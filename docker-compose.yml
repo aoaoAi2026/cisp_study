@@ -1,0 +1,40 @@
+services:
+  juice-shop:
+    image: bkimminich/juice-shop:latest
+    container_name: cisp-juice-shop
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+  webgoat:
+    image: webgoat/webgoat:latest
+    container_name: cisp-webgoat
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+
+  dvwa:
+    image: vulnerables/web-dvwa:latest
+    container_name: cisp-dvwa
+    ports:
+      - "8081:80"
+    environment:
+      - MYSQL_PASS=p@ssw0rd
+    restart: unless-stopped
+
+  bwapp:
+    image: raesene/bwapp:latest
+    container_name: cisp-bwapp
+    ports:
+      - "8082:80"
+    restart: unless-stopped
+
+networks:
+  default:
+    name: cisp-lab-network
+    driver: bridge
