@@ -1,0 +1,74 @@
+[
+  {
+    "id": "web3-001",
+    "category": "web3",
+    "title": "区块链安全全景：共识/网络/应用层攻击面",
+    "summary": "区块链分层安全模型（L0数据层/L1网络层/L2共识层/L3合约层/L4应用层）、51%攻击/长程攻击/日蚀攻击/路由劫持/女巫攻击、PoW/PoS/BFT共识安全对比、主流链（BTC/ETH/Solana/Cosmos）安全模型差异。",
+    "tags": ["区块链安全", "51%攻击", "共识安全", "PoS", "PoW", "日蚀攻击", "Layer1", "女巫攻击"],
+    "difficulty": "入门",
+    "readMinutes": 15,
+    "updatedAt": "2026-08-01",
+    "contentPath": "contents/web3/001-blockchain-security-overview.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "web3-002",
+    "category": "web3",
+    "title": "智能合约漏洞审计实战(Solidity/Rust)",
+    "summary": "常见智能合约漏洞Top 10（重入/整数溢出/访问控制缺失/闪电贷/预言机操纵/委托调用/未初始化/签名重放/前端运行/Gas消耗）、Slither/Mythril/Foundry静态与动态审计工具链、真实漏洞案例代码与修复方案。",
+    "tags": ["智能合约", "Solidity", "审计", "重入攻击", "Slither", "Mythril", "Foundry", "EVM"],
+    "difficulty": "精通",
+    "readMinutes": 18,
+    "updatedAt": "2026-08-05",
+    "contentPath": "contents/web3/002-smart-contract-audit.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "web3-003",
+    "category": "web3",
+    "title": "DeFi安全与闪电贷攻击深度分析",
+    "summary": "DeFi协议核心机制（AMM/借贷/质押/聚合器）安全风险、闪电贷攻击原理与真实案例（bZx/dForce/Cream/Euler/Hundred Finance）、价格预言机操纵（TWAP/Chainlink集成安全）、无常损失与滑点攻击。",
+    "tags": ["DeFi", "闪电贷", "AMM", "预言机操纵", "bZx", "Compound", "Uniswap", "借贷协议"],
+    "difficulty": "精通",
+    "readMinutes": 18,
+    "updatedAt": "2026-08-10",
+    "contentPath": "contents/web3/003-defi-flashloan.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "web3-004",
+    "category": "web3",
+    "title": "跨链桥安全：从 Wormhole 到 Poly Network 攻击复盘",
+    "summary": "跨链桥安全模型（锁定铸造/流动性池/原子交换）、重大攻击事件复盘（Wormhole 3.26亿美元/Ronin 6.25亿美元/Poly Network 6亿美元/Nomad 1.9亿美元）、验证人节点安全与跨链消息验证机制。",
+    "tags": ["跨链桥", "Wormhole", "Ronin", "Poly Network", "Nomad", "跨链安全", "验证人", "IBC"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2026-08-15",
+    "contentPath": "contents/web3/004-cross-chain-bridge.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "web3-005",
+    "category": "web3",
+    "title": "钱包安全与私钥管理最佳实践",
+    "summary": "热钱包vs冷钱包vs硬件钱包安全模型、助记词(BIP39)/HD钱包(BIP32/BIP44)原理、钱包常见攻击（剪贴板劫持/恶意DAPP签名/钓鱼授权approve/假空投）、多签钱包(Gnosis Safe)与MPC钱包安全、社交恢复与账户抽象(EIP-4337)安全。",
+    "tags": ["钱包安全", "私钥管理", "BIP39", "HD钱包", "多签", "Gnosis Safe", "EIP-4337", "approve钓鱼"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2026-08-20",
+    "contentPath": "contents/web3/005-wallet-key-management.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "web3-006",
+    "category": "web3",
+    "title": "MEV(矿工可提取价值)与夹子机器人攻防",
+    "summary": "MEV产生机制（三明治攻击/套利/清算/抢跑）、Flashbots/MEV-Boost/MEV-Geth基础设施、PBS提议者-构建者分离架构、SUAVE跨链MEV、交易隐私保护（隐私交易/阈值加密/时间锁）、MEV检测与防御策略。",
+    "tags": ["MEV", "三明治攻击", "Flashbots", "PBS", "抢跑", "套利", "MEV-Boost", "交易隐私"],
+    "difficulty": "精通",
+    "readMinutes": 18,
+    "updatedAt": "2026-08-25",
+    "contentPath": "contents/web3/006-mev-defense.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

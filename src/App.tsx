@@ -21,6 +21,8 @@ import {
   Flashcards,
   CyberLearningMain,
   CyberDailyLearning,
+  ResourceLibrary,
+  ResourceDetail,
 } from "./pages";
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -69,6 +71,8 @@ function App() {
           <Route path="achievements" element={<Achievements />} />
           <Route path="community" element={<Community />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="resources" element={<ResourceLibrary />} />
+          <Route path="resources/:resourceId" element={<ResourceDetail />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

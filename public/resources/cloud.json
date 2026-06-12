@@ -1,0 +1,122 @@
+[
+  {
+    "id": "cloud-001",
+    "category": "cloud",
+    "title": "阿里云/腾讯云/AWS 安全架构对比与最佳实践",
+    "summary": "主流云厂商（阿里云、腾讯云、AWS）安全能力对比：账号、网络、主机、数据、应用、审计六大维度的差异与选型建议。",
+    "tags": ["云安全", "阿里云", "腾讯云", "AWS", "安全架构"],
+    "difficulty": "入门",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/cloud/001-cloud-vendor-comparison.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "cloud-002",
+    "category": "cloud",
+    "title": "Kubernetes 安全攻防实战：RBAC / 准入控制 / 审计",
+    "summary": "K8s 集群安全：RBAC 权限、Pod 安全策略、准入控制、网络策略、审计日志与常见攻击面梳理。",
+    "tags": ["Kubernetes", "K8s", "云原生", "RBAC", "容器"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/cloud/002-kubernetes-security.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "cloud-003",
+    "category": "cloud",
+    "title": "容器安全从入门到精通：Docker / containerd 安全基线",
+    "summary": "容器安全：镜像扫描、运行时安全、Seccomp/AppArmor、rootless 模式、镜像签名与信任链。",
+    "tags": ["Docker", "容器", "containerd", "镜像安全"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/cloud/003-container-security.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "cloud-004",
+    "category": "cloud",
+    "title": "容器逃逸技术大全：CVE-2022-0492 / CVE-2022-0811 / Dirty Pipe",
+    "summary": "容器逃逸漏洞原理、复现与防御：内核漏洞、cgroups/overlayfs 利用、特权容器风险与修复建议。",
+    "tags": ["容器逃逸", "提权", "CVE", "Linux内核"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/cloud/004-container-escape.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "cloud-005",
+    "category": "cloud",
+    "title": "云原生安全体系建设：DevSecOps 落地指南",
+    "summary": "云原生时代 DevSecOps 落地：CI/CD 流水线安全、代码扫描、镜像扫描、IaC 安全、SBOM 管理。",
+    "tags": ["云原生", "DevSecOps", "CI/CD", "IaC"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/cloud/005-cloud-native-security.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "cloud-006",
+    "category": "cloud",
+    "title": "云上资产安全治理：CMDB / 暴露面 / 影子资产",
+    "summary": "云上资产管理：统一CMDB、端口暴露面发现、影子账号与匿名资源清理、攻击面收敛方法。",
+    "tags": ["云上资产", "CMDB", "暴露面", "影子资产"],
+    "difficulty": "入门",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/cloud/006-cloud-asset-governance.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "cloud-007",
+    "category": "cloud",
+    "title": "云账户安全：AK/SK 泄漏、RAM 权限与 IAM 最佳实践",
+    "summary": "云账户 AccessKey 泄漏排查、RAM/RBAC 最小权限原则、跨账号角色信任、MFA 强制与审计。",
+    "tags": ["云账户", "AK/SK", "IAM", "RAM", "最小权限"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/cloud/007-cloud-account-security.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "cloud-008",
+    "category": "cloud",
+    "title": "云 WAF / CDN 安全配置与绕过技巧",
+    "summary": "云 WAF 防护策略、规则绕过、CC 攻击防护、CDN 源站泄露、真实 IP 获取与防御思路。",
+    "tags": ["WAF", "CDN", "Web防护", "绕过"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/cloud/008-cloud-waf-cdn.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "cloud-009",
+    "category": "cloud",
+    "title": "云堡垒机与零信任运维安全",
+    "summary": "云堡垒机部署：权限收敛、会话审计、命令拦截、双因子认证与零信任访问模型（ZTNA）。",
+    "tags": ["堡垒机", "零信任", "ZTNA", "运维安全"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/cloud/009-cloud-bastion.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "cloud-010",
+    "category": "cloud",
+    "title": "对象存储桶泄漏风险与镜像安全加固",
+    "summary": "S3/OSS 桶策略误配、目录遍历、签名绕过；镜像仓库镜像签名、签名验证与供应链安全。",
+    "tags": ["对象存储", "S3", "OSS", "桶泄漏", "镜像安全"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/cloud/010-object-storage-image.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

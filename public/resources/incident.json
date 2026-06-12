@@ -1,0 +1,122 @@
+[
+  {
+    "id": "incident-001",
+    "category": "incident",
+    "title": "Windows / Linux 入侵排查实战手册",
+    "summary": "入侵排查黄金流程、账号/登录/进程/网络/文件/持久化/日志全方位分析、脚本模板与实战命令。",
+    "tags": ["入侵排查", "Windows", "Linux", "IR", "应急响应"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/incident/001-windows-linux-investigation.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "incident-002",
+    "category": "incident",
+    "title": "勒索病毒应急处置与恢复实战",
+    "summary": "勒索病毒生命周期、黄金响应流程、Windows/Linux 现场排查、家族识别、备份恢复、加固清单。",
+    "tags": ["勒索病毒", "Ransomware", "应急响应", "加密", "LockBit", "黑产"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/incident/002-ransomware-response.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "incident-003",
+    "category": "incident",
+    "title": "WebShell 排查、清除与防护实战",
+    "summary": "WebShell 家族特征、PHP/JSP/ASPX 一句话木马识别、YARA/PMF/grep 批量扫描、清除加固、持久化排查。",
+    "tags": ["WebShell", "后门", "小马", "大马", "冰蝎", "哥斯拉", "中国菜刀"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/incident/003-webshell-detection.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "incident-004",
+    "category": "incident",
+    "title": "Linux 应急响应常用命令速查",
+    "summary": "账号、进程、网络、文件、持久化、日志、取证、rootkit 全维度命令速查、一键取证脚本模板。",
+    "tags": ["Linux", "应急命令", "取证", "chkrootkit", "rkhunter", "YARA"],
+    "difficulty": "入门",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/incident/004-linux-ir-commands.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "incident-005",
+    "category": "incident",
+    "title": "事件取证与报告撰写实战",
+    "summary": "电子取证基本原则、Windows/Linux 内存/磁盘/日志取证、时间轴重建、事件报告模板与复盘会议。",
+    "tags": ["取证", "Forensics", "Volatility", "FTK", "事件报告", "时间轴"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/incident/005-forensics-and-report.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "incident-006",
+    "category": "incident",
+    "title": "数据泄露事件处置流程实战",
+    "summary": "数据分类分级、发现信号、黄金 72h 响应流程、量级评估、证据保留、通知合规、Playbook 速查。",
+    "tags": ["数据泄露", "Breach", "PIPL", "GDPR", "DLP", "合规"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/incident/006-data-breach.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "incident-007",
+    "category": "incident",
+    "title": "内存取证实战：Volatility 3 从入门到精通",
+    "summary": "Volatility 3内存分析实战：进程/网络连接/注册表/密钥/注入代码提取，Linux/Windows/Mac内存镜像分析，以及KAMD/YARA规则集成与APT内存取证案例。",
+    "tags": ["内存取证", "Volatility", "内存镜像", "取证", "LSASS", "APT"],
+    "difficulty": "精通",
+    "readMinutes": 22,
+    "updatedAt": "2026-05-10",
+    "contentPath": "contents/incident/007-memory-forensics.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "incident-008",
+    "category": "incident",
+    "title": "APT 事件应急响应全流程",
+    "summary": "APT攻击识别信号、攻击链分析、横向移动检测、持久化排查、日志重构、攻击归因、以及APT事件响应的特殊性（长期潜伏/多阶段/隐蔽性强）与应对策略。",
+    "tags": ["APT响应", "高级持续性威胁", "攻击链", "横向移动", "持久化", "威胁归因"],
+    "difficulty": "精通",
+    "readMinutes": 25,
+    "updatedAt": "2026-05-15",
+    "contentPath": "contents/incident/008-apt-incident-response.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "incident-009",
+    "category": "incident",
+    "title": "Windows EDR 告警分析实战手册",
+    "summary": "EDR告警类型分析(ATT&CK战术分类)、Sentinel/ CrowdStrike/Sysmon告警解读、进程链分析、误报识别、告警优先级评估与SIEM集成实战。",
+    "tags": ["EDR分析", "告警分析", "Sentinel", "CrowdStrike", "Sysmon", "SIEM"],
+    "difficulty": "进阶",
+    "readMinutes": 18,
+    "updatedAt": "2026-05-20",
+    "contentPath": "contents/incident/009-edr-alert-analysis.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "incident-010",
+    "category": "incident",
+    "title": "云环境安全事件应急响应",
+    "summary": "云环境应急特殊性(日志集中/动态资源/责任共担模型)、AWS/Azure/GCP云日志分析、云原生告警响应、容器/Kubernetes安全事件、以及云环境数字取证与证据固定。",
+    "tags": ["云应急", "AWS安全", "Azure安全", "云取证", "K8s安全", "容器安全"],
+    "difficulty": "精通",
+    "readMinutes": 20,
+    "updatedAt": "2026-05-25",
+    "contentPath": "contents/incident/010-cloud-incident-response.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

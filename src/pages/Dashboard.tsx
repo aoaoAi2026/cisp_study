@@ -30,6 +30,35 @@ const DailyQuotes = [
   '防御的深度决定安全的高度。',
   '最小的权限是最强的防线。',
   '今天的安全，明天的安心。',
+  '知识是防护，技能是武器。',
+  '安全之路，永无止境。',
+  '每一个字符都可能成为突破口。',
+  '了解攻击，才能更好地防御。',
+  '代码审计是安全的第一道防线。',
+];
+
+// 每日挑战系统
+const DailyChallenges = [
+  { title: '完成今日学习任务', points: 50, icon: '📚' },
+  { title: '完成3道测验题', points: 30, icon: '❓' },
+  { title: '使用闪卡学习10次', points: 40, icon: '🃏' },
+  { title: '阅读一篇工具网站介绍', points: 20, icon: '🔧' },
+  { title: '在社区发表评论', points: 30, icon: '💬' },
+  { title: '完成代码实验', points: 60, icon: '💻' },
+  { title: '记录学习笔记', points: 40, icon: '📝' },
+  { title: '观看一段视频教程', points: 35, icon: '🎬' },
+];
+
+// 学习小贴士
+const LearningTips = [
+  { tip: '试试用番茄工作法学习，25分钟专注学习，5分钟休息', icon: '🍅' },
+  { tip: '每天复盘当天学习内容，加深记忆', icon: '📖' },
+  { tip: '把学到的知识讲给别人听，教学相长', icon: '👨‍🏫' },
+  { tip: '遇到不懂的问题，及时在社区提问', icon: '❓' },
+  { tip: '定期复习旧知识，防止遗忘', icon: '🔄' },
+  { tip: '多动手实践，不要只看不练', icon: '💪' },
+  { tip: '建立知识体系，形成自己的知识网络', icon: '🕸️' },
+  { tip: '保持好奇心，探索未知领域', icon: '🔍' },
 ];
 
 export const Dashboard: React.FC = () => {
@@ -41,6 +70,29 @@ export const Dashboard: React.FC = () => {
   const levelInfo = getLevel(points);
   const progress = (completedDays.length / 90) * 100;
   const todayQuote = DailyQuotes[new Date().getDay() % DailyQuotes.length];
+
+  // 获取今日挑战
+  const today = new Date();
+  const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+  const todayChallenge = DailyChallenges[dayOfYear % DailyChallenges.length];
+  const todayTip = LearningTips[dayOfYear % LearningTips.length];
+
+  // 获取本周学习记录
+  const getWeekDays = () => {
+    const days = [];
+    const currentDayOfWeek = today.getDay() || 7; // 将周日的0转换为7
+    for (let i = 1; i <= currentDayOfWeek; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - (currentDayOfWeek - i));
+      days.push({
+        date: date.getDate(),
+        isToday: i === currentDayOfWeek,
+        hasStreak: Math.random() > 0.3, // 模拟数据
+      });
+    }
+    return days;
+  };
+  const weekDays = getWeekDays();
 
   // 额外统计
   const [extraStats, setExtraStats] = useState({
@@ -122,6 +174,83 @@ export const Dashboard: React.FC = () => {
             <Shield size={16} className="text-cyber-green" />
             <span className="text-sm text-gray-300">{todayQuote}</span>
           </div>
+        </motion.div>
+
+        {/* 每日挑战和打卡 */}
+        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 每日挑战 */}
+          <Card className="relative overflow-hidden bg-gradient-to-br from-cyber-gold/10 to-cyber-purple/10">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-cyber-gold/5 rounded-full -mr-16 -mt-16" />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-3xl">{todayChallenge.icon}</span>
+                <div>
+                  <h3 className="font-orbitron text-lg text-cyber-gold">今日挑战</h3>
+                  <p className="text-xs text-gray-400">完成挑战可获得 {todayChallenge.points} 积分</p>
+                </div>
+              </div>
+              <p className="text-white font-medium mb-4">{todayChallenge.title}</p>
+              <Button
+                className="w-full bg-cyber-gold/20 hover:bg-cyber-gold/30 border-cyber-gold/30"
+                onClick={() => {
+                  if (todayChallenge.title.includes('测验')) navigate('/quiz');
+                  else if (todayChallenge.title.includes('闪卡')) navigate('/flashcards');
+                  else if (todayChallenge.title.includes('工具')) navigate('/tools');
+                  else if (todayChallenge.title.includes('社区')) navigate('/community');
+                  else if (todayChallenge.title.includes('实验')) navigate('/lab');
+                  else if (todayChallenge.title.includes('笔记')) navigate(`/learning/day-${currentDay}`);
+                  else navigate('/learning');
+                }}
+              >
+                接受挑战 <Target size={16} />
+              </Button>
+            </div>
+          </Card>
+
+          {/* 本周打卡 */}
+          <Card className="relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-cyber-green/5 rounded-full -mr-16 -mt-16" />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-4">
+                <Flame size={24} className="text-cyber-red" />
+                <h3 className="font-orbitron text-lg text-cyber-green">本周打卡</h3>
+              </div>
+              <div className="flex justify-around mb-4">
+                {weekDays.map((day, index) => (
+                  <div key={index} className="text-center">
+                    <div
+                      className={`
+                        w-10 h-10 rounded-lg flex items-center justify-center mb-1
+                        ${day.isToday ? 'bg-cyber-green/30 border-2 border-cyber-green' : 'bg-cyber-purple/20'}
+                        ${day.hasStreak ? 'text-cyber-green' : 'text-gray-500'}
+                      `}
+                    >
+                      {day.hasStreak ? '✓' : day.date}
+                    </div>
+                    <span className="text-xs text-gray-400">
+                      {['一', '二', '三', '四', '五', '六', '日'][index]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="text-center text-sm text-gray-400">
+                连续学习 <span className="text-cyber-red font-bold">{streak}</span> 天
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* 学习小贴士 */}
+        <motion.div variants={itemVariants}>
+          <Card className="bg-gradient-to-r from-cyber-blue/10 to-cyber-purple/10">
+            <div className="flex items-start gap-4">
+              <div className="text-4xl">{todayTip.icon}</div>
+              <div>
+                <h3 className="font-orbitron text-sm text-cyber-blue mb-2">💡 今日学习小贴士</h3>
+                <p className="text-gray-300">{todayTip.tip}</p>
+              </div>
+            </div>
+          </Card>
         </motion.div>
 
         {/* Stats Row */}

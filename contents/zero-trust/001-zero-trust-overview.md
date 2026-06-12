@@ -1,0 +1,199 @@
+# 零信任架构全景：从 Google BeyondCorp 到 NIST SP 800-207
+
+---
+
+## 一、零信任的核心理念
+
+```
+传统边界安全模型：
+  内网 = 可信 | 外网 = 不可信
+  VPN接入内网 → 全域访问权限 → 横向移动风险
+
+零信任核心原则（NIST SP 800-207）：
+  1. 永不信任，始终验证（Never Trust, Always Verify）
+  2. 假设网络已被攻破（Assume Breach）
+  3. 最小权限原则（Least Privilege）— 每次访问单独授权
+  4. 显式验证（Verify Explicitly）— 多维度信号综合判断
+
+John Kindervag（Forrester，2010年首次提出）：
+  "零信任不是产品，而是一种安全策略和架构范式"
+```
+
+---
+
+## 二、NIST SP 800-207 标准架构
+
+### 2.1 核心逻辑组件
+
+```
+┌──────────────────────────────────────────────────────┐
+│                  零信任架构逻辑组件                     │
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│  ┌─────────┐    ┌─────────┐    ┌─────────┐          │
+│  │策略引擎  │◄──►│策略管理  │    │策略执行  │          │
+│  │(PE)     │    │(PA)     │    │点(PEP)   │          │
+│  └────┬────┘    └─────────┘    └────▲─────┘          │
+│       │                             │                │
+│       │  ①主体请求访问资源           │                │
+│       ├─────────────────────────────►│                │
+│       │                             │                │
+│       │  ②PEP请求PE评估              │                │
+│       │◄────────────────────────────┤                │
+│       │                             │                │
+│       │  ③PE结合多信号源决策          │                │
+│  ┌────▼──────────────────────────────▼──────┐        │
+│  │       数据源 (Data Sources)               │        │
+│  │  ├─ 用户身份 (IDP/IAM)                   │        │
+│  │  ├─ 设备健康度 (MDM/EDR/NAC)             │        │
+│  │  ├─ 行为分析 (UEBA)                      │        │
+│  │  ├─ 威胁情报 (TI Feed)                   │        │
+│  │  ├─ 资产数据库 (CMDB)                    │        │
+│  │  └─ 数据分类 (Data Classification)       │        │
+│  └──────────────────────────────────────────┘        │
+└──────────────────────────────────────────────────────┘
+```
+
+### 2.2 信任算法（Trust Algorithm）
+
+```
+访问决策 = f(用户身份, 设备状态, 访问上下文, 资源敏感度, 行为基线)
+
+示例决策矩阵：
+┌──────────┬──────────┬──────────┬──────────┐
+│          │ 受管设备  │ 不受管设备 │ 未知设备  │
+├──────────┼──────────┼──────────┼──────────┤
+│ 正常地点  │ 允许     │ 有限访问  │ 拒绝     │
+│ 异常地点  │ MFA+审批 │ MFA      │ 拒绝     │
+│ 异常行为  │ MFA+审计 │ 拒绝     │ 拒绝     │
+└──────────┴──────────┴──────────┴──────────┘
+```
+
+---
+
+## 三、三大技术路线
+
+### 3.1 软件定义边界 (SDP)
+
+```
+SDP核心机制（云安全联盟 CSA）：
+  SP-SDP架构 = 客户端(Initating Host) + 控制器(Controller) + 网关(Gateway)
+
+工作流程：
+  1. 客户端向控制器认证（单包授权 SPA）
+  2. 控制器验证身份/设备 → 下发允许访问的资源列表
+  3. 客户端与网关建立mTLS隧道
+  4. 网关实施细粒度访问控制
+
+关键特点：
+  - 先认证后连接（网络隐身，非授权设备看不到服务）
+  - 应用层隧道（非网络层VPN）
+  - 代表性产品：Zscaler Private Access (ZPA), AppGate, Perimeter 81
+
+SDP vs 传统VPN：
+  VPN：网络层隧道（L3），接入后全网可达 → 超大攻击面
+  SDP：应用层隧道（L7），细粒度权限 → 攻击面最小化
+```
+
+### 3.2 微隔离 (Micro-Segmentation)
+
+```
+定义：将数据中心内部网络划分为逻辑"微段"，控制东西向流量
+
+实现方式：
+  1. 主机代理型：在每个工作负载上安装Agent（如VMware NSX + DFW, Guardicore）
+  2. 网络设备型：通过SDN/Overlay实现（如Cisco ACI, Juniper Contrail）
+  3. 云原生型：Kubernetes NetworkPolicy + Calico/Cilium
+
+策略模型：
+  - 基于标签的策略：app=web → app=db:5432
+  - 基于身份的策略：ServiceAccount=payment-svc → ServiceAccount=db-svc
+  - 零信任基线：默认拒绝 → 按需开放 → 持续审计
+```
+
+### 3.3 身份感知代理 (Identity-Aware Proxy)
+
+```
+Google BeyondCorp (2014年公开) 核心设计：
+
+访问流程：
+  用户 → 访问代理(IAP) → 验证身份(IDP) + 设备证书 + 访问控制列表(ACL) → 代理转发到内网应用
+
+关键组件：
+  1. IDP：Google Identity / Okta / Azure AD
+  2. 设备清单(Device Inventory)：设备证书 + 补丁状态 + EDR状态
+  3. 访问策略引擎：结合身份/设备/上下文决策
+  4. 访问代理：Enforce策略，代理流量（如Google IAP, Cloudflare Access, Pomerium, Ory Oathkeeper）
+```
+
+---
+
+## 四、零信任实施路径
+
+### 4.1 CISA零信任成熟度模型
+
+```
+身份 (Identity)       → 设备 (Device)     → 网络(Network)
+     ↓                     ↓                   ↓
+应用 (Application)    → 数据 (Data)       → 可见性与自动化
+                         ↓
+              传统 → 高级 → 优化 (三阶段)
+```
+
+### 4.2 五步实施法
+
+```
+Step 1: 身份现代化
+  - 统一IDP（Okta/Azure AD/Keycloak）
+  - 全面推行MFA（FIDO2/WebAuthn优先）
+  - 应用SSO覆盖所有业务系统
+
+Step 2: 设备可信
+  - 部署MDM/EDR，建立设备信任评分
+  - 设备证书分发与管理
+  - 不受管设备访问策略（BYOD方案）
+
+Step 3: 网络转型
+  - 从VPN迁移到ZTNA/SDP
+  - 内部微隔离（东西向流量管控）
+  - DNS安全（DNS-over-HTTPS监控）
+
+Step 4: 应用与数据
+  - 应用资产发现与分类
+  - API网关 + 细粒度授权
+  - 数据分类分级 + DLP + 动态脱敏
+
+Step 5: 持续验证
+  - SIEM/UEBA行为基线
+  - 持续访问评估与动态策略调整
+  - 自动化响应（风险升级 → 自动降权/断连）
+```
+
+---
+
+## 五、主流产品与开源方案
+
+| 类别 | 商业产品 | 开源方案 |
+|------|---------|---------|
+| ZTNA/SDP | Zscaler ZPA, Cloudflare Access, Netskope | OpenZiti, Pomerium, Ory Oathkeeper |
+| 微隔离 | Illumio, Guardicore, VMware NSX | Calico, Cilium, Istio (Service Mesh) |
+| IAM/IDP | Okta, Azure AD, Ping Identity | Keycloak, Casdoor, Dex, Ory Hydra |
+| 设备信任 | CrowdStrike, SentinelOne, Tanium | osquery, Wazuh |
+| PAM | CyberArk, BeyondTrust, Delinea | Teleport, Apache Guacamole |
+
+---
+
+## 六、Checklist
+
+- [ ] 统一身份源（IDP），所有应用接入SSO
+- [ ] 全范围部署MFA（FIDO2/WebAuthn优先于短信OTP）
+- [ ] 建立设备健康度评估体系
+- [ ] 应用资产全量盘点与分级
+- [ ] 网络默认拒绝策略（白名单模式）
+- [ ] 应用层代理替代VPN接入
+- [ ] 内部东西向流量微隔离
+- [ ] 数据分类分级策略联动
+- [ ] 安全信号统一平台（SIEM/UEBA/SOAR）
+- [ ] 持续信任评估（非一次性认证）
+- [ ] 零信任专项团队与管理制度
+- [ ] 分阶段迁移（先非关键→再关键系统）

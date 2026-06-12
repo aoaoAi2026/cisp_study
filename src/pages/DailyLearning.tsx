@@ -19,7 +19,9 @@ import {
   Terminal,
   Server,
   ExternalLink,
-  StickyNote
+  StickyNote,
+  Award,
+  User
 } from 'lucide-react';
 import { useLearningStore, useAchievementStore } from '../store';
 import { learningData, weekThemes } from '../data/learningData';
@@ -32,7 +34,7 @@ export const DailyLearning: React.FC = () => {
   const { markDayComplete, completedDays } = useLearningStore();
   const { checkAndUnlockBadge } = useAchievementStore();
 
-  const [activeTab, setActiveTab] = useState<'content' | 'code' | 'quiz'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'code' | 'quiz' | 'expert'>('content');
   const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [note, setNote] = useState('');
@@ -331,6 +333,9 @@ export const DailyLearning: React.FC = () => {
             { id: 'content', label: '知识点', icon: BookOpen },
             { id: 'code', label: '代码示例', icon: Code },
             { id: 'quiz', label: '练习题', icon: FileQuestion },
+            ...(currentDay.expertNotes && currentDay.expertNotes.length > 0
+              ? [{ id: 'expert', label: '大神笔记', icon: Award }]
+              : []),
           ].map(tab => (
             <button
               key={tab.id}
@@ -468,6 +473,38 @@ export const DailyLearning: React.FC = () => {
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+
+            {activeTab === 'expert' && currentDay.expertNotes && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Award size={18} className="text-cyber-gold" />
+                  <span className="text-cyber-gold font-medium">大神笔记</span>
+                  <span className="text-xs text-gray-500">行业专家的实战经验分享</span>
+                </div>
+                {currentDay.expertNotes.map((note, i) => (
+                  <div key={i} className="p-4 rounded-lg bg-gradient-to-r from-cyber-gold/5 to-cyber-purple/5 border border-cyber-gold/20 hover:border-cyber-gold/40 transition-colors">
+                    <div className="flex items-center gap-2 mb-2">
+                      <User size={14} className="text-cyber-gold" />
+                      <span className="text-sm font-medium text-cyber-gold">{note.author}</span>
+                      <span className="text-xs text-gray-500">·</span>
+                      <span className="text-xs text-gray-400">{note.title}</span>
+                    </div>
+                    <p className="text-sm text-gray-300 leading-relaxed">{note.content}</p>
+                    {note.url && (
+                      <a
+                        href={note.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 mt-2 text-xs text-cyber-gold hover:text-cyber-green transition-colors"
+                      >
+                        <ExternalLink size={12} />
+                        查看原文
+                      </a>
+                    )}
+                  </div>
+                ))}
               </div>
             )}
           </Card>

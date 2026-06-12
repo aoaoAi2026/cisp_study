@@ -1,0 +1,98 @@
+[
+  {
+    "id": "mobile-001",
+    "category": "mobile",
+    "title": "Android APP 渗透测试实战指南",
+    "summary": "Android 逆向与渗透测试全流程：反编译、Manifest 分析、组件导出、数据安全、Hook 与动态调试。",
+    "tags": ["Android", "渗透测试", "APK", "反编译", "MobSF"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/mobile/001-android-pentest.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "mobile-002",
+    "category": "mobile",
+    "title": "Android SO 层分析与 Native 库逆向",
+    "summary": "Android Native 层逆向：JNI_OnLoad 分析、动态链接库符号还原、ARM/ARM64 反汇编、加壳脱壳。",
+    "tags": ["Android", "Native", "SO", "JNI", "ARM", "IDA"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/mobile/002-android-so-analysis.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "mobile-003",
+    "category": "mobile",
+    "title": "iOS APP 安全测试：越狱环境 + IPA 分析",
+    "summary": "iOS 安全：IPA 解包、Mach-O 分析、URL Scheme、证书校验、Frida 非越狱调试与隐私合规检测。",
+    "tags": ["iOS", "IPA", "Mach-O", "越狱", "Frida"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/mobile/003-ios-security.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "mobile-004",
+    "category": "mobile",
+    "title": "APP 重打包与二次打包检测防护",
+    "summary": "APP 重打包原理、签名利用、代码注入、反调试对抗与签名校验机制、渠道包识别方案。",
+    "tags": ["重打包", "二次打包", "签名", "反调试", "加壳"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/mobile/004-app-repackaging.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "mobile-005",
+    "category": "mobile",
+    "title": "Frida Hook 实战：Android/iOS 动态插桩",
+    "summary": "Frida 框架安装、脚本编写、Java层/Native层 Hook、绕过 SSL Pinning、Root 检测与加壳对抗。",
+    "tags": ["Frida", "Hook", "动态插桩", "SSL Pinning", "Root"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/mobile/005-frida-hook.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "mobile-006",
+    "category": "mobile",
+    "title": "小程序安全：微信/支付宝小程序渗透",
+    "summary": "小程序包解析、反编译源码、接口越权、敏感信息泄露、JS 代码审计与小程序调试技巧。",
+    "tags": ["小程序", "微信", "支付宝", "wxapkg", "JS"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/mobile/006-miniapp-security.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "mobile-007",
+    "category": "mobile",
+    "title": "APP 加壳与脱壳：一代壳/二代壳/VMP",
+    "summary": "Android Dex 加壳原理、ART 脱壳、FART/Frida-Unpack 实战、VMP 指令虚拟化对抗。",
+    "tags": ["加壳", "脱壳", "VMP", "Dex", "ART", "FART"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/mobile/007-app-packing-unpacking.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "mobile-008",
+    "category": "mobile",
+    "title": "移动端 APP 隐私合规检测实战",
+    "summary": "《个人信息保护法》合规要点、SDK 第三方库隐私收集、权限最小化、隐私政策一致性检测工具链。",
+    "tags": ["隐私合规", "PIPL", "个人信息", "权限", "SDK"],
+    "difficulty": "入门",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/mobile/008-app-privacy-compliance.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

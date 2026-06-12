@@ -1,0 +1,74 @@
+[
+  {
+    "id": "zt-001",
+    "category": "zero-trust",
+    "title": "零信任架构全景：从 Google BeyondCorp 到 NIST SP 800-207",
+    "summary": "系统解读零信任核心理念（永不信任始终验证）、NIST SP 800-207标准架构、Google BeyondCorp实践、软件定义边界(SDP)与微隔离三大技术路线对比。",
+    "tags": ["零信任", "NIST SP 800-207", "BeyondCorp", "SDP", "微隔离", "IAM", "身份安全"],
+    "difficulty": "入门",
+    "readMinutes": 15,
+    "updatedAt": "2026-03-01",
+    "contentPath": "contents/zero-trust/001-zero-trust-overview.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "zt-002",
+    "category": "zero-trust",
+    "title": "IAM 身份与访问管理实战",
+    "summary": "身份生命周期管理、LDAP/AD认证、OAuth2.0/OIDC/SAML协议详解、RBAC/ABAC授权模型、开源IAM方案(Keycloak/Casdoor)部署与集成实践。",
+    "tags": ["IAM", "身份管理", "OAuth2.0", "OIDC", "SAML", "RBAC", "ABAC", "Keycloak", "LDAP"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2026-03-05",
+    "contentPath": "contents/zero-trust/002-iam-practice.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "zt-003",
+    "category": "zero-trust",
+    "title": "多因素认证(MFA)与无密码认证技术",
+    "summary": "MFA技术全景（TOTP/FIDO2/WebAuthn/Push/短信）、FIDO2/WebAuthn无密码认证原理、硬件安全密钥(YubiKey/Titan)部署、生物特征认证安全风险与选型。",
+    "tags": ["MFA", "FIDO2", "WebAuthn", "TOTP", "YubiKey", "无密码", "生物认证", "Passkey"],
+    "difficulty": "进阶",
+    "readMinutes": 12,
+    "updatedAt": "2026-03-10",
+    "contentPath": "contents/zero-trust/003-mfa-passwordless.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "zt-004",
+    "category": "zero-trust",
+    "title": "特权访问管理(PAM)体系搭建",
+    "summary": "PAM核心能力（凭据保险箱/会话代理/权限提权管控/审计录像）、CyberArk/BeyondTrust/国产堡垒机对比、特权账号自动化轮换、JIT最小权限与零常权实践。",
+    "tags": ["PAM", "特权访问", "堡垒机", "凭据管理", "JIT", "零常权", "CyberArk", "会话审计"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2026-03-15",
+    "contentPath": "contents/zero-trust/004-pam-architecture.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "zt-005",
+    "category": "zero-trust",
+    "title": "单点登录(SSO)与联邦身份认证",
+    "summary": "SSO技术原理（CAS/OAuth2/OIDC/SAML）、Session vs Token方案对比、跨域SSO与IDP-initiated/SP-initiated流程、企业SSO常见坑与排障手册。",
+    "tags": ["SSO", "单点登录", "CAS", "联邦认证", "IDP", "SP", "JWT", "Session"],
+    "difficulty": "进阶",
+    "readMinutes": 12,
+    "updatedAt": "2026-03-20",
+    "contentPath": "contents/zero-trust/005-sso-federation.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "zt-006",
+    "category": "zero-trust",
+    "title": "ZTNA 与 SASE：零信任网络接入落地指南",
+    "summary": "ZTNA（Zscaler/Cloudflare Access/OpenZiti）vs VPN、SASE架构（SD-WAN+SSE融合）、CASB/ SWG/FWaaS组件详解、企业迁移路径（从 VPN 到 ZTNA 四步转型法）。",
+    "tags": ["ZTNA", "SASE", "SD-WAN", "SSE", "CASB", "SWG", "Zscaler", "Cloudflare"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2026-03-25",
+    "contentPath": "contents/zero-trust/006-ztna-sase.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

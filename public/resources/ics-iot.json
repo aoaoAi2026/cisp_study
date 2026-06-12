@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ics-001",
+    "category": "ics-iot",
+    "title": "工业控制系统(ICS/SCADA)安全全景",
+    "summary": "ICS/SCADA系统架构（Purdue模型/层0-5）、工业网络协议安全风险概览、工控安全威胁态势（Stuxnet/ Havex/TRITON/Industroyer）、IT/OT融合安全挑战。",
+    "tags": ["ICS", "SCADA", "Purdue模型", "工控安全", "Stuxnet", "TRITON", "OT安全", "工业控制"],
+    "difficulty": "入门",
+    "readMinutes": 12,
+    "updatedAt": "2026-04-01",
+    "contentPath": "contents/ics-iot/001-ics-scada-overview.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "ics-002",
+    "category": "ics-iot",
+    "title": "IEC 62443 工控安全标准体系解读",
+    "summary": "IEC 62443四部分（通用/策略与规程/系统级/组件级）详解、安全等级(SL1-4)评估方法、IEC 62443与等保2.0/ISO 27001映射关系。",
+    "tags": ["IEC 62443", "工控标准", "安全等级", "SL1-4", "等保2.0", "ISO 27001", "风险评估"],
+    "difficulty": "进阶",
+    "readMinutes": 12,
+    "updatedAt": "2026-04-05",
+    "contentPath": "contents/ics-iot/002-iec62443-standard.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "ics-003",
+    "category": "ics-iot",
+    "title": "PLC/DCS 攻击技术与防御",
+    "summary": "PLC攻击面（工程站/固件/梯形图逻辑/寄存器篡改）、常见PLC协议（S7comm/Modbus/EtherNet/IP/Profinet）安全分析、物理过程感知IDS与Modbus深度包检测(DPI)。",
+    "tags": ["PLC", "DCS", "S7comm", "Modbus", "梯形图", "固件安全", "DPI", "工程站"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2026-04-10",
+    "contentPath": "contents/ics-iot/003-plc-security.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "ics-004",
+    "category": "ics-iot",
+    "title": "工控协议安全分析：Modbus/DNP3/OPC-UA",
+    "summary": "三大主流工控协议（Modbus TCP/RTU、DNP3、OPC-UA）结构解析、安全缺陷分析（明文/无认证/无完整性校验）、OPC-UA安全模型（UA-SecurityPolicy/证书管理）与协议模糊测试方法。",
+    "tags": ["Modbus", "DNP3", "OPC-UA", "协议分析", "模糊测试", "工控协议", "SCADA", "Wireshark"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2026-04-15",
+    "contentPath": "contents/ics-iot/004-industrial-protocols.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "ics-005",
+    "category": "ics-iot",
+    "title": "IoT设备安全与固件分析实战",
+    "summary": "IoT设备攻击面（UART/JTAG/SPI/I2C硬件接口、固件提取与逆向）、binwalk/firmware-mod-kit/FACT固件分析工具、设备默认凭据/硬编码密钥风险与物联网安全基线（ETSI EN 303 645/GB/T 37044）。",
+    "tags": ["IoT安全", "固件分析", "binwalk", "UART", "JTAG", "FACT", "硬件安全", "GB/T 37044"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2026-04-20",
+    "contentPath": "contents/ics-iot/005-iot-firmware.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "ics-006",
+    "category": "ics-iot",
+    "title": "工业互联网安全与关键信息基础设施保护",
+    "summary": "工业互联网平台安全（边缘/平台/应用三层）、《关键信息基础设施安全保护条例》合规要求、关基安全保护（识别/防护/检测/响应/恢复五阶段）、工业安全态势感知平台建设与等保2.0工控扩展要求。",
+    "tags": ["工业互联网", "关基保护", "关键信息基础设施", "态势感知", "工控安全", "边缘计算", "CIIP"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2026-04-25",
+    "contentPath": "contents/ics-iot/006-industrial-internet.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

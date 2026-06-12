@@ -1,0 +1,74 @@
+[
+  {
+    "id": "intel-001",
+    "category": "intel",
+    "title": "APT 组织分析与海莲花/蔓灵花等知名攻击组织全景",
+    "summary": "APT（高级持续威胁）的本质、典型攻击链、海莲花/蔓灵花/响尾蛇等知名 APT 组织剖析、防御要点与 IOC 应用方法。",
+    "tags": ["APT", "高级持续威胁", "海莲花", "OceanLotus", "蔓灵花", "响尾蛇", "威胁情报", "MITRE ATT&CK"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/intel/001-apt-analysis.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "intel-002",
+    "category": "intel",
+    "title": "IOC 与情报来源实战手册",
+    "summary": "IOC 类型、格式、开源与商业情报源（VT/OTX/AbuseIPDB/MISP/国内厂商）、STIX/TAXII 标准、ETL 管道与落地实践。",
+    "tags": ["IOC", "STIX", "TAXII", "MISP", "威胁情报源", "VirusTotal", "AbuseIPDB", "情报管道"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/intel/002-ioc-sources.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "intel-003",
+    "category": "intel",
+    "title": "YARA 规则编写实战：恶意代码检测",
+    "summary": "YARA 基础语法、字符串/字节/正则匹配、PE 元数据、WebShell/Mimikatz/勒索软件实用规则与企业自定义规则流程。",
+    "tags": ["YARA", "恶意代码", "签名", "WebShell", "Mimikatz", "勒索软件", "规则集", "检测"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/intel/003-yara-rules.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "intel-004",
+    "category": "intel",
+    "title": "MITRE ATT&CK 框架解读与检测应用实战",
+    "summary": "ATT&CK 14 大战术与关键技术、蓝队检测规则映射、红队进攻路线设计、Sigma/Atomic Red Team 资源与落地步骤。",
+    "tags": ["MITRE ATT&CK", "战术", "技术", "TTP", "Sigma", "Atomic Red Team", "蓝队", "红队"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/intel/004-mitre-attack.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "intel-005",
+    "category": "intel",
+    "title": "威胁情报平台 (TIP) 部署与使用实战",
+    "summary": "MISP/OpenCTI 等开源 TIP 与主流商业 TIP 对比、情报清洗/富集/评分/分发/自动化推送与运营 KPI 实战。",
+    "tags": ["威胁情报平台", "TIP", "MISP", "OpenCTI", "TheHive", "情报运营", "STIX", "TAXII"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/intel/005-threat-intelligence-platform.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "intel-006",
+    "category": "intel",
+    "title": "威胁情报分析报告模板与写作实战",
+    "summary": "情报报告类型、通用模板、IOC 机器可读格式、写作最佳实践、工具链与合规 Checklist。",
+    "tags": ["威胁报告", "情报分析", "IOC", "STIX", "模板", "事件响应", "合规"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/intel/006-threat-report-template.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

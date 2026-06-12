@@ -1,0 +1,122 @@
+[
+  {
+    "id": "codeaudit-001",
+    "category": "codeaudit",
+    "title": "PHP 代码审计实战指南",
+    "summary": "PHP 常见漏洞: SQL 注入、命令执行、文件包含、反序列化、XSS、SSRF、变量覆盖、弱类型比较及修复建议。",
+    "tags": ["PHP", "代码审计", "SQL注入", "反序列化", "XSS"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/codeaudit/001-php-code-audit.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "codeaudit-002",
+    "category": "codeaudit",
+    "title": "Java 代码审计实战指南",
+    "summary": "Java 代码审计: SQL 注入、反序列化 (ysoserial/gadget)、表达式注入、Fastjson/Jackson、JNDI、Spring Actuator 风险。",
+    "tags": ["Java", "代码审计", "反序列化", "Fastjson", "JNDI"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/codeaudit/002-java-code-audit.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "codeaudit-003",
+    "category": "codeaudit",
+    "title": ".NET 代码审计实战指南",
+    "summary": ".NET 审计: BinaryFormatter/JSON.NET TypeNameHandling、ViewState、web.config、ASP.NET Core、NLog/log4net、命令注入。",
+    "tags": ["C#", ".NET", "代码审计", "BinaryFormatter", "ViewState"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/codeaudit/003-dotnet-code-audit.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "codeaudit-004",
+    "category": "codeaudit",
+    "title": "Python 代码审计实战指南",
+    "summary": "Python Web 审计: pickle反序列化、yaml.load、jinja2 SSTI、subprocess shell=True、Flask/Django 配置、SQLAlchemy。",
+    "tags": ["Python", "代码审计", "pickle", "SSTI", "Flask", "Django"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/codeaudit/004-python-code-audit.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "codeaudit-005",
+    "category": "codeaudit",
+    "title": "代码审计思路与工具: Semgrep / CodeQL",
+    "summary": "自动化代码审计工作流: Semgrep 规则、CodeQL 查询、污点追踪、CI 集成、自定义规则编写、SonarQube 对比。",
+    "tags": ["Semgrep", "CodeQL", "自动化审计", "静态分析", "SAST"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/codeaudit/005-semgrep-codeql.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "codeaudit-006",
+    "category": "codeaudit",
+    "title": "SQL 注入挖掘实战",
+    "summary": "SQL 注入类型、手工检测、UNION 注入、盲注、时间盲注、宽字节、sqlmap 工具链、WAF 绕过与防护。",
+    "tags": ["SQL注入", "sqlmap", "WAF绕过", "数据库安全"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/codeaudit/006-sql-injection.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "codeaudit-007",
+    "category": "codeaudit",
+    "title": "反序列化漏洞链 (POP Chain) 挖掘实战",
+    "summary": "反序列化漏洞原理、Java/PHP/Python/.NET 常见 gadget chain、ysoserial/phpggc/pickle、RASP 防护与依赖治理。",
+    "tags": ["反序列化", "POP链", "gadget", "ysoserial", "RCE"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/codeaudit/007-deserialization-pop-chain.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "codeaudit-008",
+    "category": "codeaudit",
+    "title": "敏感信息泄露排查实战",
+    "summary": "源代码、配置、注释、.git、.env、sourcemap、Actuator、JWT、日志中的敏感信息识别、gitleaks/trufflehog/Semgrep。",
+    "tags": ["信息泄露", "gitleaks", "Git", "SourceMap", "Actuator"],
+    "difficulty": "入门",
+    "readMinutes": 15,
+    "updatedAt": "2025-09-15",
+    "contentPath": "contents/codeaudit/008-sensitive-info-leak.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "codeaudit-009",
+    "category": "codeaudit",
+    "title": "Go 语言代码审计实战指南",
+    "summary": "Go语言安全审计：模板注入/html.template、SQL注入/Go-SQL、命令注入/exec、SSRF/http客户端、反序列化/yaml/encoding、认证绕过/JWT/会话管理漏洞。",
+    "tags": ["Go", "代码审计", "模板注入", "SQL注入", "命令注入", "SSRF"],
+    "difficulty": "进阶",
+    "readMinutes": 18,
+    "updatedAt": "2026-05-15",
+    "contentPath": "contents/codeaudit/009-golang-code-audit.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "codeaudit-010",
+    "category": "codeaudit",
+    "title": "JavaScript / Node.js 代码审计实战",
+    "summary": "Node.js安全审计：原型链污染(CVE-2019-10744)、命令注入/child_process、路径穿越、模板注入(EJS/Jade)、JWT安全、依赖投毒、代码注入与沙箱逃逸。",
+    "tags": ["Node.js", "JavaScript", "原型链污染", "命令注入", "模板注入", "JWT安全"],
+    "difficulty": "进阶",
+    "readMinutes": 20,
+    "updatedAt": "2026-05-20",
+    "contentPath": "contents/codeaudit/010-nodejs-code-audit.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

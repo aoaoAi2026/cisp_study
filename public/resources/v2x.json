@@ -1,0 +1,74 @@
+[
+  {
+    "id": "v2x-001",
+    "category": "v2x",
+    "title": "智能网联汽车安全全景",
+    "summary": "智能网联汽车电子电气架构（分布式→域集中→中央计算）、攻击面全景（T-Box/IVI/网关/ADAS/充电桩/手机APP/云平台）、车联网安全标准体系（GB/T 40855/40856/40857 + UN R155/156）。",
+    "tags": ["车联网", "V2X", "智能网联汽车", "T-Box", "IVI", "ADAS", "GB/T 40855", "UN R155"],
+    "difficulty": "入门",
+    "readMinutes": 12,
+    "updatedAt": "2026-07-01",
+    "contentPath": "contents/v2x/001-automotive-security-overview.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "v2x-002",
+    "category": "v2x",
+    "title": "车载总线安全：CAN/LIN/FlexRay/Ethernet 攻击与防御",
+    "summary": "CAN总线协议结构（帧格式/仲裁机制/错误处理）、CAN注入/DoS/模糊测试攻击、CAN FD与车载以太网(DoIP/SOME/IP)安全、CAN IDS设计（物理层/协议层异常检测）、SocketCAN/SavvyCAN实用工具。",
+    "tags": ["CAN总线", "CAN注入", "车载以太网", "SocketCAN", "SavvyCAN", "DoIP", "SOME/IP", "FlexRay"],
+    "difficulty": "精通",
+    "readMinutes": 18,
+    "updatedAt": "2026-07-05",
+    "contentPath": "contents/v2x/002-can-bus-security.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "v2x-003",
+    "category": "v2x",
+    "title": "T-Box/IVI/OTA 三大件安全分析",
+    "summary": "T-Box（远程通信终端）攻击面（AT指令/基带/固件提取）、IVI（车载信息娱乐系统）Android/Linux/QNX安全、FOTA/SOTA远程升级安全机制（签名验证/回滚保护/差分升级安全）、TEE/HSM安全硬件依赖分析。",
+    "tags": ["T-Box", "IVI", "OTA安全", "固件升级", "HSM", "TEE", "QNX", "车机安全"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2026-07-10",
+    "contentPath": "contents/v2x/003-tbox-ivi-ota.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "v2x-004",
+    "category": "v2x",
+    "title": "V2X通信安全与PKI证书体系",
+    "summary": "V2X通信标准（DSRC/802.11p vs C-V2X/PC5/Uu）、V2X安全标准（IEEE 1609.2安全服务 / ETSI ITS / CCSA行标）、V2X PKI证书体系（SCMS/CCMS注册/假名/应用三层证书）、签名验证性能与隐私保护机制。",
+    "tags": ["V2X", "DSRC", "C-V2X", "IEEE 1609.2", "SCMS", "PKI", "假名证书", "车路协同"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2026-07-15",
+    "contentPath": "contents/v2x/004-v2x-communication-security.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "v2x-005",
+    "category": "v2x",
+    "title": "UN R155 / R156 法规与 CSMS/SUMS 合规",
+    "summary": "UN R155（网络安全管理系统CSMS）认证要求、UN R156（软件更新管理系统SUMS）认证要求、车辆型式批准(VTA)中的安全要求、威胁分析与风险评估(TARA)方法论（ISO/SAE 21434）、与国内GB标准衔接。",
+    "tags": ["UN R155", "UN R156", "CSMS", "SUMS", "ISO 21434", "TARA", "型式批准", "VTA"],
+    "difficulty": "进阶",
+    "readMinutes": 12,
+    "updatedAt": "2026-07-20",
+    "contentPath": "contents/v2x/005-regulations.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "v2x-006",
+    "category": "v2x",
+    "title": "自动驾驶安全：功能安全与预期功能安全",
+    "summary": "ISO 26262功能安全（ASIL A-D等级）与ISO 21448预期功能安全(SOTIF)差异、感知系统安全（传感器欺骗/对抗样本/激光雷达攻击）、定位系统GPS欺骗/干扰防御、安全关键系统冗余架构与Fail-Operational设计。",
+    "tags": ["ISO 26262", "ISO 21448", "SOTIF", "ASIL", "自动驾驶安全", "传感器安全", "GPS欺骗", "功能安全"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2026-07-25",
+    "contentPath": "contents/v2x/006-autonomous-driving.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

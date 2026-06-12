@@ -1,0 +1,1805 @@
+[
+  {
+    "id": "tool-001",
+    "name": "Kali Linux",
+    "url": "https://www.kali.org",
+    "category": "操作系统/发行版",
+    "description": "最流行的渗透测试Linux发行版，预装数百款安全工具，支持WSL/VM/USB多模式运行。",
+    "country": "海外",
+    "tags": [
+      "渗透测试",
+      "Linux",
+      "发行版"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-002",
+    "name": "Parrot OS",
+    "url": "https://www.parrotsec.org",
+    "category": "操作系统/发行版",
+    "description": "基于Debian的安全发行版，主打隐私与匿名，侧重数字取证与红队作战。",
+    "country": "海外",
+    "tags": [
+      "渗透测试",
+      "Linux",
+      "发行版",
+      "匿名"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-003",
+    "name": "BlackArch",
+    "url": "https://blackarch.org",
+    "category": "操作系统/发行版",
+    "description": "基于Arch Linux的渗透测试发行版，提供2800+安全工具，滚动更新。",
+    "country": "海外",
+    "tags": [
+      "渗透测试",
+      "Linux",
+      "发行版",
+      "Arch"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-004",
+    "name": "BackBox",
+    "url": "https://www.backbox.org",
+    "category": "操作系统/发行版",
+    "description": "轻量级Ubuntu基渗透测试发行版，适合学习和日常红队作业。",
+    "country": "海外",
+    "tags": [
+      "渗透测试",
+      "Linux",
+      "Ubuntu"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-005",
+    "name": "Tails",
+    "url": "https://tails.net",
+    "category": "操作系统/发行版",
+    "description": "以匿名为核心的Live系统，所有流量强制Tor，关闭不留痕。",
+    "country": "海外",
+    "tags": [
+      "匿名",
+      "Tor",
+      "隐私",
+      "LiveCD"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-006",
+    "name": "FOFA",
+    "url": "https://fofa.info",
+    "category": "信息收集工具",
+    "description": "国产在线网络空间测绘平台，支持多种语法搜索，做资产测绘、漏洞狩猎必备。",
+    "country": "国内",
+    "tags": [
+      "资产测绘",
+      "OSINT",
+      "信息收集"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-007",
+    "name": "Shodan",
+    "url": "https://www.shodan.io",
+    "category": "信息收集工具",
+    "description": "全球在线设备搜索引擎，可直接暴露端口/Banner/服务指纹，红队资产发现利器。",
+    "country": "海外",
+    "tags": [
+      "资产测绘",
+      "OSINT",
+      "搜索引擎"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-008",
+    "name": "Censys",
+    "url": "https://search.censys.io",
+    "category": "信息收集工具",
+    "description": "基于证书与Banner的设备搜索引擎，TLS证书数据尤其丰富。",
+    "country": "海外",
+    "tags": [
+      "资产测绘",
+      "证书",
+      "搜索引擎"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-009",
+    "name": "ZoomEye",
+    "url": "https://www.zoomeye.org",
+    "category": "信息收集工具",
+    "description": "国产网络空间搜索引擎，支持服务、应用、设备指纹多维检索。",
+    "country": "国内",
+    "tags": [
+      "资产测绘",
+      "OSINT",
+      "搜索引擎"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-010",
+    "name": "Quake",
+    "url": "https://quake.360.net",
+    "category": "信息收集工具",
+    "description": "360网络空间测绘平台，支持SQL式语法查询、威胁联动。",
+    "country": "国内",
+    "tags": [
+      "资产测绘",
+      "OSINT",
+      "搜索引擎"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-011",
+    "name": "Nmap",
+    "url": "https://nmap.org",
+    "category": "信息收集工具",
+    "description": "经典端口扫描与主机发现工具，配合NSE脚本可做复杂探测。",
+    "country": "海外",
+    "tags": [
+      "端口扫描",
+      "主机发现",
+      "NSE"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-012",
+    "name": "Masscan",
+    "url": "https://github.com/robertdavidgraham/masscan",
+    "category": "信息收集工具",
+    "description": "异步TCP SYN扫描器，号称5分钟扫遍全网，做互联网级端口普查。",
+    "country": "海外",
+    "tags": [
+      "端口扫描",
+      "高速扫描",
+      "异步"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-013",
+    "name": "Amass",
+    "url": "https://github.com/owasp-amass/amass",
+    "category": "信息收集工具",
+    "description": "OWASP开源子域名枚举工具，整合多种数据源与主动被动发现技术。",
+    "country": "海外",
+    "tags": [
+      "子域名",
+      "OSINT",
+      "枚举"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-014",
+    "name": "theHarvester",
+    "url": "https://github.com/laramies/theHarvester",
+    "category": "信息收集工具",
+    "description": "邮箱、子域名、主机开源情报收集，集成多个搜索引擎API。",
+    "country": "海外",
+    "tags": [
+      "OSINT",
+      "邮箱",
+      "子域名"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-015",
+    "name": "SpiderFoot",
+    "url": "https://github.com/smicallef/spiderfoot",
+    "category": "信息收集工具",
+    "description": "开源智能框架，支持100+数据源的自动化OSINT收集。",
+    "country": "海外",
+    "tags": [
+      "OSINT",
+      "自动化",
+      "情报"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-016",
+    "name": "Burp Suite",
+    "url": "https://portswigger.net/burp",
+    "category": "Web扫描与漏扫",
+    "description": "Web安全测试事实标准的瑞士军刀，含Proxy/Scanner/Intruder/Repeater等模块。",
+    "country": "海外",
+    "tags": [
+      "Web",
+      "代理",
+      "扫描",
+      "抓包"
+    ],
+    "free": false,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-017",
+    "name": "Nessus",
+    "url": "https://www.tenable.com/products/nessus",
+    "category": "Web扫描与漏扫",
+    "description": "Tenable企业级漏洞扫描器，覆盖主机、网络、Web、合规合规扫描。",
+    "country": "海外",
+    "tags": [
+      "漏洞扫描",
+      "主机扫描",
+      "企业级"
+    ],
+    "free": false,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-018",
+    "name": "Acunetix (AWVS)",
+    "url": "https://www.acunetix.com",
+    "category": "Web扫描与漏扫",
+    "description": "专业Web应用漏扫工具，支持自动爬虫+DAST扫描，认证场景丰富。",
+    "country": "海外",
+    "tags": [
+      "Web",
+      "DAST",
+      "漏洞扫描"
+    ],
+    "free": false,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-019",
+    "name": "Xray",
+    "url": "https://xray.cool",
+    "category": "Web扫描与漏扫",
+    "description": "国产渗透神器，支持POC、主动/被动扫描，与Rad爬虫联动。",
+    "country": "国内",
+    "tags": [
+      "Web",
+      "POC",
+      "扫描"
+    ],
+    "free": false,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-020",
+    "name": "Nuclei",
+    "url": "https://github.com/projectdiscovery/nuclei",
+    "category": "Web扫描与漏扫",
+    "description": "基于YAML模板的漏洞扫描引擎，社区模板丰富，速度快、集成友好。",
+    "country": "海外",
+    "tags": [
+      "扫描",
+      "POC",
+      "YAML"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-021",
+    "name": "AppScan",
+    "url": "https://www.hcltechsw.com/products/appscan",
+    "category": "Web扫描与漏扫",
+    "description": "HCL原IBM安全团队出品的企业级Web/API/移动应用安全扫描套件。",
+    "country": "海外",
+    "tags": [
+      "Web",
+      "API",
+      "企业级"
+    ],
+    "free": false,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-022",
+    "name": "OWASP ZAP",
+    "url": "https://www.zaproxy.org",
+    "category": "Web扫描与漏扫",
+    "description": "开源免费的Web应用安全扫描器，含代理、爬虫、主动被动扫描，社区版Burp。",
+    "country": "海外",
+    "tags": [
+      "Web",
+      "开源",
+      "扫描",
+      "代理"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-023",
+    "name": "sqlmap",
+    "url": "https://sqlmap.org",
+    "category": "Web扫描与漏扫",
+    "description": "自动化SQL注入神器，支持多种数据库、注入技术与提权手段。",
+    "country": "海外",
+    "tags": [
+      "SQL注入",
+      "数据库",
+      "自动化"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-024",
+    "name": "dirsearch",
+    "url": "https://github.com/maurosoria/dirsearch",
+    "category": "Web扫描与漏扫",
+    "description": "Web目录/文件暴力枚举工具，速度快、字典灵活。",
+    "country": "海外",
+    "tags": [
+      "目录扫描",
+      "爆破",
+      "Web"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-025",
+    "name": "ffuf",
+    "url": "https://github.com/ffuf/ffuf",
+    "category": "Web扫描与漏扫",
+    "description": "高速模糊测试工具，用于目录枚举、子域名爆破、参数发现。",
+    "country": "海外",
+    "tags": [
+      "Fuzz",
+      "目录扫描",
+      "子域名"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-026",
+    "name": "Metasploit Framework",
+    "url": "https://www.metasploit.com",
+    "category": "漏洞利用框架",
+    "description": "最著名的渗透测试框架，包含exploit/payload/auxiliary/post完整链路。",
+    "country": "海外",
+    "tags": [
+      "渗透测试",
+      "框架",
+      "Exploit"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-027",
+    "name": "Cobalt Strike",
+    "url": "https://www.cobaltstrike.com",
+    "category": "漏洞利用框架",
+    "description": "红队作战商业旗舰，Beacon远控、横向移动、C2可视化一流。",
+    "country": "海外",
+    "tags": [
+      "红队",
+      "C2",
+      "远控"
+    ],
+    "free": false,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-028",
+    "name": "Empire",
+    "url": "https://github.com/EmpireProject/Empire",
+    "category": "漏洞利用框架",
+    "description": "开源PowerShell/Python后渗透框架，适合Windows域环境攻击。",
+    "country": "海外",
+    "tags": [
+      "PowerShell",
+      "后渗透",
+      "开源"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-029",
+    "name": "Sliver",
+    "url": "https://github.com/BishopFox/sliver",
+    "category": "漏洞利用框架",
+    "description": "BishopFox开源红队C2框架，Beacon模式/会话模式兼备，替代CS使用。",
+    "country": "海外",
+    "tags": [
+      "红队",
+      "C2",
+      "开源"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-030",
+    "name": "Impacket",
+    "url": "https://github.com/fortra/impacket",
+    "category": "漏洞利用框架",
+    "description": "Python构造的网络协议工具集合，psexec/wmiexec/dcomexec等横向必备。",
+    "country": "海外",
+    "tags": [
+      "Windows",
+      "协议",
+      "横向移动"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-031",
+    "name": "Wireshark",
+    "url": "https://www.wireshark.org",
+    "category": "网络分析",
+    "description": "世界最流行的开源网络协议分析器，支持千种协议解码与可视化。",
+    "country": "海外",
+    "tags": [
+      "抓包",
+      "协议分析",
+      "流量"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-032",
+    "name": "tcpdump",
+    "url": "https://www.tcpdump.org",
+    "category": "网络分析",
+    "description": "命令行抓包与过滤工具，Linux/macOS下流量取证首选。",
+    "country": "海外",
+    "tags": [
+      "抓包",
+      "命令行",
+      "流量"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-033",
+    "name": "Zmap",
+    "url": "https://zmap.io",
+    "category": "网络分析",
+    "description": "互联网级快速扫描器，可在几分钟内扫描整个IPv4地址空间。",
+    "country": "海外",
+    "tags": [
+      "扫描",
+      "IPv4",
+      "高速"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-034",
+    "name": "Tshark",
+    "url": "https://www.wireshark.org/docs/man-pages/tshark.html",
+    "category": "网络分析",
+    "description": "Wireshark的命令行版本，适合脚本化流量分析与批量处理。",
+    "country": "海外",
+    "tags": [
+      "抓包",
+      "命令行",
+      "流量分析"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-035",
+    "name": "NetworkMiner",
+    "url": "https://www.netresec.com/?page=NetworkMiner",
+    "category": "网络分析",
+    "description": "取证导向的流量分析工具，自动提取文件、凭据、主机画像。",
+    "country": "海外",
+    "tags": [
+      "取证",
+      "流量",
+      "文件提取"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-036",
+    "name": "Scapy",
+    "url": "https://scapy.net",
+    "category": "网络分析",
+    "description": "Python交互式数据包构造/解析库，协议测试与PoC编写利器。",
+    "country": "海外",
+    "tags": [
+      "协议",
+      "Python",
+      "抓包"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-037",
+    "name": "Netcat (nc)",
+    "url": "https://nc110.sourceforge.io",
+    "category": "网络分析",
+    "description": "网络瑞士军刀，可做套接字读写、反弹shell、端口转发。",
+    "country": "海外",
+    "tags": [
+      "网络工具",
+      "Shell",
+      "端口"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-038",
+    "name": "IDA Pro",
+    "url": "https://hex-rays.com/ida-pro/",
+    "category": "逆向工程",
+    "description": "逆向分析工业级反汇编/反编译器，F5伪代码与交互式调试无可替代。",
+    "country": "海外",
+    "tags": [
+      "反汇编",
+      "反编译",
+      "调试"
+    ],
+    "free": false,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-039",
+    "name": "Ghidra",
+    "url": "https://github.com/NationalSecurityAgency/ghidra",
+    "category": "逆向工程",
+    "description": "NSA开源逆向套件，反汇编/反编译/脚本/调试一应俱全，IDA免费替代品。",
+    "country": "海外",
+    "tags": [
+      "反汇编",
+      "反编译",
+      "开源"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-040",
+    "name": "x64dbg",
+    "url": "https://x64dbg.com",
+    "category": "逆向工程",
+    "description": "Windows下开源x64/x86调试器，类OllyDbg操作，插件生态完善。",
+    "country": "海外",
+    "tags": [
+      "调试",
+      "Windows",
+      "反汇编"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-041",
+    "name": "Frida",
+    "url": "https://frida.re",
+    "category": "逆向工程",
+    "description": "跨平台动态插桩框架，移动/桌面应用运行时Hook与注入分析。",
+    "country": "海外",
+    "tags": [
+      "Hook",
+      "动态分析",
+      "移动安全"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-042",
+    "name": "Binary Ninja",
+    "url": "https://binary.ninja",
+    "category": "逆向工程",
+    "description": "轻量但强大的逆向工具，IL中间语言与Python脚本友好。",
+    "country": "海外",
+    "tags": [
+      "反汇编",
+      "反编译",
+      "脚本"
+    ],
+    "free": false,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-043",
+    "name": "Radare2",
+    "url": "https://rada.re/n/",
+    "category": "逆向工程",
+    "description": "开源逆向框架，命令行驱动，支持多种架构与格式。",
+    "country": "海外",
+    "tags": [
+      "反汇编",
+      "开源",
+      "命令行"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-044",
+    "name": "OllyDbg",
+    "url": "http://www.ollydbg.de",
+    "category": "逆向工程",
+    "description": "经典Windows 32位用户态调试器，新手逆向入门友好。",
+    "country": "海外",
+    "tags": [
+      "调试",
+      "Windows",
+      "反汇编"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-045",
+    "name": "jadx",
+    "url": "https://github.com/skylot/jadx",
+    "category": "移动安全",
+    "description": "Dex/APK到Java源码的反编译工具，Android逆向分析首选。",
+    "country": "海外",
+    "tags": [
+      "Android",
+      "反编译",
+      "APK"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-046",
+    "name": "MobSF",
+    "url": "https://github.com/MobSF/Mobile-Security-Framework-MobSF",
+    "category": "移动安全",
+    "description": "开源移动端安全评估框架，支持Android/iOS/Windows静态+动态分析。",
+    "country": "海外",
+    "tags": [
+      "移动安全",
+      "Android",
+      "iOS",
+      "SAST"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-047",
+    "name": "Apktool",
+    "url": "https://ibotpeaches.github.io/Apktool/",
+    "category": "移动安全",
+    "description": "APK反编译/回编译工具，常用于资源提取、二次打包、重打包测试。",
+    "country": "海外",
+    "tags": [
+      "Android",
+      "APK",
+      "反编译"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-048",
+    "name": "objection",
+    "url": "https://github.com/sensepost/objection",
+    "category": "移动安全",
+    "description": "基于Frida的移动App运行时调试与绕过工具，支持Root/SSL Pinning Bypass。",
+    "country": "海外",
+    "tags": [
+      "Frida",
+      "Hook",
+      "Android",
+      "iOS"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-049",
+    "name": "checkra1n",
+    "url": "https://checkra.in",
+    "category": "移动安全",
+    "description": "基于checkm8硬件漏洞的iOS越狱工具，适合iOS安全研究。",
+    "country": "海外",
+    "tags": [
+      "iOS",
+      "越狱",
+      "安全研究"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-050",
+    "name": "Class-dump",
+    "url": "http://stevenygard.com/projects/class-dump/",
+    "category": "移动安全",
+    "description": "从Mach-O提取Objective-C类定义，iOS逆向分析常用。",
+    "country": "海外",
+    "tags": [
+      "iOS",
+      "Mach-O",
+      "反汇编"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-051",
+    "name": "CVE Details",
+    "url": "https://www.cvedetails.com",
+    "category": "漏洞/情报库",
+    "description": "CVE漏洞详情聚合，含CVSS评分、参考、产品分类检索。",
+    "country": "海外",
+    "tags": [
+      "CVE",
+      "漏洞",
+      "数据库"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-052",
+    "name": "NVD",
+    "url": "https://nvd.nist.gov",
+    "category": "漏洞/情报库",
+    "description": "NIST官方国家漏洞数据库，CVE数据权威来源，提供CVSS 3.1、CPE、CWE映射。",
+    "country": "海外",
+    "tags": [
+      "CVE",
+      "NVD",
+      "数据库"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-053",
+    "name": "Exploit-DB",
+    "url": "https://www.exploit-db.com",
+    "category": "漏洞/情报库",
+    "description": "Offensive Security出品的Exploit/POC库，配套searchsploit命令行工具。",
+    "country": "海外",
+    "tags": [
+      "Exploit",
+      "POC",
+      "漏洞利用"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-054",
+    "name": "CNVD",
+    "url": "https://www.cnvd.org.cn",
+    "category": "漏洞/情报库",
+    "description": "国家信息安全漏洞共享平台，中文漏洞数据权威来源。",
+    "country": "国内",
+    "tags": [
+      "CVE",
+      "漏洞",
+      "数据库"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-055",
+    "name": "CNNVD",
+    "url": "https://www.cnnvd.org.cn",
+    "category": "漏洞/情报库",
+    "description": "中国国家信息安全漏洞库，覆盖主流软硬件漏洞与修复建议。",
+    "country": "国内",
+    "tags": [
+      "漏洞",
+      "数据库",
+      "CNNVD"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-056",
+    "name": "CMSeeK",
+    "url": "https://github.com/Tuhinshubhra/CMSeeK",
+    "category": "漏洞/情报库",
+    "description": "CMS指纹识别与漏洞探测工具，支持Wordpress/Drupal/Joomla等主流CMS。",
+    "country": "海外",
+    "tags": [
+      "CMS",
+      "指纹",
+      "漏洞扫描"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-057",
+    "name": "Snyk",
+    "url": "https://snyk.io",
+    "category": "漏洞/情报库",
+    "description": "开发者友好的开源依赖漏洞扫描平台，覆盖npm/maven/pypi/gem等。",
+    "country": "海外",
+    "tags": [
+      "SCA",
+      "依赖",
+      "开源组件"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-058",
+    "name": "GitHub Advisory",
+    "url": "https://github.com/advisories",
+    "category": "漏洞/情报库",
+    "description": "GitHub官方漏洞咨询库，关联语言/包/版本，便于SCA工具消费。",
+    "country": "海外",
+    "tags": [
+      "SCA",
+      "漏洞",
+      "开源"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-059",
+    "name": "360威胁情报中心",
+    "url": "https://ti.360.net",
+    "category": "威胁情报与APT情报",
+    "description": "360安全大脑旗下威胁情报平台，提供IOC、APT分析、态势感知。",
+    "country": "国内",
+    "tags": [
+      "威胁情报",
+      "APT",
+      "IOC"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-060",
+    "name": "奇安信威胁情报中心",
+    "url": "https://ti.qianxin.com",
+    "category": "威胁情报与APT情报",
+    "description": "奇安信集团旗下威胁情报中心，提供APT报告、IOC订阅与资产风险画像。",
+    "country": "国内",
+    "tags": [
+      "威胁情报",
+      "APT",
+      "IOC"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-061",
+    "name": "微步在线",
+    "url": "https://www.threatbook.com",
+    "category": "威胁情报与APT情报",
+    "description": "国内威胁情报领军厂商，OneDNS、威胁情报订阅、勒索响应广受认可。",
+    "country": "国内",
+    "tags": [
+      "威胁情报",
+      "APT",
+      "DNS"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-062",
+    "name": "VirusTotal",
+    "url": "https://www.virustotal.com",
+    "category": "YARA/恶意代码",
+    "description": "在线多引擎文件/URL/域名/IP扫描平台，反病毒业界事实标准。",
+    "country": "海外",
+    "tags": [
+      "恶意代码",
+      "多引擎",
+      "沙箱"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-063",
+    "name": "Hybrid Analysis",
+    "url": "https://www.hybrid-analysis.com",
+    "category": "YARA/恶意代码",
+    "description": "免费在线沙箱与恶意软件分析平台，提供Falcon Sandbox自动化报告。",
+    "country": "海外",
+    "tags": [
+      "沙箱",
+      "恶意代码",
+      "动态分析"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-064",
+    "name": "Any.Run",
+    "url": "https://app.any.run",
+    "category": "YARA/恶意代码",
+    "description": "交互式在线沙箱，支持在浏览器中操作Windows虚拟机并观察行为。",
+    "country": "海外",
+    "tags": [
+      "沙箱",
+      "交互",
+      "恶意代码"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-065",
+    "name": "Joe Sandbox",
+    "url": "https://www.joesecurity.org",
+    "category": "YARA/恶意代码",
+    "description": "专业恶意代码沙箱分析平台，深度行为分析与YARA规则输出。",
+    "country": "海外",
+    "tags": [
+      "沙箱",
+      "恶意代码",
+      "YARA"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-066",
+    "name": "YARA",
+    "url": "https://virustotal.github.io/yara/",
+    "category": "YARA/恶意代码",
+    "description": "基于规则的恶意代码分类工具，威胁狩猎与样本检索的事实标准。",
+    "country": "海外",
+    "tags": [
+      "YARA",
+      "规则",
+      "恶意代码"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-067",
+    "name": "CyberChef",
+    "url": "https://gchq.github.io/CyberChef/",
+    "category": "在线编码/哈希/正则",
+    "description": "GCHQ开源的「网络瑞士军刀」，编码/解码/加密/压缩/正则一站式处理。",
+    "country": "海外",
+    "tags": [
+      "编码",
+      "哈希",
+      "正则",
+      "开源"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-068",
+    "name": "CrackStation",
+    "url": "https://crackstation.net",
+    "category": "在线编码/哈希/正则",
+    "description": "在线彩虹表哈希破解服务，覆盖MD5/SHA家族常见哈希。",
+    "country": "海外",
+    "tags": [
+      "哈希",
+      "彩虹表",
+      "破解"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-069",
+    "name": "Base64 Decode",
+    "url": "https://www.base64decode.org",
+    "category": "在线编码/哈希/正则",
+    "description": "常用Base64/URL/Hex在线编解码小工具，简单无广告。",
+    "country": "海外",
+    "tags": [
+      "编码",
+      "Base64",
+      "工具"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-070",
+    "name": "Regex101",
+    "url": "https://regex101.com",
+    "category": "在线编码/哈希/正则",
+    "description": "交互式正则表达式调试与测试平台，多引擎兼容与解释完善。",
+    "country": "海外",
+    "tags": [
+      "正则",
+      "调试"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-071",
+    "name": "Hashcat",
+    "url": "https://hashcat.net/hashcat/",
+    "category": "在线编码/哈希/正则",
+    "description": "世界最快的基于GPU的密码恢复工具，支持数百种哈希类型。",
+    "country": "海外",
+    "tags": [
+      "哈希",
+      "GPU",
+      "密码恢复"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-072",
+    "name": "John the Ripper",
+    "url": "https://www.openwall.com/john/",
+    "category": "在线编码/哈希/正则",
+    "description": "经典离线密码破解器，支持Unix/Windows/文档/压缩包多种格式。",
+    "country": "海外",
+    "tags": [
+      "密码破解",
+      "哈希",
+      "离线"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-073",
+    "name": "阿里云安全中心",
+    "url": "https://www.aliyun.com/product/sas",
+    "category": "云安全",
+    "description": "阿里云企业级云主机安全与容器安全一体化平台。",
+    "country": "国内",
+    "tags": [
+      "云安全",
+      "云主机",
+      "容器"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-074",
+    "name": "腾讯云鼎实验室",
+    "url": "https://cloud.tencent.com/developer/labs/ying",
+    "category": "云安全",
+    "description": "腾讯云安全能力输出，提供云合规、威胁检测与云原生安全报告。",
+    "country": "国内",
+    "tags": [
+      "云安全",
+      "云原生",
+      "合规"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-075",
+    "name": "AWS Security Hub",
+    "url": "https://aws.amazon.com/security-hub/",
+    "category": "云安全",
+    "description": "AWS官方安全合规聚合平台，集中管理账户安全态势。",
+    "country": "海外",
+    "tags": [
+      "AWS",
+      "云安全",
+      "合规"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-076",
+    "name": "Prowler",
+    "url": "https://github.com/prowler-cloud/prowler",
+    "category": "云安全",
+    "description": "AWS/Azure/GCP多云计算安全配置审计开源工具。",
+    "country": "海外",
+    "tags": [
+      "云安全",
+      "审计",
+      "开源"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-077",
+    "name": "OpenSSL",
+    "url": "https://www.openssl.org",
+    "category": "证书/加密工具",
+    "description": "SSL/TLS与通用加密库，证书签发、签名、调试均依赖它。",
+    "country": "海外",
+    "tags": [
+      "TLS",
+      "证书",
+      "加密"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-078",
+    "name": "CertUtil",
+    "url": "https://learn.microsoft.com/windows-server/administration/windows-commands/certutil",
+    "category": "证书/加密工具",
+    "description": "Windows内置证书管理命令，常用于证书部署与哈希校验。",
+    "country": "海外",
+    "tags": [
+      "Windows",
+      "证书",
+      "命令行"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-079",
+    "name": "Let's Encrypt",
+    "url": "https://letsencrypt.org",
+    "category": "证书/加密工具",
+    "description": "免费自动化TLS证书签发服务，Certbot一键完成申请与续期。",
+    "country": "海外",
+    "tags": [
+      "TLS",
+      "证书",
+      "免费"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-080",
+    "name": "sslyze",
+    "url": "https://github.com/nabla-c0d3/sslyze",
+    "category": "证书/加密工具",
+    "description": "TLS/SSL配置快速扫描工具，检查证书链、协议版本与漏洞。",
+    "country": "海外",
+    "tags": [
+      "TLS",
+      "扫描",
+      "证书"
+    ],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-081",
+    "name": "CTFHub",
+    "url": "https://www.ctfhub.com",
+    "category": "靶场/学习平台",
+    "description": "国内CTF赛事平台，提供题库、赛事日历、技能树与学习社区。",
+    "country": "国内",
+    "tags": [
+      "CTF",
+      "靶场",
+      "学习"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-082",
+    "name": "BUUCTF",
+    "url": "https://buuoj.cn",
+    "category": "靶场/学习平台",
+    "description": "北京邮电大学开源CTF平台，含大量历史赛题复现环境。",
+    "country": "国内",
+    "tags": [
+      "CTF",
+      "靶场",
+      "题库"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-083",
+    "name": "Hack The Box",
+    "url": "https://www.hackthebox.com",
+    "category": "靶场/学习平台",
+    "description": "海外知名在线靶场，含数百台可访问机器与进阶路径。",
+    "country": "海外",
+    "tags": [
+      "靶场",
+      "渗透测试",
+      "学习"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-084",
+    "name": "TryHackMe",
+    "url": "https://tryhackme.com",
+    "category": "靶场/学习平台",
+    "description": "海外新手友好的网络安全学习平台，模块化Path与交互式房间。",
+    "country": "海外",
+    "tags": [
+      "学习",
+      "靶场",
+      "新手"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-085",
+    "name": "PortSwigger Web Security Academy",
+    "url": "https://portswigger.net/web-security",
+    "category": "靶场/学习平台",
+    "description": "Burp官方Web安全学习学院，含OWASP Top 10交互式实验。",
+    "country": "海外",
+    "tags": [
+      "Web",
+      "学习",
+      "靶场"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-086",
+    "name": "攻防世界",
+    "url": "https://adworld.xctf.org.cn",
+    "category": "靶场/学习平台",
+    "description": "xctf官方合作靶场，支持练习区、精英区与解题直播。",
+    "country": "国内",
+    "tags": [
+      "CTF",
+      "xctf",
+      "靶场"
+    ],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-087",
+    "name": "奇安信",
+    "url": "https://www.qianxin.com",
+    "category": "国内安全厂商官网",
+    "description": "奇安信集团官方网站，覆盖网络安全、终端安全、数据安全产品线。",
+    "country": "国内",
+    "tags": [
+      "安全厂商",
+      "企业安全"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-088",
+    "name": "深信服",
+    "url": "https://www.sangfor.com.cn",
+    "category": "国内安全厂商官网",
+    "description": "深信服科技官网，VPN、下一代防火墙、桌面云等安全产品齐全。",
+    "country": "国内",
+    "tags": [
+      "安全厂商",
+      "VPN",
+      "防火墙"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-089",
+    "name": "安恒信息",
+    "url": "https://www.dbappsecurity.com.cn",
+    "category": "国内安全厂商官网",
+    "description": "安恒信息官网，主打应用安全、数据安全、态势感知与云安全。",
+    "country": "国内",
+    "tags": [
+      "安全厂商",
+      "应用安全"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-090",
+    "name": "启明星辰",
+    "url": "https://www.venustech.com.cn",
+    "category": "国内安全厂商官网",
+    "description": "启明星辰官网，提供IDP、SOC、数据安全、工控安全全栈能力。",
+    "country": "国内",
+    "tags": [
+      "安全厂商",
+      "IDS",
+      "SOC"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-091",
+    "name": "360安全",
+    "url": "https://www.360.net",
+    "category": "国内安全厂商官网",
+    "description": "360政企安全集团官网，威胁情报、攻防演习、终端EDR等能力齐全。",
+    "country": "国内",
+    "tags": [
+      "安全厂商",
+      "EDR",
+      "威胁情报"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-092",
+    "name": "绿盟科技",
+    "url": "https://www.nsfocus.com.cn",
+    "category": "国内安全厂商官网",
+    "description": "绿盟科技官网，WAF/IPS/漏洞扫描/抗DDoS等网络安全产品丰富。",
+    "country": "国内",
+    "tags": [
+      "安全厂商",
+      "WAF",
+      "IPS"
+    ],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-093",
+    "name": "天融信",
+    "url": "https://www.topsec.com.cn",
+    "category": "国内安全厂商官网",
+    "description": "天融信官网，国内老牌网络安全厂商，防火墙、数据安全等产品线齐全。",
+    "country": "国内",
+    "tags": ["安全厂商", "防火墙"],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-094",
+    "name": "Vulhub",
+    "url": "https://github.com/vulhub/vulhub",
+    "category": "漏洞靶场",
+    "description": "基于 Docker Compose 的最流行漏洞环境集合，覆盖 200+ CVE 与应用漏洞。",
+    "country": "海外",
+    "tags": ["靶场", "CVE复现", "Docker"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-095",
+    "name": "DVWA",
+    "url": "https://dvwa.co.uk",
+    "category": "漏洞靶场",
+    "description": "Damn Vulnerable Web Application，最经典的 PHP/MySQL Web 漏洞练习环境。",
+    "country": "海外",
+    "tags": ["靶场", "Web", "PHP"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-096",
+    "name": "Pikachu",
+    "url": "https://github.com/zhuifengshaonianLujian/pikachu",
+    "category": "漏洞靶场",
+    "description": "国内开源的 PHP 靶场，覆盖 XSS/SQLi/CSRF/文件上传/反序列化等常见漏洞。",
+    "country": "国内",
+    "tags": ["靶场", "Web", "PHP"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-097",
+    "name": "BWAPP",
+    "url": "https://www.itsecgames.com",
+    "category": "漏洞靶场",
+    "description": "Buggy Web Application，覆盖 100+ Web 漏洞场景的 PHP 靶场。",
+    "country": "海外",
+    "tags": ["靶场", "Web", "PHP"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-098",
+    "name": "DVWS",
+    "url": "https://github.com/interference-security/DVWS",
+    "category": "漏洞靶场",
+    "description": "Damn Vulnerable Web Services，专门针对 SOAP/REST/XXE 的 Web 服务漏洞靶场。",
+    "country": "海外",
+    "tags": ["靶场", "WebService", "XML"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-099",
+    "name": "VulnHub",
+    "url": "https://www.vulnhub.com",
+    "category": "漏洞靶场",
+    "description": "提供大量可下载的 VM 虚拟机镜像，覆盖系统/网络/Web 提权与渗透场景。",
+    "country": "海外",
+    "tags": ["靶场", "VM", "提权"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-100",
+    "name": "WebGoat",
+    "url": "https://owasp.org/www-project-webgoat/",
+    "category": "漏洞靶场",
+    "description": "OWASP 官方 Java 靶场，附带详细课程讲解常见 Web 漏洞原理与防御。",
+    "country": "海外",
+    "tags": ["靶场", "Web", "OWASP", "Java"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-101",
+    "name": "OWASP Juice Shop",
+    "url": "https://owasp.org/www-project-juice-shop/",
+    "category": "漏洞靶场",
+    "description": "基于 Node.js/Angular 的现代 Web 应用靶场，覆盖 OWASP Top 10 全部漏洞。",
+    "country": "海外",
+    "tags": ["靶场", "Web", "Node.js", "OWASP"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-102",
+    "name": "Packet Storm",
+    "url": "https://packetstormsecurity.com",
+    "category": "漏洞/情报库",
+    "description": "老牌漏洞与 Exploit 聚合平台，汇集白帽研究、工具发布、安全公告。",
+    "country": "海外",
+    "tags": ["漏洞库", "Exploit", "情报"],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-103",
+    "name": "0day.today",
+    "url": "https://0day.today",
+    "category": "漏洞/情报库",
+    "description": "付费 0day/Exploit 下载市场，汇聚大量未公开或半公开漏洞 PoC。",
+    "country": "海外",
+    "tags": ["漏洞库", "Exploit", "0day"],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-104",
+    "name": "Seebug 漏洞平台",
+    "url": "https://www.seebug.org",
+    "category": "漏洞/情报库",
+    "description": "知道创宇旗下的中文漏洞库，汇集国内白帽提交的 PoC 与漏洞分析。",
+    "country": "国内",
+    "tags": ["漏洞库", "PoC", "中文"],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-105",
+    "name": "补天漏洞响应平台",
+    "url": "https://www.butian.net",
+    "category": "SRC 平台",
+    "description": "国内最大的漏洞响应平台，企业入驻接收白帽漏洞提交并发放奖励。",
+    "country": "国内",
+    "tags": ["SRC", "漏洞响应", "众测"],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-106",
+    "name": "漏洞盒子",
+    "url": "https://www.vulbox.com",
+    "category": "SRC 平台",
+    "description": "漏洞盒子众测与企业 SRC 托管平台，覆盖金融、互联网、政企行业。",
+    "country": "国内",
+    "tags": ["SRC", "众测"],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-107",
+    "name": "阿里先知安全社区",
+    "url": "https://xz.aliyun.com",
+    "category": "SRC 平台",
+    "description": "阿里安全旗下技术社区，集合漏洞奖励、技术博文、威胁情报与企业 SRC 披露。",
+    "country": "国内",
+    "tags": ["SRC", "社区", "情报"],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-108",
+    "name": "腾讯御见威胁情报",
+    "url": "https://s.tencent.com",
+    "category": "SRC 平台",
+    "description": "腾讯安全的威胁情报与企业安全产品门户，同时承载腾讯 SRC 漏洞披露。",
+    "country": "国内",
+    "tags": ["SRC", "威胁情报"],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-109",
+    "name": "京东安全应急响应中心",
+    "url": "https://security.jd.com",
+    "category": "SRC 平台",
+    "description": "京东集团官方 SRC，接受京东系产品漏洞提交并给予奖励。",
+    "country": "国内",
+    "tags": ["SRC"],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-110",
+    "name": "字节跳动安全响应中心",
+    "url": "https://src.bytedance.com",
+    "category": "SRC 平台",
+    "description": "字节跳动官方 SRC，面向抖音、头条、飞书等产品接收安全漏洞。",
+    "country": "国内",
+    "tags": ["SRC"],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-111",
+    "name": "Quake 360",
+    "url": "https://quake.360.net",
+    "category": "信息收集工具",
+    "description": "360 旗下网络空间测绘平台，支持 SQL 式语法与资产画像。",
+    "country": "国内",
+    "tags": ["资产测绘", "搜索引擎"],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-112",
+    "name": "Hunter.io",
+    "url": "https://hunter.io",
+    "category": "信息收集工具",
+    "description": "企业邮箱/域名情报搜索，常用于社工与账号发现。",
+    "country": "海外",
+    "tags": ["OSINT", "邮箱"],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-113",
+    "name": "LeakIX",
+    "url": "https://leakix.net",
+    "category": "信息收集工具",
+    "description": "面向红队的网络空间测绘与敏感信息泄露搜索引擎，支持指纹、插件、LQL 查询。",
+    "country": "海外",
+    "tags": ["资产测绘", "OSINT", "搜索引擎"],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-114",
+    "name": "Afrog",
+    "url": "https://github.com/zan8in/afrog",
+    "category": "POC 框架",
+    "description": "高性能、可扩展的开源漏洞扫描与 POC 验证工具，兼容 YAML 规则。",
+    "country": "国内",
+    "tags": ["POC", "扫描", "YAML"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-115",
+    "name": "POC-T",
+    "url": "https://github.com/Xyntax/POC-T",
+    "category": "POC 框架",
+    "description": "支持多线程并发与插件式 POC 的 Python 批量漏洞验证框架。",
+    "country": "国内",
+    "tags": ["POC", "批量", "Python"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-116",
+    "name": "CrackMapExec",
+    "url": "https://github.com/mpgn/CrackMapExec",
+    "category": "POC 框架",
+    "description": "后渗透瑞士军刀，集成 SMB/WinRM/MSSQL/LDAP 凭据喷洒与命令执行。",
+    "country": "海外",
+    "tags": ["CME", "AD", "后渗透"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-117",
+    "name": "PowerSploit",
+    "url": "https://github.com/PowerShellMafia/PowerSploit",
+    "category": "POC 框架",
+    "description": "PowerShell 后渗透模块集合，涵盖代码执行、凭据窃取、持久化、提权。",
+    "country": "海外",
+    "tags": ["PowerShell", "后渗透"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-118",
+    "name": "ysoserial",
+    "url": "https://github.com/frohoff/ysoserial",
+    "category": "Java/反序列化工具",
+    "description": "Java 反序列化 payload 生成工具，CommonsCollections、Spring、ROME 等 gadget。",
+    "country": "海外",
+    "tags": ["Java", "反序列化", "gadget"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-119",
+    "name": "marshalsec",
+    "url": "https://github.com/mbechler/marshalsec",
+    "category": "Java/反序列化工具",
+    "description": "覆盖 Fastjson、C3P0、JdbcRowSet、BURLAP 等第三方库的反序列化 gadget。",
+    "country": "海外",
+    "tags": ["Java", "Fastjson", "反序列化"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-120",
+    "name": "JNDI-Injection-Exploit",
+    "url": "https://github.com/welk1n/JNDI-Injection-Exploit",
+    "category": "Java/反序列化工具",
+    "description": "一站式 JNDI 注入利用工具，支持多种高版本 JDK 绕过的 LDAP/RMI 服务。",
+    "country": "国内",
+    "tags": ["Java", "JNDI", "LDAP"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-121",
+    "name": "rogue-jndi",
+    "url": "https://github.com/veracode-research/rogue-jndi",
+    "category": "Java/反序列化工具",
+    "description": "恶意 JNDI 服务端实现，提供多个可定制的 factory payload 用于 Log4j2/Fastjson 等场景。",
+    "country": "海外",
+    "tags": ["Java", "JNDI", "Log4j2"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-122",
+    "name": "phpggc",
+    "url": "https://github.com/ambionics/phpggc",
+    "category": "Java/反序列化工具",
+    "description": "PHP 反序列化 Gadget Chains 集合，支持 Laravel/Symfony/CodeIgniter 等框架。",
+    "country": "海外",
+    "tags": ["PHP", "反序列化"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-123",
+    "name": "jwt_tool",
+    "url": "https://github.com/ticarpi/jwt_tool",
+    "category": "JWT 工具",
+    "description": "JWT 解析、爆破、alg:none/kid 等攻击测试的综合 Python 脚本工具箱。",
+    "country": "海外",
+    "tags": ["JWT", "爆破"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-124",
+    "name": "JWT_Tool",
+    "url": "https://github.com/tsale/OWASP-JWT-Testing-Cheat-Sheet",
+    "category": "JWT 工具",
+    "description": "OWASP JWT 测试速查表与相关工具索引，辅助 JWT 攻击思路梳理。",
+    "country": "海外",
+    "tags": ["JWT", "OWASP"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-125",
+    "name": "jwt-cracker",
+    "url": "https://github.com/lmammino/jwt-cracker",
+    "category": "JWT 工具",
+    "description": "简易的 HS256 密钥暴力破解工具，支持字典或字母数字暴力模式。",
+    "country": "海外",
+    "tags": ["JWT", "爆破"],
+    "free": true,
+    "isOnlineTool": false
+  },
+  {
+    "id": "tool-126",
+    "name": "Postman",
+    "url": "https://www.postman.com",
+    "category": "API 测试",
+    "description": "最流行的 REST/GraphQL API 调试与文档平台，支持集合、变量与自动化测试。",
+    "country": "海外",
+    "tags": ["API", "REST", "测试"],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-127",
+    "name": "Insomnia",
+    "url": "https://insomnia.rest",
+    "category": "API 测试",
+    "description": "开源轻量级 REST/GraphQL 客户端，界面简洁，支持插件与环境变量。",
+    "country": "海外",
+    "tags": ["API", "REST", "GraphQL"],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-128",
+    "name": "Astra Security",
+    "url": "https://www.getastra.com",
+    "category": "API 测试",
+    "description": "面向 API/GraphQL/WebSocket 的自动化安全扫描与鉴权测试工具。",
+    "country": "海外",
+    "tags": ["API", "扫描"],
+    "free": false,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-129",
+    "name": "OWASP API Security Top 10",
+    "url": "https://owasp.org/API-Security/",
+    "category": "API 测试",
+    "description": "OWASP API 安全 Top 10 官方文档，列出 API 最常见的风险与测试建议。",
+    "country": "海外",
+    "tags": ["API", "OWASP", "Top10"],
+    "free": true,
+    "isOnlineTool": true
+  },
+  {
+    "id": "tool-130",
+    "name": "GraphQL Voyager",
+    "url": "https://github.com/IvanGoncharov/graphql-voyager",
+    "category": "API 测试",
+    "description": "将 GraphQL schema 可视化为交互式关系图，辅助分析 API 攻击面。",
+    "country": "海外",
+    "tags": ["API", "GraphQL", "可视化"],
+    "free": true,
+    "isOnlineTool": false
+  }
+]

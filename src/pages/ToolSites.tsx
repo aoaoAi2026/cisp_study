@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ExternalLink,
   Search,
@@ -9,7 +9,11 @@ import {
   Grid3X3,
   Shield,
   Wrench,
-  Target
+  Target,
+  ChevronDown,
+  ChevronRight,
+  Star,
+  Lightbulb
 } from 'lucide-react';
 import { Card } from '../components/UI';
 import { toolSites } from '../data/toolSites';
@@ -17,6 +21,7 @@ import { toolSites } from '../data/toolSites';
 export const ToolSites: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>(toolSites[0].category);
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedSite, setExpandedSite] = useState<string | null>(null);
 
   const categories = toolSites.map(t => t.category);
   const currentSites = toolSites.find(t => t.category === activeCategory)?.sites || [];
@@ -148,39 +153,116 @@ export const ToolSites: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredSites.map((site, index) => (
-                <motion.a
+                <motion.div
                   key={site.name}
-                  href={site.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="block p-5 rounded-xl border-2 border-cyber-green/10 bg-cyber-purple/20 hover:bg-cyber-purple/40 hover:border-cyber-green/40 transition-all duration-200 group"
+                  className="rounded-xl border-2 border-cyber-green/10 bg-cyber-purple/20 overflow-hidden"
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">{site.icon}</span>
-                      <div>
-                        <h3 className="font-semibold text-white group-hover:text-cyber-green transition-colors">
-                          {site.name}
-                        </h3>
+                  <div
+                    className="p-5 cursor-pointer hover:bg-cyber-purple/40 transition-all duration-200"
+                    onClick={() => setExpandedSite(expandedSite === site.name ? null : site.name)}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl">{site.icon}</span>
+                        <div>
+                          <h3 className="font-semibold text-white">
+                            {site.name}
+                          </h3>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={site.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-gray-400 hover:text-cyber-green transition-colors"
+                        >
+                          <ExternalLink size={16} />
+                        </a>
+                        {expandedSite === site.name ? (
+                          <ChevronDown size={18} className="text-gray-400" />
+                        ) : (
+                          <ChevronRight size={18} className="text-gray-400" />
+                        )}
                       </div>
                     </div>
-                    <ExternalLink
-                      size={16}
-                      className="text-gray-400 group-hover:text-cyber-green transition-colors flex-shrink-0 mt-1"
-                    />
+                    <p className="text-sm text-gray-400 leading-relaxed mb-3">
+                      {site.description}
+                    </p>
+                    <div className="flex items-center justify-between pt-2 border-t border-cyber-green/10">
+                      <span className="text-xs text-cyber-blue truncate max-w-[200px]">
+                        {site.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                      </span>
+                      <span className="text-xs text-gray-500">点击查看详情</span>
+                    </div>
                   </div>
-                  <p className="text-sm text-gray-400 leading-relaxed mb-3">
-                    {site.description}
-                  </p>
-                  <div className="flex items-center justify-between pt-2 border-t border-cyber-green/10">
-                    <span className="text-xs text-cyber-blue truncate max-w-[200px]">
-                      {site.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
-                    </span>
-                  </div>
-                </motion.a>
+
+                  <AnimatePresence>
+                    {expandedSite === site.name && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 pb-5 space-y-4">
+                          <div className="pt-4 border-t border-cyber-green/10">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Star size={14} className="text-cyber-gold" />
+                              <span className="text-sm font-medium text-cyber-gold">主要功能</span>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {site.features.map((feature, idx) => (
+                                <span
+                                  key={idx}
+                                  className="text-xs px-2 py-1 rounded-full bg-cyber-purple/30 text-gray-300 border border-cyber-green/10"
+                                >
+                                  {feature}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <BookOpen size={14} className="text-cyber-blue" />
+                              <span className="text-sm font-medium text-cyber-blue">使用说明</span>
+                            </div>
+                            <p className="text-xs text-gray-400 leading-relaxed pl-6">
+                              {site.usage}
+                            </p>
+                          </div>
+
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <Lightbulb size={14} className="text-yellow-400" />
+                              <span className="text-sm font-medium text-yellow-400">使用小贴士</span>
+                            </div>
+                            <p className="text-xs text-gray-400 leading-relaxed pl-6">
+                              {site.tips}
+                            </p>
+                          </div>
+
+                          <div className="pt-3 border-t border-cyber-green/10">
+                            <a
+                              href={site.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block w-full py-2 text-center rounded-lg bg-cyber-green/20 text-cyber-green text-sm font-medium hover:bg-cyber-green/30 transition-colors"
+                            >
+                              访问网站 →
+                            </a>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               ))}
             </div>
           )}

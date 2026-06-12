@@ -1,0 +1,74 @@
+[
+  {
+    "id": "soc-001",
+    "category": "soc",
+    "title": "SOC 安全运营中心建设指南",
+    "summary": "SOC建设五阶段（规划→平台选型→流程设计→人员组织→持续优化）、自建vs托管(MSSP)方案对比、Tier 1-3分析师梯队设计、SOC物理环境与工单(Ticketing)系统。",
+    "tags": ["SOC", "安全运营", "MSSP", "Tier1-3", "工单系统", "态势感知", "运营中心"],
+    "difficulty": "入门",
+    "readMinutes": 12,
+    "updatedAt": "2026-06-01",
+    "contentPath": "contents/soc/001-soc-building.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "soc-002",
+    "category": "soc",
+    "title": "SIEM 日志管理与关联分析实战",
+    "summary": "SIEM核心原理（日志采集→范式化→关联→告警→可视化）、Splunk/ELK(Elastic Security)/Wazuh方案对比、关联规则编写（Sigma/YARA-L/ES|QL）、日志源归一化与解析器开发。",
+    "tags": ["SIEM", "日志管理", "Splunk", "ELK", "Wazuh", "Sigma", "关联规则", "SOC"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2026-06-05",
+    "contentPath": "contents/soc/002-siem-analysis.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "soc-003",
+    "category": "soc",
+    "title": "SOAR 安全编排自动化与响应",
+    "summary": "SOAR三件套（剧本Playbook/集成/案例管理）、常见自动化场景（钓鱼邮件分析/EDR告警处置/IP封禁/IP情报富化）、Shuffle/Splunk SOAR/TheHive开源方案实战、减少MTTD/MTTR的运营量化方法。",
+    "tags": ["SOAR", "安全编排", "自动化", "Playbook", "TheHive", "MTTD", "MTTR", "剧本"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2026-06-10",
+    "contentPath": "contents/soc/003-soar-automation.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "soc-004",
+    "category": "soc",
+    "title": "威胁狩猎(Threat Hunting)方法论与实战",
+    "summary": "威胁狩猎模型（Sqrrl/PEAK/Hunter-Killer）、假设驱动vs数据驱动狩猎方法、常用狩猎技术（Stacking/Frequency Analysis/Anomaly Detection/Clustering）、狩猎工具集（Velociraptor/HELK/DeepBlueCLI）。",
+    "tags": ["威胁狩猎", "Threat Hunting", "PEAK", "Velociraptor", "HELK", "假设驱动", "异常检测"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2026-06-15",
+    "contentPath": "contents/soc/004-threat-hunting.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "soc-005",
+    "category": "soc",
+    "title": "安全态势感知平台建设",
+    "summary": "态势感知三层模型（数据采集→大数据分析→态势可视化）、资产/漏洞/威胁/事件四维态势指标、国内主流平台（奇安信/深信服/安恒/绿盟）对比、安全大屏(Kibana/Grafana)设计与告警降噪策略。",
+    "tags": ["态势感知", "安全大屏", "告警降噪", "资产清点", "Grafana", "Kibana", "可视化"],
+    "difficulty": "进阶",
+    "readMinutes": 12,
+    "updatedAt": "2026-06-20",
+    "contentPath": "contents/soc/005-situation-awareness.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "soc-006",
+    "category": "soc",
+    "title": "安全运营指标体系与量化管理",
+    "summary": "SOC运营KPI金字塔（MTTD/MTTR/告警覆盖率/误报率/自动化率）、RSAC度量框架、安全有效性验证（BAS+红队+紫队）、SLA/SLO/SLI设计、运营成熟度模型与持续改进(PDCA)方法。",
+    "tags": ["运营指标", "KPI", "MTTD", "MTTR", "BAS", "安全意识", "度量", "PDCA"],
+    "difficulty": "进阶",
+    "readMinutes": 12,
+    "updatedAt": "2026-06-25",
+    "contentPath": "contents/soc/006-security-metrics.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

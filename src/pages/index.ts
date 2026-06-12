@@ -15,3 +15,5 @@ export { ToolSites } from './ToolSites';
 export { Flashcards } from './Flashcards';
 export { CyberLearningMain } from './CyberLearningMain';
 export { CyberDailyLearning } from './CyberDailyLearning';
+export { ResourceLibrary } from './ResourceLibrary';
+export { ResourceDetail } from './ResourceDetail';

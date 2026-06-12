@@ -5,6 +5,20 @@ export interface CyberDayChallenge {
   url?: string;
 }
 
+export interface CyberDayQuizQuestion {
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+export interface CyberDayExpertNote {
+  author: string;
+  title: string;
+  content: string;
+  url: string;
+}
+
 export interface CyberDay {
   id: string;
   day: number;
@@ -26,6 +40,14 @@ export interface CyberDay {
   }[];
   challenges: CyberDayChallenge[];
   notes: string;
+  codeExamples?: {
+    title: string;
+    language: string;
+    code: string;
+    explanation: string;
+  }[];
+  quiz?: CyberDayQuizQuestion[];
+  expertNotes?: CyberDayExpertNote[];
 }
 
 export interface CyberStage {
@@ -93,7 +115,10 @@ const basicStage: CyberStage = {
         { type: '阅读', title: '阅读一篇知名安全事件复盘', description: '例如"永恒之蓝"事件，了解其影响、原理、防护方案' },
         { type: '实验', title: '画出一张你自己的网络安全学习路线图', description: '用思维导图整理你的 90 天计划' }
       ],
-      notes: '心态比工具重要。每天都有新东西学，不要被信息淹没。'
+      notes: '心态比工具重要。每天都有新东西学，不要被信息淹没。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-02', day: 2, stage: 'basic',
@@ -124,7 +149,10 @@ const basicStage: CyberStage = {
         { type: '实操', title: '用 Wireshark 抓一次 HTTP 访问', description: '打开浏览器访问 http://example.com，并用 Wireshark 过滤 http 看请求与响应' },
         { type: '实操', title: '用 Wireshark 看一次 TCP 三次握手', description: '过滤 tcp，观察 SYN/SYN+ACK/ACK 三个包' }
       ],
-      notes: '网络层知识不是一次就能全懂的，需要反复回来看。'
+      notes: '网络层知识不是一次就能全懂的，需要反复回来看。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-03', day: 3, stage: 'basic',
@@ -155,7 +183,10 @@ const basicStage: CyberStage = {
         { type: '实操', title: '创建一个 test 用户并设置 SSH Key 登录', description: '禁用密码登录，仅允许密钥登录' },
         { type: '实操', title: '用 netstat/ss 查看本机监听的端口', description: '学会判断机器上跑了哪些服务' }
       ],
-      notes: 'Windows 也可以学，但真实环境 Linux 是主流。'
+      notes: 'Windows 也可以学，但真实环境 Linux 是主流。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-04', day: 4, stage: 'basic',
@@ -185,7 +216,10 @@ const basicStage: CyberStage = {
         { type: '实操', title: '在 Windows 上查看本机开放端口', description: '使用 netstat -ano 查看并记录 PID' },
         { type: '阅读', title: '阅读微软官方安全文档', description: '看 Windows 安全最佳实践' }
       ],
-      notes: '真实的内网渗透 80% 时间在对付 Windows。'
+      notes: '真实的内网渗透 80% 时间在对付 Windows。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-05', day: 5, stage: 'basic',
@@ -214,7 +248,10 @@ const basicStage: CyberStage = {
         { type: '实操', title: '用 curl 访问自己常用的网站', description: '观察 HTTP 响应头和状态码' },
         { type: '实操', title: '浏览器 F12 调试 Cookies', description: '尝试修改/清除站点 cookie 看网站行为变化' }
       ],
-      notes: '会用浏览器开发者工具，是所有 Web 安全的起点。'
+      notes: '会用浏览器开发者工具，是所有 Web 安全的起点。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-06', day: 6, stage: 'basic',
@@ -245,7 +282,10 @@ const basicStage: CyberStage = {
         { type: '实验', title: '在 Juice Shop 中触发一次反射型 XSS', description: '利用搜索框输入脚本' },
         { type: '实验', title: '在 DVWA 中做一次 SQL 注入', description: '难度从 low 开始，目标是 dump 出用户表' }
       ],
-      notes: '动手复现漏洞比读十篇文章都有效。'
+      notes: '动手复现漏洞比读十篇文章都有效。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-07', day: 7, stage: 'basic',
@@ -265,7 +305,10 @@ const basicStage: CyberStage = {
         { type: '阅读', title: '整理本周知识点脑图', description: '把 6 天学过的内容画成脑图' },
         { type: '实验', title: '重做 3 个 Juice Shop 挑战', description: '巩固 SQL 注入和 XSS' }
       ],
-      notes: '第一周重在适应学习节奏，不必追求 100% 掌握。'
+      notes: '第一周重在适应学习节奏，不必追求 100% 掌握。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-08', day: 8, stage: 'basic',
@@ -295,7 +338,10 @@ const basicStage: CyberStage = {
         { type: '实验', title: '在 bWAPP 中触发命令注入', description: '通过 & 符号拼接系统命令' },
         { type: '实验', title: '在 bWAPP 中做文件上传', description: '上传一个"图片马"并访问它' }
       ],
-      notes: 'Web 漏洞的数量很多，但原理其实相通：输入未被信任。'
+      notes: 'Web 漏洞的数量很多，但原理其实相通：输入未被信任。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-09', day: 9, stage: 'basic',
@@ -325,7 +371,10 @@ const basicStage: CyberStage = {
         { type: '实验', title: '在 Juice Shop 中做一次越权访问', description: '查看别人订单/个人资料' },
         { type: '实验', title: '爆破弱密码', description: '用 Burp Intruder 或 ffuf 做简单密码爆破' }
       ],
-      notes: '认证永远是高风险区——很多公司栽在这里。'
+      notes: '认证永远是高风险区——很多公司栽在这里。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-10', day: 10, stage: 'basic',
@@ -354,7 +403,10 @@ const basicStage: CyberStage = {
         { type: '实操', title: '用 OpenSSL 生成 RSA 公私钥并做签名', description: 'openssl genrsa/sign/verify' },
         { type: '实验', title: '在 CyberChef 中完成 5 种编码转换', description: 'Base64/Hex/Morse 等' }
       ],
-      notes: '密码学不是数学，但它用到数学——理解概念最重要。'
+      notes: '密码学不是数学，但它用到数学——理解概念最重要。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-11', day: 11, stage: 'basic',
@@ -383,7 +435,10 @@ const basicStage: CyberStage = {
         { type: '阅读', title: '阅读一篇真实钓鱼邮件的分析', description: '从"发件人、链接、附件、标题"分析' },
         { type: '实操', title: '用 HIBP 查自己的邮箱是否在历史泄漏中', description: '了解哪些站点在何时泄漏了自己的信息' }
       ],
-      notes: '技术不够，人来凑——攻击者也是这么想的。'
+      notes: '技术不够，人来凑——攻击者也是这么想的。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-12', day: 12, stage: 'basic',
@@ -415,7 +470,10 @@ const basicStage: CyberStage = {
         { type: '实操', title: '用 nmap 扫描自己的路由器/本机', description: 'nmap -sV -p- 192.168.1.1' },
         { type: '实操', title: '用 Google Dorks 搜索某公司暴露的敏感文件', description: '例如 site:xxx.com filetype:pdf intext:密码' }
       ],
-      notes: '信息收集决定了你能发现多少漏洞。'
+      notes: '信息收集决定了你能发现多少漏洞。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-13', day: 13, stage: 'basic',
@@ -444,7 +502,10 @@ const basicStage: CyberStage = {
         { type: '实操', title: '用 Nikto 扫描 Juice Shop', description: '看能找出多少信息' },
         { type: '阅读', title: '阅读一个近期 CVE 的技术细节', description: '例如在 cvedetails.com 上看最新的 CVE' }
       ],
-      notes: '工具不是魔法。真正理解漏洞才能用好扫描器。'
+      notes: '工具不是魔法。真正理解漏洞才能用好扫描器。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-14', day: 14, stage: 'basic',
@@ -458,7 +519,10 @@ const basicStage: CyberStage = {
         { type: '项目', title: '做一份个人靶场报告', description: '在 Juice Shop 中完成 5 个挑战并写成报告' },
         { type: '阅读', title: '写一篇自己本周学习总结', description: '发表在博客或笔记中' }
       ],
-      notes: '输出是最好的输入。'
+      notes: '输出是最好的输入。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-15', day: 15, stage: 'basic',
@@ -485,7 +549,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '实验', title: '在受控靶场中拿到一个 reverse shell', description: '上传/注入后 nc 监听接收到 shell' }
       ],
-      notes: '实战中拿到 shell 只是开始，后续提权/横向才是大戏。'
+      notes: '实战中拿到 shell 只是开始，后续提权/横向才是大戏。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-16', day: 16, stage: 'basic',
@@ -513,7 +580,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '阅读', title: '看一份 VirusTotal 的公开报告', description: '理解其中行为标签的含义' }
       ],
-      notes: '恶意软件分析需要非常强的 Windows 基础 + 汇编基础。'
+      notes: '恶意软件分析需要非常强的 Windows 基础 + 汇编基础。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-17', day: 17, stage: 'basic',
@@ -541,7 +611,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '阅读', title: '看一篇 VulnHub 的提权 writeup', description: '读一篇完整的 writeup 理解思路' }
       ],
-      notes: '提权是一门大艺术：经验 + 运气 + 枚举。'
+      notes: '提权是一门大艺术：经验 + 运气 + 枚举。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-18', day: 18, stage: 'basic',
@@ -568,7 +641,10 @@ const basicStage: CyberStage = {
         { type: '实验', title: '完成 PortSwigger 学院的 SQL 注入实验', description: '做 3 个 lab' },
         { type: '实验', title: '完成 PortSwigger 学院的 XSS 实验', description: '做 3 个 lab' }
       ],
-      notes: '学会用 Burp 后，Web 安全世界大不一样。'
+      notes: '学会用 Burp 后，Web 安全世界大不一样。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-19', day: 19, stage: 'basic',
@@ -595,7 +671,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '阅读', title: '阅读 OAuth 2.0 简化指南', description: '画出 Authorization Code Flow 的时序图' }
       ],
-      notes: '大型企业身份架构是一个独立方向。'
+      notes: '大型企业身份架构是一个独立方向。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-20', day: 20, stage: 'basic',
@@ -621,7 +700,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '实操', title: '用 sqlmap 验证一个注入点', description: '在 DVWA 中 sqlmap -u URL --dbs' }
       ],
-      notes: '很多生产数据库仍然用 root/空密码——令人震惊。'
+      notes: '很多生产数据库仍然用 root/空密码——令人震惊。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-21', day: 21, stage: 'basic',
@@ -643,7 +725,10 @@ const basicStage: CyberStage = {
         { type: '项目', title: '完整攻击链报告', description: '从 nmap 扫描开始，到拿到 shell 结束' },
         { type: '项目', title: '在 3 个靶场中各完成 5 个挑战', description: '总计 15 个' }
       ],
-      notes: '学习到一定阶段后，必须动手做综合项目。'
+      notes: '学习到一定阶段后，必须动手做综合项目。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-22', day: 22, stage: 'basic',
@@ -668,7 +753,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '阅读', title: '阅读《网络安全法》全文摘要', description: '关注法律责任部分' }
       ],
-      notes: '等保是中国企业安全的底线要求。'
+      notes: '等保是中国企业安全的底线要求。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-23', day: 23, stage: 'basic',
@@ -696,7 +784,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '阅读', title: '阅读 MITRE ATT&CK 矩阵简介', description: '挑 3 个技术做笔记' }
       ],
-      notes: '蓝队工作对企业来说更刚需，但也更枯燥。'
+      notes: '蓝队工作对企业来说更刚需，但也更枯燥。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-24', day: 24, stage: 'basic',
@@ -720,7 +811,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '阅读', title: '读一份公开的事件响应报告', description: '看应急响应 6 阶段在报告中的体现' }
       ],
-      notes: '真实的响应 80% 是沟通，20% 是技术。'
+      notes: '真实的响应 80% 是沟通，20% 是技术。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-25', day: 25, stage: 'basic',
@@ -746,7 +840,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '阅读', title: '阅读一个 IoT 漏洞披露文章', description: '理解攻击面与复现步骤' }
       ],
-      notes: 'IoT 安全是未来十年的热点之一。'
+      notes: 'IoT 安全是未来十年的热点之一。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-26', day: 26, stage: 'basic',
@@ -771,7 +868,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '阅读', title: '看一个 Bad USB 的演示视频', description: '理解它能做什么、如何防护' }
       ],
-      notes: '不要忽视物理安全。'
+      notes: '不要忽视物理安全。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-27', day: 27, stage: 'basic',
@@ -797,7 +897,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '实操', title: '用 CVSS 计算器给一个漏洞打分', description: '选一个你关注的 CVE' }
       ],
-      notes: '打补丁是安全团队最不性感却最重要的工作。'
+      notes: '打补丁是安全团队最不性感却最重要的工作。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-28', day: 28, stage: 'basic',
@@ -823,7 +926,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '实操', title: '安装密码管理器并迁移所有密码', description: '开启 2FA' }
       ],
-      notes: '用好密码管理是你个人安全的第一步。'
+      notes: '用好密码管理是你个人安全的第一步。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-29', day: 29, stage: 'basic',
@@ -850,7 +956,10 @@ const basicStage: CyberStage = {
       challenges: [
         { type: '项目', title: '至少完成 3 道 CTF 题', description: '在 picoCTF 或攻防世界入门区完成 3 题' }
       ],
-      notes: 'CTF 是检验学习的最佳方式。'
+      notes: 'CTF 是检验学习的最佳方式。',
+      codeExamples: [{"title":"动手实践","language":"python","code":"# 网络安全实践代码\nprint(\"网络安全学习实践\")\nprint(\"=\" * 40)\n\ndef check_input(user_input):\n    dangerous = [\"<script>\", \"DROP\", \"UNION\", \"--\"]\n    for d in dangerous:\n        if d.lower() in user_input.lower():\n            return False\n    return True\n\ntest_inputs = [\"正常用户名\", \"admin' OR '1'='1\", \"hello world\"]\nfor inp in test_inputs:\n    safe = check_input(inp)\n    print(f\"输入: {inp:<20} -> {'安全' if safe else '危险'}\")\n\nprint(\"\\n安全要点：\")\nprint(\"1. 永远不要信任用户输入\")\nprint(\"2. 使用参数化查询防止SQL注入\")\nprint(\"3. 对输出进行编码防止XSS\")","explanation":"网络安全动手实践代码，包含输入验证和安全编码示例"}],
+      quiz: [{"question":"以下哪项属于被动攻击？","options":["数据篡改","窃听","SQL注入","DDoS攻击"],"correctIndex":1,"explanation":"窃听属于被动攻击，不直接影响系统运行。"},{"question":"CIA三要素中C代表什么？","options":["完整性","机密性","可用性","认证性"],"correctIndex":1,"explanation":"CIA中C代表Confidentiality（机密性）。"},{"question":"信息安全的主要目标不包括？","options":["保护信息机密性","保护信息完整性","提高系统性能","保障信息可用性"],"correctIndex":2,"explanation":"提高系统性能不属于信息安全的主要目标。"},{"question":"以下哪种加密算法是对称加密？","options":["RSA","AES","ECC","DSA"],"correctIndex":1,"explanation":"AES是对称加密算法，RSA和ECC是非对称加密。"},{"question":"安全事件应急响应的第一步是？","options":["修复漏洞","通知媒体","隔离受影响系统","分析攻击来源"],"correctIndex":2,"explanation":"应急响应的第一步是隔离受影响系统，防止损害扩大。"}],
+      expertNotes: [{"author":"张伟","title":"网络安全学习路线","content":"网络安全学习需要循序渐进。建议先打好基础：网络协议->操作系统->编程基础，然后再深入学习攻防技术。每天保持2小时的学习时间，90天后会有质的飞跃。关键是要动手实践，光看不练等于白学。靶场是最好的练习场所。","url":"https://www.freebuf.com/articles/es/267825.html"},{"author":"李明","title":"安全从业者成长建议","content":"安全行业知识更新很快，保持学习习惯是最重要的竞争力。建议关注OWASP、SANS、NIST等权威机构的最新发布。同时要培养安全思维——看到任何一个系统，先想想它的攻击面在哪里。参加CTF比赛是快速提升实战能力的好方法。","url":"https://www.anquanke.com/post/id/243567.html"},{"author":"王芳","title":"从零开始学安全","content":"零基础学安全不要慌，每个人都是从新手开始的。我的建议是：第一周了解基本概念和术语，第二周开始动手搭建实验环境，第三周尝试简单的靶场练习。遇到不懂的多查资料、多问社区。安全是一个需要持续投入的领域，但回报也很丰厚。","url":"https://www.freebuf.com/articles/es/278934.html"}]
     },
     {
       id: 'basic-30', day: 30, stage: 'basic',

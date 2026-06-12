@@ -1,0 +1,74 @@
+[
+  {
+    "id": "sc-001",
+    "category": "supply-chain",
+    "title": "软件供应链安全全景：从 SolarWinds 到 xz-utils 后门",
+    "summary": "系统梳理近年重大供应链攻击事件（SolarWinds/Log4Shell/3CX/xz-utils/Kaseya）、攻击面模型、SLSA框架与全链路防护策略。",
+    "tags": ["供应链安全", "SolarWinds", "Log4Shell", "xz后门", "3CX", "SLSA", "攻击面"],
+    "difficulty": "入门",
+    "readMinutes": 12,
+    "updatedAt": "2026-03-20",
+    "contentPath": "contents/supply-chain/001-supply-chain-overview.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "sc-002",
+    "category": "supply-chain",
+    "title": "SBOM（软件物料清单）标准与实践指南",
+    "summary": "SPDX/CycloneDX/SWID三大SBOM标准对比、SBOM生成工具（Syft/Trivy/SPDX-Tools）、SBOM消费与漏洞关联自动化流程。",
+    "tags": ["SBOM", "SPDX", "CycloneDX", "SWID", "Syft", "Trivy", "开源合规", "NTIA"],
+    "difficulty": "进阶",
+    "readMinutes": 12,
+    "updatedAt": "2026-03-25",
+    "contentPath": "contents/supply-chain/002-sbom-standards.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "sc-003",
+    "category": "supply-chain",
+    "title": "依赖混淆与包管理器攻击实战防御",
+    "summary": "依赖混淆/域名抢注/恶意包投毒/Typosquatting攻击原理、NPM/PyPI/Maven仓库安全、私有仓库与代理方案、扫描工具（npmaudit/pip-audit/OSV-Scanner）。",
+    "tags": ["依赖混淆", "包管理安全", "NPM安全", "PyPI安全", "Typosquatting", "恶意包", "私有仓库"],
+    "difficulty": "进阶",
+    "readMinutes": 15,
+    "updatedAt": "2026-04-01",
+    "contentPath": "contents/supply-chain/003-dependency-confusion.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "sc-004",
+    "category": "supply-chain",
+    "title": "代码签名与软件完整性验证",
+    "summary": "代码签名体系（Authenticode/APP签名/macOS公证）、Sigstore/Cosign无密钥签名方案、构建产物完整性校验（SLSA Level 1-4）与in-toto证明框架。",
+    "tags": ["代码签名", "Sigstore", "Cosign", "SLSA", "in-toto", "完整性验证", "Authenticode"],
+    "difficulty": "精通",
+    "readMinutes": 12,
+    "updatedAt": "2026-04-05",
+    "contentPath": "contents/supply-chain/004-code-signing.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "sc-005",
+    "category": "supply-chain",
+    "title": "开源组件安全治理与漏洞管理",
+    "summary": "开源许可证合规风险、CVE/CWE/NVD漏洞关联管理、Dependabot/Renovate自动更新策略、OSV/GHSA/安全公告订阅与自动化响应。",
+    "tags": ["开源治理", "漏洞管理", "CVE", "OSV", "Dependabot", "许可证合规", "GHSA", "NVD"],
+    "difficulty": "进阶",
+    "readMinutes": 12,
+    "updatedAt": "2026-04-10",
+    "contentPath": "contents/supply-chain/005-opensource-governance.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "sc-006",
+    "category": "supply-chain",
+    "title": "CI/CD管线安全最佳实践",
+    "summary": "GitHub Actions/GitLab CI/Jenkins安全加固、流水线注入攻击防御、密钥管理（Hashicorp Vault/GH Secrets）、构建环境隔离与制品安全扫描。",
+    "tags": ["CI/CD安全", "DevSecOps", "GitHub Actions", "GitLab CI", "Jenkins", "密钥管理", "制品扫描", "流水线注入"],
+    "difficulty": "精通",
+    "readMinutes": 15,
+    "updatedAt": "2026-04-15",
+    "contentPath": "contents/supply-chain/006-cicd-security.md",
+    "author": "网安百宝箱编辑部"
+  }
+]
