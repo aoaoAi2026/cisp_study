@@ -54,7 +54,7 @@ export const useLearningStore = create<LearningState>((set, get) => ({
         syncError: '',
       });
     } catch (err: any) {
-      console.error('从服务器加载进度失败:', err);
+      console.error('从本地存储加载进度失败:', err);
       set({ syncError: err.message || '加载进度失败', synced: false });
     }
   },
@@ -74,6 +74,7 @@ export const useLearningStore = create<LearningState>((set, get) => ({
         completedDays: newCompletedDays,
         currentDay: newCurrentDay,
         lastStudyDate: now.split('T')[0],
+        streak: get().streak + 1,
       });
     } catch (err: any) {
       console.error('保存日进度失败:', err);

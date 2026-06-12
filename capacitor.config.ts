@@ -1,6 +1,4 @@
-import type { CapacitorConfig } from '@capacitor/cli';
-
-const config: CapacitorConfig = {
+const config = {
   appId: 'com.cisp.security',
   appName: '网安百宝箱',
   webDir: 'dist',
