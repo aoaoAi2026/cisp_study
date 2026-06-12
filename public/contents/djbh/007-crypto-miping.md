@@ -1,145 +1,218 @@
-# 密码应用与密码应用安全性评估（密评）实战指南
+# 等保三级数据安全：加密存储与传输全方案
 
-## 1. 密码应用与密评的法律背景
+---
 
-2020 年 1 月 1 日起《中华人民共和国密码法》正式实施，标志着密码从"技术手段"升级为国家战略资源。其中核心要求有三点：
+## 📋 目录
 
-1. **关键信息基础设施必须使用国密算法**：第二十七条规定，关键信息基础设施应当采用商用密码进行保护和校验。
-2. **等保三级以上系统应当开展密评**：《商用密码应用安全性评估管理办法》规定，等保三级及以上的关键信息基础设施运营者应当每年开展商用密码应用安全性评估（简称"密评"）。
-3. **使用国密认证产品**：密码模块、密码产品必须符合《商用密码认证目录》（如 SM1/SM2/SM3/SM4 相关的认证产品）。
+1. [数据传输安全](#一传输安全)
+2. [数据存储安全](#二存储安全)
+3. [数据库加密方案](#三数据库加密)
+4. [国密算法实践](#四国密实践)
+5. [完整实施方案](#五实施方案)
 
-与等保测评的关系：密评是等保 2.0 测评在"密码维度"的专项评估，等保测评中发现密码应用不符合要求时，需要以密评结论补充佐证。两者常常合并进行。
+---
 
-## 2. 核心国密算法与应用场景
+## 一、传输安全
 
-| 国密标准 | 算法 | 用途 | 常见应用 |
-|----------|------|------|----------|
-| SM2 | 非对称（椭圆曲线） | 数字签名 / 密钥交换 / 公钥加密 | 证书、身份认证、VPN、电子签章 |
-| SM3 | 哈希（256 bit） | 完整性校验 | 替代 SHA-256 |
-| SM4 | 对称（128 bit） | 分组加密 | 文件加密、数据库加密、磁盘加密 |
-| SM9 | 基于标识 | 身份签密 | 无需 PKI 的 ID 场景（邮件、IM） |
-| ZUC | 流密码（祖冲之） | LTE/5G 通信加密 | 无线通信 |
+### 1.1 Web 通信加密
 
-### 2.1 典型密码应用部署模式
-
-```
-用户身份认证（SM2 签名证书 + 密码 Key）
-        │
-        ▼
-  SSL/TLS 国密双证书（SM2 RSA/ECDSA + SM2 加密证书）
-        │
-        ▼
-  传输加密（SM4-GCM 国密协议 / HTTPS SM2 套件）
-        │
-        ▼
-  数据库加密（SM4-TDE 透明加密 / 应用层字段加密）
-        │
-        ▼
-  密钥管理（由合规密码机 / HSM 统一管理，禁止明文密钥）
-```
-
-## 3. 密评的主要评估维度
-
-密评依据标准：GB/T 39786《信息安全技术 信息系统密码应用基本要求》、《商用密码应用安全性评估规范》V2.0（GM/T 0115 系列）。
-
-### 3.1 四大评估维度
-
-| 维度 | 评估要点 | 典型问题 |
-|------|----------|----------|
-| 算法与协议 | 是否使用国密；密钥长度是否合规；协议是否安全 | 仍使用 MD5、SHA-1、DES、1024 位 RSA |
-| 密钥管理 | 密钥生成 / 分发 / 存储 / 备份 / 销毁是否合规 | 密钥硬编码在代码 / 配置文件；无应急密钥体系 |
-| 密码产品 | 密码产品是否获得国密局证书或商用密码认证 | 使用开源 OpenSSL + 自实现；无合规证书 |
-| 安全管理 | 管理制度、权限分离、审计、应急预案 | 无密码安全管理制度；密钥管理员权限过大 |
-
-### 3.2 典型高风险问题 Top 5
-
-1. **密钥硬编码**：源代码中 `AES_KEY = 'thisisasecretkey'`，可用 `grep` 轻松提取
-2. **仍使用 MD5/SHA-1 签名**：CA 证书仍使用弱哈希
-3. **数据库字段全部明文存储**：手机号、身份证号、交易记录未加密
-4. **使用未经认证的密码模块**：使用自实现的加密工具
-5. **HTTPS 证书仍为 RSA 2048 + SHA-256**，未采用 SM2 国密证书
-
-## 4. 密钥管理实战要求
-
-密码应用中最容易出问题的环节是密钥管理。以下是一个合规密钥管理流程示例：
-
-```
-密钥生成（密码机内部生成，不可导出明文）
-  │
-  ▼
-密钥分发（通过安全通道或分割多份由不同人保管）
-  │
-  ▼
-密钥使用（应用通过密码机 API 调用，不接触密钥明文）
-  │
-  ▼
-密钥归档（由密码机管理员执行归档，归档包需加密）
-  │
-  ▼
-密钥销毁（使用密码机销毁命令，执行后不可恢复）
+```nginx
+# Nginx HTTPS 配置(等保三级要求 TLS 1.2+)
+server {
+    listen 443 ssl http2;
+    
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    
+    ssl_certificate /etc/ssl/server.crt;
+    ssl_certificate_key /etc/ssl/server.key;
+    
+    # 国密版本: 使用铜锁(Tongsuo)编译的 Nginx
+    # enable_ntls on;
+    # ssl_certificate /etc/ssl/sm2_sign.crt;
+    # ssl_certificate_key /etc/ssl/sm2_sign.key;
+}
 ```
 
-典型密码产品选型：
-
-- **服务器密码机**：每秒可处理上万次 SM2 签名/验证，适合高并发场景
-- **智能密码钥匙（USB Key）**：用于用户身份认证、签名操作
-- **VPN 网关（国密）**：分支机构互联、移动办公接入
-- **数据库加密网关**：TDE 透明数据加密
-- **国密 CA 系统**：签发 SM2 双证书（签名证书 + 加密证书）
-
-## 5. 密评流程与交付物
-
-### 5.1 评估流程
-
-1. **前期准备**：梳理系统清单、密码技术使用情况、密钥清单
-2. **文档审查**：查阅密码管理制度、密钥管理方案、密码产品清单、密码应用流程图
-3. **现场调研**：现场查看密码机部署、密钥管理权限、审计日志
-4. **测试验证**：协议分析（Wireshark 查看 TLS 国密套件）、密钥提取风险、算法一致性测试
-5. **出具评估报告**：问题清单、风险等级、整改建议
-6. **整改复测**：对严重/高风险问题整改后复测
-
-### 5.2 一个协议分析例子
-
-通过 `openssl s_client` 检查目标站点的国密支持情况：
+### 1.2 数据库连接加密
 
 ```bash
-# 使用 OpenSSL 3.0+ + 国密补丁 / 腾讯国密版 GmSSL
-openssl s_client -connect example.gov.cn:443 -sm2 -cipher SM2
-# 输出应包含：Server public key is SM2 bits、Verify return code: 0 (ok)
+# MySQL TLS 配置
+# my.cnf
+[mysqld]
+require_secure_transport = ON
+ssl_ca = /etc/mysql/certs/ca.pem
+ssl_cert = /etc/mysql/certs/server-cert.pem
+ssl_key = /etc/mysql/certs/server-key.pem
+
+# 创建需要 TLS 的用户
+CREATE USER 'appuser'@'%' IDENTIFIED BY 'Password' REQUIRE SSL;
+
+# 验证: 连接后执行 SHOW STATUS LIKE 'Ssl_cipher';
 ```
 
-### 5.3 密钥审计工具链
+### 1.3 应用间通信(mTLS)
 
-```bash
-# 扫描代码中是否存在硬编码密钥 / token
-grep -rnE "(AES_KEY|SECRET|PASSWORD|TOKEN|PRIVATE_KEY)\s*[=:]" src/
-
-# 检查数据库字段是否明文（示例查询）
-SELECT id, phone, id_card, name FROM users LIMIT 5;
-# 如返回明文 → 需评估使用 SM4 字段级加密方案
-
-# 查看 TLS 协议与套件
-echo | openssl s_client -connect www.example.com:443 2>&1 | grep -E "Protocol|Cipher"
+```
+微服务间通信 → mTLS 双向认证
+  ✦ 每个服务有唯一 TLS 证书
+  ✦ istio/consul 管理证书
+  ✦ 确保内网通信也被加密
 ```
 
-## 6. 常见密码风险整改方案
+---
 
-| 风险场景 | 整改方案 |
-|----------|----------|
-| 自实现加密算法 | 替换为经过国密认证的密码模块（如服务器密码机） |
-| 密钥硬编码在程序中 | 使用密钥管理服务（KMS）或密码机 API 动态获取 |
-| 数据库敏感字段明文存储 | 启用 TDE / 应用层 SM4 字段级加密 |
-| HTTPS 使用 RSA 证书 | 申请 SM2 双证书（国密 CA） |
-| 无密钥应急方案 | 建立密钥分片（Shamir 秘密共享）机制 |
+## 二、存储安全
 
-## 7. 密评与等保的衔接
+### 2.1 敏感字段加密
 
-| 等保要求 | 密码/密评关联 |
-|----------|---------------|
-| S4.1 身份鉴别 | 使用 SM2 证书 + 密码 Key 实现双因素认证 |
-| S2.3 数据保密性 | 传输层 TLS（SM2 套件）、存储层 SM4 加密 |
-| S4.8 数据完整性 | 使用 SM3 进行数据完整性校验 |
-| M4/M5 安全建设/运维 | 建立密码管理制度、密钥应急与销毁流程 |
-| M3/M4 密码产品采购 | 采购具备商用密码认证的产品 |
+```php
+// ❌ 危险：明文存储
+$sql = "INSERT INTO users (name, id_card, phone) VALUES ('$name', '$id_card', '$phone')";
 
-> 密码不是"锦上添花"，而是等保 2.0 合规的必备技术底座。密评的价值在于：把"我用了加密"变为"我用对了加密，用得安全且可审计"。
+// ✅ 安全：加密后存储
+function encrypt($data, $key) {
+    $iv = random_bytes(16);
+    $encrypted = openssl_encrypt($data, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+    return base64_encode($iv . $encrypted);  // 存储 IV + 密文
+}
+
+function decrypt($data, $key) {
+    $data = base64_decode($data);
+    $iv = substr($data, 0, 16);
+    $encrypted = substr($data, 16);
+    return openssl_decrypt($encrypted, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+}
+
+// 使用:
+$encrypted_id = encrypt('320123199001011234', $master_key);
+$sql = "INSERT INTO users (name, id_card) VALUES (?, ?)";
+```
+
+### 2.2 数据库透明加密(TDE)
+
+```sql
+-- MySQL 8.0+ InnoDB 表空间加密
+-- my.cnf:
+-- [mysqld]
+-- early-plugin-load=keyring_file.so
+-- keyring_file_data=/var/lib/mysql-keyring/keyring
+
+-- 创建加密表
+CREATE TABLE users (
+    id INT,
+    name VARCHAR(100),
+    id_card VARBINARY(256)
+) ENCRYPTION='Y';
+
+-- MariaDB 数据加密
+-- innodb_encrypt_tables = ON
+-- innodb_encrypt_log = ON
+
+-- PostgreSQL pgcrypto
+CREATE EXTENSION pgcrypto;
+SELECT pgp_sym_encrypt('sensitive data', 'encryption_key');
+```
+
+---
+
+## 三、数据库加密
+
+### 3.1 密钥管理层次
+
+```
+┌──────────────────────────────┐
+│  KMS (HSM 硬件保护)          │
+│  管理 Master Key              │
+├──────────────────────────────┤
+│  Master Key → 解密 DEK包      │
+│  (存储在安全区域, 定期轮换)    │
+├──────────────────────────────┤
+│  DEK (Data Encryption Key)   │
+│  → 加密数据库中的敏感字段      │
+└──────────────────────────────┘
+
+密钥不存储在应用代码中!
+密钥不存储在数据库中!
+```
+
+### 3.2 应用加密 Demo
+
+```python
+from cryptography.fernet import Fernet
+import boto3
+import base64
+
+class DataEncryption:
+    def __init__(self):
+        # 从 KMS 获取加密的 DEK
+        self.kms = boto3.client('kms', region_name='cn-hangzhou')
+        self.dek = self._get_dek()
+        self.cipher = Fernet(self.dek)
+    
+    def _get_dek(self):
+        """从 KMS 获取/生成 DEK"""
+        response = self.kms.generate_data_key(
+            KeyId='alias/app-encryption-key',
+            KeySpec='AES_256'
+        )
+        return base64.b64encode(response['Plaintext'])
+    
+    def encrypt(self, data: str) -> str:
+        return self.cipher.encrypt(data.encode()).decode()
+    
+    def decrypt(self, data: str) -> str:
+        return self.cipher.decrypt(data.encode()).decode()
+
+# 使用
+enc = DataEncryption()
+masked_id = enc.encrypt('320123199001011234')
+print(masked_id)  # gAAAAABm...
+
+# 存储到数据库
+cursor.execute("INSERT INTO users (id_card) VALUES (?)", (masked_id,))
+```
+
+---
+
+## 四、国密实践
+
+```python
+from gmssl import sm4, sm3
+
+# SM4 加密
+key = b'0123456789ABCDEF'  # 16字节
+iv = b'0000000000000000'    # 16字节
+
+sm4_cipher = sm4.CryptSM4()
+sm4_cipher.set_key(key, sm4.SM4_ENCRYPT)
+ciphertext = sm4_cipher.crypt_cbc(iv, plaintext)
+
+# SM3 哈希
+hash_value = sm3.sm3_hash(data.encode())
+```
+
+---
+
+## 五、实施方案
+
+```
+Phase 1: 评估(1周)
+  □ 识别所有敏感数据字段
+  □ 确定加密方案(应用层/TDE)
+  □ 选型密钥管理系统(KMS)
+
+Phase 2: 实施(2-3周)
+  □ 部署 KMS
+  □ 修改应用添加加密层
+  □ 存量数据加密迁移
+  □ 功能测试
+
+Phase 3: 灰度上线(1周)
+  □ 双重读(明文+密文)
+  □ 验证性能影响
+  □ 全量切换
+```

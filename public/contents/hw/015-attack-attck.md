@@ -1,212 +1,588 @@
-# 网络攻击画像与 ATT&CK 映射实战
+# MITRE ATT&CK 攻防矩阵护网实战应用
 
-当一次攻击发生后，蓝队要回答的终极问题不是 **"攻击者做了什么"**，而是 **"这伙人是谁、他们会什么、他们下一步会做什么、我们该怎么防"**。构建**攻击画像（Attacker Profile）**并把行为映射到 **MITRE ATT&CK 框架**，是从"被动响应"到"主动预判"的关键一步。
+> 📅 2026-06-12 | 🎯 精通 | ⏱ 25 min | 分类：护网工程
 
-## 1. 什么是攻击画像（TTPs）？
+## 📋 提纲
 
-**TTPs（Tactics, Techniques, and Procedures）** 即策略、技术和过程，描述的是攻击者"怎么做事"。典型画像包括：
+1. ATT&CK 框架在护网中的定位
+2. 攻击链还原与 ATT&CK Mapping
+3. 基于 ATT&CK 的检测覆盖率分析
+4. 护网红队常用 TTP 清单
+5. 蓝队对应检测规则映射
+6. ATT&CK Navigator 实战
+7. 自动化 ATT&CK 映射工具
 
-| 画像维度 | 示例内容 |
-|----------|----------|
-| **初始访问偏好** | 钓鱼 / 公开漏洞利用 / 暴力破解 / 供应链 |
-| **典型工具** | Cobalt Strike / Metasploit / 哥斯拉 / 冰蝎 / mimikatz |
-| **横向移动方式** | RDP / SMB / WMI / PsExec / SSH / WinRM |
-| **权限维持方式** | 计划任务 / 启动项 / 服务 / 账号克隆 / Webshell |
-| **C2 通信特征** | DNS 隧道 / HTTPS 自定义协议 / 合法域名伪装 / 时间节奏 |
-| **数据窃取方式** | Rclone / 7z + FTP / WebDAV / 邮件外带 |
-| **反分析 / 反沙箱** | 沙箱检测 / 加壳 / 代码混淆 / 延迟执行 |
-| **时间窗口** | 工作时间 / 非工作时间 / 特定节假日 |
-| **语言 / 时区特征** | 样本 / 工具中的时区、语言包、UI 文本 |
-| **目标画像** | 行业偏好（政府 / 制造 / 能源 / 金融）、组织规模 |
+---
 
-把这些维度填好之后，我们就得到了一份"攻击者的简历"。
+## 1. ATT&CK 框架在护网中的定位
 
-## 2. MITRE ATT&CK 矩阵是什么？
+### 1.1 蓝队用法
 
-**ATT&CK（Adversarial Tactics, Techniques, and Common Knowledge）** 是 MITRE 维护的一个**开放的攻击者行为知识库**，把攻击行为按"战术（Tactic）→ 技术（Technique）→ 子技术（Sub-Technique）"组织起来。在企业防御中，它扮演三种角色：
-
-1. **统一语言**：用 `T1059.003 / T1078.003` 这样的编号替代"黑客在服务器上跑了个东西"之类的口语化描述。
-2. **检测能力评估**：把自家检测规则对齐到 ATT&CK，一眼看出"哪些行为我们看不见"。
-3. **红蓝对抗剧本**：红队按 ATT&CK 组织攻击路径，蓝队按 ATT&CK 组织检测与响应。
-
-### 2.1 护网中常用的 ATT&CK 战术（14 个）
-
-| 战术 ID | 中文名 | 说明（护网常见） |
-|---------|--------|------------------|
-| Reconnaissance | 侦察 | 公网信息收集、端口扫描、目录扫描 |
-| Resource Development | 资源开发 | 注册仿冒域名、搭建 C2、准备工具 |
-| Initial Access | 初始访问 | 钓鱼、漏洞利用、暴力破解、VPN 账号 |
-| Execution | 执行 | PowerShell / cmd / 宏 / Python 执行 |
-| Persistence | 权限维持 | 计划任务、启动项、服务、WebShell |
-| Privilege Escalation | 权限提升 | 本地漏洞、令牌窃取、服务提权 |
-| Defense Evasion | 防御绕过 | 关闭杀软、禁用日志、白名单滥用、混淆 |
-| Credential Access | 凭证访问 | Mimikatz、Kerberoasting、哈希抓取 |
-| Discovery | 发现 | 网络 / 系统 / 文件 / AD 侦察 |
-| Lateral Movement | 横向移动 | SMB / RDP / WMI / SSH / WinRM |
-| Collection | 收集 | 抓敏感文件、剪贴板、邮件 |
-| Command and Control | 命令控制 | C2 通信、域名生成算法（DGA）、隧道 |
-| Exfiltration | 数据外泄 | 压缩 + 外带 / 云盘 / DNS 隧道 |
-| Impact | 影响 | 勒索、数据销毁、拒绝服务 |
-
-## 3. 一次真实攻击的 ATT&CK 映射示例
-
-假设在护网中发生一次攻击，以下是从原始日志到 ATT&CK 的映射过程：
-
-### 3.1 原始事件时间线
-
-```text
-T+00:00 攻击者对 mail.example.com 的 OWA 进行暴力破解（500 次失败后成功）
-T+00:03 登录成功，使用 Webmail 查看邮件、搜索"密码"字样
-T+00:10 使用相同账号登录 VPN（无 MFA）
-T+00:15 从 VPN 出口对内网 10.0.0.0/16 做端口扫描
-T+00:25 发现 10.1.2.33（Web 服务器）445 端口开放，尝试 SMB 连接
-T+00:30 PsExec 执行命令上传可疑 exe（命名为 svchost.exe，路径 C:\Windows\Temp）
-T+00:32 可疑 exe 运行，对外 443 发起 HTTPS 连接至 198.51.100.23
-T+00:45 发现 mimikatz 行为（lsass.exe 被读取）
-T+01:10 使用获取到的管理员账号，通过 RDP 登录到数据库服务器
-T+01:30 对数据库执行 SELECT * FROM customer ... INTO OUTFILE '/tmp/cc.csv'
-T+02:00 使用 Rclone 将 /tmp/cc.csv 同步到某对象存储（外带）
-T+03:00 清理部分日志：wevtutil cl Security（清空安全日志）
+```
+护网前：ATT&CK覆盖度分析 → 找出检测盲区 → 优先补充检测
+护网中：攻击链Mapping → 理解攻击者意图 → 预测下一步
+护网后：TTP覆盖复盘 → 漏检原因分析 → 规则补充
 ```
 
-### 3.2 ATT&CK 映射结果表
+### 1.2 红队视角（知己知彼）
 
-| 时间点 | 行为描述 | 战术 | 技术（ATT&CK ID） | 检测状态 |
-|--------|----------|------|-------------------|----------|
-| T+00:00 | OWA 暴力破解 | Initial Access | T1110.003（密码喷射/暴力破解-Web 会话） | ✓ 已发现 |
-| T+00:03 | 邮箱搜索敏感关键词 | Collection | T1114.001（邮箱收集） | ✗ 未检测 |
-| T+00:10 | 同一账号异地 VPN 登录 | Initial Access | T1078.003（合法账号-本地账号） | ✗ 未检测（缺乏关联） |
-| T+00:15 | 内网端口扫描 | Discovery | T1046（网络服务扫描） | ✓ 已发现 |
-| T+00:25 | SMB 连接尝试 | Lateral Movement | T1021.002（SMB 横向） | ✓ 已发现 |
-| T+00:30 | PsExec 上传木马 | Execution + Lateral Movement | T1569.002（PsExec） | ✓ 已发现 |
-| T+00:32 | HTTPS C2 通信 | Command and Control | T1071.001（应用层协议-HTTPS） | ✗ 未检测（流量特征未标记） |
-| T+00:45 | mimikatz 读取 lsass | Credential Access | T1003.001（lsass 内存凭证） | ✓ 已发现 |
-| T+01:10 | RDP 登录数据库服务器 | Lateral Movement | T1021.001（RDP 横向） | ✗ 未检测（本地 IP 合法） |
-| T+01:30 | 批量导出数据库表 | Collection | T1567（数据本地收集）+ T1530（云/本地数据） | ✗ 未检测（数据库审计缺失） |
-| T+02:00 | Rclone 同步数据至对象存储 | Exfiltration | T1567.002（数据外带-云存储） | ✗ 未检测（DNS/出口流量） |
-| T+03:00 | 清空安全日志 | Defense Evasion | T1070.001（指示器删除-主机日志） | ✗ 未检测（日志服务器无预警） |
+护网中红队最常用的 Top 15 技术：
 
-### 3.3 基于映射结果的"防御缺口报告"
+| 排名 | Technique ID | 技术名称 | 阶段 | 检测难度 |
+|------|-------------|---------|------|---------|
+| 1 | T1059.001 | PowerShell | 执行 | ⭐⭐ |
+| 2 | T1566.001 | 鱼叉附件 | 初始访问 | ⭐⭐⭐ |
+| 3 | T1003.001 | LSASS Dump | 凭据访问 | ⭐⭐ |
+| 4 | T1055.001 | 进程注入 | 防御规避 | ⭐⭐⭐ |
+| 5 | T1021.002 | SMB横向移动 | 横向移动 | ⭐⭐ |
+| 6 | T1558.003 | Kerberoasting | 凭据访问 | ⭐ |
+| 7 | T1547.001 | Run Key持久化 | 持久化 | ⭐ |
+| 8 | T1070.004 | 文件删除 | 防御规避 | ⭐⭐⭐ |
+| 9 | T1562.001 | 禁用安全工具 | 防御规避 | ⭐⭐ |
+| 10| T1090.001 | 内网代理 | C2 | ⭐⭐ |
+| 11| T1048.003 | 非标端口外联 | 外泄 | ⭐⭐ |
+| 12| T1486 | 数据加密勒索 | 影响 | ⭐ |
+| 13| T1136.001 | 创建本地账号 | 持久化 | ⭐ |
+| 14| T1190 | 公网应用漏洞 | 初始访问 | ⭐⭐ |
+| 15| T1572 | DNS隧道 | C2 | ⭐⭐⭐ |
 
-```text
-【防御缺口 TOP 5】
+---
 
-1. T1071.001（C2-HTTPS）：目前仅靠域名黑名单，未做 JA3 指纹 + 流量行为分析
-   → 建议：引入流量分析 / NDR / 补充 JA3 情报
+## 2. 攻击链还原与 Mapping
 
-2. T1070.001（日志清除）：未对事件日志被清除做预警
-   → 建议：SIEM 规则：Security 日志大小突变 / wevtutil cl 命令告警
+### 2.1 自动化攻击链还原
 
-3. T1567.002（云存储外带）：未对终端访问未登记对象存储做限制
-   → 建议：终端 EDR + 出口代理策略 + DNS 威胁情报
+```python
+#!/usr/bin/env python3
+"""
+ATT&CK 攻击链自动还原器
+从SIEM告警/EDR事件中自动提取TTP并还原攻击链
+"""
 
-4. T1530（数据库批量导出）：数据库审计等级较低
-   → 建议：对核心库启用数据库审计系统，关注 SELECT INTO OUTFILE / TOP N 查询
+import json
+import requests
+from datetime import datetime, timedelta
+from collections import defaultdict
 
-5. T1110 + T1078（相同账号跨系统登录）：缺乏跨系统登录关联
-   → 建议：UEBA 规则：同一账号在短时间内登录多个异构系统，升级为 L3 事件
+class AttackChainReconstructor:
+    # TTP 检测规则映射：检测到的事件 → ATT&CK Technique
+    DETECTION_TO_TTP = {
+        # 初始访问
+        "external_exploit_attempt": "T1190",
+        "phishing_email_detected": "T1566.001",
+        "vpn_bruteforce_success": "T1078",
+        "external_rdp_connection": "T1021.001",
+
+        # 执行
+        "powershell_encoded_command": "T1059.001",
+        "cmd_execution": "T1059.003",
+        "wmi_execution": "T1047",
+        "scheduled_task_created": "T1053.005",
+        "service_created": "T1543.003",
+
+        # 持久化
+        "run_key_added": "T1547.001",
+        "wmi_subscription_created": "T1546.003",
+        "new_local_user_created": "T1136.001",
+        "startup_folder_modified": "T1547.001",
+
+        # 权限提升
+        "uac_bypass": "T1548.002",
+        "token_manipulation": "T1134",
+        "printspooler_exploit": "T1068",
+        "service_permission_abuse": "T1574.002",
+
+        # 防御规避
+        "defender_disabled": "T1562.001",
+        "firewall_rule_modified": "T1562.004",
+        "process_injection": "T1055.001",
+        "file_deletion_evidence": "T1070.004",
+        "timestomp": "T1070.006",
+        "disable_logging": "T1562.002",
+
+        # 凭据访问
+        "lsass_memory_access": "T1003.001",
+        "sam_dump": "T1003.002",
+        "ntds_dump": "T1003.003",
+        "kerberoasting": "T1558.003",
+        "asrep_roasting": "T1558.004",
+        "dll_side_loading": "T1574.002",
+
+        # 发现
+        "network_scan": "T1046",
+        "system_info_collection": "T1082",
+        "account_discovery": "T1087",
+        "domain_trust_discovery": "T1482",
+        "file_directory_discovery": "T1083",
+
+        # 横向移动
+        "smb_admin_share": "T1021.002",
+        "wmi_lateral": "T1047",
+        "psexec": "T1569.002",
+        "rdp_lateral": "T1021.001",
+        "winrm_lateral": "T1021.006",
+        "dcom_lateral": "T1021.003",
+
+        # 收集
+        "archive_collection": "T1560.001",
+        "email_collection": "T1114",
+        "clipboard_data": "T1115",
+        "screen_capture": "T1113",
+        "keylogging": "T1056.001",
+
+        # C2
+        "dns_tunneling": "T1572",
+        "http_beacon": "T1071.001",
+        "https_beacon": "T1071.001",
+        "proxy_usage": "T1090.001",
+        "web_service_c2": "T1102",
+
+        # 外泄
+        "data_exfiltration_dns": "T1048.001",
+        "data_exfiltration_http": "T1048.002",
+        "data_exfiltration_cloud": "T1567.002",
+    }
+
+    TACTIC_MAP = {
+        "T1190": "Initial Access", "T1566": "Initial Access", "T1078": "Initial Access",
+        "T1059": "Execution", "T1047": "Execution", "T1053": "Execution", "T1543": "Execution",
+        "T1547": "Persistence", "T1546": "Persistence", "T1136": "Persistence",
+        "T1548": "Privilege Escalation", "T1134": "Privilege Escalation", "T1068": "Privilege Escalation",
+        "T1562": "Defense Evasion", "T1055": "Defense Evasion", "T1070": "Defense Evasion",
+        "T1003": "Credential Access", "T1558": "Credential Access",
+        "T1046": "Discovery", "T1082": "Discovery", "T1087": "Discovery",
+        "T1021": "Lateral Movement", "T1569": "Lateral Movement",
+        "T1560": "Collection", "T1114": "Collection",
+        "T1572": "Command and Control", "T1071": "Command and Control", "T1090": "Command and Control",
+        "T1048": "Exfiltration", "T1567": "Exfiltration",
+    }
+
+    def __init__(self, es_url):
+        self.es = es_url
+
+    def reconstruct_from_incident(self, incident_id):
+        """
+        从单个安全事件还原攻击链
+        
+        输入: TheHive/SIEM 事件ID
+        输出: MITRE ATT&CK 攻击链
+        """
+        # 1. 获取事件相关的主机名和IP
+        incident = self.get_incident(incident_id)
+        if not incident:
+            return None
+
+        hosts = incident.get('affected_hosts', [])
+        timeframe = incident.get('timeframe', {})  # {start, end}
+
+        # 2. 查询这些主机上在时间窗口内的所有安全事件
+        events = self.query_es_security_events(hosts, timeframe)
+
+        # 3. 将事件映射为 TTP
+        ttps = self.map_events_to_ttps(events)
+
+        # 4. 按时间排序并构建攻击链
+        timeline = self.build_timeline(ttps)
+
+        # 5. 生成报告
+        return self.generate_report(incident, timeline)
+
+    def map_events_to_ttps(self, events):
+        """将安全事件映射为ATT&CK Technique"""
+        ttps = []
+
+        for event in events:
+            event_type = event.get('event_type', '')
+            ttp_id = None
+
+            # 直接匹配
+            if event_type in self.DETECTION_TO_TTP:
+                ttp_id = self.DETECTION_TO_TTP[event_type]
+            else:
+                # 模糊匹配
+                ttp_id = self.fuzzy_match(event)
+
+            if ttp_id:
+                tactic = self.get_tactic(ttp_id)
+                ttps.append({
+                    "technique_id": ttp_id,
+                    "tactic": tactic,
+                    "timestamp": event.get('@timestamp', ''),
+                    "host": event.get('host', {}).get('name', ''),
+                    "source_event": event_type,
+                    "details": event.get('details', ''),
+                    "confidence": "HIGH" if event_type in self.DETECTION_TO_TTP else "MEDIUM"
+                })
+
+        return ttps
+
+    def fuzzy_match(self, event):
+        """模糊匹配：根据事件中的字段推测TTP"""
+        process_cmdline = event.get('process', {}).get('command_line', '').lower()
+
+        # 进程命令行特征匹配
+        if 'mimikatz' in process_cmdline:
+            return 'T1003.001'
+        if 'procdump' in process_cmdline and 'lsass' in process_cmdline:
+            return 'T1003.001'
+        if 'bloodhound' in process_cmdline:
+            return 'T1482'
+        if 'ntds' in process_cmdline and 'dump' in process_cmdline:
+            return 'T1003.003'
+        if 'schtasks' in process_cmdline and '/create' in process_cmdline:
+            return 'T1053.005'
+        if 'net use' in process_cmdline and '\\\\' in process_cmdline:
+            return 'T1021.002'
+        if 'psexec' in process_cmdline:
+            return 'T1569.002'
+        if 'certutil' in process_cmdline and ('urlcache' in process_cmdline or 'split' in process_cmdline):
+            return 'T1105'
+        if 'bitsadmin' in process_cmdline and 'transfer' in process_cmdline:
+            return 'T1197'
+        if 'net user' in process_cmdline and '/add' in process_cmdline:
+            return 'T1136.001'
+
+        return None
+
+    def get_tactic(self, technique_id):
+        """根据Technique ID获取Tactic"""
+        for prefix, tactic in self.TACTIC_MAP.items():
+            if technique_id.startswith(prefix):
+                return tactic
+        return "Unknown"
+
+    def build_timeline(self, ttps):
+        """构建时间线"""
+        # 去重（同一Technique在同一主机上只保留首次出现）
+        seen = set()
+        unique_ttps = []
+        for ttp in sorted(ttps, key=lambda x: x['timestamp']):
+            key = f"{ttp['technique_id']}_{ttp['host']}"
+            if key not in seen:
+                seen.add(key)
+                unique_ttps.append(ttp)
+
+        # 按MITRE攻击战术顺序排列
+        tactic_order = [
+            "Initial Access", "Execution", "Persistence",
+            "Privilege Escalation", "Defense Evasion",
+            "Credential Access", "Discovery",
+            "Lateral Movement", "Collection",
+            "Command and Control", "Exfiltration", "Impact"
+        ]
+
+        ordered = []
+        for tactic in tactic_order:
+            tactic_ttps = [t for t in unique_ttps if t['tactic'] == tactic]
+            ordered.extend(tactic_ttps)
+
+        return ordered
+
+    def generate_report(self, incident, timeline):
+        """生成ATT&CK攻击链报告"""
+        # 按Tactic分组统计
+        tactic_summary = defaultdict(list)
+        for ttp in timeline:
+            tactic_summary[ttp['tactic']].append(ttp)
+
+        report = {
+            "incident_id": incident.get('id'),
+            "incident_name": incident.get('title'),
+            "generated_at": datetime.now().isoformat(),
+            "attack_chain": timeline,
+            "tactic_summary": {
+                tactic: {
+                    "count": len(ttps),
+                    "techniques": list(set(t['technique_id'] for t in ttps))
+                }
+                for tactic, ttps in tactic_summary.items()
+            },
+            "coverage_analysis": self.analyze_coverage(timeline),
+            "recommendations": self.generate_recommendations(timeline)
+        }
+        return report
+
+    def analyze_coverage(self, timeline):
+        """分析检测覆盖情况"""
+        all_techniques = set(t['technique_id'] for t in timeline)
+        detected_by_siem = sum(1 for t in timeline if t['confidence'] == 'HIGH')
+        missed = sum(1 for t in timeline if t['confidence'] == 'MEDIUM')
+
+        return {
+            "total_techniques_used": len(all_techniques),
+            "detected_by_automated_rules": detected_by_siem,
+            "detected_by_manual_analysis": missed,
+            "detection_gaps": [
+                t for t in timeline
+                if t['confidence'] == 'MEDIUM'
+            ]
+        }
+
+    def generate_recommendations(self, timeline):
+        """生成检测规则补充建议"""
+        gaps = [t for t in timeline if t['confidence'] == 'MEDIUM']
+        recs = []
+
+        for gap in gaps:
+            recs.append({
+                "technique_id": gap['technique_id'],
+                "tactic": gap['tactic'],
+                "recommendation": f"添加针对 {gap['technique_id']} 的Sigma检测规则",
+                "data_sources_needed": self.suggest_data_sources(gap['technique_id'])
+            })
+
+        return recs
+
+    def suggest_data_sources(self, technique_id):
+        """根据Technique ID建议需要的日志源"""
+        sources = {
+            'T1003.001': ['Sysmon Event 10 (ProcessAccess)', 'Windows Event 4663'],
+            'T1059.001': ['Sysmon Event 1 (ProcessCreation)', 'PowerShell Transcript Logging'],
+            'T1021.002': ['Sysmon Event 3 (NetworkConnection)', 'Windows Event 5140'],
+            'T1558.003': ['Windows Event 4769', 'Windows Event 4768'],
+            'T1572': ['DNS Query Logs', 'Zeek dns.log'],
+            'T1053.005': ['Windows Event 4698', 'Sysmon Event 1'],
+            'T1136.001': ['Windows Event 4720', 'Windows Event 4722'],
+            'T1562.001': ['Sysmon Event 1', 'Windows Event 1102'],
+        }
+        return sources.get(technique_id, ['通用日志源'])
+
+    def get_incident(self, incident_id):
+        """从TheHive获取事件详情"""
+        return {
+            "id": incident_id,
+            "title": f"事件-{incident_id}",
+            "affected_hosts": ["HOST01", "HOST02"],
+            "timeframe": {"start": "2026-06-12T00:00:00", "end": "2026-06-12T23:59:59"}
+        }
+
+    def query_es_security_events(self, hosts, timeframe):
+        return []
+
+
+# 使用示例
+if __name__ == "__main__":
+    reconstructor = AttackChainReconstructor("http://es:9200")
+    report = reconstructor.reconstruct_from_incident("INC-2026-0612-001")
+    print(json.dumps(report, indent=2, ensure_ascii=False))
 ```
 
-## 4. 如何在护网中落地 ATT&CK
+---
 
-### 4.1 第一步：把"检测规则"对齐到 ATT&CK
+## 3. 检测覆盖率分析
 
-每个检测规则（SIEM/WAF/EDR/IDS）都应该标上 ATT&CK 技术编号。示例：
+### 3.1 ATT&CK Navigator 自动化
 
-```yaml
-- rule_id: SIEM-R0042
-  rule_name: "mimikatz-lsass-dump"
-  mitre: T1003.001
-  data_source:
-    - Windows Security Event (4663 / 4688)
-    - EDR 进程访问
-  detection: >
-    process_name IN ("mimikatz*", "sekurlsa*")
-    OR (target_process = "lsass.exe" AND access_mask = 0x1010)
-  response: L3 重要，自动升级
+```python
+#!/usr/bin/env python3
+"""
+ATT&CK Navigator 热力图生成器
+根据现有检测规则，生成覆盖度热力图
+"""
 
-- rule_id: SIEM-R0047
-  rule_name: "psexec-lateral-movement"
-  mitre: T1569.002
-  detection: >
-    4697 事件（服务安装）+ 随后出现 cmd.exe / powershell.exe
-    从非运维源 IP 在 10 分钟内登录 5+ 台不同主机
+import json
+import yaml
+import requests
+
+class ATTACKCoverageHeatmap:
+    def __init__(self, mitre_data_url):
+        """加载MITRE ATT&CK数据"""
+        data = requests.get(mitre_data_url).json()
+        self.techniques = {}
+        for obj in data['objects']:
+            if obj['type'] == 'attack-pattern':
+                tech_id = obj['external_references'][0]['external_id']
+                self.techniques[tech_id] = {
+                    "name": obj['name'],
+                    "tactics": [p['phase_name'] for p in obj.get('kill_chain_phases', [])],
+                    "platforms": obj.get('x_mitre_platforms', []),
+                }
+
+    def load_sigma_rules(self, rules_dir):
+        """加载现有Sigma规则，提取覆盖的Technique"""
+        import glob
+        covered = {}
+
+        for rule_file in glob.glob(f"{rules_dir}/**/*.yml", recursive=True):
+            try:
+                with open(rule_file, 'r') as f:
+                    rule = yaml.safe_load(f)
+
+                tags = rule.get('tags', [])
+                for tag in tags:
+                    if tag.startswith('attack.t'):
+                        tech_id = tag.replace('attack.', '').upper()
+                        if tech_id not in covered:
+                            covered[tech_id] = {"rules": [], "rule_count": 0}
+                        covered[tech_id]['rules'].append({
+                            "title": rule.get('title', ''),
+                            "level": rule.get('level', ''),
+                            "status": rule.get('status', '')
+                        })
+                        covered[tech_id]['rule_count'] += 1
+            except:
+                pass
+
+        return covered
+
+    def generate_navigator_json(self, covered, output_file="attack_coverage.json"):
+        """生成ATT&CK Navigator JSON"""
+        navigator = {
+            "name": "检测覆盖率热力图",
+            "versions": {
+                "attack": "14",
+                "navigator": "4.9.0",
+                "layer": "4.5"
+            },
+            "domain": "enterprise-attack",
+            "description": "蓝队检测覆盖度分析",
+            "filters": {"platforms": ["Windows", "Linux", "macOS"]},
+            "sorting": 0,
+            "layout": {
+                "layout": "side",
+                "aggregateFunction": "average",
+                "showID": True,
+                "showName": True
+            },
+            "hideDisabled": False,
+            "techniques": [],
+            "gradient": {
+                "colors": [
+                    "#ff6666",  # 红色 - 无覆盖
+                    "#ffe766",  # 黄色 - 部分覆盖（1条规则）
+                    "#8ec843",  # 绿色 - 良好覆盖（2+条规则）
+                ],
+                "minValue": 0,
+                "maxValue": 2
+            },
+            "legendItems": [
+                {"label": "无检测", "color": "#ff6666"},
+                {"label": "部分检测(1条规则)", "color": "#ffe766"},
+                {"label": "良好检测(2+条规则)", "color": "#8ec843"},
+            ]
+        }
+
+        for tech_id, tech_info in self.techniques.items():
+            coverage = covered.get(tech_id, {})
+            rule_count = coverage.get('rule_count', 0)
+
+            entry = {
+                "techniqueID": tech_id,
+                "tactic": tech_info['tactics'][0] if tech_info['tactics'] else '',
+                "score": min(rule_count, 2),  # 0-2分
+                "color": "",
+                "comment": "",
+                "enabled": True,
+                "metadata": [],
+                "links": [],
+                "showSubtechniques": True
+            }
+
+            if rule_count == 0:
+                entry['comment'] = f"⚠️ 无检测覆盖 - {tech_info['name']}"
+            elif rule_count == 1:
+                entry['comment'] = f"检测覆盖: {coverage['rules'][0]['title']}"
+            else:
+                entry['comment'] = f"检测覆盖: {rule_count}条规则"
+
+            navigator['techniques'].append(entry)
+
+        with open(output_file, 'w') as f:
+            json.dump(navigator, f, indent=2)
+
+        return navigator
+
+    def generate_gap_report(self, covered):
+        """生成检测盲区报告"""
+        gaps = []
+        for tech_id, tech_info in self.techniques.items():
+            if tech_id not in covered:
+                gaps.append({
+                    "technique_id": tech_id,
+                    "name": tech_info['name'],
+                    "tactics": tech_info['tactics'],
+                    "platforms": tech_info['platforms'],
+                    "priority": self.calculate_gap_priority(tech_id, tech_info['tactics'])
+                })
+
+        # 按优先级排序
+        gaps.sort(key=lambda x: x['priority'], reverse=True)
+        return gaps
+
+    def calculate_gap_priority(self, tech_id, tactics):
+        """计算检测盲区优先级"""
+        score = 0
+
+        # 初始访问/执行/凭据访问 = 最高优先级
+        high_priority_tactics = [
+            'initial-access', 'execution', 'credential-access',
+            'defense-evasion', 'lateral-movement'
+        ]
+        for tactic in tactics:
+            if tactic in high_priority_tactics:
+                score += 10
+
+        # Windows平台 + 5分（最常见目标）
+        if 'Windows' in self.techniques.get(tech_id, {}).get('platforms', []):
+            score += 5
+
+        return score
+
+
+if __name__ == "__main__":
+    heatmap = ATTACKCoverageHeatmap(
+        "https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json"
+    )
+
+    covered = heatmap.load_sigma_rules("/opt/sigma/rules")
+    heatmap.generate_navigator_json(covered)
+
+    gaps = heatmap.generate_gap_report(covered)
+    print(f"检测盲区: {len(gaps)} 个Technique")
+    for gap in gaps[:10]:
+        print(f"  [{''.join(gap['tactics'])}] {gap['technique_id']}: {gap['name']} (优先级:{gap['priority']})")
 ```
 
-### 4.2 第二步：绘制"自己的 ATT&CK 热力图"
+---
 
-```text
-护网结束后可输出"防御热力图"：
+## 4. 护网检测盲区 Top 10
 
-  战术 / 技术           命中次数    已检测    未检测    改进计划
-  Initial Access         23           18        5        加强 OWA + VPN MFA
-  Execution              17           14        3        补全 PowerShell 日志
-  Credential Access      9            7         2        优化 mimikatz 检测
-  Lateral Movement       31           22        9        引入 NDR + 数据库审计
-  ...                   ...          ...       ...       ...
-```
+根据实战经验，护网中最容易漏检的 10 个技术：
 
-### 4.3 第三步：用 ATT&CK 设计红队演练剧本
+| 排名 | Technique | 为什么容易漏检 | 建议数据源 |
+|------|-----------|--------------|-----------|
+| 1 | T1562.002 禁用Windows日志 | 攻击者先关日志，后续再无告警 | Wazuh Agent连续在线检查 |
+| 2 | T1572 DNS隧道 | DNS流量通常不被深度检测 | Zeek dns.log + 熵值分析 |
+| 3 | T1090.001 内网代理 | 代理流量混淆在正常HTTP中 | 非标准端口HTTP + JA3指纹 |
+| 4 | T1070.004 文件删除 | 删除后无证据 | Sysmon FileDelete事件 |
+| 5 | T1556.003 Kerberos Ticket | 合法票据难以区分 | 非工作时间TGT使用 |
+| 6 | T1021.001 RDP横向 | RDP加密流量难以检测 | Windows Event 4776 + 源IP分析 |
+| 7 | T1567.002 云存储外泄 | 使用合法云服务(阿里云OSS等) | 代理日志 + 流量大小异常 |
+| 8 | T1613 云资源发现 | 云API调用不在传统SIEM范围 | CloudTrail/操作审计日志 |
+| 9 | T1020 自动化外泄 | 分段传输，单次流量小 | NetFlow累计流量分析 |
+| 10| T1210 BlueKeep等远程漏洞 | 旧系统漏洞扫描不覆盖 | 全量漏洞扫描 + 资产发现 |
 
-```text
-【下次护网红队剧本（基于上次未检测项）】
-- 红队剧本一：T1071.001（C2-HTTPS）+ T1571（非标准端口） → 测试我方流量检测
-- 红队剧本二：T1070.001（清除日志）+ T1027（混淆文件） → 测试取证与反分析能力
-- 红队剧本三：T1567.002（云存储外带） → 测试数据防泄漏能力
-```
+---
 
-## 5. 攻击画像的长期维护："攻击者档案"
+## 5. 排错与优化
 
-在每次护网 / 真实事件后，建议建立"攻击者档案"：
-
-```text
-【攻击者档案示例】
-档案编号： ATK-2025-003
-首次观测： 2025-09-12（护网期间）
-最后观测： 2025-09-20
-情报来源： 内部 SOC + 威胁情报平台 + 友方行业共享
-
-TTPs：
-  - 初始访问： T1110.003（OWA 暴力破解）、T1566（钓鱼邮件）
-  - 执行：     T1059.001（PowerShell）、T1053.005（计划任务）
-  - 凭证：     T1003.001（mimikatz）
-  - 横向：     T1021.002（SMB）、T1569.002（PsExec）
-  - C2：       T1071.001（HTTPS）+ T1001.003（DNS 隧道备用）
-  - 外带：     T1567.002（Rclone 云对象存储）
-
-工具指纹：
-  - mimikatz 变种哈希： xxxx
-  - 自写木马哈希：       yyyy
-  - C2 域名/IP：  198.51.100.23 / cdn-akamai-backup[.]top
-
-语言/时区： 样本中含中文注释；C2 心跳主要发生在工作日 09-21 时（UTC+8）
-
-行业偏好： 政府 / 大型央企 / 医疗
-
-防御建议：
-  - 在 SIEM 中新增"攻击者档案匹配"规则：同源 TTPs 一旦命中即 L3
-  - 把上述 C2 域名 / IP / 哈希同步到防火墙 + EDR + 邮件网关
-  - 下次护网前，针对档案中的 TTPs 做专项测试
-```
-
-## 6. 实践中的常见问题
-
-| 问题 | 建议 |
+| 问题 | 解决 |
 |------|------|
-| "映射太粗，分不清技术" | 优先标到"技术级别（Txxxx）"，子技术（Txxxx.00y）能标就标，标不到不强求 |
-| "事件太多，映射时间不够" | L1/L2 事件走规则自动映射；L3/L4 人工复核 |
-| "检测和 ATT&CK 总是对不上" | 从检测规则出发做"反向映射"：每条规则对应哪些 ATT&CK 技术 |
-| "做完一次就丢了" | 把 ATT&CK 热力图变成**月度 / 季度报表**，长期追踪防御能力变化 |
-| "只 ATT&CK，不改防御" | 映射只是手段，**用映射结果推动规则/工具/流程改进**才是目标 |
+| Navigator热力图不更新 | 重新运行生成脚本，检查MITRE数据源版本 |
+| 规则TTP标记不全 | Sigma规则中tags必须包含 `attack.tXXXX`格式 |
+| 检测覆盖度过低（<30%） | 优先补高优先级盲区 |
+| 护网期间TTP快速变化 | 每次交班更新Navigator热力图 |
 
-## 7. 总结：攻击画像的"飞轮效应"
+---
 
-当把一次次事件持续地：
+## ✅ ATT&CK Mapping Checklist
 
-```text
- 原始日志 → 事件研判 → ATT&CK 映射 → 攻击者画像 → 更新检测规则 → 更多事件被捕获
-    ▲                                                                         │
-    └──────────────────────────────────────────────────────────────────────────┘
-```
+- [ ] 护网前 ATT&CK 覆盖率分析（目标 > 50%）
+- [ ] 高优先级盲区补充检测规则
+- [ ] 攻击链还原模板准备（含PS脚本）
+- [ ] Navigator 热力图部署
+- [ ] 护网中每日更新 TTP 覆盖
+- [ ] 每起 P1 事件攻击链 Mapping
+- [ ] 护网后 TTP 复盘 + 规则补充
 
-就形成了一个**自增强的防御飞轮**：**越分析 → 越懂对手 → 越能抓新攻击 → 越能防住**。在护网这个"集中考场"上，这样的飞轮能让团队从"被攻击牵着走"进化到"预判攻击者下一步"。
+> 📚 延伸阅读：SOC/004-威胁狩猎 | SOC/008-SIEM规则编写 | HW/001-蓝队防护方案

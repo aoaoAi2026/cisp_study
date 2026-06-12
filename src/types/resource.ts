@@ -36,7 +36,7 @@ export const categoryNames: Record<string, string> = {
   'data-security': '数据安全',
   'incident': '应急响应',
   'intel': '威胁情报',
-  'soc': '安全运维',
+  'soc': '安全运营',
   'tools': '工具指南',
   'knowledge': '基础知识',
   'ai-security': 'AI安全',
@@ -46,5 +46,5 @@ export const categoryNames: Record<string, string> = {
   'v2x': '车联网安全',
   'zero-trust': '零信任',
   'crypto-compliance': '密码合规',
-  'hw': '安全运维',
+  'hw': '护网行动',
 };

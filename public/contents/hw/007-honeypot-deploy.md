@@ -1,88 +1,257 @@
-# 蜜罐部署实战：HFish / T-pot / 微步蜜罐选型与部署
+# 蜜罐部署实战：HFish / T-Pot 选型与部署
 
-蜜罐（Honeypot）是一种**故意构造的"伪目标"**，用于吸引攻击者，捕获其攻击行为，为蓝队提供早期预警与分析素材。在护网行动中，蜜罐是消耗攻击者精力、**换取真实资产安全**的重要手段。本文介绍三种主流蜜罐方案：开源的 HFish、T-pot，以及商用的微步在线蜜罐，并给出实战部署建议。
+---
 
-## 1. 三种主流蜜罐方案对比
+## 📋 目录
 
-| 维度 | HFish | T-pot | 微步在线威胁感知系统（商用蜜罐） |
-|------|-------|-------|----------------------------------|
-| 类型 | 国产开源 | 国际开源（基于 Elastic + Suricata 等） | 商用 SaaS / 私有部署 |
-| 协议覆盖 | SSH / Web / MySQL / Redis / SMB / Telnet / HTTP 仿冒等 | SSH / Telnet / Elastic / ICS 协议仿真 + 流量分析 | 含高仿真 Web 应用、OA 仿冒、邮箱、数据库、工控蜜罐 |
-| 部署方式 | Docker / 原生二进制 / 支持节点集群 | Docker Compose（建议至少 8C16G） | 一体机 / Agent / 私有云镜像 |
-| 告警展示 | 自有 Web 控制台，支持邮件 / 企业微信 / 钉钉推送 | Kibana Dashboard + Elastic 整套栈 | 云平台统一大屏，支持威胁情报联动 |
-| 适合场景 | 入门蜜罐、轻量化部署、中小企业 | 威胁研究、CTF、需要大量协议仿真 | 企业级实战、护网告警分级、溯源情报 |
-| 护网实战性 | ★★★★ | ★★★ | ★★★★★ |
-| 安装难度 | 简单 | 中等（组件多） | 厂商协助 |
+1. [蜜罐类型选择](#一蜜罐类型)
+2. [T-Pot 多蜜罐平台](#二t-pot)
+3. [HFish 企业级蜜罐](#三hfish)
+4. [蜜罐策略设计](#四策略设计)
+5. [蜜罐告警联动 SIEM](#五告警联动)
+6. [HoneyToken 欺骗防御](#六honeytoken)
+7. [完整案例：护网发现内网横向](#七完整案例)
 
-> **护网建议**：如果团队第一次上蜜罐、人力有限，建议先上 **HFish** 快速落地；如果需要高仿真 Web 仿冒（仿 OA / 仿官网登录）并需要威胁情报联动，建议采购 **商用蜜罐**；研究场景再考虑 **T-pot**。
+---
 
-## 2. 蜜罐部署位置与流量牵引
+## 一、蜜罐类型
 
-蜜罐**不是放上去就完事**，关键在于如何把攻击者的注意力**牵引到蜜罐上**。常见部署位置如下：
+```
+低交互蜜罐:
+  模拟服务端口响应 (SSH/FTP/HTTP 等)
+  优势: 部署简单、无风险
+  劣势: 容易被识破
+  代表: Cowrie(SSH)、Dionaea(恶意软件捕获)
 
-### 2.1 部署位置
-- **DMZ 区**：部署在对外服务区旁，与真实业务 IP 放在同一 C 段，通过"伪资产"吸引扫描器。
-- **内网区域**：在内网部署低交互/高交互蜜罐，用于发现内网横向渗透、已攻破主机的异常行为。
-- **关键服务旁路**：如在 OA / VPN / 邮箱入口旁部署仿冒 Web 登录，"克隆"真实登录界面，捕获账号爆破。
+中交互蜜罐:
+  模拟完整服务 + 部分操作系统
+  优势: 可捕获更多攻击行为
+  代表: Cowrie(增强版)
 
-### 2.2 流量牵引方法
+高交互蜜罐:
+  真实操作系统 + 真实服务
+  优势: 完全不会被识破
+  劣势: 被攻破后可能成为跳板 → 需严格隔离
+```
+
+---
+
+## 二、T-Pot
+
 ```bash
-# 示例：使用 iptables 在防火墙上把"无业务端口"重定向到蜜罐节点（10.0.0.88）
-# 注意：真实业务端口一定不能重定向，否则影响业务！
-iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 135,139,445,3306,6379,7001:7010 \
-         -j DNAT --to-destination 10.0.0.88
+# T-Pot = 20+蜜罐一体化 + ELK可视化
+# GitHub: https://github.com/telekom-security/tpotce
 
-# 或使用路由器的策略路由 / 端口镜像把"非授权访问"引入蜜罐
-# 关键原则：绝不能影响真实生产流量
+# 快速部署
+git clone https://github.com/telekom-security/tpotce
+cd tpotce/iso/installer/
+./install.sh --type=user
+
+# 访问: https://<IP>:64297 (管理面板)
+# 默认: 首次登录设置密码
+
+# 内置蜜罐:
+# Cowrie:       SSH/Telnet蜜罐 → 捕获爆破、命令执行
+# Dionaea:      捕获恶意软件样本 → 自动提交到VirusTotal
+# Elasticpot:   Elasticsearch蜜罐
+# Conpot:       ICS/SCADA蜜罐(工业协议)
+# Honeytrap:    智能蜜罐 → 自动识别协议
+# Mailoney:     SMTP蜜罐
+# RDPY:         RDP蜜罐
+
+# 查看攻击面板:
+# https://<IP>:64297 → Kibana → T-Pot Dashboard
+# → 实时攻击地图 → 攻击者IP/国家/攻击类型
 ```
 
-### 2.3 隐蔽与隔离
-- 蜜罐主机名、SSH Banner 不能暴露 "honeypot" 字样，要**伪装成真实业务主机**。
-- 蜜罐所在网段需严格限制：蜜罐被攻陷后**不可作为跳板**回连真实内网。
-- 使用独立 VLAN + 出向 ACL（仅允许上报日志到 SIEM），并开启流量全量 PCAP 留存。
+---
 
-## 3. 告警分级与护网值守联动
+## 三、HFish
 
-蜜罐日志量巨大，如果全部当作"真攻击"直接上报，值守团队会被**告警疲劳**淹没。正确的做法是建立**告警分级**：
+```bash
+# HFish = 国产企业级蜜罐 (免费社区版)
+# https://hfish.net
 
-| 告警级别 | 典型行为 | 值守响应动作 |
-|----------|----------|--------------|
-| L1 提示 | 单一端口扫描、无尝试登录 | 记录 + 不处置 |
-| L2 关注 | 多次 SSH 口令尝试、Web 接口尝试弱口令 | 记录 + 加黑（若来自公网） |
-| L3 重要 | 成功登录蜜罐（高交互）、上传 Webshell、横向探测 | 升级研判 + 溯源 IP + 封禁源头 + 上报 |
-| L4 紧急 | 蜜罐发起对内网扫描 / 有蠕虫行为 | 立即隔离蜜罐节点 + 保留取证 + 全量分析样本 |
+# Docker 部署
+docker run -d --name hfish \
+  -p 4433:4433 -p 4434:4434 \
+  -v /data/hfish:/usr/share/hfish \
+  threatbook/hfish-server:latest
 
-```yaml
-# 护网期间常用的 HFish 告警规则（示例配置思路）
-rules:
-  - name: 蜜罐登录成功
-    condition: event.type == 'login_success'
-    level: L3
-    action:
-      - notify: wechat, mail, siem
-      - add_ioc: source_ip
+# 管理端: https://<IP>:4433/web
+# 首次: admin / admin (强制改密码)
 
-  - name: 高频扫描同一C段蜜罐
-    condition: count(source_ip, 5m) > 50
-    level: L3
-    action:
-      - notify: oncall
-      - auto_block: firewall_edl
-
-  - name: 上传可疑文件
-    condition: file.uploaded == true AND file.hash IN malicious_hash
-    level: L4
-    action:
-      - isolate_honeypot
-      - forensics_save_pcap
+# 支持的蜜罐服务:
+# SSH/SFTP/RDP/MySQL/Redis/HTTP/FTP/VNC/Elasticsearch
+# 邮件蜜罐/OA门户蜜罐/VPN蜜罐
+# 自定义Web蜜罐(克隆企业登录页)
 ```
 
-## 4. 实战建议与踩坑提醒
+### HFish 部署实战
 
-1. **蜜罐是 "消耗品"，不是防线**：不要指望蜜罐拦截攻击，它的价值在于**预警 + 拖慢攻击者 + 抓指纹**。
-2. **先放"无业务端口"蜜罐**：3306 / 6379 / 445 等真实业务不用的端口，误报率低、见效最快。
-3. **每周更新仿冒页面**：攻击者会总结蜜罐指纹，因此 OA / VPN 仿冒页面要**定期微调**，避免被识别。
-4. **与 SIEM / SOAR 打通**：蜜罐日志进入 SIEM 后，结合 WAF、IDS、EDR 多源告警做**关联分析**，可极大降低漏判。
-5. **法律合规**：蜜罐只应部署在**自己的资产中**，不能对攻击者主动回连扫描，更不能把蜜罐放在他人网络里，避免触犯《网络安全法》。
+```bash
+# 1. 部署管理端
+docker-compose up -d
 
-在护网实战中，一个**规划良好的蜜罐矩阵**通常能捕捉到 **60% 以上** 的外围扫描与尝试攻击，为真实资产争取到关键的响应时间。
+# 2. 添加蜜罐节点
+# Web UI → 节点管理 → 添加节点
+# 选择要部署的服务
+✓ SSH蜜罐 (端口 22) → 检测SSH爆破
+✓ MySQL蜜罐 (端口 3306) → 检测数据库攻击
+✓ Redis蜜罐 (端口 6379) → 检测未授权访问
+✓ HTTP蜜罐 (端口 8080) → 检测Web扫描
+✓ RDP蜜罐 (端口 3389) → 检测RDP爆破
+
+# 3. 启动节点
+# 节点上安装agent → 自动连接管理端
+
+# 4. 查看效果
+# 攻击列表 → 实时查看攻击者IP/工具/行为
+# 攻击地图 → 可视化
+```
+
+---
+
+## 四、策略设计
+
+```
+部署位置策略:
+
+外网 (DMZ):
+  部署 1-2 个 SSH/HTTP 蜜罐
+  目的: 捕获互联网扫描器 → 早期预警
+
+内网 (每个关键子网):
+  每个/24子网部署 1 个蜜罐
+  伪装: 文件服务器/数据库/打印机
+  目的: 检测横向移动 ← ★护网核心!
+
+云上 (每个VPC):
+  伪装: K8s API/数据库/S3端点
+
+隔离策略:
+  ✓ 蜜罐独立 VLAN
+  ✓ 蜜罐出站流量严格限制(防止成为跳板!)
+  ✓ 防火墙: 蜜罐不能访问真实业务网络
+  ✓ 蜜罐告警 → 即时通知SOC
+
+诱饵设计:
+  ✦ 名称伪装: 与真实服务器命名相似
+    真实: DB-PROD-01 → 蜜罐: DB-PROD-03
+  ✦ 假凭证: 内置弱口令
+    admin/admin123 → 诱导攻击者尝试
+  ✦ 假文件: "员工薪资.xlsx"、"网络拓扑.vsd"
+    → 诱导攻击者下载
+  ✦ 假AK/SK (AWS/阿里云)
+    → 追踪攻击者的云资源探测
+```
+
+---
+
+## 五、告警联动
+
+```python
+# HFish Webhook → SIEM / 企业微信
+
+# HFish 配置 → 告警通知 → Webhook URL
+WEBHOOK_URL = "https://hooks/siem"
+
+import requests, json
+
+def send_to_siem(alert):
+    """将蜜罐告警发送到 SIEM"""
+    event = {
+        "@timestamp": alert['time'],
+        "event.category": "honeypot",
+        "event.type": alert['type'],         # ssh_login/redis_cmd/http_scan
+        "source.ip": alert['attacker_ip'],
+        "source.port": alert['attacker_port'],
+        "destination.ip": alert['honeypot_ip'],
+        "destination.port": alert['honeypot_port'],
+        "honeypot.service": alert['service'],
+        "honeypot.payload": alert['payload'][:500],  # 攻击payload
+    }
+    requests.post(WEBHOOK_URL, json=event)
+
+# 企业微信通知
+def send_wechat(msg):
+    requests.post("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=XXX",
+        json={"msgtype":"text","text":{"content":msg}})
+
+# 高价值告警 → 即时通知
+if alert['type'] == 'redis_cmd' and 'config set dir' in alert['payload']:
+    send_wechat(f"⚠️ Redis攻击! IP:{alert['attacker_ip']}")
+```
+
+---
+
+## 六、HoneyToken
+
+```
+HoneyToken (蜜标) = 在真实环境中埋入"诱饵"
+
+类型:
+  ✦ AD假用户 → 域内创建假用户账户
+    → 一旦登录 → 高置信度攻击告警
+  ✦ 数据库假表 → 创建 admin_users 假表
+    → 一旦访问 → SQL注入/data dump被触发
+  ✦ 文件假凭证 → 文件服务器放"密码.txt"
+    → 一旦打开 → 内网文件扫描被触发
+  ✦ 代码假AK/SK → 代码仓库放假密钥
+    → 一旦使用 → CloudTrail告警
+
+实施:
+  AD假用户:
+    New-ADUser -Name "svc_backup_test" -SamAccountName "svc_backup_test"
+    → 账号监控: 一旦登录 → SIEM告警
+
+  文件:
+    echo "password: fake_admin_2026" > /shared/IT/密码.txt
+    → 使用 auditd 监控文件访问
+```
+
+---
+
+## 七、完整案例
+
+```
+某金融企业护网 — 内网蜜罐发现横向移动
+
+Day 5: 蜜罐告警
+  HFish 告警: 内网主机 10.0.5.88 正在扫描蜜罐 22端口
+  蜜罐IP: 10.0.5.100 (伪装为文件服务器)
+
+分析:
+  ① 攻击源: 10.0.5.88 (市场部工作站)
+  ② 行为: SSH 爆破 + 登录尝试
+     尝试账号: root/admin/oracle → 蜜罐接受并记录
+  ③ 判定: 攻击者已入侵 10.0.5.88 → 正在内网横向!
+
+响应:
+  ✓ 立即隔离 10.0.5.88
+  ✓ 排查: 发现该主机通过钓鱼邮件被控
+  ✓ C2: 45.xxx.xxx.xxx (已封禁)
+  ✓ 攻击者尚未成功横向到其他主机 (蜜罐是最先被扫描的!)
+
+成果:
+  ✦ 蜜罐成功发现横向移动 (其他安全产品未检测到扫描行为)
+  ✦ 攻击者被限制在单台主机
+  ✦ 护网加分: 主动发现 + 快速响应
+
+教训:
+  ✓ 蜜罐必须部署在每个关键子网
+  ✓ 蜜罐告警 + SIEM 联动至关重要
+```
+
+---
+
+## ✅ 蜜罐部署 Checklist
+
+- [ ] 外网蜜罐部署(T-Pot/HFish)
+- [ ] 内网每子网 ≥1 蜜罐
+- [ ] 蜜罐 VLAN 隔离
+- [ ] 蜜罐出站限制(防跳板)
+- [ ] 蜜罐 → SIEM 告警联动
+- [ ] 企业微信/钉钉即时通知
+- [ ] HoneyToken 部署
+- [ ] 蜜罐定期维护(更新蜜罐软件)

@@ -1,136 +1,163 @@
 # SOC 告警分级、降噪与处理流程实战
 
----
+> 📅 2026-06-12 | 🎯 进阶 | ⏱ 18 min | 分类：安全运营/SOC
 
-## 一、告警四级分类
+## 📋 提纲
 
-```
-P1 (Critical — 正在发生的攻击)：
-  触发条件：
-    ✦ 确认的Webshell/后门/入侵
-    ✦ 核心系统沦陷(域控/数据库被控制)
-    ✦ 数据正被外泄(大流量异常出站)
-    ✦ 勒索软件正在加密文件
-  响应要求：15分钟内响应，通知IC
-
-P2 (High — 攻击指标确认)：
-  触发条件：
-    ✦ EDR确认的恶意进程运行
-    ✦ C2通信检测（Beacon）
-    ✦ 暴力破解成功
-    ✦ 可疑横向移动
-  响应要求：1小时内响应
-
-P3 (Medium — 可疑行为)：
-  触发条件：
-    ✦ 多次登录失败(n<阈值)
-    ✦ 异常时间登录
-    ✦ 非VPN远程访问
-    ✦ 单次端口扫描
-  响应要求：4小时内响应
-
-P4 (Low — 信息性）：
-  触发条件：
-    ✦ 已知白名单匹配
-    ✦ 测试环境告警
-    ✦ 过期漏洞(已不在支持范围内)
-  响应要求：24小时内关注/关闭
-```
+1. 告警分类体系
+2. P1-P4 四级分类标准
+3. 告警降噪策略
+4. Tier1-3流转规则
+5. 告警SLA设计
+6. 告警质量度量
 
 ---
 
-## 二、五层降噪策略
+## 1. 告警分类体系
 
 ```
-告警降噪 = 日10000条 → 可处理200条
-
-Layer 1: 白名单（直接消除）
-  ✦ 安全扫描器IP（Nessus/Rapid7定期扫描）
-  ✦ 运维自动化工具（Ansible/Jenkins）
-  ✦ 已知测试环境
-  → 这些源的告警 → 不生成（或自动关闭）
-
-Layer 2: 阈值调优
-  错误示例：1次SSH失败 = 告警 → 噪音
-  正确配置：
-    windows: 5次失败/120秒 → P3告警
-    linux:   10次失败/5分钟 → P3告警
-    VPN:     3次失败/60秒 → P3告警
-
-Layer 3: 资产上下文（动态调整）
-  核心资产(DC/DB/核心应用)：
-    低危行为 → 提升到P3
-  非重要资产(测试/开发)：
-    低危行为 → P4/关闭
-
-Layer 4: 告警合并（聚合）
-  同一源IP的100条扫描告警 → 1个事件
-  同一主机的多个检测 → 按最高级别合并
-  同一攻击链(多个阶段) → 1个案例
-
-Layer 5: 动态基线
-  月底运维窗口大量RDP → 正常，降级
-  平时凌晨3点RDP → 异常，升级
-  基于时间/日期/业务周期动态调整
+P1 (Critical)  - 已确认正在进行的成功攻击，需要立即响应
+P2 (High)      - 很可能正在发生攻击，需要紧急调查
+P3 (Medium)    - 可疑行为，需要例行调查
+P4 (Low)       - 信息性告警，日常关注
 ```
 
----
+### 1.1 P1 判定标准
 
-## 三、告警处理 SOP
+触发即P1：
+- EDR检测到恶意软件执行
+- 成功的数据外传（>100MB）
+- 域控上检测到异常操作
+- 特权账号在非工作时间登录
+- 攻击者获取SYSTEM/DA权限
+- Webshell成功上传
 
-```
-标准处理流程：
+### 1.2 告警判定自动化
 
-接收告警 → 初步分类(1分钟) → 
-  ├─ 误报？ → 标记FalsePositive → 规则优化 → 关闭
-  ├─ 重复？ → 合并到已有案例 → 关闭
-  └─ 真实告警？ → 
-      研判(5-15分钟) → 
-        ├─ 无需响应(P4) → 关闭+注明理由
-        └─ 需要响应(P1-P3) → 
-            创建案例 → 升级给Tier2 → 
-            Tier2深度分析 → 执行响应 → 
-            验证 → 关闭 + 复盘记录
+```python
+class AlertClassifier:
+    def classify(self, alert):
+        """自动判定告警等级"""
+        score = 0
 
-Tier 1职责（初级分析师）：
-  ✓ 告警初步筛选(分流)
-  ✓ 高置信度误报关闭
-  ✓ 标准处置（封禁IP/隔离主机/重置密码）
-  ✓ 可处理 → 关闭
-  ✓ 无法处理 → 升级Tier2
+        # 攻击成功标记
+        if alert.get('attack_success'):
+            score += 40
 
-Tier 2职责（高级分析师）：
-  ✓ 复杂攻击深度分析
-  ✓ 攻击链还原
-  ✓ 取证分析（内存/磁盘）
-  ✓ 规则编写与优化
+        # 涉及关键资产
+        if alert.get('asset', {}).get('is_critical'):
+            score += 30
+
+        # 威胁情报命中
+        if alert.get('threat_intel', {}).get('malicious'):
+            score += 20
+
+        # 高危告警类型
+        if alert['rule_id'] in ['mimikatz_detected', 'lsass_access', 'c2_beacon', 
+                                 'ransomware_activity', 'data_exfiltration']:
+            score += 30
+
+        # 横向移动
+        if alert.get('lateral_movement'):
+            score += 25
+
+        # 非工作时间
+        hour = alert.get('timestamp', {}).get('hour', 12)
+        if hour in [0, 1, 2, 3, 4, 5, 22, 23]:
+            score += 10
+
+        # 判定
+        if score >= 70:    return "P1"
+        elif score >= 40:  return "P2"
+        elif score >= 20:  return "P3"
+        else:              return "P4"
+
+    def get_sla(self, priority):
+        return {
+            "P1": {"response": "5 min", "containment": "15 min", "resolution": "4 h"},
+            "P2": {"response": "15 min", "containment": "1 h", "resolution": "24 h"},
+            "P3": {"response": "1 h", "containment": "8 h", "resolution": "72 h"},
+            "P4": {"response": "24 h", "containment": "N/A", "resolution": "7 d"},
+        }.get(priority, {})
 ```
 
 ---
 
-## 四、降噪指标
+## 2. Tier1-3 流转规则
 
 ```
-告警降噪KPI：
-  日原始告警量 → 目标日可处理告警量
-  降噪率 = (原始-可处理)/原始
-  
-  优秀：日处理告警 < 200 (降噪率 > 98%)
-  良好：日处理告警 200-500 (降噪率 > 95%)
-  及格：日处理告警 500-1000 (降噪率 > 90%)
-  不及格：>1000 (分析师告警疲劳)
-
-误报率控制：
-  Tier1关闭的告警 → 每月抽样10%
-  → 误关率 > 5% → 培训整改
-  → 误报率 > 40% → 规则优化
-
-常见降噪手段效果排序：
-  1. 白名单：消除30-50%
-  2. 告警合并：消除20-30%
-  3. 阈值调优：消除10-20%
-  4. 资产上下文：再减少10-15%
-  5. 动态基线：持续优化5-10%
-
-最终效果：日10000→日150-250告警
+告警产生 → 自动分类
+  ├─ P4 → 直接归档（不通知人）
+  ├─ P3 → Tier1队列（2h内处理）
+  ├─ P2 → Tier1队列 + 通知（30min内必处理）
+  └─ P1 → 跳过Tier1，直接通知Tier2+Tier3
 ```
+
+### 2.1 Tier1 操作手册
+
+```python
+#!/usr/bin/env python3
+"""Tier1 分析师告警处理SOP自动化"""
+
+class Tier1SOP:
+    def handle_alert(self, alert):
+        """Tier1 标准处理流程"""
+        enriched = self.enrich(alert)
+        verdict = self.triage(enriched)
+
+        actions = {
+            "false_positive": self.close_as_fp,
+            "known_good": self.close_as_known,
+            "suspicious": self.escalate_to_tier2,
+            "malicious": self.emergency_escalate,
+        }
+
+        return actions.get(verdict, self.escalate_to_tier2)(enriched)
+
+    def triage(self, enriched):
+        """Tier1 研判逻辑"""
+        # 检查：是不是已知攻击 → 工具自动判定为真阳
+        # 检查：是不是内部安全工具触发 → 白名单
+        # 检查：检查资产环境 → 测试环境可降级
+        # 检查：关联历史 → 同类告警是否常出现
+
+        if self.is_internal_tool(enriched):
+            return "known_good"
+
+        if self.is_definitely_malicious(enriched):
+            return "malicious"
+
+        if self.needs_investigation(enriched):
+            return "suspicious"
+
+        return "false_positive"
+
+    def emergency_escalate(self, enriched):
+        """紧急升级 - 直接通知Tier3"""
+        self.create_p1_incident(enriched)
+        self.send_urgent_notification(enriched)
+        self.auto_contain(enriched)  # 如果可以自动遏制
+```
+
+---
+
+## 3. 告警质量度量
+
+| 指标 | 计算 | 目标 |
+|------|------|------|
+| 误报率 | FP/总告警 | <30% |
+| 漏报率 | 确认攻击中未被检测的 | <5% |
+| 平均判定时间 | 告警产生→Tier1判定 | <5min |
+| 升级准确率 | 升级后确认真阳/总升级 | >80% |
+| 自动化率 | SOAR自动处置/总告警 | >60% |
+
+---
+
+## ✅ 告警管理 Checklist
+
+- [ ] P1-P4分级标准确认
+- [ ] Tier1 SOP文档
+- [ ] 告警降噪配置
+- [ ] 告警质量周报
+
+> 📚 延伸阅读：SOC/001-SOC建设 | SOC/002-SIEM分析 | SOC/009-EDR运营

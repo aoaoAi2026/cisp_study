@@ -1,172 +1,355 @@
-# SOC 安全运营中心建设指南（护网视角）
+# 护网中SOC建设与告警降噪实战
 
-**SOC（Security Operations Center）** 是把"人、流程、技术"捏合在一起、持续运营安全的组织单元。护网行动本质上是对 SOC 真实能力的一场**大考**：告警能不能发现？研判能不能及时？处置能不能到位？能不能溯源？本文以护网实战为导向，从 **人员（People）- 流程（Process）- 技术（Technology）** 三个维度给出 SOC 建设思路。
+> 📅 2026-06-12 | 🎯 进阶 | ⏱ 20 min | 分类：护网工程
 
-## 1. 人员与角色分工
+## 📋 提纲
 
-一个能支撑护网的 SOC，至少要包含以下角色。小团队允许"一人多岗"，但角色职责必须明确。
+1. 护网SOC与日常SOC的差异
+2. 告警降噪五层策略
+3. 护网专用检测规则集
+4. 告警优先级动态调整
+5. 护网值班Dashboard
+6. 护网日报/班次报模板
 
-| 角色 | 人数建议（按 7x24 三班倒） | 主要职责 |
-|------|----------------------------|----------|
-| SOC 经理 / 值守经理 | 1 人 | 总负责、排班、汇报、资源协调 |
-| 监测岗 L1 | 3 ~ 6 人（每班次 1~2 人） | 盯屏、看告警、L1 研判、开事件单 |
-| 研判岗 L2 | 2 ~ 4 人 | 事件深入分析、攻击链还原、攻击画像 |
-| 处置岗 L3 / 响应 | 2 ~ 3 人 | 防火墙/EDR/系统层面执行处置、回滚 |
-| 溯源 / 反制岗（可选） | 1 ~ 2 人 | 攻击源分析、情报聚合、上报监管 |
-| 平台运维 / 数据工程 | 1 ~ 2 人 | SIEM / 日志 / 采集链路健康、规则维护 |
-| 业务联络人 | 按系统数量 | 业务系统接口人、协助业务影响评估 |
+---
 
-### 1.1 能力模型
-- **L1** 能读懂常见告警（暴力破解、SQL 注入尝试、端口扫描）、能开标准化事件单。
-- **L2** 能读懂 Windows 安全日志、Linux /var/log、Web 访问日志，能做简单的攻击链还原。
-- **L3** 能做内存取证、样本分析、ATT&CK 映射、高级事件复盘。
+## 1. 护网SOC vs 日常SOC
 
-## 2. 技术平台选型
+| 维度 | 日常 | 护网 |
+|------|------|------|
+| 日均告警量 | 200-500 | 2000-5000 |
+| 误报率目标 | <30% | <10% |
+| 告警SLA | 30min | 5-15min |
+| EDR模式 | 检测 | 阻断 |
+| 规则集 | 日常200+ | 护网增强400+ |
+| 值班人数 | 2-4人 | 6-12人 |
+| 日报频次 | 周报/月报 | 小时报/班次报 |
 
-SOC 的"武器库"至少应覆盖：
+---
 
-| 能力域 | 说明 | 常见产品（举例，非广告） |
-|--------|------|--------------------------|
-| **日志采集 / 集中存储** | 把各系统日志标准化汇总 | ELK、Splunk、自研 Flume/Kafka + ClickHouse |
-| **SIEM / UEBA** | 关联分析、告警、可视化 | 奇安信、安恒、Splunk Enterprise Security |
-| **EDR / HIPS** | 主机侧行为监测、隔离 | 奇安信天擎、火绒企业版、CrowdStrike、SentinelOne |
-| **NDR / 流量分析** | 全流量、威胁流量检测 | 安恒、深信服、Suricata + Zeek + Brim（开源） |
-| **漏洞 / 资产平台** | 资产台账、漏洞生命周期管理 | 自建 CMDB + 漏洞平台 / 商业扫描器 |
-| **SOAR / 工单** | 自动化剧本、工单流转、SLA 计时 | 商业 SOAR、或自建基于飞书/钉钉/企业微信机器人 |
-| **威胁情报** | IP / 域名 / Hash 情报 | 微步、奇安信、360、VT |
+## 2. 告警降噪五层策略
 
-### 2.1 日志接入优先级
+### 2.1 降噪架构
 
-护网前必须接入的日志（按优先级）：
-
-```text
-P0（必须）：防火墙、出口 NAT、WAF、VPN 网关、OA 登录、邮箱网关、AD 域控、核心服务器
-P1（重要）：所有 Web 服务器 access/error 日志、数据库审计、堡垒机、EDR
-P2（建议）：终端登录、DNS 解析、API 网关、应用审计、蜜罐
+```
+原始告警(5000条/天)
+    ↓
+第1层：白名单过滤 → 去掉已知安全测试/运维操作(剩余3500)
+    ↓
+第2层：资产上下文 → 结合资产价值/角色过滤(剩余2000)
+    ↓
+第3层：告警合并 → 同IP/同类型5分钟窗口合并(剩余800)
+    ↓
+第4层：动态基线 → 与正常行为基线比较(剩余300)
+    ↓  
+第5层：威胁情报富化 → 标注威胁等级(剩余100条可处理告警)
 ```
 
-### 2.2 关键数据规范化（示例字段）
+### 2.2 实现代码
 
-```json
-{
-  "ts": "2025-09-18T09:12:33+08:00",
-  "src_ip": "203.0.113.47",
-  "dst_ip": "10.1.2.33",
-  "dst_port": 443,
-  "hostname": "web-prod-03",
-  "user": "-",
-  "action": "block",
-  "rule_id": "WAF-1023-SQLI",
-  "http_method": "POST",
-  "http_uri": "/api/v1/login",
-  "http_ua": "curl/7.81",
-  "http_status": 403,
-  "ja3": "e7b8...",
-  "tag": ["sqli", "blocked"]
+```python
+#!/usr/bin/env python3
+"""告警降噪引擎"""
+
+from dataclasses import dataclass, field
+from typing import List, Dict
+from datetime import datetime, timedelta
+from collections import defaultdict
+import json
+
+@dataclass
+class Alert:
+    id: str
+    timestamp: datetime
+    source_ip: str
+    dest_ip: str
+    rule_id: str
+    severity: str  # critical/high/medium/low
+    description: str
+    asset_info: Dict = field(default_factory=dict)
+    threat_intel: Dict = field(default_factory=dict)
+
+class AlertNoiseReducer:
+    def __init__(self, config):
+        self.config = config
+        self.whitelist = self.load_whitelist()
+        self.asset_db = self.load_asset_db()
+
+    def reduce(self, alerts: List[Alert]) -> List[Alert]:
+        """五层降噪流水线"""
+        print(f"原始告警: {len(alerts)}")
+
+        # 第1层：白名单过滤
+        after_l1 = self.layer1_whitelist(alerts)
+        print(f"L1白名单后: {len(after_l1)}")
+
+        # 第2层：资产上下文过滤
+        after_l2 = self.layer2_asset_context(after_l1)
+        print(f"L2资产上下文后: {len(after_l2)}")
+
+        # 第3层：告警合并（去重）
+        after_l3 = self.layer3_merge(after_l2)
+        print(f"L3合并后: {len(after_l3)}")
+
+        # 第4层：动态基线
+        after_l4 = self.layer4_baseline(after_l3)
+        print(f"L4基线后: {len(after_l4)}")
+
+        # 第5层：威胁情报标注
+        after_l5 = self.layer5_threat_intel(after_l4)
+        print(f"L5情报富化后: {len(after_l5)}")
+        print(f"降噪率: {(1-len(after_l5)/max(len(alerts),1))*100:.1f}%")
+
+        return after_l5
+
+    def layer1_whitelist(self, alerts):
+        """第1层：白名单过滤"""
+        filtered = []
+        for alert in alerts:
+            key = f"{alert.source_ip}_{alert.rule_id}"
+            if key in self.whitelist:
+                continue  # 白名单中的告警直接丢弃
+
+            # 跳过已知的扫描器/漏洞扫描器IP
+            if self.is_known_scanner(alert.source_ip):
+                continue
+
+            # 跳过内部安全工具的告警
+            if self.is_internal_tool(alert.source_ip):
+                continue
+
+            filtered.append(alert)
+        return filtered
+
+    def layer2_asset_context(self, alerts):
+        """第2层：资产上下文过滤"""
+        filtered = []
+        for alert in alerts:
+            asset = self.asset_db.get(alert.dest_ip, {})
+
+            # 开发/测试环境 → 降低告警优先级或过滤
+            if asset.get('env') == 'dev':
+                if alert.severity in ['low', 'medium']:
+                    continue  # 开发环境低中危不告警
+
+            # 非关键资产 → 过滤低危
+            if not asset.get('is_critical'):
+                if alert.severity == 'low':
+                    continue
+
+            # 资产未上线（已退役？）
+            if asset.get('status') == 'decommissioned':
+                continue
+
+            # 补充资产信息
+            alert.asset_info = asset
+            filtered.append(alert)
+
+        return filtered
+
+    def layer3_merge(self, alerts):
+        """第3层：告警合并 - 同源IP+同规则5分钟内合并"""
+        buckets = defaultdict(list)
+        window = timedelta(minutes=5)
+
+        for alert in alerts:
+            key = f"{alert.source_ip}_{alert.rule_id}"
+            buckets[key].append(alert)
+
+        merged = []
+        for key, bucket in buckets.items():
+            bucket.sort(key=lambda x: x.timestamp)
+
+            current_group = [bucket[0]]
+            for alert in bucket[1:]:
+                if alert.timestamp - current_group[-1].timestamp <= window:
+                    current_group.append(alert)
+                else:
+                    merged.append(self.merge_group(current_group))
+                    current_group = [alert]
+
+            merged.append(self.merge_group(current_group))
+
+        return merged
+
+    def merge_group(self, group):
+        """合并一组相似告警"""
+        merged = group[0]
+        merged.description = f"{merged.description} (合并{len(group)}条, 时间范围{group[0].timestamp}-{group[-1].timestamp})"
+
+        # 如果合并数超过阈值，升级告警
+        if len(group) >= 20:
+            if merged.severity != 'critical':
+                merged.severity = 'critical'
+                merged.description += " [已自动升级为CRITICAL]"
+
+        return merged
+
+    def layer4_baseline(self, alerts):
+        """第4层：动态基线"""
+        filtered = []
+        for alert in alerts:
+            # 查询该IP在过去7天的告警频率
+            baseline = self.get_baseline(alert.source_ip, alert.rule_id, days=7)
+
+            # 如果当前与基线偏差不大 → 可能是正常波动
+            if baseline.get('avg_daily', 0) > 0:
+                today_count = self.get_today_count(alert.source_ip, alert.rule_id)
+                deviation = today_count / baseline['avg_daily']
+
+                if deviation < 2:  # 没超过2倍基线
+                    alert.severity = 'low'  # 降级
+
+            # 如果是第一次出现 → 反而值得关注
+            if baseline.get('total', 0) == 0:
+                alert.description += " [首次出现-需关注]"
+
+            filtered.append(alert)
+        return filtered
+
+    def layer5_threat_intel(self, alerts):
+        """第5层：威胁情报富化"""
+        for alert in alerts:
+            # 查询威胁情报
+            intel = self.query_threat_intel(alert.source_ip)
+            alert.threat_intel = intel
+
+            # 已知恶意IP → 升级
+            if intel.get('malicious'):
+                if alert.severity != 'critical':
+                    alert.severity = 'critical'
+                    alert.description += " [威胁情报命中-恶意IP]"
+
+            # 高风险国家
+            if intel.get('country') in ['RU', 'KP', 'IR']:
+                if alert.severity == 'low':
+                    alert.severity = 'medium'
+                    alert.description += " [高风险国家]"
+
+        return alerts
+
+    def is_known_scanner(self, ip):
+        scanners = ['shodan', 'censys', 'zoomeye', 'fofa']
+        # 查询IP是否属于已知扫描引擎
+        try:
+            import socket
+            hostname = socket.gethostbyaddr(ip)[0]
+            return any(s in hostname.lower() for s in scanners)
+        except:
+            return False
+
+    def is_internal_tool(self, ip):
+        # 内部工具IP白名单
+        return ip.startswith('10.0.100.')  # 安全工具段
+
+    def get_baseline(self, ip, rule_id, days):
+        # 从ES查询历史基线
+        return {"avg_daily": 5, "total": 35}
+
+    def get_today_count(self, ip, rule_id):
+        return 8
+
+    def query_threat_intel(self, ip):
+        return {"malicious": False, "country": "CN"}
+
+    def load_whitelist(self):
+        return set()
+
+    def load_asset_db(self):
+        return {}
+
+    def load_config(self):
+        return {}
+```
+
+---
+
+## 3. 护网增强规则集
+
+```python
+# 护网期间全局规则调整
+HW_RULES = {
+    # 1. 境外IP告警提升一级
+    "foreign_ip_escalation": {
+        "condition": "alert.source_ip.geo.country NOT IN ('CN')",
+        "action": "severity += 1",
+    },
+
+    # 2. 非工作时间检测灵敏度提升
+    "off_hours_sensitivity": {
+        "condition": "alert.timestamp.hour IN (0,1,2,3,4,5,6,22,23)",
+        "action": "add_tags(['off_hours', 'hw_enhanced'])",
+    },
+
+    # 3. 告警聚合窗口缩短
+    "merge_window": {
+        "default": 10,  # 日常10分钟
+        "hw": 3,         # 护网3分钟
+    },
+
+    # 4. 可疑域名列表
+    "suspicious_tlds": [".top", ".xyz", ".tk", ".ml", ".ga", ".cf", ".pw", ".cc", ".ws"],
+
+    # 5. 内网横向移动检测增强
+    "lateral_movement_sensitivity": "high",
 }
 ```
 
-## 3. 流程设计：事件分级与工单流转
+---
 
-### 3.1 事件分级
+## 4. 护网日报模板
 
-| 级别 | 典型事件 | 响应要求 |
-|------|----------|----------|
-| L1 提示 | 单 IP 扫描、误报测试 | 留档即可，不要求处置 |
-| L2 关注 | 多次弱口令尝试、目录扫描 | 5 分钟内确认、必要时加黑 |
-| L3 重要 | 登录成功、Webshell 上传、横向探测 | 3 分钟内响应 + 10 分钟内处置 |
-| L4 紧急 | 核心系统被入侵、勒索加密、大量数据外泄 | 1 分钟内升级总指挥、进入应急 |
+```markdown
+# 护网日报 - 2026年6月12日
 
-### 3.2 工单生命周期
+## 告警总览
+| 指标 | 数值 | 变化 |
+|------|------|------|
+| 总告警 | 4,521 | ↑12% |
+| 降噪后 | 342 | - |
+| P1事件 | 1 | 新增 |
+| P2事件 | 5 | ↑1 |
+| 自动封禁IP | 203 | - |
+| 自动处置率 | 67.2% | ↓3% |
 
-```text
-发现（SIEM 告警 / 人工上报 / 蜜罐 / 外部通报）
-  ↓
-受理（L1 初筛、分派责任人、打标签 L1~L4）
-  ↓
-研判（L2 复现日志、确认攻击链、定级、写分析）
-  ↓
-处置（L3 执行：封禁 / 隔离 / 下线 / 改密 / 回滚）
-  ↓
-验证（L2 复查：是否还有后续行为、攻击是否被阻断）
-  ↓
-归档（复盘、更新规则、更新 ATT&CK 矩阵、更新知识库）
+## 攻击态势
+- 攻击来源 Top3: 美国(34%), 俄罗斯(18%), 荷兰(12%)
+- 攻击类型 Top3: 漏洞扫描(41%), 暴力破解(27%), Web攻击(15%)
+
+## 重大事件
+1. **[P1] Exchange CVE利用** - 被WAF拦截，封禁攻击IP x 12
+2. **[P2] VPN暴力破解** - 封禁攻击IP x 47，无成功登录
+
+## 设备状态
+- EDR在线率: 98.5%
+- WAF: 正常
+- IPS: 正常
+
+## 明日关注
+- 加强Exchange/SharePoint监控
+- 预计攻击量会继续上升
+- Tier1分析师张三病假，已调配李四顶班
 ```
 
-### 3.3 SLA 参考
+---
 
-```yaml
-sla:
-  L1:
-    first_response_minutes: 30
-    close_hours: 48
-  L2:
-    first_response_minutes: 10
-    close_hours: 12
-  L3:
-    first_response_minutes: 5
-    close_hours: 4
-  L4:
-    first_response_minutes: 1
-    close_hours: "由总指挥确认"
-```
+## 5. 排错指南
 
-## 4. 指标度量：SOC 的"驾驶舱"
+| 问题 | 原因 | 解决 |
+|------|------|------|
+| 告警太多人处理不过来 | 降噪不够 | 收紧白名单+合并窗口+动态阈值 |
+| 漏掉了真实攻击 | 降噪过度 | 降低降噪阈值+人工抽检 |
+| 告警延迟>5分钟 | ES性能 | 增加节点+优化索引+增大refresh_interval |
 
-一个成熟的 SOC 会用数据说话。以下指标适合写入**护网日报**：
+---
 
-| 指标 | 说明 | 目标 / 基线 |
-|------|------|-------------|
-| 日均告警数 | SIEM 原始告警总量 | 视规模；关键是下降趋势 |
-| 误报率 | L1 判定为误报 / 总量 | 持续下降，< 30% 优秀 |
-| L3/L4 事件数 | 真正攻击事件数量 | 越少越好；>0 说明防护有短板 |
-| 平均响应时间（MTTR） | 从告警产生到处置完成 | L3 事件 < 30 分钟 |
-| 被攻陷时长（Dwell Time） | 从入侵到发现 | 理想 < 1 小时 |
-| 规则命中率 | 每条检测规则每月命中事件数 | 持续淘汰 0 命中规则 |
-| 威胁情报命中率 | 情报命中 / 总情报 | 用来评估情报订阅价值 |
+## ✅ SOC护网 Checklist
 
-### 4.1 一个典型 SOC 驾驶舱（示意 SQL）
+- [ ] 降噪引擎部署调优
+- [ ] 护网规则集切换
+- [ ] EDR切换阻断模式
+- [ ] 值班Dashboard上线
+- [ ] 日报/班次报模板就绪
+- [ ] 告警通知渠道验证
 
-```sql
--- 当日攻击态势：按源 IP TOP10
-SELECT src_ip, count(*) AS hits, arrayJoin(groupArray(DISTINCT rule_id))
-FROM waf_events
-WHERE ts >= today()
-GROUP BY src_ip
-ORDER BY hits DESC
-LIMIT 10;
-
--- 近 7 天按 ATT&CK 阶段的事件分布
-SELECT attack_phase, count(*)
-FROM soc_incidents
-WHERE ts >= today() - 7
-GROUP BY attack_phase;
-```
-
-## 5. 护网期间 SOC 的"特殊配置"
-
-- **暂停非必要变更**：护网期间不做系统大版本升级、大流量策略变更。
-- **提高 WAF / IDS 规则级别**：关闭"学习模式"，规则切到"拦截"，阈值收紧。
-- **新增临时检测规则**：针对当红漏洞（如最新 0day / Nday）做**应急规则**。
-- **加密告警通道**：值守用的 IM 群、告警电话、短信网关必须有独立备用通道。
-- **每日 17:00 日报**：汇总当天事件、源 IP TOP10、封禁数量、攻击类型分布。
-- **每日 09:00 晨会**：值守经理通报昨日态势，并下发当日关注重点。
-
-## 6. 常见坑点与应对
-
-1. **告警风暴**：规则开太猛、日志质量差 → 解决办法：**逐步上线规则 + 白名单过滤 + 告警收敛（按 IP/指纹聚合）**。
-2. **数据量撑爆存储**：事前做**留存策略**：PCAP 7 天、原始告警 30 天、事件单永久归档。
-3. **L1 疲劳**：夜班 + 单调 → 强制轮换（每 2 小时换岗）、引入自动化 + SOAR 减少手工。
-4. **跨部门协作慢**：提前和运维/业务/网络侧定好**联络清单 + 授权模板**，护网期间 15 分钟响应。
-5. **只护不管**：护网结束就"解散 SOC" → 正确做法：把护网期间沉淀的规则、知识库、攻击画像**常态化运营**。
-
-## 7. 总结
-
-SOC 建设不是**一次性项目**，而是长期运营能力。护网只是一次集中演练；真正的价值在于把演练成果沉淀为：
-
-- 一份可执行的**事件响应手册**
-- 一套持续优化的**检测规则库**
-- 一个能自动联动的**SOAR 剧本集**
-- 一支训练有素的**蓝队**
-
-只要做到这四点，SOC 就不再是"大屏摆拍"，而是真实可落地的护网能力。
+> 📚 延伸阅读：SOC/001-SOC建设 | SOC/002-SIEM分析 | HW/004-值班方案

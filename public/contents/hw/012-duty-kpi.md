@@ -1,185 +1,472 @@
-# 护网期间的值班制度与人员考核方案
+# 护网值班人员KPI考核与激励制度
 
-护网行动的核心是人。再好的技术方案，如果没有**一套可执行的值班制度**与**公平透明的考核激励**，都很难在 7x24 小时的高强度压力下保持稳定。本文给出一套可落地的值守组织方式、交接班规范、告警处置 SLA 与人员考核模型，供各单位参考裁剪。
+> 📅 2026-06-12 | 🎯 进阶 | ⏱ 18 min | 分类：护网工程
 
-## 1. 值守组织方式
+## 📋 提纲
 
-### 1.1 推荐的三班倒排班（人效最高）
+1. KPI考核原则
+2. Tier1/Tier2/Tier3 分级KPI
+3. 扣分/加分项设计
+4. 自动采集系统
+5. 护网后激励方案
+6. KPI Dashboard
 
-| 班次 | 时间 | 人员配置（建议） | 关注重点 |
-|------|------|------------------|----------|
-| 白班 A | 08:00 - 16:00 | L2+L1 × 2 + 值守经理 | 白天工作时间攻击密度最高，需全员在位 |
-| 中班 B | 16:00 - 24:00 | L1+L1（1 人有 L2 能力） | 员工下班、钓鱼邮件晚间高发 |
-| 夜班 C | 00:00 - 08:00 | L1 × 1 + L2 电话 oncall | 攻击者夜间活跃、员工疲劳、误报处理压力大 |
+---
 
-### 1.2 值守纪律（可写入制度）
+## 1. 考核原则
 
-```text
-【护网值守纪律 V1.0】
+```
+护网KPI不是"抓错人"——是激励团队在高压下做出最佳表现。
 
-1) 值守期间必须全程在岗，离岗超过 10 分钟必须向值守经理请假并有人代岗；
-2) 严禁私自把设备截图 / 告警内容 / 攻击源信息外传（朋友圈、公开聊天、未脱敏报告）；
-3) 严禁在值守时间使用公司电脑进行与工作无关的浏览（可能被红队社工反查）；
-4) 重大事件（L3/L4）必须第一时间升级，严禁个人隐瞒；
-5) 交接班必须"面对面"进行，交班人必须把未关闭事件和待观察事项逐一说清；
-6) 值班用 IM 群必须单独建群、加入审计、护网后统一归档；
-7) 值守期间禁止接受陌生快递、禁止点击陌生链接；
-8) 值守用 VPN / 堡垒机 / SIEM 账号必须使用 MFA，严禁共享账号。
+原则：
+1. 重过程轻结果：做了什么 > 最终得失分（攻防结果有随机性）
+2. 鼓励主动发现：主动发现的攻击 ×2 权重
+3. 容错机制：新手第一年不设硬性扣分
+4. 团队整体评分：Tier1-3一起考核，不内耗
+5. 匿名反馈：每班次后匿名评价队友
 ```
 
-## 2. 交接班规范
+---
 
-交接班是最容易"掉事件"的环节。规范如下：
+## 2. 分级KPI
 
-### 2.1 交接班模板
+### 2.1 Tier1 分析师KPI
 
-```text
-==================== 交接班记录表 ====================
-交班人： XXX       接班人： XXX       班次： C → A
-交班时间： 2025-09-20 08:00
+```python
+#!/usr/bin/env python3
+class Tier1KPI:
+    def __init__(self, analyst_name):
+        self.name = analyst_name
+        self.metrics = {
+            # 数量指标（40%）
+            "alerts_handled": 0,           # 处置告警数 目标: >50/班
+            "alerts_escalated": 0,         # 升级告警数
+            "auto_block_ips": 0,           # 自动封禁IP数
 
-一、上一班总体态势
-  - 事件总数： 17（L1=11, L2=4, L3=2, L4=0）
-  - 源 IP TOP3： 203.0.113.47 / 198.51.100.23 / 203.0.113.88
-  - 封禁 IP 总数： 27（较昨日 +5）
+            # 质量指标（40%）
+            "accurate_verdict_rate": 0,    # 研判准确率 目标: >85%
+            "false_positive_rate": 0,      # 误报率（越低越好）目标: <30%
+            "false_negative_count": 0,     # 漏判数（严重扣分）
 
-二、未关闭事件（必须逐一提及）
-  [1] 事件号 HW-0919-031：  10.1.2.33 疑似 WebShell，L3，处置中，等待 EDR 隔离完成
-      处置建议： 继续观察 1 小时，如无新行为则关闭；如仍有执行则升级
-  [2] 事件号 HW-0919-035：  邮箱网关异常邮件投递，L2，已隔离，待上报至钓鱼情报
-      处置建议： 白天再复核附件哈希是否命中情报库
+            # 时效指标（20%）
+            "avg_triage_time_seconds": 0,  # 平均研判时间 目标: <5min
+            "handover_completeness": 0,    # 交接完整率 目标: 100%
+            "missed_shifts": 0,            # 缺勤次数（严重扣分）
+        }
 
-三、重点关注项（给接班人）
-  - 外部情报提示：今明两天可能出现"中秋放假通知"钓鱼邮件，请重点关注
-  - 系统变更：昨夜有两台数据库服务器更新补丁，如有告警请先复核白名单
+    def calculate_score(self):
+        scores = {}
 
-四、交接物品
-  - 值守手机： 已转交给接班人
-  - 值守手册 V1.2： 在工位
-  - 应急联系人列表： 在共享盘
+        # 数量得分
+        handled = self.metrics['alerts_handled']
+        if handled >= 80:
+            scores['quantity'] = 40
+        elif handled >= 50:
+            scores['quantity'] = 30 + (handled - 50) * 0.33
+        elif handled >= 30:
+            scores['quantity'] = 20 + (handled - 30) * 0.5
+        else:
+            scores['quantity'] = max(0, handled * 0.5)
 
-五、其他备注
-  - 夜班无 coffee 补给，请白班协助申请；
-======================================================
+        # 质量得分
+        acc = self.metrics['accurate_verdict_rate']
+        if acc >= 0.95:
+            scores['quality'] = 40 + (acc - 0.95) * 200  # 超过95%有奖励
+        elif acc >= 0.85:
+            scores['quality'] = 35
+        elif acc >= 0.70:
+            scores['quality'] = 25
+        else:
+            scores['quality'] = 15
+
+        # 漏判扣分（每漏判1个P1扣10分）
+        fn = self.metrics['false_negative_count']
+        scores['quality'] -= fn * 10
+        scores['quality'] = max(0, scores['quality'])
+
+        # 时效得分
+        avg_time = self.metrics['avg_triage_time_seconds']
+        if avg_time <= 180:  # 3分钟内
+            scores['timeliness'] = 20
+        elif avg_time <= 300:  # 5分钟内
+            scores['timeliness'] = 15
+        elif avg_time <= 600:  # 10分钟内
+            scores['timeliness'] = 10
+        else:
+            scores['timeliness'] = 5
+
+        # 缺勤
+        scores['timeliness'] -= self.metrics['missed_shifts'] * 10
+
+        total = sum(scores.values())
+        total = max(0, min(100, total))
+
+        # 等级
+        if total >= 90:
+            grade = "S - 卓越"
+        elif total >= 80:
+            grade = "A - 优秀"
+        elif total >= 70:
+            grade = "B - 良好"
+        elif total >= 60:
+            grade = "C - 合格"
+        else:
+            grade = "D - 需改进"
+
+        return {"score": round(total, 1), "grade": grade, "breakdown": scores}
 ```
 
-### 2.2 交接 Checklist
+### 2.2 Tier2 高级分析师KPI
 
-每一次交接班，必须在交班人、接班人、值守经理三方确认下完成：
+| 指标 | 权重 | 目标值 | 计算方式 |
+|------|------|--------|---------|
+| P1事件处置成功率 | 25% | >95% | 处置成功/处置总数 |
+| 攻击链还原率 | 20% | >80% | 完整还原攻击链的事件数/确认真阳性事件数 |
+| Sigma规则贡献 | 15% | >3条/护网 | 有效新增检测规则数 |
+| Tier1指导质量 | 15% | Tier1评价>4.5/5 | 匿名Tier1评分 |
+| 平均分析时间 | 15% | P1<30min, P2<2h | 从接警到完成分析 |
+| IOC输出 | 10% | >20条/护网 | 经MISP验证的有效IOC数 |
 
-- [ ] 未关闭事件逐个梳理
-- [ ] 待处置 / 待观察事项已登记
-- [ ] 封禁清单是否同步至防火墙 / WAF
-- [ ] 情报库是否有更新
-- [ ] 值守账号是否正常（MFA 是否绑定 / 未过期）
-- [ ] 昨日日报是否已提交至值守经理
+### 2.3 Tier3 专家KPI
 
-## 3. 告警处置 SLA 与流程
+| 指标 | 权重 | 目标值 |
+|------|------|--------|
+| 应急响应速度 | 30% | 接通知后15min内到场/上线 |
+| 事件处置效果 | 30% | 根除率100%, 无二次复发 |
+| 技术输出 | 20% | 护网后输出技术复盘报告+改进方案 |
+| 团队赋能 | 20% | 护网期间至少1次全员技术分享 |
 
-### 3.1 告警响应 SLA
+---
 
-| 级别 | 到岗响应 | 处置完成 | 升级要求 |
-|------|----------|----------|----------|
-| L1 提示 | 30 分钟内受理 | 48 小时内关闭 | 不要求升级 |
-| L2 关注 | 10 分钟内受理 | 12 小时内关闭 | 30 分钟未响应自动升级给 L2 |
-| L3 重要 | 5 分钟内受理 | 1 小时内关闭 | 立即通知值守经理 + 业务侧接口人 |
-| L4 紧急 | 1 分钟内受理 | 持续至解决 | 立即通知总指挥 + 应急组长 |
+## 3. 加分/扣分项
 
-### 3.2 标准处置流程
+### 加分项（红榜）
 
-```text
-告警产生
-  ↓
-L1 初筛（≤2 分钟）：误报？白名单？已知来源？
-  ├─ 误报 → 关闭事件 + 记录以便规则调优
-  ├─ 可疑 → 开事件单 + 分派给 L2 + 打标签
-  └─ 明显攻击（WebShell 上传成功 / 登录成功等） → 直接 L3+ 升级
-  ↓
-L2 研判（≤10 分钟）：多源日志复核、攻击链还原、判断是否真实入侵
-  ↓
-L3 处置（并行）：封禁 IP / 隔离主机 / 改密 / 下线 / 回滚
-  ↓
-验证：观察 30~120 分钟是否还有后续行为
-  ↓
-关闭：归档事件单 + 更新规则 / 知识库
-  ↓
-复盘：每 24 小时总结关键事件、输出日报
+```python
+BONUS_POINTS = {
+    "主动发现未被检测到的攻击": 20,
+    "成功溯源到攻击者身份": 15,
+    "编写高质量Sigma规则（并被采纳）": 10,
+    "主动提交高质量威胁情报（>10条）": 8,
+    "应急处置速度<5分钟（P1事件）": 5,
+    "护网期间零失误": 5,
+    "主动帮助同事解决难题": 3,
+    "发现新的攻击手法并通报": 10,
+}
 ```
 
-### 3.3 一次典型 L3 事件的处置步骤（示例）
+### 扣分项（黑榜）
 
-```text
-目标系统： Web 门户（prod-web-03）
-事件类型： 可疑文件上传 + EDR 报 WebShell 特征
-
-步骤 1：保留现场 —— 在 EDR 中标记主机、保留一份内存/磁盘快照
-步骤 2：隔离主机 —— 防火墙安全组 / EDR 隔离 prod-web-03
-步骤 3：提取样本 —— 上传至本地沙箱 + 威胁情报平台比对哈希
-步骤 4：日志复核 —— WAF / Web 访问日志 / EDR 进程树完整还原
-步骤 5：修补漏洞 —— 修复上传点、加固鉴权、关闭不必要接口
-步骤 6：改密 & 审计 —— 重置该应用相关账号、审计近 72 小时登录
-步骤 7：恢复 —— 确认干净后恢复流量，观察 1 小时
-步骤 8：归档 —— 事件单 + 样本 + 时间线归档；更新检测规则
+```python
+PENALTY_POINTS = {
+    "P1漏判导致攻击成功": -30,
+    "P2漏判导致攻击扩散": -15,
+    "应急响应迟到>30分钟": -20,
+    "未按时交接班": -10,
+    "告警未按时处置（超SLA）": -5,
+    "未按要求记录工单": -3,
+    "护网期间擅离值守": -25,
+    "泄露内部信息（对外透露护网情况）": -50,  # 严重违规
+}
 ```
 
-## 4. 人员考核与激励（护网期间）
+---
 
-护网期间的考核要兼顾**数量与质量**，不能只按事件数计奖，也不能完全主观。推荐使用"积分制"。
+## 4. KPI自动采集系统
 
-### 4.1 积分制模型（示例）
+```python
+#!/usr/bin/env python3
+"""
+护网KPI自动采集器
+每小时自动从各系统采集数据，生成实时KPI报表
+"""
 
-| 动作 | 积分 | 备注 |
+import requests
+import json
+from datetime import datetime, timedelta
+from collections import defaultdict
+
+class HWKPICollector:
+    def __init__(self, es_url, thehive_url, wazuh_url):
+        self.es = es_url
+        self.thehive = thehive_url
+        self.wazuh = wazuh_url
+        self.kpi_data = defaultdict(dict)
+
+    def collect_tier1_kpi(self, analyst_name, shift_date):
+        """采集Tier1 KPI数据"""
+        kpi = {}
+
+        # 1. 告警处置数（从TheHive工单）
+        kpi['alerts_handled'] = self.query_thehive_cases(
+            analyst_name, shift_date,
+            status="closed"
+        )
+
+        # 2. 升级数
+        kpi['alerts_escalated'] = self.query_thehive_cases(
+            analyst_name, shift_date,
+            escalation="yes"
+        )
+
+        # 3. 研判准确率（用Tier2复核结果反向计算）
+        reviewed = self.query_tier2_review(analyst_name, shift_date)
+        correct = sum(1 for r in reviewed if r['verdict'] == 'correct')
+        total = len(reviewed)
+        kpi['accurate_verdict_rate'] = correct / total if total else 0
+
+        # 4. 平均研判时间（从TheHive时间戳计算）
+        kpi['avg_triage_time_seconds'] = self.calc_avg_triage_time(
+            analyst_name, shift_date
+        )
+
+        # 5. 漏判检测
+        kpi['false_negative_count'] = self.detect_false_negatives(
+            analyst_name, shift_date
+        )
+
+        # 6. 封禁IP数
+        kpi['auto_block_ips'] = self.query_es_blocks(analyst_name, shift_date)
+
+        return kpi
+
+    def query_thehive_cases(self, analyst, date, **filters):
+        """查询TheHive工单统计"""
+        # TheHive API查询
+        query = {
+            "query": {
+                "_and": [
+                    {"_field": "createdBy", "_value": analyst},
+                    {"_gte": {"_field": "createdAt", "_value": f"{date}T00:00:00Z"}},
+                    {"_lt": {"_field": "createdAt", "_value": f"{date}T23:59:59Z"}},
+                ]
+            }
+        }
+
+        for key, value in filters.items():
+            if key == 'status':
+                query['query']['_and'].append(
+                    {"_field": "status", "_value": value}
+                )
+            if key == 'escalation':
+                query['query']['_and'].append(
+                    {"_gt": {"_field": "severity", "_value": 2}}
+                )
+
+        resp = requests.post(
+            f"{self.thehive}/api/v1/query",
+            headers={"Authorization": f"Bearer {self.api_key}"},
+            json=query
+        )
+        return len(resp.json())
+
+    def calc_avg_triage_time(self, analyst, date):
+        """计算平均研判时间"""
+        # 从TheHive工单的创建时间到关闭时间
+        resp = requests.post(
+            f"{self.thehive}/api/v1/query",
+            json={
+                "query": [
+                    {"_field": "createdBy", "_value": analyst},
+                    {"_field": "status", "_value": "Closed"},
+                    {"_gte": {"_field": "createdAt", "_value": f"{date}"}},
+                ]
+            },
+            headers={"Authorization": f"Bearer {self.api_key}"}
+        )
+
+        cases = resp.json()
+        if not cases:
+            return 0
+
+        total_seconds = 0
+        for case in cases:
+            created = datetime.fromtimestamp(case['createdAt'] / 1000)
+            closed = datetime.fromtimestamp(case['updatedAt'] / 1000)
+            total_seconds += (closed - created).total_seconds()
+
+        return total_seconds / len(cases)
+
+    def detect_false_negatives(self, analyst, date):
+        """
+        检测漏判：
+        1. 查找分析师标记为"误报"但后来被Tier2确认为"真阳"的告警
+        2. 查找未处理的告警中后来被确认为真实的
+        """
+        false_negatives = []
+
+        # 查询该分析师标记为误报/忽略的告警
+        resp = requests.post(
+            f"{self.thehive}/api/v1/query",
+            json={
+                "query": [
+                    {"_field": "createdBy", "_value": analyst},
+                    {"_field": "status", "_value": "Ignored"},
+                    {"_gte": {"_field": "createdAt", "_value": f"{date}"}},
+                ]
+            },
+            headers={"Authorization": f"Bearer {self.api_key}"}
+        )
+
+        ignored = resp.json()
+        for case in ignored:
+            # 检查是否有后续事件证实这是真实攻击
+            related_events = self.find_related_events(case)
+            if related_events:
+                false_negatives.append({
+                    "case_id": case['id'],
+                    "title": case['title'],
+                    "related_events": related_events
+                })
+
+        return len(false_negatives)
+
+    def generate_daily_kpi_report(self, date):
+        """生成KPI日报"""
+        report = {
+            "date": date,
+            "generated_at": datetime.now().isoformat(),
+            "tier1": {},
+            "tier2": {},
+            "team_stats": {},
+            "highlights": [],
+            "warnings": []
+        }
+
+        # 逐人采集
+        for analyst in self.get_on_duty_analysts(date):
+            report['tier1'][analyst] = self.collect_tier1_kpi(analyst, date)
+
+        # 团队统计
+        all_handled = sum(a['alerts_handled'] for a in report['tier1'].values())
+        all_accurate = sum(
+            a['alerts_handled'] * a.get('accurate_verdict_rate', 0)
+            for a in report['tier1'].values()
+        )
+
+        report['team_stats'] = {
+            "total_alerts_handled": all_handled,
+            "avg_accuracy": f"{all_accurate/max(all_handled,1)*100:.1f}%",
+            "false_negatives": sum(
+                a.get('false_negative_count', 0)
+                for a in report['tier1'].values()
+            ),
+            "on_time_handover": "100%",  # 从交接记录计算
+        }
+
+        # 标注优秀/需改进
+        for analyst, kpi in report['tier1'].items():
+            tier1 = Tier1KPI(analyst)
+            for k, v in kpi.items():
+                tier1.metrics[k] = v
+            result = tier1.calculate_score()
+            kpi['score'] = result['score']
+            kpi['grade'] = result['grade']
+
+            if result['grade'].startswith('S'):
+                report['highlights'].append(f"⭐ {analyst}: {result['grade']}")
+            elif result['grade'].startswith('D'):
+                report['warnings'].append(f"⚠️ {analyst}: {result['grade']}，需关注")
+
+        return report
+
+    def get_on_duty_analysts(self, date):
+        """获取当天值班人员名单"""
+        # 从排班系统获取
+        return ["张三", "李四", "王五", "赵六"]  # 示例
+
+    def find_related_events(self, case):
+        """查找关联事件"""
+        return []
+
+    def query_es_blocks(self, analyst, date):
+        return 0  # 从Wazuh API获取
+
+
+if __name__ == "__main__":
+    collector = HWKPICollector(
+        es_url="http://elasticsearch:9200",
+        thehive_url="http://thehive:9000",
+        wazuh_url="http://wazuh:55000"
+    )
+
+    report = collector.generate_daily_kpi_report("2026-06-12")
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+```
+
+---
+
+## 5. 激励方案
+
+### 5.1 物质激励
+
+| 等级 | 奖励 | 条件 |
 |------|------|------|
-| 按时到岗、无违纪 | +2 / 班次 | |
-| 处理 L1 事件 | +1 / 件 | 需在 30 分钟内完成 |
-| 处理 L2 事件 | +3 / 件 | 需 L2 复核通过 |
-| 处理 L3 事件 | +10 / 件 | 需值守经理审核 |
-| 处置 L4 事件 | +30 / 件 | 按应急小组整体奖励 |
-| 优化规则使误报下降 | +5 / 条规则 | 有对比数据 |
-| 发现新攻击 / 新工具指纹 | +20 | 经 L2+ 确认 |
-| 撰写高质量复盘报告 | +10 | 被采用为模板 |
-| 事件误判（真实攻击被当误报） | -10 | 经审计确认 |
-| 漏报 / 未按时升级 | -20 | 造成实质损失加重 |
-| 违反值守纪律 | -10 / 次 | 视情节加倍 |
+| S级 | 护网奖金 × 2.0 + 额外假期3天 | KPI ≥ 90 + 重大贡献 |
+| A级 | 护网奖金 × 1.5 + 额外假期1天 | KPI ≥ 80 |
+| B级 | 护网奖金 × 1.0 | KPI ≥ 70 |
+| C级 | 护网奖金 × 0.5 | KPI ≥ 60 |
+| D级 | 无奖金 + 复盘面谈 | KPI < 60 |
 
-### 4.2 每日量化看板
+### 5.2 精神激励
 
-```text
-【护网日报 · 9 月 19 日】
-当班总事件： 127
-  L1/L2/L3/L4： 88 / 30 / 9 / 0
-平均受理响应： L2 7.3 分钟、L3 3.1 分钟
-误报率： 28.4%（昨日 32.6% ↓）
-封禁 IP 累计： 142
-新增检测规则： 3
-员工个人积分 TOP3： 王 XX 48、李 XX 41、张 XX 36
-关键事件摘要：
-  - 03 号事件（L3）：Web 门户疑似 WebShell 上传，已隔离无进一步行为
-  - 15 号事件（L2）：外部钓鱼邮件一批，已隔离 + 哈希封禁
+- 护网荣誉墙：S/A级永久展示
+- "护网之星"勋章：每轮评选3人
+- 优先晋升：S级连续2轮纳入晋升池
+- 对外展示：S级事迹写入安全团队年报
+
+---
+
+## 6. KPI Dashboard
+
+```json
+{
+  "dashboard": {
+    "title": "护网KPI实时看板",
+    "panels": [
+      {
+        "title": "Tier1分析师排名",
+        "type": "bar_gauge",
+        "sort": "KPI分数",
+        "colors": {"90-100": "green", "70-89": "yellow", "0-69": "red"}
+      },
+      {
+        "title": "告警处置量趋势",
+        "type": "timeseries",
+        "group_by": "analyst"
+      },
+      {
+        "title": "研判准确率",
+        "type": "gauge",
+        "thresholds": [{"value": 85, "color": "green"}, {"value": 70, "color": "yellow"}]
+      },
+      {
+        "title": "平均研判时间（分钟）",
+        "type": "stat",
+        "thresholds": [{"value": 5, "color": "green"}, {"value": 10, "color": "red"}]
+      },
+      {
+        "title": "漏判事件",
+        "type": "table",
+        "columns": ["分析师", "事件ID", "描述", "等级"]
+      }
+    ]
+  }
+}
 ```
 
-### 4.3 激励落地
+---
 
-- **物质奖励**：护网专项奖金池，按积分比例发放。
-- **荣誉激励**：最佳值守员 / 最佳分析员 / 最佳处置员证书 / 奖状。
-- **职业发展**：护网期间积分与表现纳入年度绩效考核；优先参加外部培训 / 蓝队认证。
-- **反向约束**：重大漏报 / 违纪由值守经理评估是否需要补考与再培训。
+## ✅ KPI制度 Checklist
 
-## 5. 常见问题与应对
+- [ ] KPI指标确认（Tier1/Tier2/Tier3差异化）
+- [ ] KPI自动采集脚本开发完成
+- [ ] TheHive API数据对接
+- [ ] 每日KPI日报自动生成
+- [ ] KPI Dashboard上线
+- [ ] 激励方案报批
+- [ ] 护网前全员宣讲KPI规则
+- [ ] 护网后KPI汇总 + 激励发放
+- [ ] 匿名反馈收集
 
-| 问题 | 建议 |
-|------|------|
-| 夜班人员精力不足 | 严格执行每 2 小时轮岗 + 简短 standup；准备零食和咖啡 |
-| 告警风暴、L1 被淹没 | 值班经理临时提高告警阈值 + 集中精力抓 L3/L4 |
-| 事件单积压 | 值守经理手动分派；临时调用备用 L2 资源 |
-| IM 群信息爆炸 | 明确"主告警群 / 沟通群 / 闲聊群"三群分离；机器人统一播报 |
-| 员工 / 业务侧接口人联系不上 | 事先准备**多套联络方式**，并要求业务侧提供"backup 接口人" |
-| 护网后团队倦怠 | 安排调休 + 复盘表彰；避免"护网一结束就散伙" |
-
-## 6. 总结：值守能力来自三个"固化"
-
-- **流程固化**：把交接班、事件处置、告警升级写成 SOP，每个人按剧本执行。
-- **数据固化**：用积分制和日报把"模糊贡献"变成"可量化结果"。
-- **能力固化**：把护网期间发现的优秀分析路径、新工具指纹、新 Playbook 沉淀为知识库，让下一次护网更快更强。
-
-有了制度、有了激励、有了沉淀，护网值守就能从"临时应急队"升级为"常态化蓝队"。
+> 📚 延伸阅读：HW/001-蓝队防护方案 | HW/004-值班方案 | SOC/006-安全指标体系

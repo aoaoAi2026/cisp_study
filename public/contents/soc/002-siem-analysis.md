@@ -2,248 +2,611 @@
 
 ---
 
+## 📋 目录
+
+1. [SIEM 核心原理](#一siem-核心原理)
+2. [数据流水线架构](#二数据流水线)
+3. [ELK 生产级部署](#三elk-部署)
+4. [日志范式化 (ECS)](#四日志范式化)
+5. [关键日志源接入配置](#五日志源接入)
+6. [关联分析规则编写](#六关联分析规则)
+7. [告警质量优化](#七告警质量优化)
+8. [Splunk 实战对比](#八splunk-实战)
+9. [日志保留与合规](#九日志保留)
+10. [完整案例：从零搭建 ELK SIEM](#十完整案例)
+11. [排错指南](#十一排错指南)
+
+---
+
 ## 一、SIEM 核心原理
 
+### 1.1 SIEM = SEM + SIM + 关联分析
+
 ```
-SIEM = SEM(安全管理) + SIM(信息管理) + 关联分析
+SEM (Security Event Management) = 实时告警 + 事件响应
+SIM (Security Information Management) = 日志管理 + 合规报告
+关联分析 = 跨日志源的关联规则引擎
 
-数据流水线：
-  日志源 → Log Shippers → 消息队列 → 范式化/富化 → 索引存储 → 关联分析 → 告警/可视化
+数据流:
+  日志源 → 采集层 → 缓冲层 → 处理层 → 存储层 → 分析层 → 可视化
+    ↓        ↓        ↓        ↓        ↓        ↓        ↓
+  服务器   Filebeat  Kafka   Logstash   ES集群   Sigma/    Kibana
+  防火墙   Winlogbeat Redis  Fluentd  OpenSearch KQL/SPL  Grafana
+```
 
-关键技术组件：
-  1. 日志采集：Filebeat/Winlogbeat/Syslog-NG/NXLog
-  2. 消息缓冲：Kafka/Redis/Pulsar
-  3. 日志解析：Logstash/Fluentd/Vector/自定义Parser
-  4. 索引存储：Elasticsearch/OpenSearch
-  5. 分析引擎：Elastic Security(ES|QL+KQL+Sigma)
-  6. 可视化：Kibana/Grafana
+### 1.2 核心组件选型
+
+| 组件 | 开源首选 | 商业首选 | 说明 |
+|------|---------|---------|------|
+| 采集 | Filebeat | Cribl | 轻量、可靠 |
+| 缓冲 | Kafka | Confluent | 削峰填谷 |
+| 处理 | Logstash | Cribl Stream | ETL+富化 |
+| 存储 | Elasticsearch | Splunk Indexer | 全文搜索 |
+| 分析 | ElastAlert/Wazuh | Splunk ES | 规则引擎 |
+| 可视化 | Kibana | Splunk Dashboard | 大屏+报表 |
+
+---
+
+## 二、数据流水线架构
+
+### 2.1 生产级架构
+
+```
+┌──────────┐   ┌──────────┐   ┌──────────┐
+│ 日志源     │   │ 日志源     │   │ 日志源     │
+│ Linux     │   │ Windows  │   │ Network  │
+└────┬─────┘   └────┬─────┘   └────┬─────┘
+     │ Filebeat      │ Winlogbeat   │ Syslog
+     ▼               ▼              ▼
+┌─────────────────────────────────────────┐
+│            Kafka Cluster (3节点)         │
+│   Topic: logs-syslog                     │
+│   Topic: logs-win-event                  │
+│   Topic: logs-network                    │
+│   Topic: logs-app                        │
+└────────────────┬────────────────────────┘
+                 │ Consumer Group
+                 ▼
+┌─────────────────────────────────────────┐
+│         Logstash Pipeline (3节点)        │
+│   ├── Input: Kafka                       │
+│   ├── Filter: grok + mutate + geoip      │
+│   ├── Output: Elasticsearch              │
+│   └── Dead Letter Queue: S3/Filesystem    │
+└────────────────┬────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────┐
+│      Elasticsearch Cluster (3+节点)      │
+│   Hot (SSD): 7天                         │
+│   Warm (HDD): 30天                        │
+│   Cold (S3): 90天                         │
+│   Frozen (S3): 365天                      │
+└────────────────┬────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────┐
+│              Kibana (2节点)              │
+│   ├── Discover (日志搜索)                 │
+│   ├── Security → Alerts (告警规则)        │
+│   ├── Dashboard (安全大屏)                │
+│   └── Reporting (合规报告)                │
+└─────────────────────────────────────────┘
+```
+
+### 2.2 容量规划
+
+```
+日志量估算公式:
+  EPS (Events Per Second) = 日志源数量 × 每源EPS
+
+典型EPS:
+  Linux 服务器:    50-200 EPS
+  Windows 服务器:  100-500 EPS
+  防火墙:          500-5000 EPS
+  Web 服务器:      100-1000 EPS
+  DNS:             50-500 EPS
+  交换机:          10-100 EPS
+
+存储估算:
+  每条日志平均大小: ~1KB
+  日存储 = EPS × 86400 × 1KB
+  
+  例: 10000 EPS → 864GB/天
+
+ES 集群规格建议:
+  EPS        节点数    每节点CPU  每节点内存  存储
+  < 5000     3        8核       32GB       SSD 2TB×3
+  5k-20k     5        16核      64GB       SSD 4TB×5
+  20k-50k    10       16核      128GB      SSD 4TB×10
 ```
 
 ---
 
-## 二、日志源接入
+## 三、ELK 部署
 
-### 2.1 必选日志源
+### 3.1 Docker Compose 快速部署
 
-```
-安全运营核心日志源（优先级排序）：
+```yaml
+# docker-compose.yml — 生产最小化部署
+version: '3.8'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=soc-es-cluster
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=${ES_PASSWORD}
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    ulimits:
+      memlock: {soft: -1, hard: -1}
+      nofile: {soft: 65536, hard: 65536}
 
-P0 (必须有):
-  ✓ 防火墙/IPS日志 → 网络攻击检测 (非syslog)
-  ✓ AD/Domain Controller → 认证事件(成功/失败)
-  ✓ EDR/XDR → 端点事件(进程/文件/网络/注册表)
-  ✓ DNS 日志 → C2/隧道/DGA检测
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://es01:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ES_PASSWORD}
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
 
-P1 (强烈推荐):
-  ✓ Web服务器 (Nginx/Apache) → URL访问/WAF
-  ✓ 邮件网关 → 钓鱼邮件/恶意附件
-  ✓ VPN/ZTNA → 远程访问审计
-  ✓ 云服务 (AWS CloudTrail/Azure Monitor) → 云活动审计
-  ✓ DHCP → 设备连网追踪
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+    ports:
+      - "5044:5044"   # Beats input
+      - "5514:5514/udp" # Syslog UDP
+      - "6514:6514"     # Syslog TCP+TLS
+    depends_on:
+      - elasticsearch
 
-P2 (锦上添花):
-  ✓ 数据库审计日志 (Oracle/MySQL/PG)
-  ✓ 打印服务器
-  ✓ 文件服务器访问
-  ✓ 应用程序自定义日志
-```
-
-### 2.2 Syslog 配置示例
-
-```bash
-# Rsyslog 集中发送 (Linux)
-# /etc/rsyslog.d/50-forward.conf
-*.* @192.168.1.200:514   # UDP
-# 或
-*.* @@192.168.1.200:514  # TCP (推荐)
-
-# 增加TLS加密传输 (生产环境必须)
-$DefaultNetstreamDriver gtls
-$ActionSendStreamDriverMode 1
-$ActionSendStreamDriverAuthMode x509/name
-$ActionSendStreamDriverPermittedPeer logserver.example.com
-```
-
-```xml
-<!-- Windows Event Forwarding → Winlogbeat -->
-<!-- winlogbeat.yml -->
-winlogbeat.event_logs:
-  - name: Security
-    ignore_older: 72h
-  - name: System
-  - name: Application
-  
-output.elasticsearch:
-  hosts: ["https://elasticsearch:9200"]
-  ssl.certificate_authorities: ["certs/ca.crt"]
-  ssl.certificate: "certs/winlogbeat.crt"
-  ssl.key: "certs/winlogbeat.key"
+volumes:
+  es-data:
 ```
 
----
-
-## 三、日志范式化
-
-### 3.1 ECS (Elastic Common Schema)
-
-```
-ECS = Elastic推出的统一日志格式标准
-
-核心字段：
-  @timestamp       → 事件时间
-  event.kind       → event/alert/metric
-  event.category   → authentication/network/process/file...
-  event.type       → start/end/creation/deletion...
-  event.outcome    → success/failure/unknown
-  
-  user.name        → 操作用户
-  user.domain      → 域
-  source.ip        → 源IP
-  source.port      → 源端口
-  destination.ip   → 目的IP
-  destination.port → 目的端口
-  
-  process.name     → 进程名
-  process.command_line → 命令行
-  file.path        → 文件路径
-  network.protocol → TCP/UDP/HTTP...
-  url.original     → 完整URL
-  dns.question.name → DNS查询域名
-  
-  rule.id          → 触发的SIEM规则ID
-  rule.name        → 规则名称
-
-优势：不同来源的日志字段统一 → 跨设备关联分析
-```
-
-### 3.2 Logstash 解析器
+### 3.2 Logstash Pipeline 配置
 
 ```ruby
-# Logstash 解析 FortiGate 防火墙日志
-filter {
-  grok {
-    match => {
-      "message" => [
-        "%{FORTIGATE_LOG}"  # 自定义Grok模式
-      ]
-    }
+# logstash/pipeline/syslog.conf
+input {
+  beats {
+    port => 5044
+    ssl => true
+    ssl_certificate => "/etc/logstash/certs/logstash.crt"
+    ssl_key => "/etc/logstash/certs/logstash.key"
   }
-  
-  # 字段映射到ECS
+  syslog {
+    port => 5514
+  }
+  tcp {
+    port => 6514
+    ssl_enable => true
+    ssl_cert => "/etc/logstash/certs/logstash.crt"
+    ssl_key => "/etc/logstash/certs/logstash.key"
+    codec => json_lines
+  }
+}
+
+filter {
+  # ===== 字段映射到 ECS =====
   mutate {
     rename => {
-      "srcip"  => "[source][ip]"
-      "dstip"  => "[destination][ip]"
-      "srcport" => "[source][port]"
-      "dstport" => "[destination][port]"
-      "action"  => "[event][action]"
+      "src_ip" => "[source][ip]"
+      "dst_ip" => "[destination][ip]"
+      "src_port" => "[source][port]"
+      "dst_port" => "[destination][port]"
+      "hostname" => "[host][name]"
     }
   }
   
-  # 富化：GeoIP
+  # ===== GeoIP 富化 =====
   geoip {
     source => "[source][ip]"
     target => "[source][geo]"
   }
   
-  # 富化：威胁情报(检查IP是否已知恶意)
-  translate {
-    field       => "[source][ip]"
-    destination => "[source][threat]"
-    dictionary_path => "/etc/logstash/threat_ip.yml"
+  # ===== 添加本机信息 =====
+  mutate {
+    add_field => {
+      "[event][ingested]" => "%{@timestamp}"
+      "[observer][hostname]" => "logstash-01"
+    }
+  }
+  
+  # ===== 丢弃调试日志 =====
+  if [loglevel] == "DEBUG" {
+    drop {}
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["https://es01:9200"]
+    user => "elastic"
+    password => "${ES_PASSWORD}"
+    ssl => true
+    ssl_certificate_verification => false
+    index => "logs-%{+YYYY.MM.dd}"
+    document_id => "%{[@metadata][fingerprint]}"
+    manage_template => true
+  }
+  
+  # 失败队列
+  dead_letter_queue {
+    path => "/usr/share/logstash/data/dead_letter_queue"
+    max_bytes => "1024mb"
+  }
+}
+```
+
+### 3.3 ILM 索引生命周期
+
+```json
+// 创建 ILM Policy
+PUT _ilm/policy/soc-logs-policy
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "actions": {
+          "rollover": {
+            "max_primary_shard_size": "50gb",
+            "max_age": "1d"
+          }
+        }
+      },
+      "warm": {
+        "min_age": "7d",
+        "actions": {
+          "shrink": { "number_of_shards": 1 },
+          "forcemerge": { "max_num_segments": 1 }
+        }
+      },
+      "cold": {
+        "min_age": "30d",
+        "actions": {
+          "searchable_snapshot": {
+            "snapshot_repository": "soc-backups"
+          }
+        }
+      },
+      "delete": {
+        "min_age": "365d",
+        "actions": { "delete": {} }
+      }
+    }
+  }
+}
+
+// 应用 Policy 到索引模板
+PUT _index_template/soc-logs-template
+{
+  "index_patterns": ["logs-*"],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "soc-logs-policy",
+      "index.lifecycle.rollover_alias": "logs"
+    }
   }
 }
 ```
 
 ---
 
-## 四、关联分析规则
+## 四、日志范式化 (ECS)
 
-### 4.1 Sigma 规则
+```
+ECS (Elastic Common Schema) 核心字段映射：
+
+时间类:
+  @timestamp              → 事件发生时间
+  event.created           → 日志采集时间
+  event.ingested          → 写入ES时间
+
+主机类:
+  host.name               → 主机名
+  host.ip                 → 主机IP
+  host.os.family          → windows/linux
+  host.os.version         → 操作系统版本
+
+用户类:
+  user.name               → 用户名
+  user.domain             → 域
+  user.email              → 邮箱
+
+网络类:
+  source.ip               → 源IP
+  source.port             → 源端口
+  destination.ip          → 目标IP
+  destination.port        → 目标端口
+  network.protocol        → TCP/UDP/HTTP
+  network.direction       → inbound/outbound
+
+事件类:
+  event.category          → authentication/network/process
+  event.type              → start/end/info/error
+  event.action            → user-login/file-delete
+  event.outcome           → success/failure/unknown
+
+进程类:
+  process.pid             → 进程ID
+  process.name            → 进程名
+  process.command_line    → 命令行
+  process.parent.name     → 父进程名
+
+文件类:
+  file.path               → 文件路径
+  file.name               → 文件名
+  file.size               → 文件大小
+
+DNS 类:
+  dns.question.name       → 查询域名
+  dns.question.type       → A/AAAA/MX/TXT
+  dns.response_code       → NOERROR/NXDOMAIN
+```
+
+---
+
+## 五、日志源接入
+
+### 5.1 Linux 服务器
 
 ```yaml
-# Sigma 规则示例 1：检测Mimikatz执行
-title: Suspicious Mimikatz Execution
-id: 5f0c03b1-3e94-4c4b-96b9-1a7c4f2c4c7d
-status: stable
-description: Detects Mimikatz commands
-logsource:
-  product: windows
-  category: process_creation
-detection:
-  selection:
-    CommandLine|contains:
-      - 'mimikatz'
-      - 'sekurlsa::logonpasswords'
-      - 'lsadump::sam'
-      - 'lsadump::secrets'
-      - 'lsadump::cache'
-  condition: selection
-level: critical
-tags:
-  - attack.t1003
-  - attack.credential_access
+# /etc/filebeat/filebeat.yml
+filebeat.inputs:
+  - type: filestream
+    id: syslog
+    paths:
+      - /var/log/syslog
+      - /var/log/messages
+    tags: ["syslog", "linux"]
 
-# Sigma 规则示例 2：检测可疑DNS查询(DGA)
-title: Suspicious DNS Query - Potential DGA
-id: dns-002
-description: High entropy DNS queries suggesting DGA
-logsource:
-  category: dns
-detection:
-  selection:
-    dns.question.name|re: '^[a-z0-9]{20,}\.(com|net|org|info)$'
-  timeframe: 10m
-  condition: selection | count() > 50
-level: high
+  - type: filestream
+    id: auth
+    paths:
+      - /var/log/auth.log
+      - /var/log/secure
+    tags: ["auth", "linux"]
+
+  - type: filestream
+    id: audit
+    paths:
+      - /var/log/audit/audit.log
+    tags: ["audit", "linux"]
+
+output.logstash:
+  hosts: ["logstash:5044"]
+  ssl.certificate_authorities: ["/etc/filebeat/certs/ca.crt"]
+  ssl.certificate: "/etc/filebeat/certs/filebeat.crt"
+  ssl.key: "/etc/filebeat/certs/filebeat.key"
 ```
 
-### 4.2 Elastic KQL 查询
+### 5.2 Windows 服务器
+
+```yaml
+# C:\Program Files\Winlogbeat\winlogbeat.yml
+winlogbeat.event_logs:
+  - name: Security
+    level: critical,error,warning,information
+    event_id: 
+      - 4624,4625,4634,4647,4648    # 登录事件
+      - 4720,4722,4723,4724,4725,4726  # 账户管理
+      - 4672,4673,4674               # 特权使用
+      - 4688,4689                    # 进程创建/终止
+      - 4768,4769,4770,4771          # Kerberos
+      - 5140,5145                    # SMB共享访问
+
+  - name: System
+  - name: Application
+  - name: Microsoft-Windows-Sysmon/Operational
+  - name: Microsoft-Windows-PowerShell/Operational
+
+output.logstash:
+  hosts: ["logstash:5044"]
+```
+
+### 5.3 防火墙/FortiGate
+
+```bash
+# FortiGate CLI 配置
+config log syslogd setting
+  set status enable
+  set server "10.0.40.10"
+  set port 6514
+  set mode reliable
+  set facility local7
+  set format default
+end
+```
+
+---
+
+## 六、关联分析规则
+
+### 6.1 Wazuh 规则示例
+
+```xml
+<!-- /var/ossec/etc/rules/local_rules.xml -->
+
+<group name="soc_bruteforce,">
+  <!-- 暴力破解检测: 5次失败/2分钟 -->
+  <rule id="100200" level="10" frequency="5" timeframe="120">
+    <if_matched_sid>5710</if_matched_sid>
+    <same_source_ip />
+    <description>SSH Bruteforce: 5 failed logins in 120s</description>
+    <group>authentication_failed,</group>
+    <mitre>
+      <id>T1110</id>
+      <tactic>Credential Access</tactic>
+    </mitre>
+  </rule>
+  
+  <!-- 暴力破解成功 -->
+  <rule id="100201" level="12">
+    <if_sid>100200</if_sid>
+    <if_matched_sid>5715</if_matched_sid>
+    <same_source_ip />
+    <description>SSH Bruteforce Success after failed attempts</description>
+  </rule>
+</group>
+```
+
+### 6.2 ElastAlert 规则
+
+```yaml
+# elastalert_rules/ssh_bruteforce.yaml
+name: SSH Bruteforce
+type: frequency
+index: logs-*
+num_events: 10
+timeframe:
+  minutes: 5
+
+filter:
+  - term:
+      event.category: "authentication"
+  - term:
+      event.outcome: "failure"
+  - term:
+      event.type: "start"
+
+query_key: source.ip
+realert:
+  minutes: 30
+
+alert:
+  - "email"
+  - "thehive"
+
+email:
+  - "soc@company.com"
+
+thehive:
+  url: "http://thehive:9000"
+  api_key: "${THEHIVE_KEY}"
+```
+
+### 6.3 Elastic KQL 关联查询
 
 ```kql
-// 检测横向移动 — 单用户短时间多主机RDP/WinRM
-event.category : "authentication" 
+// 横向移动检测：同一用户短时间内登录多台主机
+event.category : "authentication"
 AND event.outcome : "success"
 AND event.type : "start"
-AND source.ip : * 
-| stats count_distinct(host.name) as hosts BY user.name
-| where hosts > 5
+AND NOT user.name : ("SYSTEM", "NETWORK SERVICE")
+| stats 
+    count_distinct(host.name) as distinct_hosts,
+    values(host.name) as host_list
+  BY user.name, source.ip
+| where distinct_hosts > 5
+| sort distinct_hosts desc
 
-// 检测数据外泄 — 非工作时间大流量出站
-event.category : "network"
-AND network.direction : "outbound"
-AND NOT destination.ip : 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
-AND @timestamp >= now-1h
-AND @timestamp.hour >= 22 OR @timestamp.hour <= 6
-| stats sum(network.bytes) as total_bytes BY source.ip
-| where total_bytes > 1073741824  // >1GB
+// 可疑父子进程链
+event.category : "process"
+AND process.parent.name : ("winword.exe", "excel.exe", "outlook.exe")
+AND process.name : ("powershell.exe", "cmd.exe", "wscript.exe", "mshta.exe")
+| table @timestamp, host.name, process.parent.name, process.name, process.command_line
+| sort @timestamp desc
 ```
 
 ---
 
-## 五、主流产品对比
+## 七、告警质量优化
 
-| 产品 | 搜索语言 | 特色 | 说明 |
-|------|---------|------|------|
-| **Splunk** | SPL | 搜索能力最强 | 按数据量计费(贵) |
-| **ELK** | KQL / ES|QL | 开源灵活 | 自建运维成本高 |
-| **Wazuh** | Rules XML | SIEM+XDR一体 | 开源、易入门 |
-| **MS Sentinel** | KQL | Azure原生 | 云原生、微软生态 |
-| **QRadar** | Ariel | IBM生态 | 大企业、复杂部署 |
-| **奇安信天眼** | 自定义 | 国产适配 | 威胁情报强 |
-| **深信服SIP** | 自定义 | 一体化 | 全网态势感知 |
+```
+告警质量度量：
+
+True Positive Rate (真阳性率):
+  真正攻击 / 总告警
+  目标: > 60%
+
+False Positive Rate (误报率):
+  误报 / 总告警  
+  目标: < 15%
+
+告警优化周期:
+  每月: 审计所有规则的命中率和误报率
+  规则优化:
+    TPR < 30% → 调整或下线
+    FPR > 50% → 加过滤条件或下线
+    新规则 → 上线1个月内设为 "仅告警不升级"
+
+白名单管理:
+  运维IP段 → 不产生低级别告警
+  安全扫描器IP → 白名单
+  测试环境 → 降低告警级别
+```
 
 ---
 
-## 六、Checklist
+## 八、Splunk 实战
 
-- [ ] 核心日志源全量接入(P0级)
-- [ ] 日志范式化(统一到ECS或自定义Schema)
-- [ ] 日志传输加密(Syslog-TLS/Kafka-TLS/Beats-TLS)
-- [ ] 日志保留策略(热数据30天/温数据90天/冷数据≥365天)
-- [ ] 基线规则部署(Sigma规则集导入)
-- [ ] 关联分析规则编写(至少覆盖ATT&CK Top 20技术)
-- [ ] 告警降噪(合并+白名单+动态阈值)
-- [ ] 日志质量监控(采集延迟/丢失率/解析错误率)
-- [ ] 规则定期审核(≥季度)
-- [ ] 数据生命周期管理(索引轮转/归档/删除)
+```
+Splunk SPL vs Elastic KQL 对比：
+
+搜索语法:
+  Splunk:   index=main sourcetype=linux_secure "Failed password"
+  Elastic:  index:main AND event.dataset:linux_secure AND
+            event.outcome:failure
+
+统计:
+  Splunk:   | stats count by src_ip
+  Elastic:  | stats count() by source.ip
+
+时间图表:
+  Splunk:   | timechart span=1h count
+  Elastic:  | date_histogram field=@timestamp interval=1h
+
+关联:
+  Splunk:   | transaction src_ip maxspan=5m
+  Elastic:  (使用 Painless 脚本或多层 stats 实现)
+```
+
+---
+
+## 九、日志保留与合规
+
+```
+等保三级日志要求：
+  ✦ 日志保留 ≥ 6 个月
+  ✦ 审计日志不可删除/不可篡改
+  ✦ 日志进程保护（杀不死/自动拉起）
+
+日志完整性保护方案：
+  1. 应用层: 日志文件加 HMAC-SM3 校验值链
+  2. 传输层: mTLS 加密传输
+  3. 存储层: ES 索引只读 + 快照到 WORM 存储 (S3 Object Lock)
+
+合规证明：
+  ✓ 日志采集覆盖率报表
+  ✓ 日志保留时长证明
+  ✓ 日志完整性校验报告
+```
+
+---
+
+## ✅ Checklist
+
+- [ ] ES 集群部署（≥3节点）
+- [ ] Logstash 处理管道配置
+- [ ] 核心日志源全量接入
+- [ ] 日志范式化 (ECS)
+- [ ] 基础检测规则部署（≥50条）
+- [ ] 告警质量审计（月度）
+- [ ] ILM 索引生命周期配置
+- [ ] 日志完整性保护
+- [ ] 合规报告自动生成

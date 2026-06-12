@@ -1,175 +1,214 @@
-# 外网打点（信息收集 + 端口 + 指纹）实施手册
+# 渗透测试资产测绘与信息收集实战手册
 
-## 1. 信息收集总览
+> 📅 2026-06-12 | 🎯 进阶 | ⏱ 20 min | 分类：渗透测试
 
-```
-目标企业
- ├── 域名 / 子域名 / 备案信息
- ├── 公网 IP / C 段 / ASN
- ├── 端口与服务（80/443/22/3389/8080/...）
- ├── Web 指纹（CMS / 框架 / 中间件）
- ├── 邮箱 / 员工信息（GitHub / 脉脉 / LinkedIn）
- ├── 历史漏洞（CVE / CNVD / 漏洞平台）
- └── 供应链（外包 / 子公司 / 合作伙伴）
-```
+## 📋 提纲
 
-## 2. 子域名收集
-
-### 2.1 工具链
-
-```bash
-# 1. OneForAll（综合性强，推荐）
-python3 oneforall.py --target target.com run
-
-# 2. Subfinder（速度快，适合快速枚举）
-subfinder -d target.com -all -silent -o sub.txt
-
-# 3. Amass（主动+被动，覆盖率高）
-amass enum -passive -d target.com -o amass.txt
-
-# 4. CT 证书透明
-curl -s "https://crt.sh/?q=%25.target.com&output=json" | jq -r '.[].name_value' | sort -u
-
-# 5. 第三方 API：Virustotal / SecurityTrails / DNSDB
-# 6. 搜索引擎：site:target.com / site:*.target.com
-```
-
-### 2.2 子域名解析与存活
-
-```bash
-# 解析
-massdns -r resolvers.txt -t A -o S sub.txt -w resolved.txt
-# HTTP 存活探测
-cat sub.txt | httpx -silent -title -status-code -tech-detect -cdn -o live.txt
-```
-
-## 3. IP 段与 ASN
-
-```bash
-# 1. Whois 查询域名对应 IP 段
-whois target.com | grep -iE 'CIDR|NetRange|inetnum'
-
-# 2. ASN 信息
-whois -h whois.radb.net -- "-i origin AS12345"
-# BGP.he.net：浏览器查看 AS 路由信息
-
-# 3. Shodan / FOFA
-# FOFA 语法：domain="target.com" || cert="target.com" || ip="1.2.3.0/24"
-# Shodan 语法：hostname:target.com, ssl:"target.com", net:"1.2.3.0/24"
-```
-
-## 4. 端口扫描
-
-### 4.1 快速全端口（Masscan + Nmap）
-
-```bash
-# 全端口快速扫描（慎用以避免影响业务）
-sudo masscan 10.0.0.0/24 -p1-65535 --rate 2000 -oL masscan.log
-
-# 从 masscan 结果提取开放端口，再用 nmap 做服务版本识别
-nmap -sS -sV -sC -Pn -p T:21,22,80,443,3306,3389,6379,8080,9000 -iL targets.txt -oN nmap_scan.txt
-```
-
-### 4.2 常见敏感端口清单
-
-| 端口 | 服务 | 关注风险 |
-|------|------|---------|
-| 21 | FTP | 匿名登录 / 弱口令 / vsftpd 漏洞 |
-| 22 | SSH | 弱口令 / 老版本（CVE-2024-6387） |
-| 23 | Telnet | 明文传输 / 弱口令 |
-| 389/636 | LDAP | 未授权 / 弱口令 |
-| 445 | SMB | 永恒之蓝 / SMBGhost / 弱口令 |
-| 3306 | MySQL | 未授权 / 弱口令 / UDF |
-| 3389 | RDP | BlueKeep(CVE-2019-0708) / 弱口令 |
-| 5432 | PostgreSQL | 未授权 / 弱口令 |
-| 6379 | Redis | 未授权 / SSH key 写入 RCE |
-| 9200 | Elasticsearch | 未授权 / 历史 RCE |
-| 11211 | Memcached | 未授权读取 |
-| 27017 | MongoDB | 未授权访问 |
-| 10050 | Zabbix | 默认口令 / 历史 RCE |
-| 8080/7001/8888/9090 | 管理后台 | Tomcat / Weblogic / JBOSS / Jenkins |
-| 2375/2376 | Docker | Docker API 未授权 RCE |
-
-## 5. Web 指纹识别
-
-### 5.1 常用工具
-
-```bash
-# EHole 棱洞指纹
-./EHole -f live.txt -o ehole.json
-
-# Glass / finger
-python3 glass.py -f url.txt
-
-# Wappalyzer / WhatWeb
-whatweb -v http://target.com
-
-# httpx -tech-detect（已经在上一步使用）
-```
-
-### 5.2 关注指纹类型
-
-- **国内 CMS**：织梦 / 帝国 / PHPcms / 动易 / 致远 OA / 泛微 OA / 通达 OA / 蓝凌 OA / 用友 NC
-- **开发框架**：Spring Boot / Struts2 / ThinkPHP / Laravel / Flask / Django / Shiro / Fastjson
-- **中间件**：Nginx / Apache / Tomcat / JBoss / Weblogic / WebSphere / IIS
-- **云服务**：阿里 / 腾讯 / 华为云 OSS、COS、CDN 配置问题
-
-## 6. 目录与文件探测
-
-```bash
-# Gobuster 目录扫描
-gobuster dir -u http://target.com -w ./wordlist/dicc.txt -x php,jsp,action,html,txt,zip,rar,sql,log -t 50 -o dir.txt
-
-# 7kbscan / dirmap / Dirsearch
-python3 dirmap.py -i http://target.com -lcf
-
-# Git/SVN 泄漏探测
-GitHack.py http://target.com/.git/
-SVNDump.py http://target.com/.svn/entries
-```
-
-常见敏感文件：`/admin`、`/manager`、`/console`、`/actuator`、`/druid`、`/swagger-ui.html`、`/phpinfo.php`、`/backup.zip`、`/.git/config`、`/robots.txt`、`/web.config`、`/.DS_Store`
-
-## 7. 员工信息与账户泄漏
-
-- **Pastebin / 0bin / GitHub Gist**：搜索 `target.com password` / `@target.com`
-- **Git 泄漏工具**：`gitleaks`、`trufflehog`、`Gitrob`、`GitGuardian`
-- **LinkedIn / 脉脉**：收集员工姓名，用于生成邮箱字典和社工
-- **账户泄漏查询**：HaveIBeenPwned / Dehashed（需 API Key）
-
-## 8. 指纹 → POC 匹配与漏洞验证
-
-```bash
-# Nuclei 批量 POC（需先下载社区 nuclei-templates）
-nuclei -l live.txt -t ./nuclei-templates/cves/ -s critical,high -o nuclei_critical.txt
-
-# Xray 被动扫描 + 主动爬虫
-xray_linux_amd64 webscan --listen 127.0.0.1:7777 --html-output xray.html
-# 浏览器挂上该代理并访问目标
-
-# POC-T / Vulmap / T14 综合利用框架
-python3 POC-T.py -s thinkphp_rce2 -aF "app=\"thinkphp\"" --dork "thinkphp"
-```
-
-## 9. 情报平台速查
-
-| 类型 | 平台 |
-|------|------|
-| 网络空间测绘 | FOFA / Shodan / ZoomEye / Quake / Hunter |
-| 域名信息 | 站长之家 / ICP 备案查询 / DNSDB / SecurityTrails |
-| 漏洞库 | CVE / CNVD / CNNVD / Exploit-DB / Seebug / Packet Storm |
-| 威胁情报 | 微步 / 奇安信 / 360 / VirusTotal / AbuseIPDB |
-
-## 10. 工作流建议
-
-1. 明确目标与授权
-2. 被动情报（域名/子域/ASN/员工信息）→ 不去直接触达目标
-3. 端口扫描 → 服务识别
-4. Web 指纹 → CVE/POC 匹配
-5. 人工检查：各系统登录、文件上传、后台接口
-6. 组合利用链编写 PoC 并验证
-7. 输出报告
+1. 信息收集七阶段
+2. 子域名收集全套工具
+3. 指纹识别与CMS识别
+4. JavaScript信息泄露
+5. 目录/文件爆破
+6. GitHub/网盘信息泄露
 
 ---
 
-**免责声明**：本手册仅用于合法的授权安全测试。使用以上工具和技术时必须取得书面授权，并遵守相关法律法规。
+## 1. 信息收集七阶段
+
+```
+阶段1: 被动收集（不接触目标）
+  搜索引擎/证书透明度/DNS历史/Whois/社交媒体
+
+阶段2: DNS枚举
+  子域名爆破/域传送/DNS记录分析
+
+阶段3: 网络层探测
+  端口扫描/C段探测/ASN发现
+
+阶段4: Web层信息收集
+  指纹识别/目录爆破/JS分析/API发现
+
+阶段5: 代码仓库泄露
+  GitHub/GitLab/网盘/源码泄露
+
+阶段6: 企业信息收集
+  组织架构/员工信息/第三方供应商
+
+阶段7: 汇总分析
+  资产清单+攻击面分析
+```
+
+---
+
+## 2. 子域名全收集
+
+```bash
+#!/bin/bash
+# subdomain_enum.sh - 全量子域名收集
+
+DOMAIN="$1"
+
+echo "=== 子域名全量收集: $DOMAIN ==="
+
+# 1. 被动收集
+echo "[1] 被动收集..."
+# crt.sh
+curl -s "https://crt.sh/?q=%25.$DOMAIN&output=json" | jq -r '.[].name_value' | sed 's/\*\.//g' | sort -u > subs_crtsh.txt
+
+# AlienVault OTX
+curl -s "https://otx.alienvault.com/api/v1/indicators/domain/$DOMAIN/passive_dns" | jq -r '.passive_dns[].hostname' | sort -u > subs_otx.txt
+
+# SecurityTrails (需API)
+curl -s "https://api.securitytrails.com/v1/domain/$DOMAIN/subdomains" -H "APIKEY: $ST_KEY" | jq -r '.subdomains[]' | sed "s/$/.$DOMAIN/" >> subs_st.txt
+
+# 2. 字典爆破
+echo "[2] DNS字典爆破..."
+# 使用shuffledns + massdns
+shuffledns -d $DOMAIN -w /usr/share/wordlists/subdomains-top1million-5000.txt -r resolvers.txt -o subs_brute.txt
+
+# 3. 合并去重
+cat subs_*.txt | sort -u > all_subdomains.txt
+echo "  发现 $(wc -l < all_subdomains.txt) 个唯一子域名"
+
+# 4. DNS解析
+echo "[3] DNS解析..."
+cat all_subdomains.txt | dnsx -silent -a -resp -o resolved_subs.txt
+echo "  解析成功: $(wc -l < resolved_subs.txt)"
+
+# 5. HTTP探测
+echo "[4] HTTP服务探测..."
+cat resolved_subs.txt | httpx -silent -title -status-code -tech-detect -o alive_websites.txt
+echo "  发现Web服务: $(wc -l < alive_websites.txt)"
+```
+
+---
+
+## 3. 指纹识别
+
+```python
+#!/usr/bin/env python3
+"""Web指纹识别工具"""
+
+import requests
+import re
+from urllib.parse import urljoin
+
+class WebFingerprint:
+    FINGERPRINTS = {
+        'ThinkPHP': [
+            {'path': '/index.php?s=index/think\\app/invokefunction', 'status': [200, 500]},
+            {'header': 'X-Powered-By', 'pattern': 'ThinkPHP'},
+        ],
+        'Shiro': [
+            {'cookie': 'rememberMe=deleteMe', 'check': 'Set-Cookie'},
+        ],
+        'Spring Boot': [
+            {'path': '/actuator/health', 'status': 200},
+            {'path': '/error', 'pattern': 'Whitelabel Error Page'},
+        ],
+        'Struts2': [
+            {'path': '/struts/webconsole.html', 'status': 200},
+            {'ext': '.action;.do', 'status': [200, 404]},
+            {'path': '/.action', 'status': 200},
+            {'path': '/index.action', 'status': 200},
+        ],
+        'Fastjson': [
+            {'post': '{"test":"test"}', 'header': 'Content-Type', 'hval': 'application/json',
+             'check_status': 200, 'check_body': 'fastjson'},
+        ],
+        'Swagger': [
+            {'path': '/swagger-ui.html', 'status': 200},
+            {'path': '/swagger-resources', 'status': 200},
+            {'path': '/v2/api-docs', 'status': 200},
+            {'path': '/v3/api-docs', 'status': 200},
+        ],
+        'Druid': [
+            {'path': '/druid/index.html', 'status': 200},
+            {'path': '/druid/login.html', 'status': 200},
+        ],
+    }
+
+    def scan(self, url):
+        found = []
+        for name, checks in self.FINGERPRINTS.items():
+            for check in checks:
+                if self.check_fingerprint(url, check):
+                    found.append(name)
+                    break
+        return found
+
+    def check_fingerprint(self, url, check):
+        try:
+            if 'path' in check:
+                resp = requests.get(urljoin(url, check['path']), verify=False, timeout=5, allow_redirects=False)
+                if 'pattern' in check:
+                    return check['pattern'] in resp.text
+                if 'status' in check:
+                    return resp.status_code in (check['status'] if isinstance(check['status'], list) else [check['status']])
+            if 'header' in check:
+                resp = requests.get(url, verify=False, timeout=5)
+                return check['pattern'] in resp.headers.get(check['header'], '')
+            if 'cookie' in check:
+                resp = requests.get(url, cookies={'rememberMe': 'deleteMe'}, verify=False, timeout=5)
+                return check['check'] in resp.headers.get('Set-Cookie', '')
+        except:
+            pass
+        return False
+```
+
+---
+
+## 4. JS信息泄露分析
+
+```bash
+# 1. 提取所有JS文件
+cat alive_websites.txt | gau --js | sort -u > js_files.txt
+
+# 2. 从JS提取敏感信息
+cat js_files.txt | while read url; do
+    curl -sk "$url" | grep -iE '(api[_-]?key|api[_-]?secret|access[_-]?key|auth[_-]?token|password|secret|token|aws_access|private_key|AKIA|bearer|authorization)' >> js_secrets.txt
+done
+
+# 3. 提取JS中的路径/API
+cat js_files.txt | while read url; do
+    curl -sk "$url" | grep -oE '["'"'"'](/[a-zA-Z0-9_/.-]+)["'"'"']' | sort -u >> js_apis.txt
+done
+
+# 4. 使用 LinkFinder 深度提取
+python3 LinkFinder.py -i "$url" -o cli >> js_endpoints.txt
+```
+
+---
+
+## 5. 目录爆破
+
+```bash
+# 使用 ffuf 快速目录爆破
+ffuf -u https://target.com/FUZZ \
+    -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \
+    -fc 403,404 \
+    -t 50 \
+    -o dir_results.json
+
+# 重点路径
+for path in .git/config .env .svn/entries .DS_Store \
+    wp-config.php.bak config.php.bak database.yml.bak \
+    backup/ admin/ phpmyadmin/ .htaccess robots.txt; do
+    status=$(curl -sk -o /dev/null -w "%{http_code}" "https://target.com/$path")
+    [ "$status" != "404" ] && echo "$path → $status"
+done
+```
+
+---
+
+## ✅ 信息收集 Checklist
+
+- [ ] 子域名全收集（被动+字典+证书）
+- [ ] DNS解析+HTTP探测
+- [ ] Web指纹/中间件/CMS识别
+- [ ] JS信息泄露分析
+- [ ] 目录/文件爆破（含.git/.env等）
+- [ ] GitHub/网盘源码泄露
+- [ ] 资产清单+攻击面汇总
+
+> 📚 延伸阅读：Penetration/001-Web流程 | HW/002-资产自查 | Cloud/001-云安全

