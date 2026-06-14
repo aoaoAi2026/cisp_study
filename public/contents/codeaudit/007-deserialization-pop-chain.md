@@ -1,5 +1,23 @@
 # 反序列化漏洞链挖掘实战 (POP Chain)
 
+> **📘 文档定位**：CISP 考试代码审计高阶内容 | 难度：⭐⭐⭐⭐⭐ | 预计阅读：25 分钟
+> POP Chain 是反序列化漏洞的核心利用技术。本文从 POP 链构造四步法、各语言经典 Gadget 链速查到识别与防御，系统梳理反序列化漏洞攻防体系。
+
+---
+
+## 导航目录
+- [一、反序列化漏洞的本质](#一反序列化漏洞的本质)
+- [二、主流语言的危险反序列化器](#二主流语言的危险反序列化器)
+- [三、POP 链构造的基本思路](#三pop-链构造的基本思路)
+- [四、经典链示例 (Java Commons-Collections 6)](#四经典链示例-java-commons-collections-6)
+- [五、经典链示例 (PHP Laravel RCE)](#五经典链示例-php-laravel-rce)
+- [六、经典链示例 (Python pickle)](#六经典链示例-python-pickle)
+- [七、识别与发现](#七识别与发现)
+- [八、经典 Gadget 速查表 (Java)](#八经典-gadget-速查表-java)
+- [九、防护与修复](#九防护与修复)
+- [十、实战演练清单](#十实战演练清单)
+- [十一、高分考点与知识巧记](#十一高分考点与知识巧记)
+
 ---
 
 ## 一、反序列化漏洞的本质
@@ -186,3 +204,38 @@ grep -rln "BinaryFormatter\|NetDataContractSerializer\|LosFormatter" src/
 - [ ] 每季度做一次反序列化专项渗透测试 (结合 ysoserial / phpgcc / 手工构造)
 - [ ] 建立"疑似反序列化"告警 → 安全团队 24h 响应流程
 - [ ] 团队培训: 反序列化危害 + 正确替代方案 (JSON/Proto/Thrift)
+
+---
+
+## 十一、高分考点与知识巧记
+
+> 🔑 **高分考点**：POP Chain 是反序列化漏洞的理论核心，考试侧重理解 Gadget 链构造原理和各语言经典链。CC 链、Fastjson、Laravel RCE 是三大高频考点。
+
+| 考点 | 频次 | 核心记忆点 |
+|:---|:---:|:---|
+| POP Chain 四步法 | ⭐⭐⭐⭐⭐ | 起点(魔法方法) → 中间(属性传递) → 终点(危险操作) → 串联 |
+| Java CC 链 | ⭐⭐⭐⭐⭐ | CommonsCollections 1-7，ysoserial 生成 |
+| PHP unserialize | ⭐⭐⭐⭐ | __wakeup/__destruct 入口，phpggc 工具 |
+| Python pickle | ⭐⭐⭐⭐ | __reduce__ 返回(callable, args)，直接 RCE |
+| 防护方案 | ⭐⭐⭐⭐ | 禁不安全反序列化器 > 白名单类 > JSON/Proto 替代 |
+
+> 💡 **知识巧记**：POP 链构造记"起中转串"——起点(魔法方法入口)、中间(属性传递转发)、终点(Sink 危险操作)、串联(属性全可控)。各语言工具对照：Java→ysoserial、PHP→phpggc、.NET→ysoserial.net、Python→手工 __reduce__。防护优先级：禁用 > 白名单 > 替代格式 > 升级依赖 > RASP。
+
+### 高分考点速查表
+
+| 考察维度 | 关键结论 | 常见干扰项 |
+|:---|:---|:---|
+| CC 链核心 | PriorityQueue.readObject → compareTo → ChainedTransformer → Runtime.exec | "CC 链只在 JDK 8 有效" ❌ |
+| Fastjson | autoType 模式 + @type 指定 class = RCE | "Fastjson 最新版仍有反序列化漏洞" ❌ |
+| pickle vs json | pickle 可执行代码，json 纯数据安全 | "pickle 和 json 安全性相同" ❌ |
+| JEP 290 | Java 序列化过滤器，白名单类校验 | "JEP 290 完全解决反序列化问题" ❌ |
+| 替代方案 | JSON/Protobuf/Thrift 不含类信息 | "XML 也是安全的替代格式" ❌ |
+
+### 知识巧记口诀
+
+> **POP Chain 攻防口诀**：
+> 反序列化核心起中转串，魔法方法入口起。
+> Java ysoserial CC 链，PHP phpggc Laravel 袭。
+> Python __reduce__ 直捣黄龙，.NET ysoserial.net BinaryFormatter 忌。
+> 防护禁用不安全器，白名单类 JSON Proto 替。
+> RASP 监控 Runtime.exec，JNDI lookup 拦截齐。

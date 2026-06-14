@@ -1,3 +1,5 @@
+import { storageSet, storageGet, storageRemove } from './NativeStorage';
+
 const USERS_KEY = 'cisp_users';
 const PROGRESS_KEY = 'cisp_progress_';
 const TOKEN_KEY = 'cisp_token';
@@ -45,13 +47,13 @@ export interface LabTool {
   officialSite: string;
 }
 
-function getStoredUsers(): LocalUser[] {
-  const raw = localStorage.getItem(USERS_KEY);
+async function getStoredUsers(): Promise<LocalUser[]> {
+  const raw = await storageGet(USERS_KEY);
   return raw ? JSON.parse(raw) : [];
 }
 
-function saveUsers(users: LocalUser[]): void {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+async function saveUsers(users: LocalUser[]): Promise<void> {
+  await storageSet(USERS_KEY, JSON.stringify(users));
 }
 
 function getProgressKey(userId: number): string {
@@ -60,45 +62,46 @@ function getProgressKey(userId: number): string {
 
 export const LocalDB = {
   users: {
-    getAll(): LocalUser[] {
+    async getAll(): Promise<LocalUser[]> {
       return getStoredUsers();
     },
 
-    getById(id: number): LocalUser | undefined {
-      return getStoredUsers().find((u) => u.id === id);
+    async getById(id: number): Promise<LocalUser | undefined> {
+      const users = await getStoredUsers();
+      return users.find((u) => u.id === id);
     },
 
-    getByUsername(username: string): LocalUser | undefined {
-      return getStoredUsers().find((u) => u.username.toLowerCase() === username.toLowerCase());
+    async getByUsername(username: string): Promise<LocalUser | undefined> {
+      const users = await getStoredUsers();
+      return users.find((u) => u.username.toLowerCase() === username.toLowerCase());
     },
 
-    create(user: Omit<LocalUser, 'id' | 'createdAt'>): LocalUser {
-      const users = getStoredUsers();
+    async create(user: Omit<LocalUser, 'id' | 'createdAt'>): Promise<LocalUser> {
+      const users = await getStoredUsers();
       const newUser: LocalUser = {
         ...user,
         id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
         createdAt: new Date().toISOString(),
       };
       users.push(newUser);
-      saveUsers(users);
+      await saveUsers(users);
       return newUser;
     },
 
-    exists(username: string): boolean {
-      return getStoredUsers().some((u) => u.username.toLowerCase() === username.toLowerCase());
+    async exists(username: string): Promise<boolean> {
+      const users = await getStoredUsers();
+      return users.some((u) => u.username.toLowerCase() === username.toLowerCase());
     },
   },
 
   progress: {
-    get(userId: number): UserProgress {
-      const raw = localStorage.getItem(getProgressKey(userId));
-      if (raw) {
-        return JSON.parse(raw);
-      }
+    async get(userId: number): Promise<UserProgress> {
+      const raw = await storageGet(getProgressKey(userId));
+      if (raw) return JSON.parse(raw);
       return this.create(userId);
     },
 
-    create(userId: number): UserProgress {
+    async create(userId: number): Promise<UserProgress> {
       const defaultProgress: UserProgress = {
         userId,
         currentDay: 1,
@@ -109,46 +112,46 @@ export const LocalDB = {
         completedLabs: [],
         quizResults: {},
       };
-      localStorage.setItem(getProgressKey(userId), JSON.stringify(defaultProgress));
+      await storageSet(getProgressKey(userId), JSON.stringify(defaultProgress));
       return defaultProgress;
     },
 
-    save(userId: number, progress: UserProgress): void {
-      localStorage.setItem(getProgressKey(userId), JSON.stringify(progress));
+    async save(userId: number, progress: UserProgress): Promise<void> {
+      await storageSet(getProgressKey(userId), JSON.stringify(progress));
     },
 
-    update(userId: number, updates: Partial<UserProgress>): UserProgress {
-      const current = this.get(userId);
+    async update(userId: number, updates: Partial<UserProgress>): Promise<UserProgress> {
+      const current = await this.get(userId);
       const updated = { ...current, ...updates };
-      this.save(userId, updated);
+      await this.save(userId, updated);
       return updated;
     },
 
-    reset(userId: number): UserProgress {
+    async reset(userId: number): Promise<UserProgress> {
       return this.create(userId);
     },
   },
 
   auth: {
-    setToken(token: string): void {
-      localStorage.setItem(TOKEN_KEY, token);
+    async setToken(token: string): Promise<void> {
+      await storageSet(TOKEN_KEY, token);
     },
 
-    getToken(): string | null {
-      return localStorage.getItem(TOKEN_KEY);
+    async getToken(): Promise<string | null> {
+      return storageGet(TOKEN_KEY);
     },
 
-    clearToken(): void {
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_KEY);
+    async clearToken(): Promise<void> {
+      await storageRemove(TOKEN_KEY);
+      await storageRemove(USER_KEY);
     },
 
-    setUser(user: LocalUser): void {
-      localStorage.setItem(USER_KEY, JSON.stringify(user));
+    async setUser(user: LocalUser): Promise<void> {
+      await storageSet(USER_KEY, JSON.stringify(user));
     },
 
-    getUser(): LocalUser | null {
-      const raw = localStorage.getItem(USER_KEY);
+    async getUser(): Promise<LocalUser | null> {
+      const raw = await storageGet(USER_KEY);
       if (!raw) return null;
       try {
         return JSON.parse(raw) as LocalUser;

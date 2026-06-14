@@ -259,3 +259,39 @@ with open('urls_with_params.txt', 'w') as f:
 - [ ] 注入成功→数据获取→横向移动
 
 > 📚 延伸阅读：Penetration/003-SQL注入 | Penetration/007-WAF绕过 | Vuln/001-漏洞概述
+
+---
+
+## 高分考点与知识巧记
+
+### 高分考点速查表
+
+| 考点 | 考察维度 | 记忆要点 |
+|------|----------|----------|
+| SQL注入分类 | 基础理论 | 联合查询(UNION)、报错注入(Error-based)、布尔盲注(Boolean)、时间盲注(Time-based)、堆叠查询 |
+| 自动化挖掘工具 | 工具选型 | sqlmap(全自动)、GHA(手工辅助)、Xray(被动扫描)、自定义脚本(深度定制) |
+| 注入点识别技巧 | 实战技巧 | 单引号/双引号→报错判断；and 1=1/1=2→布尔判断；sleep()→时间判断 |
+| WAF绕过Tamper | 高级技术 | space2comment、charencode、randomcase、between、equaltolike等组合使用 |
+| 各数据库特性 | 数据库对比 | MySQL(load_file/into outfile)、MSSQL(xp_cmdshell)、Oracle(UTL_HTTP)、PostgreSQL(COPY) |
+| 实战技巧 | 综合运用 | 参数污染、二次编码、分块传输、HTTP走私、JSON格式注入 |
+
+### 知识巧记口诀
+
+> **SQL注入挖掘口诀**：
+> 凡是参数都可测，单引双引先试探；
+> and 1=1和1=2，布尔差异判注入；
+> 延时sleep看响应，时间盲注也跑不了；
+> sqlmap自动化跑，tamper绕过要组合；
+> 报错联合加盲注，三大类型要记牢。
+
+> **数据库特性记**：MySQL读写文件、MSSQL命令执行、Oracle外带数据、PostgreSQL大对象。
+
+### 考试陷阱提醒
+
+| 陷阱 | 正确认知 |
+|------|----------|
+| ❌ 只有GET参数才有注入 | ✅ POST参数、Cookie、HTTP Header(User-Agent/Referer等)都可能存在注入点 |
+| ❌ sqlmap跑不出来就没有注入 | ✅ sqlmap有局限，手工确认+自定义脚本+多工具交叉验证才能保证覆盖率 |
+| ❌ WAF能彻底防SQL注入 | ✅ WAF可被tamper组合绕过，根本方案是参数化查询和白名单校验 |
+
+> 💡 **一句话总结**：SQL注入是老牌但永不过时的漏洞——只要SQL拼接还存在，注入就不会消失，CISP考试考查注入原理、检测方法和实战绕过技巧。

@@ -1,5 +1,23 @@
 # .NET 代码审计实战指南
 
+> **📘 文档定位**：CISP 考试代码审计进阶内容 | 难度：⭐⭐⭐⭐ | 预计阅读：22 分钟
+> .NET 代码审计覆盖 ASP.NET/ASP.NET Core 两大生态。本文从反序列化、ViewState 风险、web.config 审计到 Blazor XSS，系统梳理 .NET 平台安全审计要点。
+
+---
+
+## 导航目录
+- [一、.NET 技术栈与常见风险](#一net-技术栈与常见风险)
+- [二、SQL 注入](#二sql-注入)
+- [三、.NET 反序列化漏洞](#三net-反序列化漏洞)
+- [四、ViewState 风险](#四viewstate-风险)
+- [五、web.config 风险点](#五webconfig-风险点)
+- [六、ASP.NET Core 安全](#六aspnet-core-安全)
+- [七、文件上传与路径遍历](#七文件上传与路径遍历)
+- [八、XXE (XML 外部实体注入)](#八xxe-xml-外部实体注入)
+- [九、反序列化之外的 RCE 路径](#九反序列化之外的-rce-路径)
+- [十、CheckList](#十checklist)
+- [十一、高分考点与知识巧记](#十一高分考点与知识巧记)
+
 ---
 
 ## 一、.NET 技术栈与常见风险
@@ -260,3 +278,38 @@ Server.Execute(Request["path"]);
 - [ ] 反编译 `*.dll / *.exe` 查看是否存在硬编码密钥、后门 IP
 - [ ] 权限: `[Authorize]` / `[AllowAnonymous]` 覆盖情况; 管理后台路径访问控制
 - [ ] XXE: 所有 XML 解析是否禁用 DTD?
+
+---
+
+## 十一、高分考点与知识巧记
+
+> 🔑 **高分考点**：.NET 代码审计考点集中在 BinaryFormatter 反序列化、ViewState 安全、web.config 风险配置。ysoserial.net 是 .NET 版反序列化利用工具，与 Java 版 ysoserial 对应。
+
+| 考点 | 频次 | 核心记忆点 |
+|:---|:---:|:---|
+| 反序列化 API | ⭐⭐⭐⭐⭐ | BinaryFormatter/NetDataContractSerializer/LosFormatter 禁止反序列化外部数据 |
+| ViewState | ⭐⭐⭐⭐ | machineKey 泄露 + ysoserial.net 伪造 = RCE |
+| web.config 风险 | ⭐⭐⭐⭐ | debug=true/customErrors=Off/tracing/machineKey 硬编码 |
+| Json.NET TypeNameHandling | ⭐⭐⭐⭐ | 类似 Java Jackson enableDefaultTyping，应设为 None |
+| ASP.NET Core | ⭐⭐⭐ | HTTPS 强制、HSTS、CORS 限制、Swagger 保护 |
+
+> 💡 **知识巧记**：.NET 反序列化三大禁：BinaryFormatter 禁、NetDataContractSerializer 禁、LosFormatter 禁。web.config 五风险记"调错机追验"——debug 调试开、customErrors 错误关、machineKey 硬编码、tracing 追踪开、validateRequest 验证关。ysoserial.net 对应 Java ysoserial，TextFormattingRunProperties 是最经典 gadget。
+
+### 高分考点速查表
+
+| 考察维度 | 关键结论 | 常见干扰项 |
+|:---|:---|:---|
+| BinaryFormatter | 微软官方标记危险，禁止反序列化不可信数据 | "升级 .NET 版本即可安全" ❌ |
+| machineKey | 多环境不可共享，备份不可泄漏 | "machineKey 自动生成就安全" ❌ |
+| TypeNameHandling | 设为 None，类似 Java 关闭 autoType | "Auto 模式是安全的" ❌ |
+| customErrors | 生产必须 RemoteOnly 或 On | "Off 模式方便调试" ❌ |
+| ASP.NET Core HSTS | UseHsts() + UseHttpsRedirection() | "HTTP 和 HTTPS 并存没问题" ❌ |
+
+### 知识巧记口诀
+
+> **.NET 代码审计口诀**：
+> 反序列化三大禁，Binary NetData LosFormatter 停。
+> web.config 五风险，调错机追验记分明。
+> ViewState machineKey 护，泄露即可 RCE 成。
+> Json.NET type 设 None，如同 Java autoType 封。
+> ASP.NET Core 强制 HTTPS，CORS 收紧 HSTS 硬。

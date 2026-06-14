@@ -1,5 +1,19 @@
 # JavaScript / Node.js 代码审计实战
 
+> **📘 文档定位**：CISP 考试代码审计内容 | 难度：⭐⭐⭐ | 预计阅读：15 分钟
+> Node.js 代码审计关注原型链污染、命令注入、JWT 安全与 npm 供应链风险。原型链污染是 JavaScript 特有的高危漏洞类型。
+
+---
+
+## 导航目录
+- [一、原型链污染](#一原型链污染)
+- [二、命令注入](#二命令注入)
+- [三、JWT 安全](#三jwt-安全)
+- [四、npm 依赖审计](#四npm-依赖审计)
+- [五、Serverless 安全](#五serverless-安全)
+- [六、Checklist](#六checklist)
+- [七、高分考点与知识巧记](#七高分考点与知识巧记)
+
 ---
 
 ## 一、原型链污染
@@ -114,3 +128,36 @@ Serverless 函数(如AWS Lambda)审计要点：
 - [ ] JWT algorithms强制指定
 - [ ] npm audit + Snyk 定期扫描
 - [ ] Serverless IAM最小权限
+
+---
+
+## 七、高分考点与知识巧记
+
+> 🔑 **高分考点**：Node.js 审计核心考点是原型链污染（JavaScript 特有）、exec vs spawn 安全性、JWT alg:none 攻击。原型链污染是高频考点，lodash.defaultsDeep 是经典案例。
+
+| 考点 | 频次 | 核心记忆点 |
+|:---|:---:|:---|
+| 原型链污染 | ⭐⭐⭐⭐⭐ | __proto__/constructor 注入，lodash < 4.6.0 |
+| exec vs spawn | ⭐⭐⭐⭐ | exec 字符串拼接危险，spawn 参数数组安全 |
+| JWT alg:none | ⭐⭐⭐⭐ | 不指定 algorithms 可被 none 绕过 |
+| npm audit | ⭐⭐⭐ | npm audit --production + snyk test |
+| Serverless 安全 | ⭐⭐⭐ | 环境变量加密、IAM 最小权限、超时配置 |
+
+> 💡 **知识巧记**：原型链污染核心记"__proto__ 全局改，Object.create(null) 无原型安"。Node.js 命令注入记"exec 拼 spawn 数"——exec 拼接字符串危险，spawn 参数数组安全。JWT 三防：指定 algorithms、强密钥、短有效期。
+
+### 高分考点速查表
+
+| 考察维度 | 关键结论 | 常见干扰项 |
+|:---|:---|:---|
+| 原型链污染 | 通过 __proto__ 修改 Object.prototype，影响所有对象 | "原型链污染只影响当前对象" ❌ |
+| exec vs spawn | exec 默认 shell 解析，spawn 不经过 shell | "exec 和 spawn 安全性相同" ❌ |
+| JWT none | 不指定 algorithms 参数可被 none 算法绕过 | "JWT 库默认禁止 none" ❌ |
+| npm audit | 仅扫描生产依赖，devDependencies 也需关注 | "npm audit 自动修复所有漏洞" ❌ |
+
+### 知识巧记口诀
+
+> **Node.js 审计口诀**：
+> 原型链污染是特产，__proto__ 过滤 create(null) 安。
+> 命令执行 spawn 替 exec，参数数组避 shell 串。
+> JWT 三防护 none，强密钥短有效期 algorithms 限。
+> npm audit 定期扫，Serverless IAM 最小权。

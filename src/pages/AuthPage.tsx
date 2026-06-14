@@ -23,7 +23,7 @@ export default function AuthPage() {
         : await api.register(username.trim(), password, email.trim() || undefined);
       login({ id: result.user.id, name: result.user.username, email: result.user.email || '', joinDate: new Date().toISOString().split('T')[0] });
       console.log(`${mode === 'login' ? '登录' : '注册'}成功:`, result.user);
-      navigate('/dashboard');
+      navigate('/');
     } catch (err: any) {
       setError(err.message || '请求失败');
     } finally {
@@ -131,6 +131,6 @@ export default function AuthPage() {
   );
 }
 
-export function getUser(): ApiUser | null {
+export async function getUser(): Promise<ApiUser | null> {
   return api.getStoredUser();
 }

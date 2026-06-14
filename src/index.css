@@ -6,7 +6,7 @@
 
 :root {
   --cyber-black: #0a0e17;
-  --cyber-purple: #1a1a2e;
+  --cyber-purple: #6b5b95;
   --cyber-green: #00ff88;
   --cyber-blue: #00d4ff;
   --cyber-red: #ff3366;
@@ -42,7 +42,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--cyber-purple);
+  background: #374151;
   border-radius: 4px;
 }
 

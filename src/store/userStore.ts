@@ -20,8 +20,8 @@ interface UserState {
   user: User | null;
   settings: UserSettings;
   login: (user: User) => void;
-  logout: () => void;
-  initFromStorage: () => void;
+  logout: () => Promise<void>;
+  initFromStorage: () => Promise<void>;
   updateSettings: (settings: Partial<UserSettings>) => void;
 }
 
@@ -34,8 +34,8 @@ export const useUserStore = create<UserState>((set, get) => ({
     notifications: true,
   },
 
-  initFromStorage: () => {
-    const stored = api.getStoredUser();
+  initFromStorage: async () => {
+    const stored = await api.getStoredUser();
     if (stored) {
       set({
         user: {
@@ -46,24 +46,25 @@ export const useUserStore = create<UserState>((set, get) => ({
         },
       });
     }
-    const savedSettings = localStorage.getItem('cisp_user_settings');
-    if (savedSettings) {
-      try {
+    // Load settings from localStorage (non-critical, web-only)
+    try {
+      const savedSettings = localStorage.getItem('cisp_user_settings');
+      if (savedSettings) {
         set({ settings: { ...get().settings, ...JSON.parse(savedSettings) } });
-      } catch {}
-    }
+      }
+    } catch { /* ignore */ }
   },
 
   login: (user) => set({ user }),
 
-  logout: () => {
-    authLogout();
+  logout: async () => {
+    await authLogout();
     set({ user: null });
   },
 
   updateSettings: (newSettings) => {
     const updated = { ...get().settings, ...newSettings };
     set({ settings: updated });
-    localStorage.setItem('cisp_user_settings', JSON.stringify(updated));
+    try { localStorage.setItem('cisp_user_settings', JSON.stringify(updated)); } catch { /* ignore */ }
   },
 }));

@@ -1,5 +1,21 @@
 # 内网横向渗透：Kerberos 与域内移动
 
+> **📘 文档定位**：CISP 考试 渗透测试 高级 | 难度：⭐⭐⭐⭐⭐ | 预计阅读：30 分钟
+>
+> 深入讲解 Windows 域环境中基于 Kerberos 协议的横向移动技术，覆盖 Kerberoasting/AS-REP Roasting/白银票据/黄金票据/PTT/PTK/Overpass the Hash 等核心攻击手法。
+
+---
+
+## 导航目录
+
+- [一、Kerberos 协议原理](#一kerberos-协议原理)
+- [二、Kerberoasting 攻击](#二kerberoasting-攻击)
+- [三、票据攻击（白银/黄金）](#三票据攻击白银黄金)
+- [四、PTT/PTK/Overpass the Hash](#四pttptkoverpass-the-hash)
+- [五、域内横向移动技术](#五域内横向移动技术)
+- [六、安全部署 Checklist](#六安全部署-checklist)
+- [七、高分考点与知识巧记](#七高分考点与知识巧记)
+
 ---
 
 ## 📋 目录

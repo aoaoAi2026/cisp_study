@@ -1,5 +1,5 @@
 // 网络安全学习 - 每日课程详情页
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -25,21 +25,117 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { Card, Badge, Button } from '../components/UI';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { cyberBasicPlan, CyberLearningPlan, CyberDay, QuizQuestion } from '../data/cyberBasic';
 import { cyberPenetrationPlan } from '../data/cyberPenetration';
 import { cyberDefensePlan } from '../data/cyberDefense';
+import { cyberAiPlan } from '../data/cyberAi';
 import { Pomodoro } from '../components/Pomodoro';
+import { saveData, loadData } from '../data/persistData';
+import { useQuizPractice, useWrongQuestionBook, checkQuizAnswer } from '../hooks';
+
+// 静态导入所有课程 .md 文件，避免运行时 fetch 路径问题
+const mdModules = import.meta.glob<{ default: string }>('../../public/contents/cyber-learning/**/*.md', {
+  query: '?raw',
+  eager: true,
+});
+
+/** 根据 planId 和 day 获取 .md 内容 */
+function getMdFile(planId: string, day: number): string | null {
+  // 尝试多种可能的 key 格式
+  const candidates = [
+    `../../public/contents/cyber-learning/${planId}/day-${day}.md`,
+    `/src/contents/cyber-learning/${planId}/day-${day}.md`,
+  ];
+  for (const key of candidates) {
+    if (mdModules[key]) return (mdModules[key] as any).default || (mdModules[key] as any);
+  }
+  // glob 返回的 key 可能是绝对路径或不同格式，遍历匹配
+  for (const [modKey, mod] of Object.entries(mdModules)) {
+    if (modKey.includes(`/${planId}/day-${day}.md`)) {
+      return (mod as any).default || (mod as any);
+    }
+  }
+  return null;
+}
 
 const plans: Record<string, CyberLearningPlan> = {
   basic: cyberBasicPlan,
   penetration: cyberPenetrationPlan,
-  defense: cyberDefensePlan
+  defense: cyberDefensePlan,
+  ai: cyberAiPlan
 };
 
 const planColor = (planId: string) => {
-  if (planId === 'basic') return { main: 'text-cyber-green', bg: 'bg-cyber-green', border: 'border-cyber-green' };
-  if (planId === 'penetration') return { main: 'text-cyber-red', bg: 'bg-cyber-red', border: 'border-cyber-red' };
-  return { main: 'text-cyber-blue', bg: 'bg-cyber-blue', border: 'border-cyber-blue' };
+  if (planId === 'basic') return {
+    main: 'text-cyber-green',
+    bg: 'bg-cyber-green',
+    border: 'border-cyber-green',
+    bgLight: 'bg-cyber-green/20',
+    borderLight: 'border-cyber-green/40',
+    borderFaint: 'border-cyber-green/50',
+    borderSoft: 'border-cyber-green/50',
+    borderStrong: 'border-cyber-green/70',
+    cardBorder: 'border-cyber-green/30',
+    textColor: 'text-cyber-green',
+    optionDefault: 'border-cyber-green/40 bg-white/5 hover:border-cyber-green/70 hover:bg-cyber-green/15',
+    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
+    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
+    optionDim: 'border-cyber-green/20 bg-transparent opacity-40',
+    btnDefault: 'bg-[#00cc66] text-black font-semibold hover:bg-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.3)] hover:shadow-[0_0_20px_rgba(0,255,136,0.5)]',
+  };
+  if (planId === 'penetration') return {
+    main: 'text-cyber-red',
+    bg: 'bg-cyber-red',
+    border: 'border-cyber-red',
+    bgLight: 'bg-cyber-red/20',
+    borderLight: 'border-cyber-red/40',
+    borderFaint: 'border-cyber-red/50',
+    borderSoft: 'border-cyber-red/50',
+    borderStrong: 'border-cyber-red/70',
+    cardBorder: 'border-cyber-red/30',
+    textColor: 'text-cyber-red',
+    optionDefault: 'border-cyber-red/40 bg-white/5 hover:border-cyber-red/70 hover:bg-cyber-red/15',
+    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
+    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
+    optionDim: 'border-cyber-red/20 bg-transparent opacity-40',
+    btnDefault: 'bg-[#e04444] text-white font-semibold hover:bg-[#ff5555] shadow-[0_0_12px_rgba(255,68,68,0.3)] hover:shadow-[0_0_20px_rgba(255,68,68,0.5)]',
+  };
+  if (planId === 'ai') return {
+    main: 'text-gray-200',
+    bg: 'bg-cyber-purple',
+    border: 'border-cyber-purple',
+    bgLight: 'bg-cyber-purple/15',
+    borderLight: 'border-white/15',
+    borderFaint: 'border-white/25',
+    borderSoft: 'border-white/30',
+    borderStrong: 'border-white/40',
+    cardBorder: 'border-white/10',
+    textColor: 'text-gray-300',
+    optionDefault: 'border-white/30 bg-white/5 text-gray-200 hover:border-white/50 hover:bg-white/10',
+    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
+    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
+    optionDim: 'border-white/15 bg-transparent opacity-40',
+    btnDefault: 'bg-[#7b6ba8] text-white font-semibold hover:bg-[#9588c0] shadow-[0_0_12px_rgba(123,107,168,0.35)] hover:shadow-[0_0_18px_rgba(123,107,168,0.5)]',
+  };
+  return {
+    main: 'text-cyber-blue',
+    bg: 'bg-cyber-blue',
+    border: 'border-cyber-blue',
+    bgLight: 'bg-cyber-blue/20',
+    borderLight: 'border-cyber-blue/40',
+    borderFaint: 'border-cyber-blue/50',
+    borderSoft: 'border-cyber-blue/50',
+    borderStrong: 'border-cyber-blue/70',
+    cardBorder: 'border-cyber-blue/30',
+    textColor: 'text-cyber-blue',
+    optionDefault: 'border-cyber-blue/40 bg-white/5 hover:border-cyber-blue/70 hover:bg-cyber-blue/15',
+    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
+    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
+    optionDim: 'border-cyber-blue/20 bg-transparent opacity-40',
+    btnDefault: 'bg-[#3388ee] text-white font-semibold hover:bg-[#5599ff] shadow-[0_0_12px_rgba(51,136,238,0.3)] hover:shadow-[0_0_20px_rgba(51,136,238,0.5)]',
+  };
 };
 
 export const CyberDailyLearning: React.FC = () => {
@@ -50,162 +146,96 @@ export const CyberDailyLearning: React.FC = () => {
 
   const [currentDay, setCurrentDay] = useState(1);
   const [completedDays, setCompletedDays] = useState<Set<number>>(new Set());
-  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
-  const [quizAnswers, setQuizAnswers] = useState<(number | number[] | string | null)[]>([]);
-  const [showAnswer, setShowAnswer] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [note, setNote] = useState('');
   const [noteSavedAt, setNoteSavedAt] = useState<number | null>(null);
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
-  const [wrongQuestions, setWrongQuestions] = useState<Array<{ planId: string; day: number; questionIndex: number; consecutiveCorrect: number }>>([]);
+  const [mdContent, setMdContent] = useState<string | null>(null);
+  const [mdLoading, setMdLoading] = useState(false);
+  const [mdError, setMdError] = useState<string | null>(null);
   const saveTimer = React.useRef<number | null>(null);
+
+  // 测验和错题本 hooks
+  const day = useMemo(
+    () => plan?.days.find(d => d.day === currentDay),
+    [plan, currentDay],
+  );
+  const quiz = useQuizPractice(day?.quiz || []);
+  const wrongQuestionBook = useWrongQuestionBook();
+
+  // 切换天时重置测验
+  const resetQuiz = useCallback(() => { quiz.reset(); }, [quiz.reset]);
+  useEffect(() => {
+    resetQuiz();
+  }, [resetQuiz]);
 
   useEffect(() => {
     if (!planId) return;
-    try {
-      const raw = localStorage.getItem('cisp_cyber_progress');
-      if (raw) {
-        const data = JSON.parse(raw);
-        if (data[planId]?.completedDays) {
-          setCompletedDays(new Set(data[planId].completedDays));
-        }
+    async function load() {
+      const data = await loadData<any>('cisp_cyber_progress', {});
+      if (data[planId]?.completedDays) {
+        setCompletedDays(new Set(data[planId].completedDays));
       }
-    } catch {}
-    // 加载错题本
-    try {
-      const raw = localStorage.getItem('cisp_wrong_questions');
-      if (raw) {
-        setWrongQuestions(JSON.parse(raw));
-      }
-    } catch {}
+    }
+    load();
   }, [planId]);
 
   useEffect(() => {
     if (!planId) return;
-    const noteKey = `cyber_${planId}_${currentDay}`;
-    const raw = localStorage.getItem(noteKey);
-    if (raw) {
-      try { setNote(raw); setNoteSavedAt(Date.now()); } catch {}
-    } else {
-      setNote(''); setNoteSavedAt(null);
+    async function load() {
+      const noteKey = `cyber_${planId}_${currentDay}`;
+      const raw = await loadData<string>(noteKey, '');
+      if (raw) { setNote(raw); setNoteSavedAt(Date.now()); } else { setNote(''); setNoteSavedAt(null); }
     }
+    load();
   }, [planId, currentDay]);
 
+  // 加载 .md 课程内容（静态导入，无需网络请求）
   useEffect(() => {
-    // 重置测验状态
-    setCurrentQuizIndex(0);
-    setQuizAnswers([]);
-    setShowAnswer(false);
-  }, [currentDay, planId]);
+    if (!planId) return;
+    const content = getMdFile(planId, currentDay);
+    setMdContent(content);
+    setMdLoading(false);
+    setMdError(content ? null : null); // 无文件时静默 fallback 到 day.content
+  }, [planId, currentDay]);
 
   const handleNoteChange = (val: string) => {
     setNote(val);
     if (saveTimer.current) window.clearTimeout(saveTimer.current);
-    saveTimer.current = window.setTimeout(() => {
+    saveTimer.current = window.setTimeout(async () => {
       if (!planId) return;
       const noteKey = `cyber_${planId}_${currentDay}`;
-      localStorage.setItem(noteKey, val);
+      await saveData(noteKey, val);
       setNoteSavedAt(Date.now());
     }, 800);
   };
 
-  const saveWrongQuestion = (questionIndex: number, isCorrect: boolean) => {
-    if (!planId) return;
-    
-    const key = `${planId}_${currentDay}_${questionIndex}`;
-    let updated = [...wrongQuestions];
-    
-    if (isCorrect) {
-      // 答对了，更新连续答对次数
-      const idx = updated.findIndex(w => `${w.planId}_${w.day}_${w.questionIndex}` === key);
-      if (idx >= 0) {
-        updated[idx].consecutiveCorrect += 1;
-        // 连续答对3次，移除错题本
-        if (updated[idx].consecutiveCorrect >= 3) {
-          updated.splice(idx, 1);
-        }
-      }
-    } else {
-      // 答错了，添加或重置连续答对次数
-      const idx = updated.findIndex(w => `${w.planId}_${w.day}_${w.questionIndex}` === key);
-      if (idx >= 0) {
-        updated[idx].consecutiveCorrect = 0;
-      } else {
-        updated.push({ planId, day: currentDay, questionIndex, consecutiveCorrect: 0 });
-      }
-    }
-    
-    setWrongQuestions(updated);
-    localStorage.setItem('cisp_wrong_questions', JSON.stringify(updated));
-  };
-
   const handleQuizAnswer = (answer: number | number[] | string) => {
-    const question = day?.quiz?.[currentQuizIndex];
-    if (!question || showAnswer) return;
-    
-    const newAnswers = [...quizAnswers];
-    newAnswers[currentQuizIndex] = answer;
-    setQuizAnswers(newAnswers);
-    setShowAnswer(true);
-    
-    // 判断是否正确
-    let isCorrect = false;
-    if (question.type === 'single') {
-      isCorrect = answer === question.correctIndex;
-    } else if (question.type === 'multiple') {
-      const correctIndices = question.correctIndices || [];
-      const userIndices = Array.isArray(answer) ? answer : [];
-      isCorrect = correctIndices.length === userIndices.length && 
-                  correctIndices.every(i => userIndices.includes(i));
-    } else if (question.type === 'boolean') {
-      isCorrect = answer === question.correctIndex;
-    } else if (question.type === 'fill') {
-      isCorrect = String(answer).toLowerCase().trim() === String(question.correctAnswer).toLowerCase().trim();
-    }
-    
-    saveWrongQuestion(currentQuizIndex, isCorrect);
+    if (quiz.showAnswer) return;
+    const isCorrect = quiz.answerOne(answer);
+    wrongQuestionBook.recordAnswer(planId!, currentDay, quiz.currentIndex, isCorrect);
   };
 
   const handleMultipleSelect = (index: number) => {
-    const current = quizAnswers[currentQuizIndex];
-    const currentArray = Array.isArray(current) ? current : [];
-    let newSelection: number[];
-    
-    if (currentArray.includes(index)) {
-      newSelection = currentArray.filter(i => i !== index);
-    } else {
-      newSelection = [...currentArray, index].sort((a, b) => a - b);
-    }
-    
-    const newAnswers = [...quizAnswers];
-    newAnswers[currentQuizIndex] = newSelection;
-    setQuizAnswers(newAnswers);
+    quiz.toggleMultiple(index);
   };
 
   const nextQuestion = () => {
-    if (!day?.quiz || currentQuizIndex >= day.quiz.length - 1) {
-      // 完成所有题目
+    if (quiz.isLastQuestion) {
       markComplete();
     } else {
-      setCurrentQuizIndex(currentQuizIndex + 1);
-      setShowAnswer(false);
+      quiz.nextQuestion();
     }
   };
 
-  const markComplete = () => {
+  const markComplete = async () => {
     if (!planId) return;
     const newSet = new Set(completedDays);
-    if (newSet.has(currentDay)) {
-      newSet.delete(currentDay);
-    } else {
-      newSet.add(currentDay);
-    }
+    if (newSet.has(currentDay)) { newSet.delete(currentDay); } else { newSet.add(currentDay); }
     setCompletedDays(newSet);
-    const raw = localStorage.getItem('cisp_cyber_progress') || '{}';
-    let data: any = {};
-    try { data = JSON.parse(raw); } catch {}
+    const data = await loadData<any>('cisp_cyber_progress', {});
     data[planId] = { ...data[planId], completedDays: Array.from(newSet) };
-    localStorage.setItem('cisp_cyber_progress', JSON.stringify(data));
+    await saveData('cisp_cyber_progress', data);
   };
 
   const copyToClipboard = (text: string, id: string) => {
@@ -225,7 +255,6 @@ export const CyberDailyLearning: React.FC = () => {
     );
   }
 
-  const day = plan.days.find(d => d.day === currentDay);
   const color = planColor(planId!);
 
   const containerVariants = {
@@ -257,6 +286,7 @@ export const CyberDailyLearning: React.FC = () => {
               <Badge
                 className={planId === 'basic' ? 'bg-cyber-green/20 text-cyber-green' :
                            planId === 'penetration' ? 'bg-cyber-red/20 text-cyber-red' :
+                           planId === 'ai' ? 'bg-[#6b5b95]/25 text-gray-200 border border-[#6b5b95]/30' :
                            'bg-cyber-blue/20 text-cyber-blue'}
               >
                 第{currentDay}天
@@ -268,7 +298,8 @@ export const CyberDailyLearning: React.FC = () => {
         <Button
           onClick={markComplete}
           variant={completedDays.has(currentDay) ? 'outline' : 'primary'}
-          className={completedDays.has(currentDay) ? `${color.border} text-${planId === 'basic' ? 'cyber-green' : planId === 'penetration' ? 'cyber-red' : 'cyber-blue'}` : ''}
+          colorScheme={planId}
+          className={completedDays.has(currentDay) ? `${color.border} ${color.textColor}` : ''}
         >
           {completedDays.has(currentDay) ? (
             <><CheckCircle size={16} /> 已完成</>
@@ -280,7 +311,7 @@ export const CyberDailyLearning: React.FC = () => {
 
       {/* Day Navigation */}
       <motion.div variants={itemVariants}>
-        <Card className={`border-${planId === 'basic' ? 'cyber-green' : planId === 'penetration' ? 'cyber-red' : 'cyber-blue'}/20`}>
+        <Card className={color.cardBorder}>
           <div className="flex items-center gap-4 overflow-x-auto pb-2">
             {[...plan.days].sort((a, b) => a.day - b.day).map((d) => (
               <button
@@ -290,7 +321,7 @@ export const CyberDailyLearning: React.FC = () => {
                   flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-sm font-medium
                   transition-all duration-200
                   ${currentDay === d.day
-                    ? `${color.bg}/20 ${color.main} border ${color.border}/30`
+                    ? `${color.bgLight} ${color.main} border ${color.borderFaint}`
                     : completedDays.has(d.day)
                       ? 'bg-cyber-green/10 text-cyber-green border border-cyber-green/20'
                       : 'bg-cyber-purple/10 text-gray-400 border border-cyber-purple/20 hover:bg-cyber-purple/20'
@@ -367,11 +398,24 @@ export const CyberDailyLearning: React.FC = () => {
                 </h3>
                 {expanded === 'content' ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
               </button>
+              {expanded === 'content' && (
+                <div className="prose prose-invert prose-sm max-w-none text-gray-300 leading-relaxed">
+                  {mdLoading && (
+                    <div className="text-sm text-gray-400 italic">正在加载课程内容...</div>
+                  )}
+                  {!mdLoading && mdContent && (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{mdContent}</ReactMarkdown>
+                  )}
+                  {!mdLoading && !mdContent && (
+                    <div
+                      className="prose prose-invert prose-sm max-w-none text-gray-300 whitespace-pre-wrap leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: day.content.replace(/\n/g, '<br/>').replace(/### /g, '<h4 class="text-cyber-purple font-medium mt-3 mb-2">').replace(/## /g, '<h3 class="text-white font-medium mt-4 mb-2">').replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyber-green">$1</strong>').replace(/`([^`]+)`/g, '<code class="bg-cyber-purple/20 text-cyber-green px-1 py-0.5 rounded text-xs">$1</code>').replace(/```[\s\S]*?```/g, (m) => '<pre class="bg-cyber-black/50 border border-cyber-purple/20 rounded p-3 text-xs overflow-x-auto my-2"><code>' + m.replace(/```\w*\n?/g, '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>') }}
+                    />
+                  )}
+                </div>
+              )}
               {expanded !== 'content' && (
-                <div
-                  className="prose prose-invert prose-sm max-w-none text-gray-300 whitespace-pre-wrap leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: day.content.replace(/\n/g, '<br/>').replace(/### /g, '<h4 class="text-cyber-purple font-medium mt-3 mb-2">').replace(/## /g, '<h3 class="text-white font-medium mt-4 mb-2">').replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyber-green">$1</strong>').replace(/`([^`]+)`/g, '<code class="bg-cyber-purple/20 text-cyber-green px-1 py-0.5 rounded text-xs">$1</code>').replace(/```[\s\S]*?```/g, (m) => '<pre class="bg-cyber-black/50 border border-cyber-purple/20 rounded p-3 text-xs overflow-x-auto my-2"><code>' + m.replace(/```\w*\n?/g, '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>') }}
-                />
+                <div className="text-xs text-gray-500 italic">点击展开查看课程内容</div>
               )}
             </Card>
           </motion.div>
@@ -453,7 +497,7 @@ export const CyberDailyLearning: React.FC = () => {
           {/* 靶场环境 */}
           {day.labEnvironment && day.labEnvironment.length > 0 && (
             <motion.div variants={itemVariants}>
-              <Card className={`border-${planId === 'basic' ? 'cyber-green' : planId === 'penetration' ? 'cyber-red' : 'cyber-blue'}/20`}>
+              <Card className={color.cardBorder}>
                 <h3 className={`text-sm font-medium ${color.main} mb-3 flex items-center gap-2`}>
                   <Server size={16} />
                   实验靶场
@@ -479,7 +523,7 @@ export const CyberDailyLearning: React.FC = () => {
                         <span className={`text-xs px-2 py-0.5 rounded ${
                           lab.type === 'docker' ? 'bg-cyber-green/20 text-cyber-green' :
                           lab.type === 'online' ? 'bg-cyber-blue/20 text-cyber-blue' :
-                          'bg-cyber-purple/20 text-cyber-purple'
+                          'bg-[#6b5b95]/20 text-gray-300'
                         }`}>
                           {lab.type === 'docker' ? 'Docker' : lab.type === 'online' ? '在线' : '本地'}
                         </span>
@@ -572,28 +616,21 @@ export const CyberDailyLearning: React.FC = () => {
                     随堂测验
                   </h3>
                   <span className="text-xs text-gray-400">
-                    {currentQuizIndex + 1} / {day.quiz.length}
+                    {quiz.currentIndex + 1} / {day.quiz.length}
                   </span>
                 </div>
                 
-                {day.quiz[currentQuizIndex] && (() => {
-                  const question = day.quiz[currentQuizIndex] as QuizQuestion;
-                  const userAnswer = quizAnswers[currentQuizIndex];
+                {day.quiz[quiz.currentIndex] && (() => {
+                  const rawQ = day.quiz[quiz.currentIndex] as QuizQuestion;
+                  const question: QuizQuestion = {
+                    ...rawQ,
+                    type: rawQ.type || (rawQ.options && rawQ.options.length > 0 ? 'single' : 'fill'),
+                  };
+                  const userAnswer = quiz.answers[quiz.currentIndex];
                   
-                  const isCorrect = (() => {
-                    if (!showAnswer) return null;
-                    if (question.type === 'single' || question.type === 'boolean') {
-                      return userAnswer === question.correctIndex;
-                    } else if (question.type === 'multiple') {
-                      const correctIndices = question.correctIndices || [];
-                      const userIndices = Array.isArray(userAnswer) ? userAnswer : [];
-                      return correctIndices.length === userIndices.length && 
-                             correctIndices.every(i => userIndices.includes(i));
-                    } else if (question.type === 'fill') {
-                      return String(userAnswer).toLowerCase().trim() === String(question.correctAnswer).toLowerCase().trim();
-                    }
-                    return false;
-                  })();
+                  const isCorrect = quiz.showAnswer
+                    ? checkQuizAnswer(question, userAnswer)
+                    : null;
                   
                   return (
                     <div className="space-y-4">
@@ -602,7 +639,7 @@ export const CyberDailyLearning: React.FC = () => {
                           question.type === 'single' ? 'bg-cyber-blue/20 text-cyber-blue' :
                           question.type === 'multiple' ? 'bg-cyber-green/20 text-cyber-green' :
                           question.type === 'boolean' ? 'bg-cyber-gold/20 text-cyber-gold' :
-                          'bg-cyber-purple/20 text-cyber-purple'
+                          'bg-[#6b5b95]/20 text-gray-300'
                         }`}>
                           {question.type === 'single' ? '单选' :
                            question.type === 'multiple' ? '多选' :
@@ -621,22 +658,22 @@ export const CyberDailyLearning: React.FC = () => {
                               ? (Array.isArray(userAnswer) && userAnswer.includes(i))
                               : userAnswer === i;
                             
-                            let cls = `${color.border}/30 bg-cyber-purple/10 hover:${color.border}/40`;
-                            if (showAnswer) {
+                            let cls = color.optionDefault;
+                            if (quiz.showAnswer) {
                               const isCorrectOption = question.type === 'multiple' 
                                 ? (question.correctIndices || []).includes(i)
                                 : i === question.correctIndex;
                               
-                              if (isCorrectOption) cls = 'border-cyber-green/50 bg-cyber-green/10';
-                              else if (isSelected) cls = 'border-cyber-red/50 bg-cyber-red/10';
-                              else cls = `${color.border}/20 bg-transparent opacity-50`;
+                              if (isCorrectOption) cls = color.optionCorrect;
+                              else if (isSelected) cls = color.optionWrong;
+                              else cls = color.optionDim;
                             }
                             
                             return (
                               <button
                                 key={i}
                                 onClick={() => {
-                                  if (!showAnswer) {
+                                  if (!quiz.showAnswer) {
                                     if (question.type === 'multiple') {
                                       handleMultipleSelect(i);
                                     } else {
@@ -644,14 +681,14 @@ export const CyberDailyLearning: React.FC = () => {
                                     }
                                   }
                                 }}
-                                disabled={showAnswer}
+                                disabled={quiz.showAnswer}
                                 className={`w-full text-left px-4 py-3 rounded-lg border transition-all ${cls}`}
                               >
                                 <span className="text-sm font-mono mr-2 text-gray-400">
                                   {String.fromCharCode(65 + i)}.
                                 </span>
                                 <span className="text-sm text-gray-200">{opt}</span>
-                                {question.type === 'multiple' && !showAnswer && (
+                                {question.type === 'multiple' && !quiz.showAnswer && (
                                   <span className={`ml-auto text-xs ${isSelected ? 'text-cyber-green' : 'text-gray-500'}`}>
                                     {isSelected ? '✓' : '○'}
                                   </span>
@@ -669,23 +706,21 @@ export const CyberDailyLearning: React.FC = () => {
                             type="text"
                             value={String(userAnswer || '')}
                             onChange={(e) => {
-                              const newAnswers = [...quizAnswers];
-                              newAnswers[currentQuizIndex] = e.target.value;
-                              setQuizAnswers(newAnswers);
+                              quiz.setCurrentAnswer(e.target.value);
                             }}
                             onKeyDown={(e) => {
-                              if (e.key === 'Enter' && !showAnswer) {
+                              if (e.key === 'Enter' && !quiz.showAnswer) {
                                 handleQuizAnswer((userAnswer as string) || '');
                               }
                             }}
-                            disabled={showAnswer}
+                            disabled={quiz.showAnswer}
                             className="w-full px-4 py-3 bg-cyber-purple/10 border border-cyber-purple/30 rounded-lg text-white text-sm outline-none focus:border-cyber-green"
                             placeholder="请输入答案..."
                           />
-                          {!showAnswer && (
+                          {!quiz.showAnswer && (
                             <button
                               onClick={() => handleQuizAnswer((userAnswer as string) || '')}
-                              className={`w-full py-2 rounded-lg ${color.bg}/20 text-${color.main} border border-${color.border}/30 hover:border-${color.border}/50 transition-colors`}
+                              className={`w-full py-2 rounded-lg ${color.btnDefault} transition-colors`}
                             >
                               提交答案
                             </button>
@@ -694,17 +729,17 @@ export const CyberDailyLearning: React.FC = () => {
                       )}
                       
                       {/* 提交按钮（多选） */}
-                      {question.type === 'multiple' && !showAnswer && (
+                      {question.type === 'multiple' && !quiz.showAnswer && (
                         <button
                           onClick={() => handleQuizAnswer(userAnswer as number[] || [])}
-                          className={`w-full py-2 rounded-lg ${color.bg}/20 text-${color.main} border border-${color.border}/30 hover:border-${color.border}/50 transition-colors`}
+                          className={`w-full py-2 rounded-lg ${color.btnDefault} transition-colors`}
                         >
                           提交答案
                         </button>
                       )}
                       
                       {/* 答案解析 */}
-                      {showAnswer && (
+                      {quiz.showAnswer && (
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -726,12 +761,12 @@ export const CyberDailyLearning: React.FC = () => {
                       )}
                       
                       {/* 下一题按钮 */}
-                      {showAnswer && (
+                      {quiz.showAnswer && (
                         <button
                           onClick={nextQuestion}
-                          className={`w-full py-2 rounded-lg ${color.bg}/20 text-${color.main} border border-${color.border}/30 hover:border-${color.border}/50 transition-colors`}
+                          className={`w-full py-2 rounded-lg ${color.btnDefault} transition-colors`}
                         >
-                          {currentQuizIndex >= day.quiz.length - 1 ? '完成测验' : '下一题'}
+                          {quiz.isLastQuestion ? '完成测验' : '下一题'}
                         </button>
                       )}
                     </div>
@@ -778,32 +813,32 @@ export const CyberDailyLearning: React.FC = () => {
           )}
 
           {/* 错题本入口 */}
-          {wrongQuestions.length > 0 && (
+          {wrongQuestionBook.entries.length > 0 && (
             <motion.div variants={itemVariants}>
               <Card className="bg-cyber-red/5 border-cyber-red/20">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-medium text-cyber-red flex items-center gap-2">
                     <AlertCircle size={16} />
                     错题本
-                    <Badge className="bg-cyber-red/20 text-cyber-red">{wrongQuestions.length}道错题</Badge>
+                    <Badge className="bg-cyber-red/20 text-cyber-red">{wrongQuestionBook.entries.length}道错题</Badge>
                   </h3>
                   <span className="text-xs text-gray-500">连续答对3次可移除</span>
                 </div>
                 <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
-                  {wrongQuestions.slice(0, 5).map((wq, i) => (
+                  {wrongQuestionBook.entries.slice(0, 5).map((entry, i) => (
                     <div key={i} className="flex items-center justify-between p-2 rounded bg-cyber-black/30">
                       <div className="text-xs">
-                        <span className="text-cyber-green">第{wq.day}天</span>
-                        <span className="text-gray-500">· 题{wq.questionIndex + 1}</span>
+                        <span className="text-cyber-green">第{entry.day}天</span>
+                        <span className="text-gray-500">· 题{entry.questionIndex + 1}</span>
                       </div>
                       <span className="text-xs text-gray-400">
-                        连续答对 {wq.consecutiveCorrect}/3
+                        连续答对 {entry.consecutiveCorrect}/3
                       </span>
                     </div>
                   ))}
-                  {wrongQuestions.length > 5 && (
+                  {wrongQuestionBook.entries.length > 5 && (
                     <div className="text-center text-xs text-gray-500 py-1">
-                      还有 {wrongQuestions.length - 5} 道错题...
+                      还有 {wrongQuestionBook.entries.length - 5} 道错题...
                     </div>
                   )}
                 </div>

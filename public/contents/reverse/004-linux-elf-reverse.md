@@ -1,8 +1,12 @@
 # Linux ELF 逆向：从入口点到 GOT/PLT 劫持实战
 
-**ELF（Executable and Linkable Format）** 是 Linux/Unix 生态最主流的可执行文件格式。理解 ELF 的基本结构、动态链接机制与 GOT/PLT 的运作，不仅是二进制漏洞利用的基础，也能让你对"程序从磁盘到执行"的整个流程有透彻认识。本文从逆向视角，梳理关键概念与常见利用场景。
+> **📘 文档定位**：CISP 考试逆向工程基础内容 | 难度：⭐⭐⭐⭐ | 预计阅读：22 分钟
+> ELF 是 Linux 生态最主流的可执行文件格式。本文从文件结构到 GOT/PLT 劫持，系统梳理 ELF 逆向与二进制利用基础。
 
-## 一、ELF 文件结构概览
+---
+
+## 导航目录
+- [一、ELF 文件结构概览](#一elf-文件结构概览)
 
 ELF 从静态视角分为若干 Section（段），从运行视角又分为若干 Segment（程序段）：
 
@@ -141,3 +145,30 @@ call printf@plt          ->  进入 PLT 第 N 项
 5. Kernel Pwn：KASLR、SMEP/SMAP、KPTI、modprobe_path 等。
 
 ELF 逆向与二进制漏洞利用是一场"与系统机制对话"的修行。把每个保护机制的原理与绕过方式"模块化"理解，再通过实战把它们组合起来，就能形成可复用的攻防思维。
+
+---
+
+## 高分考点与知识巧记
+
+> 🔑 **高分考点**：ELF 逆向考点集中在文件结构、GOT/PLT 机制、保护机制(PIE/RELRO/NX)。
+
+| 考点 | 频次 | 核心记忆点 |
+|:---|:---:|:---|
+| GOT/PLT | ⭐⭐⭐⭐⭐ | PLT 跳板→GOT 真实地址，延迟绑定(lazy binding) |
+| 保护机制 | ⭐⭐⭐⭐ | PIE(地址随机化)、RELRO(GOT 只读)、NX(栈不可执行)、Stack Canary |
+| ELF 结构 | ⭐⭐⭐ | ELF Header + Program Header + Section Header |
+
+> 💡 **知识巧记**：GOT/PLT 记"PLT 跳板 GOT 真址"，保护机制记"PIE 随 RELRO 固 NX 禁 Canary 检"。
+
+### 高分考点速查表
+
+| 考察维度 | 关键结论 | 常见干扰项 |
+|:---|:---|:---|
+| Full RELRO | GOT 完全只读，无法 GOT 覆写 | "Partial RELRO 也防 GOT 覆写" ❌ |
+| PIE bypass | 需要先泄露基址才能 ROP | "PIE 下直接 ret2libc 可行" ❌ |
+
+### 知识巧记口诀
+
+> **ELF 逆向口诀**：
+> PLT 跳板 GOT 真址，延迟绑定首次解析。
+> PIE 随 RELRO 固 NX 禁，Canary 栈保护溢出检。

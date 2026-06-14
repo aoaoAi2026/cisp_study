@@ -10,7 +10,7 @@ export const TopNav: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/auth');
   };
 
   const displayName = user?.name || '访客';

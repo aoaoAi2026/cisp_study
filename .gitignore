@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Trae AI configuration
+.trae/
+
+# CodeBuddy AI skills (don't commit to project repo)
+.codebuddy/skills

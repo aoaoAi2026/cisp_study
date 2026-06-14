@@ -389,3 +389,38 @@ if ($args ~* "\.pipeline\.") {
 - [ ] 护网前验证修复
 
 > 📚 延伸阅读：Vuln/002-Log4Shell | Vuln/008-Shiro | CodeAudit/001-PHP代码审计
+
+---
+
+## 高分考点与知识巧记
+
+### 高分考点速查表
+
+| 考点 | 考察维度 | 记忆要点 |
+|------|----------|----------|
+| Spring4Shell漏洞原理 | 核心机制 | CVE-2022-22965；Spring Core模块参数绑定→ClassLoader篡改→写入WebShell |
+| 利用条件 | 前置条件 | JDK 9+、Spring Framework 5.3.0-5.3.17、Apache Tomcat部署(WAR包)、spring-webmvc依赖 |
+| 与Log4j2对比 | 横向对比 | Log4j2:JNDI注入(无代码执行限制)、Spring4Shell:参数绑定(需WAR+Tomcat) |
+| 受影响版本 | 版本识别 | Spring Framework 5.3.0-5.3.17、5.2.0-5.2.19及更早版本 |
+| 检测与修复 | 防护策略 | 升级至5.3.18+/5.2.20+、设置@InitBinder全局disallowedFields、WAF规则 |
+| Spring生态安全 | 综合认知 | Spring Boot≠Spring Framework；Spring Cloud Gateway另有漏洞(CVE-2022-22947) |
+
+### 知识巧记口诀
+
+> **Spring4Shell口诀**：
+> Spring Core是核心，参数绑定出漏洞；
+> ClassLoader被篡改，WebShell写入Tomcat；
+> JDK9以上才触发，WAR包部署是条件；
+> 升级版本最根本，disallowedFields做加固。
+
+> **Spring漏洞家族**：Spring4Shell(Core参数绑定)、Spring Cloud Gateway(SPEL注入)、Spring Data REST(远程代码执行)。
+
+### 考试陷阱提醒
+
+| 陷阱 | 正确认知 |
+|------|----------|
+| ❌ Spring4Shell和Log4j2是一回事 | ✅ 两者漏洞机制完全不同：Log4j2是JNDI注入、Spring4Shell是参数绑定→ClassLoader篡改 |
+| ❌ 所有Spring应用都受影响 | ✅ 需要特定条件：JDK9+、Tomcat WAR部署、spring-webmvc依赖，Spring Boot内嵌容器默认不受影响 |
+| ❌ 升级Spring Boot版本就行 | ✅ 漏洞在Spring Framework核心，需升级Framework版本；Spring Boot版本升级可能间接修复 |
+
+> 💡 **一句话总结**：Spring4Shell虽利用条件比Log4j2苛刻，但Spring生态的广泛使用使其同样具有高风险——CISP考试重点考查Spring4Shell与Log4j2的异同对比。

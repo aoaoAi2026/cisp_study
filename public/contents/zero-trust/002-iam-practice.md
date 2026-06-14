@@ -1,5 +1,21 @@
 # IAM 身份与访问管理实战
 
+> **📘 文档定位**：CISP 考试 零信任身份安全 核心 | 难度：⭐⭐⭐⭐ | 预计阅读：30 分钟
+>
+> 系统讲解 IAM 三大支柱（认证/授权/审计）、RBAC/ABAC 授权模型、OAuth2.0/OIDC/SAML 协议族、Keycloak 开源 IDP 实战部署及 LDAP/AD 集成方案，覆盖账户生命周期管理与权限审计。
+
+---
+
+## 导航目录
+
+- [一、IAM 核心概念](#一iam-核心概念)
+- [二、认证协议族](#二认证协议族)
+- [三、授权模型设计](#三授权模型设计)
+- [四、开源 IDP 实战 (Keycloak)](#四开源-idp-实战-keycloak)
+- [五、LDAP / AD 集成](#五ldap--ad-集成)
+- [六、安全部署 Checklist](#六安全部署-checklist)
+- [七、高分考点与知识巧记](#七高分考点与知识巧记)
+
 ---
 
 ## 一、IAM 核心概念
@@ -293,3 +309,40 @@ ldapsearch -H ldaps://ldap.example.com:636 \
 - [ ] IDP高可用部署（多节点+数据库主从）
 - [ ] 登录日志全量记录（SIEM接入）
 - [ ] 异常登录检测（异地/异常时间/新设备）
+
+---
+
+## 七、高分考点与知识巧记
+
+### 高分考点速查表
+
+| 序号 | 考点 | 频率 | 难度 | 关键答案 |
+|:---:|:---|:---:|:---:|:---|
+| 1 | IAM 三大支柱 | ⭐⭐⭐⭐⭐ | ⭐⭐ | 认证(Authentication)/授权(Authorization)/审计(Audit) |
+| 2 | RBAC vs ABAC | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | RBAC 基于角色/ABAC 基于属性(用户+资源+环境) |
+| 3 | OAuth2.0 四种授权 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 授权码/隐式/密码/客户端凭证，推荐授权码+PKCE |
+| 4 | OIDC vs SAML | ⭐⭐⭐⭐ | ⭐⭐⭐ | OIDC(JSON/API友好)/SAML(XML/企业SSO传统) |
+| 5 | JWT 结构 | ⭐⭐⭐⭐ | ⭐⭐⭐ | Header.Payload.Signature，无状态令牌 |
+| 6 | Keycloak 核心概念 | ⭐⭐⭐ | ⭐⭐⭐ | Realm/Client/User/Role/Group/Identity Provider |
+
+### 知识巧记口诀
+
+> 🎵 **IAM 三A记**："认授审" — Authentication(认证)、Authorization(授权)、Audit(审计)
+>
+> 🎵 **OAuth2.0 授权码流程**："用户点登录→跳授权页→拿授权码→换Token→访问API"
+>
+> 🎵 **RBAC vs ABAC**："角色看身份、属性看条件" — RBAC 静态角色，ABAC 动态属性
+
+---
+
+### 考试陷阱提醒
+
+| 陷阱 | 正确理解 |
+|:---|:---|
+| "OAuth2.0 是认证协议" | ❌ OAuth2.0 是授权协议，OIDC 才是基于 OAuth2.0 的认证协议 |
+| "JWT 天然安全" | ❌ JWT 安全性取决于签名算法(禁用none)、密钥管理和过期时间设置 |
+| "RBAC 和 ABAC 互斥" | ❌ 可组合使用，RBAC 做粗粒度角色，ABAC 做细粒度属性策略 |
+
+---
+
+> **IAM 是零信任的第一道关口——身份即新边界，认证强则安全强，授权细则风险低。**

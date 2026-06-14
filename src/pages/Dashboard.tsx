@@ -170,7 +170,7 @@ export const Dashboard: React.FC = () => {
           <p className="text-gray-400 text-lg">
             你正在学习第 <span className="text-cyber-green font-bold">{currentDay}</span> 天 · {weekInfo.theme}
           </p>
-          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyber-purple/40 border border-cyber-green/20">
+          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.06] border border-white/15">
             <Shield size={16} className="text-cyber-green" />
             <span className="text-sm text-gray-300">{todayQuote}</span>
           </div>
@@ -179,7 +179,7 @@ export const Dashboard: React.FC = () => {
         {/* 每日挑战和打卡 */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* 每日挑战 */}
-          <Card className="relative overflow-hidden bg-gradient-to-br from-cyber-gold/10 to-cyber-purple/10">
+          <Card className="relative overflow-hidden bg-gradient-to-br from-cyber-gold/8 to-white/[0.04]">
             <div className="absolute top-0 right-0 w-32 h-32 bg-cyber-gold/5 rounded-full -mr-16 -mt-16" />
             <div className="relative">
               <div className="flex items-center gap-2 mb-4">
@@ -221,7 +221,7 @@ export const Dashboard: React.FC = () => {
                     <div
                       className={`
                         w-10 h-10 rounded-lg flex items-center justify-center mb-1
-                        ${day.isToday ? 'bg-cyber-green/30 border-2 border-cyber-green' : 'bg-cyber-purple/20'}
+                        ${day.isToday ? 'bg-cyber-green/30 border-2 border-cyber-green' : 'bg-white/[0.08]'}
                         ${day.hasStreak ? 'text-cyber-green' : 'text-gray-500'}
                       `}
                     >
@@ -242,7 +242,7 @@ export const Dashboard: React.FC = () => {
 
         {/* 学习小贴士 */}
         <motion.div variants={itemVariants}>
-          <Card className="bg-gradient-to-r from-cyber-blue/10 to-cyber-purple/10">
+          <Card className="bg-gradient-to-r from-cyber-blue/8 to-white/[0.04]">
             <div className="flex items-start gap-4">
               <div className="text-4xl">{todayTip.icon}</div>
               <div>
@@ -354,7 +354,7 @@ export const Dashboard: React.FC = () => {
                     onClick={() => navigate(`/learning/${day.id}`)}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-cyber-purple/60 flex items-center justify-center text-sm font-medium text-cyber-green">
+                      <div className="w-8 h-8 rounded-lg bg-cyber-blue/20 flex items-center justify-center text-sm font-medium text-cyber-green">
                         {day.day}
                       </div>
                       <div>
@@ -425,7 +425,7 @@ export const Dashboard: React.FC = () => {
                     relative group p-3 rounded-lg border transition-all cursor-pointer
                     ${i + 1 <= currentWeek
                       ? 'bg-cyber-green/10 border-cyber-green/30'
-                      : 'bg-cyber-purple/20 border-cyber-green/10 hover:border-cyber-green/20'
+                      : 'bg-white/[0.05] border-white/10 hover:border-white/20'
                     }
                   `}
                   onClick={() => navigate('/learning')}
@@ -452,10 +452,10 @@ export const Dashboard: React.FC = () => {
         {/* 学习数据统计 */}
         <motion.div variants={itemVariants}>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="flex flex-col items-center text-center py-6 bg-gradient-to-br from-cyber-green/10 to-cyber-purple/10">
+            <Card className="flex flex-col items-center text-center py-6 bg-gradient-to-br from-cyber-green/8 to-transparent">
               <div className="relative w-32 h-32 mb-3">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="42" strokeWidth="8" fill="none" className="text-cyber-purple/30" stroke="currentColor" />
+                  <circle cx="50" cy="50" r="42" strokeWidth="8" fill="none" className="text-white/10" stroke="currentColor" />
                   <circle
                     cx="50" cy="50" r="42" strokeWidth="8" fill="none"
                     className="text-cyber-green" stroke="currentColor"
@@ -482,7 +482,7 @@ export const Dashboard: React.FC = () => {
               <p className="text-xs text-gray-400 mt-1">
                 正确率 {extraStats.flashAnswered > 0 ? Math.round((extraStats.flashCorrect / extraStats.flashAnswered) * 100) : 0}%
               </p>
-              <div className="w-full h-1.5 mt-3 rounded-full bg-cyber-purple/30 overflow-hidden">
+              <div className="w-full h-1.5 mt-3 rounded-full bg-white/10 overflow-hidden">
                 <div
                   className="h-full bg-cyber-blue"
                   style={{ width: `${extraStats.flashAnswered > 0 ? Math.round((extraStats.flashCorrect / extraStats.flashAnswered) * 100) : 0}%` }}
@@ -507,7 +507,7 @@ export const Dashboard: React.FC = () => {
                     className={`w-2 h-6 rounded-full ${
                       i <= Math.min(5, Math.ceil(extraStats.pomodoroCount / 2))
                         ? 'bg-cyber-gold'
-                        : 'bg-cyber-purple/30'
+                        : 'bg-white/15'
                     }`}
                   />
                 ))}

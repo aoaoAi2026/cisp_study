@@ -141,20 +141,6 @@ const defaultBadges: Badge[] = [
     condition: 'notes_10',
   },
   {
-    id: 'streak_7',
-    name: '连续7天',
-    description: '学习连续不间断7天',
-    icon: '🎯',
-    condition: 'streak_7_achievement',
-  },
-  {
-    id: 'streak_30',
-    name: '连续30天',
-    description: '学习连续不间断30天',
-    icon: '🚀',
-    condition: 'streak_30_achievement',
-  },
-  {
     id: 'first_comment',
     name: '社交达人',
     description: '在社区发布第一条评论',
@@ -208,7 +194,7 @@ const defaultBadges: Badge[] = [
     name: '第一步',
     description: '完成第一课学习',
     icon: '👣',
-    condition: 'first_day_complete',
+    condition: 'complete_day_1',
   },
   {
     id: 'week_warrior',

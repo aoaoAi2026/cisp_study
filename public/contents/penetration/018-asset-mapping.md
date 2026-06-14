@@ -297,3 +297,40 @@ if request.headers.get('Origin') not in ALLOWED_ORIGINS:
 - [ ] CSRF Token生成与验证机制审计
 
 > 📚 延伸阅读：Penetration/001-Web流程 | Penetration/003-SQL注入 | CodeAudit/001-PHP审计
+
+---
+
+## 高分考点与知识巧记
+
+### 高分考点速查表
+
+| 考点 | 考察维度 | 记忆要点 |
+|------|----------|----------|
+| SSRF漏洞原理 | 基础理论 | 服务端发起请求→攻击者控制URL→访问内部资源；常见于URL获取/导入/代理功能 |
+| SSRF利用场景 | 实战技巧 | 内网端口探测、云元数据窃取(AWS/阿里云)、Redis/Memcached未授权、文件读取(file://) |
+| SSRF绕过技术 | 高级技巧 | IP编码(十进制/八进制/十六进制)、DNS重绑定、302跳转、URL解析差异 |
+| CSRF漏洞原理 | 基础理论 | 诱导受害者点击→以受害者身份执行操作；依赖Cookie自动携带机制 |
+| CSRF Token防御 | 防护机制 | 随机Token+Session绑定、SameSite Cookie、Origin/Referer校验 |
+| SSRF+CSRF联合防御 | 综合方案 | URL白名单+内网IP黑名单+DNS解析校验+SameSite+CSRF Token |
+
+### 知识巧记口诀
+
+> **SSRF口诀**：
+> 服务端代请求，URL我控制；
+> file://读文件，http://探内网；
+> 云元数据是目标，169.254要记牢；
+> IP编码绕黑名单，DNS重绑定更巧妙。
+
+> **CSRF口诀**：
+> 跨站请求伪造，Cookie自动带；
+> Token加SameSite，Origin校验不能少。
+
+### 考试陷阱提醒
+
+| 陷阱 | 正确认知 |
+|------|----------|
+| ❌ SSRF只能读内网 | ✅ SSRF可读文件(file://)、探测端口、窃取云元数据、攻击内网服务(Redis等) |
+| ❌ IP黑名单能完全防SSRF | ✅ IP编码、DNS重绑定、302跳转等多种方式可绕过IP限制 |
+| ❌ CSRF Token存在就安全 | ✅ Token必须与Session绑定、随机生成、单次有效，否则仍可被绕过 |
+
+> 💡 **一句话总结**：SSRF与CSRF是Web安全的高频考点——SSRF攻击服务端、CSRF攻击客户端，两者防御思路完全不同但都需深入理解请求发起机制。

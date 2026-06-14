@@ -267,3 +267,38 @@ iptables -A INPUT -p tcp --dport 8090 -j DROP
 - [ ] 护网前确认修复
 
 > 📚 延伸阅读：Vuln/002-Log4Shell | Vuln/009-Spring4Shell | CTF/009-JNDI
+
+---
+
+## 高分考点与知识巧记
+
+### 高分考点速查表
+
+| 考点 | 考察维度 | 记忆要点 |
+|------|----------|----------|
+| Confluence OGNL注入原理 | 核心机制 | CVE-2022-26134；OGNL表达式注入→WebWork ActionProxy→无认证RCE |
+| OGNL表达式语言 | 基础知识 | Object-Graph Navigation Language；Struts2/Confluence等框架使用；类似EL/SPEL |
+| 受影响版本 | 版本识别 | Confluence Server/Data Center 1.3.0至7.4.16/7.13.6/7.14.2/7.15.1/7.16.3/7.17.2/7.18.0 |
+| 利用与检测 | 实战技巧 | 直接HTTP请求执行命令；无需认证；检查/路径下的异常响应 |
+| 修复方案 | 防护策略 | 升级至安全版本(7.4.17+/7.13.7+等)、WAF防护、限制外网访问 |
+| 与Struts2关联 | 横向对比 | Confluence基于WebWork(Struts2前身)→同样使用OGNL→类似的表达式注入风险 |
+
+### 知识巧记口诀
+
+> **Confluence OGNL口诀**：
+> Confluence协作平台，OGNL表达式是核心；
+> 无需认证直接打，HTTP请求就RCE；
+> WebWork框架是根源，Struts2同门师兄弟；
+> 升级版本封堵快，外网访问要严控。
+
+> **OGNL注入家族**：Struts2 S2-xxx系列、Confluence CVE-2022-26134、Confluence CVE-2021-26084。
+
+### 考试陷阱提醒
+
+| 陷阱 | 正确认知 |
+|------|----------|
+| ❌ Confluence是小型工具影响有限 | ✅ Confluence是Atlassian核心产品，全球企业广泛使用，内网Wiki常含敏感信息 |
+| ❌ 需要登录才能利用 | ✅ CVE-2022-26134是预认证RCE，无需任何身份验证即可直接执行命令 |
+| ❌ 和Struts2漏洞完全一样 | ✅ 同根同源(OGNL)但利用路径不同，Confluence通过XWork ActionProxy触发 |
+
+> 💡 **一句话总结**：Confluence OGNL注入是继Struts2后OGNL表达式语言的又一严重漏洞——预认证RCE使其成为攻击者的高价值目标，CISP考试考查企业协作工具的安全风险。

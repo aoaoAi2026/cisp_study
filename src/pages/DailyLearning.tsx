@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import {
+  AlertCircle,
   ArrowLeft,
   ArrowRight,
   CheckCircle,
@@ -24,6 +26,7 @@ import {
   User
 } from 'lucide-react';
 import { useLearningStore, useAchievementStore } from '../store';
+import { useQuizExam, useWrongQuestionBook } from '../hooks';
 import { learningData, weekThemes } from '../data/learningData';
 import { Card, Badge, Button } from '../components/UI';
 import { Pomodoro } from '../components/Pomodoro';
@@ -35,11 +38,16 @@ export const DailyLearning: React.FC = () => {
   const { checkAndUnlockBadge } = useAchievementStore();
 
   const [activeTab, setActiveTab] = useState<'content' | 'code' | 'quiz' | 'expert'>('content');
-  const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({});
-  const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [note, setNote] = useState('');
   const [noteSavedAt, setNoteSavedAt] = useState<number | null>(null);
+  const [mdContent, setMdContent] = useState<string | null>(null);
+  const [mdLoading, setMdLoading] = useState<boolean>(true);
+  const [mdError, setMdError] = useState<string | null>(null);
   const noteSaveTimer = useRef<number | null>(null);
+
+  const quiz = useQuizExam(currentDay.quiz || []);
+  const wrongQuestionBook = useWrongQuestionBook();
+  const [quizResult, setQuizResult] = useState<{ correct: number; total: number; score: number } | null>(null);
 
   useEffect(() => {
     const raw = localStorage.getItem('cisp_notes');
@@ -58,6 +66,28 @@ export const DailyLearning: React.FC = () => {
     } else {
       setNote('');
     }
+  }, [dayId]);
+
+  useEffect(() => {
+    if (!dayId) return;
+    const controller = new AbortController();
+    setMdLoading(true);
+    setMdError(null);
+    fetch(`/contents/learning/${dayId}.md`, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      })
+      .then((text) => {
+        setMdContent(text);
+        setMdLoading(false);
+      })
+      .catch((err) => {
+        if (err.name === 'AbortError') return;
+        setMdError(err.message || '加载失败');
+        setMdLoading(false);
+      });
+    return () => controller.abort();
   }, [dayId]);
 
   const handleNoteChange = (value: string) => {
@@ -98,15 +128,16 @@ export const DailyLearning: React.FC = () => {
   };
 
   const handleQuizSubmit = () => {
-    setQuizSubmitted(true);
-    let correct = 0;
-    currentDay.quiz?.forEach(q => {
-      if (quizAnswers[q.id] === q.correctIndex) {
-        correct++;
-      }
-    });
-    const score = (correct / currentDay.quiz!.length) * 100;
-    if (score >= 90) {
+    const result = quiz.submit();
+    setQuizResult(result);
+    // 记录错题
+    if (currentDay.quiz) {
+      currentDay.quiz.forEach((q, i) => {
+        const isCorrect = result.correctIndices.includes(i);
+        wrongQuestionBook.recordAnswer('cisp', currentDay.day, i, isCorrect);
+      });
+    }
+    if (result.score >= 90) {
       checkAndUnlockBadge('quiz_90');
     }
   };
@@ -188,7 +219,7 @@ export const DailyLearning: React.FC = () => {
               </span>
               <span className="flex items-center gap-1">
                 <BookOpen size={14} />
-                {currentDay.content?.length}字符
+                {mdContent?.length || currentDay.content?.length || 0}字符
               </span>
               <span className="flex items-center gap-1">
                 <Clock size={14} />
@@ -360,9 +391,17 @@ export const DailyLearning: React.FC = () => {
             {activeTab === 'content' && (
               <div className="prose prose-invert max-w-none">
                 <div className="text-gray-300 leading-relaxed">
-                  <ReactMarkdown>
-                    {currentDay.content || '# 暂无内容'}
-                  </ReactMarkdown>
+                  {mdLoading ? (
+                    <div className="py-8 text-center text-gray-500">正在加载课程内容...</div>
+                  ) : mdError ? (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {currentDay.content || '# 暂无内容'}
+                    </ReactMarkdown>
+                  ) : (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {mdContent || currentDay.content || '# 暂无内容'}
+                    </ReactMarkdown>
+                  )}
                 </div>
               </div>
             )}
@@ -420,22 +459,13 @@ export const DailyLearning: React.FC = () => {
                     </h4>
                     <div className="space-y-2">
                       {q.options.map((opt, oIndex) => {
-                        let optionClass = 'quiz-option';
-                        if (quizSubmitted) {
-                          if (oIndex === q.correctIndex) {
-                            optionClass += ' correct';
-                          } else if (oIndex === quizAnswers[q.id] && oIndex !== q.correctIndex) {
-                            optionClass += ' incorrect';
-                          }
-                        } else if (quizAnswers[q.id] === oIndex) {
-                          optionClass += ' selected';
-                        }
+                        const optionClass = quiz.getOptionClass(qIndex, oIndex);
 
                         return (
                           <div
                             key={oIndex}
                             className={optionClass}
-                            onClick={() => !quizSubmitted && setQuizAnswers({ ...quizAnswers, [q.id]: oIndex })}
+                            onClick={() => quiz.setAnswer(qIndex, oIndex)}
                           >
                             <span className="font-medium mr-2">
                               {String.fromCharCode(65 + oIndex)}.
@@ -445,7 +475,7 @@ export const DailyLearning: React.FC = () => {
                         );
                       })}
                     </div>
-                    {quizSubmitted && (
+                    {quiz.submitted && (
                       <div className="p-3 rounded-lg bg-cyber-purple/20 border border-cyber-green/10">
                         <p className="text-sm text-cyber-green">
                           <strong>解析:</strong> {q.explanation}
@@ -456,19 +486,14 @@ export const DailyLearning: React.FC = () => {
                 ))}
 
                 <div className="flex gap-3 pt-4 border-t border-cyber-green/10">
-                  {!quizSubmitted ? (
-                    <Button onClick={handleQuizSubmit} disabled={Object.keys(quizAnswers).length < (currentDay.quiz?.length || 0)}>
+                  {!quiz.submitted ? (
+                    <Button onClick={handleQuizSubmit} disabled={!quiz.allAnswered}>
                       提交答案
                     </Button>
                   ) : (
                     <div className="flex items-center gap-2">
                       <span className="text-cyber-green font-medium">
-                        得分: {
-                          Math.round(
-                            (currentDay.quiz?.filter(q => quizAnswers[q.id] === q.correctIndex).length || 0) /
-                            (currentDay.quiz?.length || 1) * 100
-                          )
-                        }%
+                        得分: {quizResult?.score ?? 0}%
                       </span>
                     </div>
                   )}
@@ -509,6 +534,40 @@ export const DailyLearning: React.FC = () => {
             )}
           </Card>
         </motion.div>
+
+        {/* 错题本入口 */}
+        {wrongQuestionBook.entries.length > 0 && (
+          <motion.div variants={itemVariants}>
+            <Card className="bg-cyber-red/5 border-cyber-red/20">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-cyber-red flex items-center gap-2">
+                  <AlertCircle size={16} />
+                  错题本
+                  <Badge className="bg-cyber-red/20 text-cyber-red">{wrongQuestionBook.entries.length}道错题</Badge>
+                </h3>
+                <span className="text-xs text-gray-500">连续答对3次可移除</span>
+              </div>
+              <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
+                {wrongQuestionBook.entries.slice(0, 5).map((entry, i) => (
+                  <div key={i} className="flex items-center justify-between p-2 rounded bg-cyber-black/30">
+                    <div className="text-xs">
+                      <span className="text-cyber-green">Day {entry.day}</span>
+                      <span className="text-gray-500">· 题{entry.questionIndex + 1}</span>
+                    </div>
+                    <span className="text-xs text-gray-400">
+                      连续答对 {entry.consecutiveCorrect}/3
+                    </span>
+                  </div>
+                ))}
+                {wrongQuestionBook.entries.length > 5 && (
+                  <div className="text-center text-xs text-gray-500 py-1">
+                    还有 {wrongQuestionBook.entries.length - 5} 道错题...
+                  </div>
+                )}
+              </div>
+            </Card>
+          </motion.div>
+        )}
 
         {/* Actions */}
         <motion.div variants={itemVariants} className="flex justify-between mt-6">

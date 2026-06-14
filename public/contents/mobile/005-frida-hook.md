@@ -1,5 +1,21 @@
 # Frida Hook 实战：Android/iOS 动态插桩
 
+> **📘 文档定位**：CISP 考试 移动安全 高级 | 难度：⭐⭐⭐⭐ | 预计阅读：30 分钟
+>
+> 系统讲解 Frida 动态插桩框架在 Android/iOS 平台的使用，覆盖 Java/Native Hook、SSL Pinning Bypass、加密函数追踪及 objection 高级用法。
+
+---
+
+## 导航目录
+
+- [一、Frida 基础架构](#一frida-基础架构)
+- [二、Java 层 Hook](#二java-层-hook)
+- [三、Native 层 Hook](#三native-层-hook)
+- [四、SSL Pinning Bypass](#四ssl-pinning-bypass)
+- [五、objection 高级用法](#五objection-高级用法)
+- [六、安全部署 Checklist](#六安全部署-checklist)
+- [七、高分考点与知识巧记](#七高分考点与知识巧记)
+
 ---
 
 ## 一、Frida 是什么

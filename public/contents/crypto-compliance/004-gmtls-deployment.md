@@ -1,5 +1,21 @@
 # 国密 SSL/TLS 部署实战与 Wireshark 抓包分析
 
+> **📘 文档定位**：CISP 考试核心基础 | 难度：⭐⭐⭐⭐ | 预计阅读：30 分钟
+>
+> 国密 TLCP（传输层密码协议）是等保密评合规的关键技术要求。本文从 TLCP 协议原理、双证书体系、Nginx/Apache 部署到 Wireshark 抓包分析，完整覆盖国密 TLS 的部署与调试全流程。
+
+---
+
+## 导航目录
+
+- [一、国密 TLS 协议](#一国密-tls-协议)
+- [二、Nginx 国密部署](#二nginx-国密部署)
+- [三、Wireshark 国密 TLS 分析](#三wireshark-国密-tls-分析)
+- [四、Apache 国密部署](#四apache-国密部署)
+- [五、常见问题排障](#五常见问题排障)
+- [六、安全部署 Checklist](#六安全部署-checklist)
+- [七、高分考点与知识巧记](#七高分考点与知识巧记)
+
 ---
 
 ## 一、国密 TLS 协议
@@ -51,6 +67,41 @@ TLCP 双证书要求：
   理论上可以用同一个SM2密钥对，
   但安全最佳实践要求分离（不同用途不同密钥）
 ```
+
+### 1.3 TLCP 握手流程
+
+```
+TLCP 握手过程（简化）：
+
+Client                                  Server
+  |                                      |
+  | ① ClientHello                       |
+  |   密码套件: ECC-SM2-SM4-SM3         |
+  |------------------------------------->|
+  |                                      |
+  | ② ServerHello + Certificate +        |
+  |    ServerKeyExchange +               |
+  |    CertificateRequest                |
+  |<-------------------------------------|
+  |                                      |
+  | ③ Certificate +                     |
+  |    ClientKeyExchange +               |
+  |    CertificateVerify +               |
+  |    ChangeCipherSpec + Finished       |
+  |------------------------------------->|
+  |                                      |
+  | ④ ChangeCipherSpec + Finished       |
+  |<-------------------------------------|
+  |                                      |
+  | 安全通道建立，应用数据SM4加密传输     |
+
+关键差异（vs TLS 1.3）：
+  - 需要双证书（签名+加密）
+  - 握手消息更多（4步 vs TLS 1.3的1-RTT）
+  - 必须使用国密密码套件
+```
+
+> **🔑 高分考点**：TLCP双证书——签名证书用于身份认证+握手签名，加密证书用于密钥交换。双证书是TLCP与标准TLS最显著的区别之一。
 
 ---
 
@@ -170,6 +221,15 @@ export SSLKEYLOGFILE=/tmp/sslkeys.log
 # 然后在Wireshark中: Edit→Preferences→TLS→(Pre)-Master-Secret log filename
 ```
 
+### 3.3 国密TLS抓包关键特征
+
+| 特征 | TLS（国际） | TLCP（国密） |
+|:---|:---|:---|
+| ClientHello密码套件 | 0xC02F等标准ID | 0xE001/0xE003（非标准ID） |
+| 证书数量 | 1个（通常） | 2个（签名+加密） |
+| 签名算法 | RSA/ECDSA | SM2 |
+| 证书公钥类型 | RSA(1.2.840.113549) / EC(1.2.840.10045) | SM2(1.2.156.10197.1.301) |
+
 ---
 
 ## 四、Apache 国密部署
@@ -235,9 +295,19 @@ make && make install
   - 会话复用(TLCP Session Resumption)减少握手
 ```
 
+### 5.3 排障流程
+
+```
+问题 → 检查项：
+  浏览器提示证书错误 → 检查证书是否由国密CA签发、是否过期
+  浏览器无法建立连接 → 检查密码套件配置、确认enable_ntls开启
+  能连接但是国际TLS → 客户端不支持国密，触发回退（正常行为）
+  部分浏览器可以部分不行 → 浏览器国密支持差异，使用国密浏览器测试
+```
+
 ---
 
-## 六、Checklist
+## 六、安全部署 Checklist
 
 - [ ] 铜锁/Tongsuo 编译部署
 - [ ] 国密版Nginx/Apache编译
@@ -249,3 +319,40 @@ make && make install
 - [ ] 证书过期监控与自动续期
 - [ ] 性能基线测试
 - [ ] 日志+审计配置
+
+---
+
+## 七、高分考点与知识巧记
+
+### 高分考点速查表
+
+| 序号 | 考点 | 频率 | 难度 | 关键答案 |
+|:---:|:---|:---:|:---:|:---|
+| 1 | TLCP全称 | ⭐⭐⭐ | ⭐ | Transport Layer Cryptography Protocol（GB/T 38636-2020） |
+| 2 | 双证书体系 | ⭐⭐⭐⭐⭐ | ⭐⭐ | 签名证书(digitalSignature) + 加密证书(keyEncipherment) |
+| 3 | TLCP密码套件 | ⭐⭐⭐⭐ | ⭐⭐ | ECC-SM2-SM4-GCM-SM3 / ECC-SM2-SM4-CBC-SM3 |
+| 4 | 国密TLS开源方案 | ⭐⭐⭐⭐ | ⭐⭐ | 铜锁(Tongsuo) — 蚂蚁集团开源 |
+| 5 | 国密浏览器 | ⭐⭐⭐ | ⭐ | 360国密专版、奇安信可信浏览器、红莲花浏览器 |
+| 6 | TLCP vs TLS性能 | ⭐⭐⭐ | ⭐⭐ | TLCP慢25-40%（SM4轮数多+AES-NI加速优势） |
+| 7 | SM2密钥交换特点 | ⭐⭐⭐ | ⭐⭐ | 具有前向安全性，不支持被动解密 |
+
+### 知识巧记口诀
+
+> 🎵 **TLCP三件套**："SM2交换+签名，SM4加密，SM3哈希"——对应ECC-SM2、SM4、SM3
+>
+> 🎵 **双证书记忆**："签名证身份，加密管密钥，两证缺一不可"
+>
+> 🎵 **部署方案**："铜锁编Nginx，双证配TLCP，国密浏览器来验证"
+
+---
+
+## 学习建议
+
+1. 🖥️ 动手编译铜锁版Nginx，完成一次国密TLS部署
+2. 🔍 用Wireshark对比抓取标准TLS和国密TLCP的握手包
+3. 📊 测试国密TLS vs 标准TLS的性能差异
+4. 📖 阅读GB/T 38636-2020标准原文
+
+---
+
+> **国密TLS部署是密评合规的"标配"。双证书+双栈部署是实现平滑过渡的最佳实践。**

@@ -225,3 +225,38 @@ import com.alibaba.fastjson2.JSON;
 - [ ] 关闭AutoType或升级Fastjson2
 
 > 📚 延伸阅读：Vuln/002-Log4Shell | Vuln/008-Shiro | CTF/009-JNDI
+
+---
+
+## 高分考点与知识巧记
+
+### 高分考点速查表
+
+| 考点 | 考察维度 | 记忆要点 |
+|------|----------|----------|
+| 反序列化漏洞原理 | 核心机制 | 不可信数据反序列化→魔术方法触发→代码执行；readObject()/unserialize()是入口 |
+| Java反序列化 | 重点方向 | ObjectInputStream.readObject()、ysoserial利用链(CommonsCollections/CommonsBeanutils等) |
+| PHP反序列化 | 重点方向 | unserialize()→__wakeup()/__destruct()/__toString()魔术方法→POP链构造 |
+| Fastjson反序列化 | 国内重点 | AutoType开启→@type指定类→JNDI/LDAP远程加载→RCE |
+| 检测方法 | 实战技巧 | 黑盒(特征字符/Base64编码)、白盒(搜索readObject/unserialize)、流量分析 |
+| 修复方案 | 防护策略 | 类型白名单、禁用AutoType(升级Fastjson2)、使用安全的序列化方案(JSON/Protobuf) |
+
+### 知识巧记口诀
+
+> **反序列化口诀**：
+> 不可信数据不反序列化，readObject是入口；
+> Java看ysoserial链，CC链最经典；
+> PHP看魔术方法，__wakeup和__destruct；
+> Fastjson关AutoType，升级Fastjson2最安全。
+
+> **检测三件套**：黑盒看Base64特征、白盒搜反序列化函数、流量分析找可疑类名。
+
+### 考试陷阱提醒
+
+| 陷阱 | 正确认知 |
+|------|----------|
+| ❌ 反序列化只影响Java | ✅ PHP、Python(pickle)、.NET、Ruby等多种语言都存在反序列化风险 |
+| ❌ Fastjson升级到最新版就安全 | ✅ 需要关闭AutoType或升级到Fastjson2；历史上多次出现绕过，需持续关注 |
+| ❌ 序列化用JSON就没风险 | ✅ JSON本身不触发反序列化漏洞，但如果JSON中包含类名解析(Fastjson)则仍有风险 |
+
+> 💡 **一句话总结**：反序列化是跨语言的严重漏洞类型——Java的ysoserial、PHP的POP链、Fastjson的AutoType是三大考试重点，CISP考试考查原理理解和修复方案选择。

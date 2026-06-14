@@ -3,19 +3,27 @@ import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopNav } from './TopNav';
 import { useLearningStore } from '../../store/learningStore';
+import { useUserStore } from '../../store/userStore';
 import { api } from '../../api/client';
 
 export const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const loadFromServer = useLearningStore((s) => s.loadFromServer);
+  const initFromStorage = useUserStore((s) => s.initFromStorage);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (api.getToken() && !loaded) {
-      loadFromServer().finally(() => setLoaded(true));
-    } else {
+    async function init() {
+      // 恢复用户登录状态（从 Capacitor Preferences / localStorage）
+      await initFromStorage();
+      // 加载学习进度
+      const token = await api.getToken();
+      if (token) {
+        await loadFromServer();
+      }
       setLoaded(true);
     }
+    init();
   }, []);
 
   return (

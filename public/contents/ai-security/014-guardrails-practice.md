@@ -1,5 +1,19 @@
 # LLM 内容安全护栏实战：NeMo Guardrails / Guardrails AI 从入门到上线
 
+> **📘 文档定位**：CISP 考试 AI 安全核心进阶 | 难度：⭐⭐⭐ | 预计阅读：25 分钟
+> 内容安全护栏是 LLM 应用的最后一道防线。本文对比 NeMo Guardrails、Guardrails AI、LLM Guard 三大方案，从配置到代码实战，提供可落地的护栏部署方案。
+
+---
+
+## 导航目录
+- [一、内容安全护栏三剑客](#一内容安全护栏三剑客)
+- [二、NeMo Guardrails 实战](#二nemo-guardrails-实战)
+- [三、Guardrails AI 实战](#三guardrails-ai-实战)
+- [四、LLM Guard 实战](#四llm-guard-实战)
+- [五、护栏部署架构](#五护栏部署架构)
+- [六、安全部署 Checklist](#六安全部署-checklist)
+- [七、高分考点与知识巧记](#七高分考点与知识巧记)
+
 ---
 
 ## 一、内容安全护栏三剑客
@@ -344,7 +358,7 @@ sanitized_output, is_valid, risk_score = scan_output(output_scanners, llm_output
 
 ---
 
-## 六、Checklist
+## 六、安全部署 Checklist
 
 - [ ] 基础输入护栏（长度/速率/关键词）部署
 - [ ] Prompt注入检测（规则+LLM自检双模式）
@@ -355,3 +369,26 @@ sanitized_output, is_valid, risk_score = scan_output(output_scanners, llm_output
 - [ ] 护栏旁路测试（红队定期验证护栏有效性）
 - [ ] 护栏日志与告警（被拦截的请求审计）
 - [ ] 护栏性能监控（延迟增加不超过200ms为佳）
+
+---
+
+## 七、高分考点与知识巧记
+
+### 高分考点速查表
+| 序号 | 考点 | 频率 | 难度 | 关键答案 |
+|:---:|:---|:---:|:---:|:---|
+| 1 | 三大护栏方案对比 | ⭐⭐⭐⭐⭐ | ⭐⭐ | NeMo Guardrails（对话安全）、Guardrails AI（结构化验证）、LLM Guard（安全扫描） |
+| 2 | 护栏三大类型 | ⭐⭐⭐⭐ | ⭐⭐ | 输入护栏（拦截/修改用户输入）、对话护栏（控制对话流向）、输出护栏（检查LLM输出） |
+| 3 | 护栏五种动作 | ⭐⭐⭐ | ⭐⭐ | block（拒绝）、mask（脱敏）、rephrase（重述）、fact_check（校验）、redirect（重定向） |
+| 4 | 双层护栏架构 | ⭐⭐⭐⭐ | ⭐⭐⭐ | Layer1同步（<100ms快速规则）+ Layer2异步（<1s LLM检测） |
+| 5 | Guardrails AI 核心机制 | ⭐⭐⭐ | ⭐⭐⭐ | Pydantic风格结构化验证，失败自动重试LLM调用 |
+| 6 | Colang 自定义护栏语言 | ⭐⭐⭐ | ⭐⭐⭐ | NeMo Guardrails 的领域特定语言，定义对话流和护栏规则 |
+
+### 知识巧记口诀
+> 🎵 **护栏三剑客**："NeMo 对话安全全面控，Guardrails 结构化输出严验证；LLM Guard 轻量扫描快，三剑合璧保安全"
+
+> 🎵 **护栏五动作**："拦（block）住恶意输入，脱（mask）去敏感信息；改（rephrase）写不当内容，查（fact_check）验事实真假；引（redirect）导话题方向"
+
+---
+
+> **内容安全护栏不是可选项，而是 LLM 应用的必选项。无论是 NeMo Guardrails 的全面对话控制，还是 Guardrails AI 的结构化验证，选择适合场景的护栏方案并持续迭代，是 LLM 安全运营的基石。**

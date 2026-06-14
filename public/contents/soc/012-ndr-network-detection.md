@@ -1,5 +1,21 @@
 # NDR 网络检测与响应：Zeek / Suricata / NetFlow 实战
 
+> **📘 文档定位**：CISP 考试 安全运营 核心 | 难度：⭐⭐⭐⭐ | 预计阅读：28 分钟
+>
+> 系统讲解 NDR（网络检测与响应）技术体系：Zeek/Suricata 部署配置、NetFlow 流量分析、加密流量检测及与 SIEM 的联动方案。
+
+---
+
+## 导航目录
+
+- [一、NDR 技术体系](#一ndr-技术体系)
+- [二、Zeek 部署与规则](#二zeek-部署与规则)
+- [三、Suricata 部署与规则](#三suricata-部署与规则)
+- [四、NetFlow 流量分析](#四netflow-流量分析)
+- [五、NDR 与 SIEM 联动](#五ndr-与-siem-联动)
+- [六、安全部署 Checklist](#六安全部署-checklist)
+- [七、高分考点与知识巧记](#七高分考点与知识巧记)
+
 ---
 
 ## 一、NDR 三层体系

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { api } from '../api/client';
 
 interface LearningProgress {
@@ -15,8 +16,6 @@ interface LearningState {
   mode: 'full' | 'intensive';
   completedLabs: string[];
   quizResults: Record<string, { score: number; date: string }>;
-  synced: boolean;
-  syncError: string;
 
   loadFromServer: () => Promise<void>;
   markDayComplete: (dayId: string, quizScore?: number) => Promise<void>;
@@ -27,60 +26,57 @@ interface LearningState {
   resetProgress: () => Promise<void>;
 }
 
-export const useLearningStore = create<LearningState>((set, get) => ({
-  currentDay: 1,
-  completedDays: [],
-  streak: 0,
-  lastStudyDate: '',
-  mode: 'full',
-  completedLabs: [],
-  quizResults: {},
-  synced: false,
-  syncError: '',
+export const useLearningStore = create<LearningState>()(
+  persist(
+    (set, get) => ({
+      currentDay: 1,
+      completedDays: [],
+      streak: 0,
+      lastStudyDate: '',
+      mode: 'full',
+      completedLabs: [],
+      quizResults: {},
 
-  async loadFromServer() {
-    if (!api.getToken()) return;
-    try {
-      const data = await api.getProgress();
-      set({
-        currentDay: data.currentDay || 1,
-        completedDays: data.completedDays || [],
-        completedLabs: data.completedLabs || [],
-        quizResults: data.quizResults || {},
-        mode: data.mode || 'full',
-        streak: data.streak || 0,
-        lastStudyDate: data.lastStudyDate || '',
-        synced: true,
-        syncError: '',
-      });
-    } catch (err: any) {
-      console.error('从本地存储加载进度失败:', err);
-      set({ syncError: err.message || '加载进度失败', synced: false });
-    }
-  },
+      async loadFromServer() {
+        const token = await api.getToken();
+        if (!token) return;
+        try {
+          const data = await api.getProgress();
+          set({
+            currentDay: data.currentDay || 1,
+            completedDays: data.completedDays || [],
+            completedLabs: data.completedLabs || [],
+            quizResults: data.quizResults || {},
+            mode: data.mode || 'full',
+            streak: data.streak || 0,
+            lastStudyDate: data.lastStudyDate || '',
+          });
+        } catch (err: any) {
+          console.error('从服务器加载进度失败:', err);
+        }
+      },
 
-  async markDayComplete(dayId: string, quizScore?: number) {
-    try {
-      const result = await api.completeDay(dayId, quizScore);
-      const now = new Date().toISOString();
-      const alreadyExists = get().completedDays.some((d) => d.dayId === dayId);
-      const newCompletedDays = alreadyExists
-        ? get().completedDays
-        : [...get().completedDays, { dayId, completedAt: now, quizScore }];
+      async markDayComplete(dayId: string, quizScore?: number) {
+        try {
+          const result = await api.completeDay(dayId, quizScore);
+          const now = new Date().toISOString();
+          const alreadyExists = get().completedDays.some((d) => d.dayId === dayId);
+          const newCompletedDays = alreadyExists
+            ? get().completedDays
+            : [...get().completedDays, { dayId, completedAt: now, quizScore }];
 
-      const newCurrentDay = result.currentDay || get().currentDay;
+          const newCurrentDay = result.currentDay || get().currentDay;
 
-      set({
-        completedDays: newCompletedDays,
-        currentDay: newCurrentDay,
-        lastStudyDate: now.split('T')[0],
-        streak: get().streak + 1,
-      });
-    } catch (err: any) {
-      console.error('保存日进度失败:', err);
-      set({ syncError: err.message || '保存失败' });
-    }
-  },
+          set({
+            completedDays: newCompletedDays,
+            currentDay: newCurrentDay,
+            lastStudyDate: now.split('T')[0],
+            streak: get().streak + 1,
+          });
+        } catch (err: any) {
+          console.error('保存日进度失败:', err);
+        }
+      },
 
   async setCurrentDay(day: number) {
     set({ currentDay: day });
@@ -137,4 +133,9 @@ export const useLearningStore = create<LearningState>((set, get) => ({
       console.error('重置进度失败:', err);
     }
   },
-}));
+    }),
+    {
+      name: 'cisp_learning',
+    },
+  ),
+);

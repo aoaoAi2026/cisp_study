@@ -1,5 +1,20 @@
 # LangChain / LlamaIndex 安全开发最佳实践
 
+> **📘 文档定位**：CISP 考试 AI 安全核心进阶 | 难度：⭐⭐⭐⭐ | 预计阅读：25 分钟
+> LangChain 和 LlamaIndex 是 LLM 应用开发的主流框架，但其链式调用、Prompt 模板、工具集成等特性带来了独特的安全风险。本文系统讲解两大框架的安全开发实践。
+
+---
+
+## 导航目录
+- [一、框架安全陷阱全景](#一框架安全陷阱全景)
+- [二、Prompt 模板注入](#二prompt-模板注入)
+- [三、Output Parser 注入](#三output-parser-注入)
+- [四、Chain 链式调用安全](#四chain-链式调用安全)
+- [五、LlamaIndex RAG 安全](#五llamaindex-rag-安全)
+- [六、回调安全审计](#六回调安全审计)
+- [七、安全部署 Checklist](#七安全部署-checklist)
+- [八、高分考点与知识巧记](#八高分考点与知识巧记)
+
 ---
 
 ## 一、框架安全陷阱全景
@@ -318,7 +333,7 @@ chain = my_chain.with_config(
 
 ---
 
-## 七、Checklist
+## 七、安全部署 Checklist
 
 - [ ] Prompt模板使用System/Human/Assistant分离模式
 - [ ] Partial Variables 仅从服务端可信来源获取
@@ -329,3 +344,26 @@ chain = my_chain.with_config(
 - [ ] LlamaIndex文档摄取管道注入检测
 - [ ] RAG检索结果安全过滤
 - [ ] 回调系统记录全链路日志
+
+---
+
+## 八、高分考点与知识巧记
+
+### 高分考点速查表
+| 序号 | 考点 | 频率 | 难度 | 关键答案 |
+|:---:|:---|:---:|:---:|:---|
+| 1 | LangChain 三大安全陷阱 | ⭐⭐⭐⭐⭐ | ⭐⭐ | Prompt模板注入、Output Parser注入、链间数据未消毒 |
+| 2 | 安全Prompt模板设计 | ⭐⭐⭐⭐ | ⭐⭐ | System/Human分离 + 分隔符标记 + Partial Variables仅服务端 |
+| 3 | trust_remote_code 风险 | ⭐⭐⭐⭐ | ⭐⭐ | 设为True时执行模型仓库中的自定义代码 → 供应链RCE风险 |
+| 4 | 工具调用安全封装 | ⭐⭐⭐ | ⭐⭐⭐ | 命令白名单 + 危险模式检测 + 超时限制 + 输出截断 |
+| 5 | 回调审计三要素 | ⭐⭐⭐ | ⭐⭐ | on_llm_start审计输入、on_llm_end审计输出、on_tool_start审计工具 |
+| 6 | 链间消毒原则 | ⭐⭐⭐ | ⭐⭐ | 每层链的输出必须在传入下一层前消毒，SecureChainWrapper模式 |
+
+### 知识巧记口诀
+> 🎵 **框架安全四原则**："模板分离防注入，输出解析不用eval；链间传递要消毒，工具调用加封装"
+
+> 🎵 **LangChain vs LlamaIndex 安全**："LangChain 重链条，层层消毒是关键；LlamaIndex 管文档，摄取管道先过滤"
+
+---
+
+> **框架安全的核心：不要信任任何输入输出。Prompt模板分离指令与数据、链间输出消毒、工具调用封装安全层——三条铁律记心间。**

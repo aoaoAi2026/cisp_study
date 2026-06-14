@@ -581,3 +581,38 @@ if ($rm ~ "^[A-Za-z0-9+/=]{50,}$") {
 - [ ] 全网验证修复
 
 > 📚 延伸阅读：Vuln/009-Spring4Shell | Vuln/002-Log4Shell | CTF/009-JNDI&Fastjson
+
+---
+
+## 高分考点与知识巧记
+
+### 高分考点速查表
+
+| 考点 | 考察维度 | 记忆要点 |
+|------|----------|----------|
+| Shiro反序列化原理 | 核心机制 | RememberMe Cookie→Base64解码→AES解密→反序列化→恶意对象执行 |
+| Shiro-550(CVE-2016-4437) | 经典漏洞 | AES密钥硬编码(kPH+bIxk5D2deZiIxcaaaA==)；1.2.4及之前版本 |
+| Shiro-721(CVE-2019-12422) | 进阶漏洞 | Padding Oracle攻击→无需已知密钥→需合法RememberMe Cookie |
+| 检测与利用 | 实战技巧 | 检查响应Set-Cookie中rememberMe=deleteMe特征；使用ysoserial生成Payload |
+| 修复方案 | 防护策略 | 升级Shiro版本、更换AES密钥、使用随机密钥(每应用不同) |
+| 与其他反序列化对比 | 横向对比 | vs Fastjson(JNDI)、vs WebLogic(T3协议)、vs JBoss/WebSphere(JMX) |
+
+### 知识巧记口诀
+
+> **Shiro反序列化口诀**：
+> RememberMe是关键，Base64解码AES解密；
+> 密钥硬编码是根本，kPH+bIxk...人人知；
+> 反序列化无校验，恶意对象随便塞；
+> 550老版本密钥固定，721升级版Padding Oracle。
+
+> **检测技巧**：看Set-Cookie有没有rememberMe=deleteMe，有就八成是Shiro，进一步验证。
+
+### 考试陷阱提醒
+
+| 陷阱 | 正确认知 |
+|------|----------|
+| ❌ 换密钥就能修复Shiro-550 | ✅ 仅换密钥不够，需升级到安全版本并确保反序列化有类型白名单校验 |
+| ❌ Shiro-721比550危害更大 | ✅ 550(密钥已知)利用更简单；721需Padding Oracle攻击，条件更苛刻 |
+| ❌ 删除RememberMe功能就安全 | ✅ 只要反序列化入口存在，可能还有其他利用路径，需从根上修复 |
+
+> 💡 **一句话总结**：Shiro反序列化是Java安全最经典的漏洞之一——硬编码密钥+无校验反序列化=灾难，CISP考试必考550和721两个版本的区别与利用条件。

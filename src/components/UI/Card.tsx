@@ -18,7 +18,7 @@ export const Card: React.FC<CardProps> = ({
     <div
       className={`
         rounded-xl p-6 transition-all duration-300
-        bg-cyber-purple/40 backdrop-blur-sm
+        bg-white/[0.05] backdrop-blur-sm
         border border-cyber-green/10
         hover:border-cyber-green/30
         ${glow ? 'hover:shadow-lg hover:shadow-cyber-green/10' : ''}
@@ -112,6 +112,7 @@ interface ButtonProps {
   loading?: boolean;
   className?: string;
   icon?: LucideIcon;
+  colorScheme?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -123,12 +124,19 @@ export const Button: React.FC<ButtonProps> = ({
   loading = false,
   className = '',
   icon: Icon,
+  colorScheme = 'basic',
 }) => {
   const baseClasses = 'inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 rounded-lg';
 
+  const outlineColors = {
+    basic: 'border-cyber-green text-cyber-green hover:bg-cyber-green/10',
+    penetration: 'border-cyber-red text-cyber-red hover:bg-cyber-red/10',
+    defense: 'border-cyber-blue text-cyber-blue hover:bg-cyber-blue/10',
+  };
+
   const variantClasses = {
     primary: 'bg-gradient-to-r from-cyber-green to-cyber-green/80 text-cyber-black hover:shadow-lg hover:shadow-cyber-green/30 hover:scale-105',
-    outline: 'border-2 border-cyber-green text-cyber-green hover:bg-cyber-green/10',
+    outline: `border-2 ${outlineColors[colorScheme as keyof typeof outlineColors] || outlineColors.basic}`,
     danger: 'border-2 border-red-500 text-red-500 hover:bg-red-500/10',
   };
 

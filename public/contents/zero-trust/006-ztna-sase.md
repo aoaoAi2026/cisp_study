@@ -1,5 +1,20 @@
 # ZTNA 与 SASE：零信任网络接入落地指南
 
+> **📘 文档定位**：CISP 考试 零信任网络接入 核心 | 难度：⭐⭐⭐⭐ | 预计阅读：25 分钟
+>
+> 系统对比 ZTNA 替代传统 VPN 的优势、SASE 架构融合（SD-WAN+安全服务边缘）、主流 ZTNA/SASE 产品方案（Zscaler/Cloudflare/Netskope）及落地部署策略，是零信任网络接入的实战指南。
+
+---
+
+## 导航目录
+
+- [一、ZTNA 替代传统 VPN](#一ztna-替代传统-vpn)
+- [二、SASE 架构](#二sase-架构)
+- [三、主流 ZTNA/SASE 产品](#三主流-ztnasse-产品)
+- [四、ZTNA 部署实践](#四ztna-部署实践)
+- [五、安全部署 Checklist](#五安全部署-checklist)
+- [六、高分考点与知识巧记](#六高分考点与知识巧记)
+
 ---
 
 ## 一、ZTNA 替代传统 VPN
@@ -168,3 +183,40 @@ Phase 4: SASE成熟（9-12个月）
 - [ ] 逐步下线VPN（保留紧急备用）
 - [ ] 评估SASE框架扩展（CASB/SWG/FWaaS）
 - [ ] 持续监控 + 用户反馈优化
+
+---
+
+## 六、高分考点与知识巧记
+
+### 高分考点速查表
+
+| 序号 | 考点 | 频率 | 难度 | 关键答案 |
+|:---:|:---|:---:|:---:|:---|
+| 1 | ZTNA vs VPN 对比 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ZTNA(应用层/细粒度/隐身)/VPN(网络层/粗粒度/暴露) |
+| 2 | SASE 架构组件 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | SD-WAN+SWG+CASB+ZTNA+FWaaS 融合 |
+| 3 | 客户端 vs 无客户端 ZTNA | ⭐⭐⭐⭐ | ⭐⭐⭐ | 客户端(完整设备信任)/无客户端(Browser Access) |
+| 4 | ZTNA 三种部署模式 | ⭐⭐⭐ | ⭐⭐⭐⭐ | 端点发起/服务发起/双向发起 |
+| 5 | 主流 ZTNA 厂商 | ⭐⭐⭐⭐ | ⭐⭐ | Zscaler ZPA/Cloudflare Access/Netskope/OpenZiti |
+| 6 | ZTNA 迁移策略 | ⭐⭐⭐ | ⭐⭐⭐ | 先Web后非Web、先非关键后关键、VPN并行过渡 |
+
+### 知识巧记口诀
+
+> 🎵 **ZTNA 三优势**："隐身细粒防横向" — 网络隐身、细粒度权限、防横向移动
+>
+> 🎵 **SASE 五合一**："网安网零防" — SD-WAN+SWG+CASB+ZTNA+FWaaS
+>
+> 🎵 **迁移三步走**："Web 先行、非 Web 跟上、VPN 断后"
+
+---
+
+### 考试陷阱提醒
+
+| 陷阱 | 正确理解 |
+|:---|:---|
+| "ZTNA 就是 SASE" | ❌ ZTNA 是 SASE 的一个组件，SASE 还包括 SWG/CASB/SD-WAN/FWaaS |
+| "部署 ZTNA 后立即下线 VPN" | ❌ 需并行过渡期，非 Web 应用和遗留系统可能需要保留 VPN |
+| "Browser Access 可以替代所有 ZTNA" | ❌ 只支持 HTTP/HTTPS 协议，SSH/RDP 等仍需客户端方案 |
+
+---
+
+> **ZTNA 是零信任在网络层的落地形态——从"先接入再验证"到"先验证再接入"，这是网络安全的范式革命。**

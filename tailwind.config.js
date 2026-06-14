@@ -1,8 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 
+/** @type {import('@tailwindcss/typography')} */
+import typography from "@tailwindcss/typography";
+
 export default {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  safelist: [
+    'border-cyber-green', 'border-cyber-green/10', 'border-cyber-green/20', 'border-cyber-green/30', 'border-cyber-green/40', 'border-cyber-green/50',
+    'border-cyber-red', 'border-cyber-red/10', 'border-cyber-red/20', 'border-cyber-red/30', 'border-cyber-red/40', 'border-cyber-red/50',
+    'border-cyber-blue', 'border-cyber-blue/10', 'border-cyber-blue/20', 'border-cyber-blue/30', 'border-cyber-blue/40', 'border-cyber-blue/50',
+    'text-cyber-green', 'text-cyber-red', 'text-cyber-blue',
+    'bg-cyber-green/10', 'bg-cyber-green/20', 'bg-cyber-green/30',
+    'bg-cyber-red/10', 'bg-cyber-red/20', 'bg-cyber-red/30',
+    'bg-cyber-blue/10', 'bg-cyber-blue/20', 'bg-cyber-blue/30',
+  ],
   theme: {
     container: {
       center: true,
@@ -11,7 +23,7 @@ export default {
       colors: {
         cyber: {
           black: "#0a0e17",
-          purple: "#1a1a2e",
+          purple: "#6b5b95",
           green: "#00ff88",
           blue: "#00d4ff",
           red: "#ff3366",
@@ -46,7 +58,37 @@ export default {
           "100%": { opacity: "1" },
         },
       },
+      typography: ({ theme }) => ({
+        invert: {
+          css: {
+            "--tw-prose-body": "#d1d5db",
+            "--tw-prose-headings": "#ffffff",
+            "--tw-prose-links": theme("colors.cyber.green"),
+            "--tw-prose-bold": "#ffffff",
+            "--tw-prose-code": "#00ff88",
+            "--tw-prose-pre-code": "#d1d5db",
+            "--tw-prose-pre-bg": "#0a0e17",
+            "--tw-prose-quotes": "#9ca3af",
+            "--tw-prose-quote-borders": theme("colors.cyber.green"),
+            "--tw-prose-borders": "#1f2937",
+            "--tw-prose-th-borders": "#1f2937",
+            "--tw-prose-td-borders": "#1f2937",
+            "--tw-prose-invert-body": "#d1d5db",
+            "--tw-prose-invert-headings": "#ffffff",
+            "--tw-prose-invert-links": theme("colors.cyber.green"),
+            "--tw-prose-invert-bold": "#ffffff",
+            "--tw-prose-invert-code": "#00ff88",
+            "--tw-prose-invert-pre-code": "#d1d5db",
+            "--tw-prose-invert-pre-bg": "#0a0e17",
+            "--tw-prose-invert-quotes": "#9ca3af",
+            "--tw-prose-invert-quote-borders": theme("colors.cyber.green"),
+            "--tw-prose-invert-borders": "#1f2937",
+            "--tw-prose-invert-th-borders": "#1f2937",
+            "--tw-prose-invert-td-borders": "#1f2937",
+          },
+        },
+      }),
     },
   },
-  plugins: [],
+  plugins: [typography],
 };

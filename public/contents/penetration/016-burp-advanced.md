@@ -1,5 +1,21 @@
 # Burp Suite 高级利用技巧与插件实战
 
+> **📘 文档定位**：CISP 考试 渗透工具 核心 | 难度：⭐⭐⭐ | 预计阅读：25 分钟
+>
+> 系统讲解 Burp Suite 的高级功能：Intruder/Scanner/Repeater 深度使用、Macros/Session Handling、BApp 插件生态及自定义开发。
+
+---
+
+## 导航目录
+
+- [一、Burp Suite 架构回顾](#一burp-suite-架构回顾)
+- [二、Intruder 高级技巧](#二intruder-高级技巧)
+- [三、Session Handling 与 Macros](#三session-handling-与-macros)
+- [四、Scanner 深度配置](#四scanner-深度配置)
+- [五、BApp 插件实战](#五bapp-插件实战)
+- [六、安全部署 Checklist](#六安全部署-checklist)
+- [七、高分考点与知识巧记](#七高分考点与知识巧记)
+
 ---
 
 ## 📋 目录

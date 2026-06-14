@@ -1,5 +1,24 @@
 # Java 代码审计实战指南
 
+> **📘 文档定位**：CISP 考试代码审计核心内容 | 难度：⭐⭐⭐⭐⭐ | 预计阅读：25 分钟
+> Java 代码审计是白盒测试的重难点。本文从关键 API 对照、SQL 注入、反序列化 Gadget 链、表达式注入到 Spring Boot 安全检查，系统梳理 Java 生态常见漏洞与审计方法。
+
+---
+
+## 导航目录
+- [一、Java 代码审计核心知识](#一java-代码审计核心知识)
+- [二、SQL 注入](#二sql-注入)
+- [三、Java 反序列化漏洞](#三java-反序列化漏洞)
+- [四、表达式注入（SpEL / OGNL）](#四表达式注入spel--ognl)
+- [五、XXE](#五xxe)
+- [六、Spring Boot 安全检查清单](#六spring-boot-安全检查清单)
+- [七、Fastjson 风险](#七fastjson-风险)
+- [八、JWT / 认证安全](#八jwt--认证安全)
+- [九、命令注入](#九命令注入)
+- [十、审计流程](#十审计流程)
+- [十一、CheckList](#十一checklist)
+- [十二、高分考点与知识巧记](#十二高分考点与知识巧记)
+
 ---
 
 ## 一、Java 代码审计核心知识
@@ -237,3 +256,38 @@ Step 6: 第三方组件版本
 - [ ] SSRF: 是否对 URL 做协议/内网 IP 校验?
 - [ ] Spring Security / Shiro: 鉴权规则是否覆盖了所有接口? 静态资源/错误页?
 - [ ] 第三方依赖: Log4j2/Struts2/Fastjson/Shiro 等历史高危组件版本是否最新?
+
+---
+
+## 十二、高分考点与知识巧记
+
+> 🔑 **高分考点**：Java 代码审计是 CISP 考试中难度最高的内容之一。反序列化 Gadget 链、表达式注入、Fastjson 漏洞是三大核心考点。考试常以"给定一段 Java 代码或配置，找出安全风险"的形式出现。
+
+| 考点 | 频次 | 核心记忆点 |
+|:---|:---:|:---|
+| 反序列化 Gadget 链 | ⭐⭐⭐⭐⭐ | CommonsCollections、Fastjson autoType、ysoserial 工具 |
+| SQL 注入 | ⭐⭐⭐⭐ | MyBatis ${} 直接替换 vs #{} 预编译 |
+| 表达式注入 | ⭐⭐⭐⭐ | SpEL、OGNL(Struts2)、FreeMarker/Velocity 模板 |
+| Spring Boot Actuator | ⭐⭐⭐⭐ | env/heapdump 泄露密钥，生产必须 minimal |
+| Fastjson | ⭐⭐⭐⭐ | autoType 默认关闭，升级最新版 |
+
+> 💡 **知识巧记**：Java 审计流程记"依赖搜鉴配接三"——查依赖 CVE、搜索危险函数、鉴权矩阵检查、配置文件审计、接口层追踪、第三方组件版本。反序列化 Gadget 链记"CC链 + Fastjson + Jackson + XStream + SnakeYAML"。MyBatis 铁律：`#{}` 安全预编译，`${}` 直接替换必审计。
+
+### 高分考点速查表
+
+| 考察维度 | 关键结论 | 常见干扰项 |
+|:---|:---|:---|
+| MyBatis #{} vs ${} | #{} 预编译安全，${} 直接拼接危险 | "${} 也是参数化查询" ❌ |
+| Fastjson 修复 | 升级最新版 + 关闭 autoType + 白名单 accept | "Fastjson 默认安全" ❌ |
+| Actuator 安全 | 生产只暴露 health/info，env 含密钥 | "Actuator 默认配置即可" ❌ |
+| JWT none 算法 | 必须强制验签，禁止 none 算法 | "JWT 默认验签" ❌ |
+| ProcessBuilder | 数组形式避免 shell 解析，白名单校验 | "Runtime.exec 数组形式也安全" ❌ |
+
+### 知识巧记口诀
+
+> **Java 代码审计口诀**：
+> 反序列化头号敌，CC 链 Fastjson 要警惕。
+> MyBatis 铁律记，井号安全美元危。
+> 表达式注入三兄弟，SpEL OGNL 模板集。
+> Actuator 生产最小化，env heapdump 密钥泄。
+> JWT none 算法禁，签名校验不可弃。

@@ -1,5 +1,20 @@
 # 云原生安全体系建设：DevSecOps 落地指南
 
+> **📘 文档定位**：CISP 考试云安全进阶内容 | 难度：⭐⭐⭐⭐ | 预计阅读：20 分钟
+> DevSecOps 将安全融入开发全生命周期。本文从流水线各阶段安全植入、SBOM 供应链安全、运行时检测闭环到 SLSA 框架，系统讲解云原生安全体系落地实践。
+
+---
+
+## 导航目录
+- [一、DevSecOps 总体框架](#一devsecops-总体框架)
+- [二、流水线各阶段安全植入点](#二流水线各阶段安全植入点)
+- [三、CI/CD 流水线示例（GitHub Actions）](#三cicd-流水线示例github-actions)
+- [四、SBOM 与供应链安全](#四sbom-与供应链安全)
+- [五、运行时安全闭环](#五运行时安全闭环)
+- [六、落地难点与建议](#六落地难点与建议)
+- [七、团队 CheckList](#七团队-checklist)
+- [八、高分考点与知识巧记](#八高分考点与知识巧记)
+
 ---
 
 ## 一、DevSecOps 总体框架
@@ -123,3 +138,38 @@ Automation:    SOAR：Phantom / Tines / 自研 Python Playbook
 - [ ] Terraform / K8s YAML 走 Checkov/tfsec 检查
 - [ ] 生产集群部署 Falco / Tetragon 做运行时检测
 - [ ] 建立 SBOM 清单，每季度回顾一次供应链曝光面
+
+---
+
+## 八、高分考点与知识巧记
+
+> 🔑 **高分考点**：DevSecOps 考点集中在安全左移理念、流水线工具链、SBOM 概念、SLSA 框架分级。考试偏重理念理解和框架对比，不要求掌握具体 CI 配置语法。
+
+| 考点 | 频次 | 核心记忆点 |
+|:---|:---:|:---|
+| 安全左移 (Shift-Left) | ⭐⭐⭐⭐⭐ | 安全从上线前门槛变为全生命周期质量属性 |
+| 流水线安全工具 | ⭐⭐⭐⭐ | SAST(CodeQL/Semgrep)、SCA(Snyk)、镜像扫描(Trivy)、IaC(Checkov) |
+| SBOM | ⭐⭐⭐⭐ | 软件物料清单，CycloneDX/SPDX 格式，供应链安全基础 |
+| SLSA 框架 | ⭐⭐⭐ | L1 构建记录 → L2 签名防篡改 → L3 硬化 CI → L4 可复现构建 |
+| 运行时闭环 | ⭐⭐⭐ | 检测(Falco) → 响应(隔离) → 修复 → 验证 |
+
+> 💡 **知识巧记**：DevSecOps 五阶段记"计码构测运"——Plan（威胁建模）、Code（SAST）、Build（依赖扫描）、Test（DAST/IAST）、Operate（运行时检测）。SLSA 四级记"记签硬复"——L1 记录、L2 签名、L3 硬化、L4 复现。工具链口诀：代码扫 Semgrep，依赖查 Snyk，镜像过 Trivy，配置审 Checkov。
+
+### 高分考点速查表
+
+| 考察维度 | 关键结论 | 常见干扰项 |
+|:---|:---|:---|
+| Shift-Left 含义 | 安全前置到开发早期，降低修复成本 | "上线后再做安全测试" ❌ |
+| SAST vs DAST | SAST 白盒静态分析，DAST 黑盒动态测试 | "SAST 需要运行应用" ❌ |
+| SBOM 作用 | 列出所有软件组件依赖，快速定位受影响范围 | "SBOM 只包含 CVE 信息" ❌ |
+| SLSA L2 | 签名构建记录 + 防篡改 + OIDC | "SLSA L2 需要可复现构建" ❌ |
+| 阻断策略 | CRITICAL/HIGH 阻断，LOW/MEDIUM 告警 | "所有级别都阻断" ❌ |
+
+### 知识巧记口诀
+
+> **DevSecOps 落地口诀**：
+> 安全左移是根本，五阶段全植入深。
+> 代码提交 Semgrep 审，依赖 Snyk 查 CVE。
+> 镜像构建 Trivy 过，IaC Checkov 审配文。
+> SBOM 清单定期看，SLSA 四级步步升。
+> 运行 Falco 守底线，检测响应闭环成。

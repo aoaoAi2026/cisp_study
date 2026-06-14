@@ -1,5 +1,21 @@
 # Java JNDI 注入 + Fastjson 反序列化深度实战
 
+> **📘 文档定位**：CISP 考试 CTF 安全 高级 | 难度：⭐⭐⭐⭐⭐ | 预计阅读：30 分钟
+>
+> 深入讲解 Java 安全的两大核心漏洞：JNDI 注入（LDAP/RMI）与 Fastjson 反序列化，覆盖利用链构造、Bypass 技巧及 ysoserial 工具实战。
+
+---
+
+## 导航目录
+
+- [一、JNDI 注入原理](#一jndi-注入原理)
+- [二、LDAP/RMI 利用链](#二ldaprmi-利用链)
+- [三、Fastjson 反序列化](#三fastjson-反序列化)
+- [四、Bypass 技巧](#四bypass-技巧)
+- [五、ysoserial 工具实战](#五ysoserial-工具实战)
+- [六、安全部署 Checklist](#六安全部署-checklist)
+- [七、高分考点与知识巧记](#七高分考点与知识巧记)
+
 ---
 
 ## 📋 目录

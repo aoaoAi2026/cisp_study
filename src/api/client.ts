@@ -6,16 +6,16 @@ export interface ApiUser {
   email?: string;
 }
 
-function getToken(): string | null {
+async function getToken(): Promise<string | null> {
   return LocalDB.auth.getToken();
 }
 
-function setToken(token: string) {
-  LocalDB.auth.setToken(token);
+async function setToken(token: string): Promise<void> {
+  return LocalDB.auth.setToken(token);
 }
 
-function clearToken() {
-  LocalDB.auth.clearToken();
+async function clearToken(): Promise<void> {
+  return LocalDB.auth.clearToken();
 }
 
 export const api = {
@@ -24,22 +24,22 @@ export const api = {
   clearToken,
 
   async register(username: string, password: string, email?: string) {
-    if (LocalDB.users.exists(username)) {
+    if (await LocalDB.users.exists(username)) {
       throw new Error('用户名已存在');
     }
     
     const hashedPassword = hashPassword(password);
-    const user = LocalDB.users.create({ username, password: hashedPassword, email });
+    const user = await LocalDB.users.create({ username, password: hashedPassword, email });
     
     const token = generateToken();
-    setToken(token);
-    LocalDB.auth.setUser(user);
+    await setToken(token);
+    await LocalDB.auth.setUser(user);
     
     return { token, user: { id: user.id, username: user.username, email: user.email }, message: '注册成功' };
   },
 
   async login(username: string, password: string) {
-    const user = LocalDB.users.getByUsername(username);
+    const user = await LocalDB.users.getByUsername(username);
     if (!user) {
       throw new Error('用户名或密码错误');
     }
@@ -50,14 +50,14 @@ export const api = {
     }
     
     const token = generateToken();
-    setToken(token);
-    LocalDB.auth.setUser(user);
+    await setToken(token);
+    await LocalDB.auth.setUser(user);
     
     return { token, user: { id: user.id, username: user.username, email: user.email }, message: '登录成功' };
   },
 
   async me() {
-    const user = LocalDB.auth.getUser();
+    const user = await LocalDB.auth.getUser();
     if (!user) {
       throw new Error('未登录');
     }
@@ -65,7 +65,7 @@ export const api = {
   },
 
   async getProgress() {
-    const user = LocalDB.auth.getUser();
+    const user = await LocalDB.auth.getUser();
     if (!user) {
       throw new Error('未登录');
     }
@@ -73,12 +73,12 @@ export const api = {
   },
 
   async completeDay(dayId: string, quizScore?: number) {
-    const user = LocalDB.auth.getUser();
+    const user = await LocalDB.auth.getUser();
     if (!user) {
       throw new Error('未登录');
     }
     
-    const progress = LocalDB.progress.get(user.id);
+    const progress = await LocalDB.progress.get(user.id);
     const alreadyCompleted = progress.completedDays.some((d) => d.dayId === dayId);
     
     if (!alreadyCompleted) {
@@ -98,70 +98,66 @@ export const api = {
         progress.currentDay = dayNum + 1;
       }
       
-      LocalDB.progress.save(user.id, progress);
+      await LocalDB.progress.save(user.id, progress);
     }
     
     return { currentDay: progress.currentDay };
   },
 
   async completeLab(labId: string) {
-    const user = LocalDB.auth.getUser();
+    const user = await LocalDB.auth.getUser();
     if (!user) {
       throw new Error('未登录');
     }
     
-    const progress = LocalDB.progress.get(user.id);
+    const progress = await LocalDB.progress.get(user.id);
     if (!progress.completedLabs.includes(labId)) {
       progress.completedLabs.push(labId);
-      LocalDB.progress.save(user.id, progress);
+      await LocalDB.progress.save(user.id, progress);
     }
     
     return { success: true };
   },
 
   async saveQuiz(quizId: string, score: number) {
-    const user = LocalDB.auth.getUser();
+    const user = await LocalDB.auth.getUser();
     if (!user) {
       throw new Error('未登录');
     }
     
-    const progress = LocalDB.progress.get(user.id);
+    const progress = await LocalDB.progress.get(user.id);
     progress.quizResults[quizId] = { score, date: new Date().toISOString() };
-    LocalDB.progress.save(user.id, progress);
+    await LocalDB.progress.save(user.id, progress);
     
     return { success: true };
   },
 
   async updatePreferences(prefs: { currentDay?: number; mode?: 'full' | 'intensive' }) {
-    const user = LocalDB.auth.getUser();
+    const user = await LocalDB.auth.getUser();
     if (!user) {
       throw new Error('未登录');
     }
     
-    const progress = LocalDB.progress.get(user.id);
-    if (prefs.currentDay !== undefined) {
-      progress.currentDay = prefs.currentDay;
-    }
-    if (prefs.mode !== undefined) {
-      progress.mode = prefs.mode;
-    }
-    LocalDB.progress.save(user.id, progress);
+    const progress = await LocalDB.progress.get(user.id);
+    if (prefs.currentDay !== undefined) progress.currentDay = prefs.currentDay;
+    if (prefs.mode !== undefined) progress.mode = prefs.mode;
+    await LocalDB.progress.save(user.id, progress);
     
     return { success: true };
   },
 
   async resetProgress() {
-    const user = LocalDB.auth.getUser();
+    const user = await LocalDB.auth.getUser();
     if (!user) {
       throw new Error('未登录');
     }
     
-    LocalDB.progress.reset(user.id);
+    await LocalDB.progress.reset(user.id);
     return { success: true };
   },
 
-  getStoredUser(): ApiUser | null {
-    const user = LocalDB.auth.getUser();
+  async getStoredUser(): Promise<ApiUser | null> {
+    const user = await LocalDB.auth.getUser();
     if (!user) return null;
     return { id: user.id, username: user.username, email: user.email };
   },
@@ -187,11 +183,10 @@ export const api = {
   },
 };
 
-export function isLoggedIn(): boolean {
-  return !!getToken();
+export async function isLoggedIn(): Promise<boolean> {
+  return !!(await getToken());
 }
 
-export function logout() {
-  clearToken();
+export async function logout(): Promise<void> {
+  await clearToken();
 }
-

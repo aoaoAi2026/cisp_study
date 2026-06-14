@@ -302,3 +302,38 @@ protected static function exec($dispatch) {
 - [ ] 所有Web目录检查是否存在未知WebShell
 
 > 📚 延伸阅读：Vuln/001-漏洞概述 | CodeAudit/001-PHP代码审计 | HW/002-资产自查
+
+---
+
+## 高分考点与知识巧记
+
+### 高分考点速查表
+
+| 考点 | 考察维度 | 记忆要点 |
+|------|----------|----------|
+| ThinkPHP 5 RCE原理 | 核心机制 | 未过滤的控制器/方法名→Request类method方法覆盖→call_user_func_array执行 |
+| 受影响版本 | 版本识别 | ThinkPHP 5.0.x(5.0.23以下)、5.1.x(5.1.31以下)；5.2.x不受影响 |
+| 漏洞利用Payload | 实战技巧 | ?s=captcha→_method=__construct→filter[]=system→POST传参执行命令 |
+| ThinkPHP架构特点 | 基础知识 | MVC框架、单一入口(index.php)、路由解析、自动加载机制 |
+| 检测与修复 | 防护策略 | 升级至安全版本、WAF规则防护、禁用危险函数(exec/system等) |
+| 中国CMS漏洞特点 | 国内安全 | 国产CMS漏洞频发(ThinkPHP/Shiro/Fastjson/Spring)；护网高频利用 |
+
+### 知识巧记口诀
+
+> **ThinkPHP RCE口诀**：
+> ThinkPHP 5.x版本，captcha路由是入口；
+> _method覆盖构造，filter数组传命令；
+> 5.0.23以下全中招，5.1.31也要补；
+> 国产框架漏洞多，资产自查第一条。
+
+> **国内框架漏洞链**：ThinkPHP RCE→Shiro反序列化→Fastjson JNDI→Spring4Shell。
+
+### 考试陷阱提醒
+
+| 陷阱 | 正确认知 |
+|------|----------|
+| ❌ ThinkPHP 6.x也受影响 | ✅ 该漏洞仅影响ThinkPHP 5.0.x和5.1.x特定版本，6.x架构重构不受影响 |
+| ❌ 只改控制器名就能防 | ✅ 需要从根本上修复Request类的method覆盖问题，仅过滤参数不够 |
+| ❌ ThinkPHP是国外框架 | ✅ ThinkPHP是国产PHP框架，在中国企业中使用广泛，护网中频繁被利用 |
+
+> 💡 **一句话总结**：ThinkPHP RCE是国产框架漏洞的典型代表——MVC框架的自动解析机制可能引入严重安全风险，CISP考试考查国产框架安全和中国企业资产防护。

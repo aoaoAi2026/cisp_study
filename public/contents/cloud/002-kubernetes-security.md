@@ -1,5 +1,18 @@
 # Kubernetes 安全攻防实战：RBAC / 准入控制 / 审计
 
+> **📘 文档定位**：CISP 考试云安全核心进阶 | 难度：⭐⭐⭐⭐ | 预计阅读：20 分钟
+> Kubernetes 安全涉及基础设施、集群、工作负载、应用四层。本文从 RBAC 权限配置、准入控制、Pod 安全基线到审计日志，系统讲解 K8s 安全攻防实战。
+
+---
+
+## 导航目录
+- [一、K8s 集群攻击面总览](#一k8s-集群攻击面总览)
+- [二、RBAC 权限配置与审计](#二rbac-权限配置与审计)
+- [三、准入控制与 Pod 安全](#三准入控制与-pod-安全)
+- [四、审计日志与威胁检测](#四审计日志与威胁检测)
+- [五、实战加固 Checklist](#五实战加固-checklist)
+- [六、高分考点与知识巧记](#六高分考点与知识巧记)
+
 ---
 
 ## 一、K8s 集群攻击面总览
@@ -107,3 +120,37 @@ kubectl describe pod kube-apiserver -n kube-system
 - [ ] 审计日志写入独立对象存储并接入 SIEM
 - [ ] 命名空间打 PSA 标签，按业务分级
 - [ ] ServiceAccount token 自动轮转（Bound Service Account Tokens）
+
+---
+
+## 六、高分考点与知识巧记
+
+> 🔑 **高分考点**：考试中 K8s 安全的命题集中在 RBAC 模型、Pod 安全上下文、准入控制器三大块。务必区分 ClusterRole 与 Role 的作用域差异，以及 PSA 三种模式（enforce/audit/warn）的含义。
+
+| 考点 | 频次 | 核心记忆点 |
+|:---|:---:|:---|
+| RBAC 四要素 | ⭐⭐⭐⭐⭐ | Role/ClusterRole 描述权限，RoleBinding/ClusterRoleBinding 绑定主体 |
+| Pod Security Admission | ⭐⭐⭐⭐ | 替代 PSP，三种模式 enforce > warn > audit |
+| etcd 安全 | ⭐⭐⭐⭐ | mTLS 通信 + 快照加密 + 独立网络 |
+| kubelet 认证 | ⭐⭐⭐ | 10250 端口，x509 客户端证书 + Bearer Token |
+| ServiceAccount | ⭐⭐⭐ | Bound Token 替代静态 Secret，自动轮转 |
+
+> 💡 **知识巧记**：K8s 安全四层架构记作"基集工应"——基础层（节点内核）、集群层（API/etcd）、工作负载层（Pod/容器）、应用层（业务代码）。RBAC 模型记"角绑角"——Role 描述权限 → RoleBinding 绑定 → Subject 获得权限。Pod 安全三模式记"强制告审"——enforce（强制拒绝）→ warn（警告但放行）→ audit（仅记录审计）。
+
+### 高分考点速查表
+
+| 考察维度 | 关键结论 | 常见干扰项 |
+|:---|:---|:---|
+| RBAC 权限范围 | ClusterRole 全局，Role 命名空间级 | "Role 可以跨命名空间" ❌ |
+| PSP vs PSA | PSP 自 1.25 移除，PSA 内置 | "PSP 是 K8s 推荐的当前方案" ❌ |
+| kubelet 认证 | 10250 端口需证书，readOnlyPort 应关闭 | "kubelet 默认安全" ❌ |
+| etcd 备份安全 | 快照含所有 Secret，必须加密存储 | "etcd 快照不包含敏感数据" ❌ |
+| 审计日志检测 | 频繁 watch secrets、kube-system 创建 Pod | "只看登录失败日志即可" ❌ |
+
+### 知识巧记口诀
+
+> **K8s 安全攻防口诀**：
+> 四层架构基集工应，RBAC 角绑角记心间。
+> etcd 快照必加密，PSA 三模强制告审。
+> kubelet 证书不可缺，审计日志送 SIEM 管。
+> Bound Token 自动转，准入控制守门前。

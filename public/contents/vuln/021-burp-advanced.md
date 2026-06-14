@@ -201,3 +201,38 @@ sqlmap -r request.txt --batch --level=3 --risk=2
 - [ ] 上游代理配置
 
 > 📚 延伸阅读：Penetration/001-Web流程 | Penetration/002-信息收集 | Vuln/001-漏洞概述
+
+---
+
+## 高分考点与知识巧记
+
+### 高分考点速查表
+
+| 考点 | 考察维度 | 记忆要点 |
+|------|----------|----------|
+| Burp Suite核心模块 | 工具认知 | Proxy(代理拦截)、Repeater(重放测试)、Intruder(暴力破解)、Scanner(自动扫描)、Decoder(编解码) |
+| Intruder攻击模式 | 工具技巧 | Sniper(单变量)、Battering ram(同时替换)、Pitchfork(配对替换)、Cluster bomb(笛卡尔积) |
+| 插件生态 | 工具扩展 | Turbo Intruder(高速并发)、Logger++(高级日志)、Autorize(越权检测)、J2EEScan |
+| 高级配置 | 深度使用 | 上游代理(级联代理)、TLS Pass Through、Match and Replace(自动替换)、Session Handling |
+| SQLMap+Tamper | 集成使用 | space2comment(空格→注释)、charencode(URL编码)、between(> < → BETWEEN)、randomcase(大小写) |
+| 渗透测试效率 | 工具方法论 | 自动化扫描→手工验证→插件辅助→深度利用的完整工作流 |
+
+### 知识巧记口诀
+
+> **Burp Suite口诀**：
+> Proxy代理抓请求，Repeater重放验漏洞；
+> Intruder四种模式，Sniper单点打；
+> Turbo Intruder并发高，越权Autorize好帮手；
+> Match and Replace自动改，Session处理不掉线。
+
+> **Intruder四种模式记**：Sniper(狙击手)→单个变量；Battering ram(攻城锤)→统一值；Pitchfork(叉子)→配对跑；Cluster bomb(集束炸弹)→全排列。
+
+### 考试陷阱提醒
+
+| 陷阱 | 正确认知 |
+|------|----------|
+| ❌ Burp自带的Scanner够用了 | ✅ 专业渗透需结合Nuclei/Xray等专用扫描器+手工验证+自定义插件 |
+| ❌ Intruder只能用于爆破密码 | ✅ Intruder可用于FUZZ测试、越权遍历ID、参数挖掘等多种场景 |
+| ❌ Burp社区版和专业版差不多 | ✅ 专业版的Scanner、Intruder并发限制解除、插件API等功能社区版不具备 |
+
+> 💡 **一句话总结**：Burp Suite是渗透测试的瑞士军刀——从代理拦截到自动化扫描，从Intruder爆破到插件扩展，CISP考试考查工具的正确使用方法和最佳实践。

@@ -61,8 +61,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle }) =
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full w-64 bg-cyber-purple/80 backdrop-blur-xl
-          border-r border-cyber-green/10 z-50 transition-transform duration-300
+          fixed top-0 left-0 h-full w-64 bg-[#111827] backdrop-blur-xl
+          border-r border-white/10 z-50 transition-transform duration-300
           lg:translate-x-0
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
@@ -126,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle }) =
       {/* Mobile Menu Button */}
       <button
         onClick={onToggle}
-        className="fixed top-4 left-4 z-30 lg:hidden bg-cyber-purple/80 backdrop-blur-xl p-2 rounded-lg border border-cyber-green/20 text-cyber-green"
+        className="fixed top-4 left-4 z-30 lg:hidden bg-[#111827] backdrop-blur-xl p-2 rounded-lg border border-white/15 text-cyber-green"
         style={{ display: isOpen ? 'none' : 'block' }}
       >
         <Menu size={20} />

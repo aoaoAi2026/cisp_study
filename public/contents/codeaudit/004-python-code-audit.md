@@ -1,5 +1,24 @@
 # Python 代码审计实战指南
 
+> **📘 文档定位**：CISP 考试代码审计核心内容 | 难度：⭐⭐⭐⭐ | 预计阅读：22 分钟
+> Python 代码审计覆盖 Flask/Django/FastAPI 等主流框架。本文从反序列化、SSTI 模板注入、命令注入到配置安全，系统梳理 Python 生态常见漏洞与审计方法。
+
+---
+
+## 导航目录
+- [一、Python Web 生态常见风险总览](#一python-web-生态常见风险总览)
+- [二、pickle / YAML / JSON 反序列化](#二pickle--yaml--json-反序列化)
+- [三、命令注入](#三命令注入)
+- [四、模板注入 (SSTI - Jinja2 / Mako / Tornado)](#四模板注入-ssti---jinja2--mako--tornado)
+- [五、SQL 注入](#五sql-注入)
+- [六、路径遍历与文件读取/写入](#六路径遍历与文件读取写入)
+- [七、SSRF](#七ssrf)
+- [八、Flask / Django 配置安全](#八flask--django-配置安全)
+- [九、第三方依赖与 CVE 治理](#九第三方依赖与-cve-治理)
+- [十、XSS / CSP / CSRF](#十xss--csp--csrf)
+- [十一、CheckList](#十一checklist)
+- [十二、高分考点与知识巧记](#十二高分考点与知识巧记)
+
 ---
 
 ## 一、Python Web 生态常见风险总览
@@ -260,3 +279,38 @@ return mark_safe(f"<p>{user_input}</p>")  # 禁止把用户输入 mark_safe
 - [ ] 依赖扫描: 运行 `pip-audit` 是否有高/严重 CVE?
 - [ ] 是否 `ALLOWED_HOSTS=['*']` 或 CORS `allow_origins=['*']`?
 - [ ] Celery / RQ / 消息队列: serializer 是否为 json (不是 pickle)?
+
+---
+
+## 十二、高分考点与知识巧记
+
+> 🔑 **高分考点**：Python 代码审计高频考点集中在 pickle 反序列化、Jinja2 SSTI、yaml.load 不安全用法。SSTI 是 Python 特有考点，考试常考察 Jinja2 模板注入的利用链。
+
+| 考点 | 频次 | 核心记忆点 |
+|:---|:---:|:---|
+| pickle 反序列化 | ⭐⭐⭐⭐⭐ | pickle.loads 不可信数据 = RCE，Celery 默认用 pickle |
+| SSTI (Jinja2) | ⭐⭐⭐⭐⭐ | render_template_string 拼接用户输入，__mro__ 链读 config/RCE |
+| yaml.load | ⭐⭐⭐⭐ | PyYAML<5.1 不安全，safe_load 替代，!!python/object 可 RCE |
+| shell=True | ⭐⭐⭐⭐ | subprocess.run + shell=True 拼接 = 命令注入 |
+| Flask/Django 配置 | ⭐⭐⭐ | debug=True、弱 SECRET_KEY、ALLOWED_HOSTS=['*'] |
+
+> 💡 **知识巧记**：Python 三大反序列化禁忌：pickle.loads 禁、yaml.load 禁、jsonpickle.decode 禁。SSTI 利用链：`''.__class__.__mro__` → 遍历子类 → 找 Popen → RCE。Flask 配置三忌：debug 开、SECRET_KEY 弱、autoescape 关。
+
+### 高分考点速查表
+
+| 考察维度 | 关键结论 | 常见干扰项 |
+|:---|:---|:---|
+| pickle vs json | pickle 可执行任意代码，json 安全 | "pickle 和 json 一样安全" ❌ |
+| yaml.load vs safe_load | safe_load 只解析基本类型 | "yaml.load 默认安全" ❌ |
+| render_template vs render_template_string | 前者变量传入安全，后者拼接危险 | "两者一样" ❌ |
+| shell=True 风险 | 字符串拼接 + shell=True = 命令注入 | "shell=True 配合参数列表也安全" ❌ |
+| Celery 序列化 | 默认 pickle，必须改为 json | "Celery 默认安全" ❌ |
+
+### 知识巧记口诀
+
+> **Python 代码审计口诀**：
+> pickle yaml 是祸根，反序列化 RCE 成。
+> SSTI 模板拼输入，mro 链 config 读。
+> shell=True 配拼接，命令注入不可忽。
+> Flask debug 生产禁，SECRET_KEY 强且独。
+> Celery 序列化改 json，pickle 默认不安全。

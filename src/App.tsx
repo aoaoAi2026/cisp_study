@@ -1,8 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "./components/Layout";
-import AuthPage from "./pages/AuthPage";
-import { api } from "./api/client";
 import {
   Dashboard,
   LearningPath,
@@ -24,36 +21,52 @@ import {
   ResourceLibrary,
   ResourceDetail,
 } from "./pages";
+import AuthPage from "./pages/AuthPage";
+import { useUserStore } from "./store/userStore";
+import { useEffect, useState } from "react";
 
-function RequireAuth({ children }: { children: React.ReactNode }) {
-  const location = useLocation();
-  if (!api.getToken()) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+// 受保护的路由组件
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const user = useUserStore((s) => s.user);
+  const initFromStorage = useUserStore((s) => s.initFromStorage);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    async function check() {
+      await initFromStorage();
+      setChecking(false);
+    }
+    check();
+  }, []);
+
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-cyber-black flex items-center justify-center">
+        <div className="text-cyber-green animate-pulse">加载中...</div>
+      </div>
+    );
   }
-  return children;
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  return <>{children}</>;
 }
 
 function App() {
-  const [ready, setReady] = useState(true);
-
-  useEffect(() => {
-    setReady(true);
-  }, []);
-
-  if (!ready) return null;
-
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<AuthPage />} />
-        <Route
-          path="/"
-          element={
-            <RequireAuth>
-              <Layout />
-            </RequireAuth>
-          }
-        >
+        {/* 登录/注册页面（公开） */}
+        <Route path="/auth" element={<AuthPage />} />
+
+        {/* 受保护的页面（需要登录） */}
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }>
           <Route index element={<Dashboard />} />
           <Route path="learning" element={<LearningPath />} />
           <Route path="learning/:dayId" element={<DailyLearning />} />
@@ -74,7 +87,9 @@ function App() {
           <Route path="resources" element={<ResourceLibrary />} />
           <Route path="resources/:resourceId" element={<ResourceDetail />} />
         </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
+
+        {/* 未登录时访问其他路径也重定向到登录页 */}
+        <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     </Router>
   );

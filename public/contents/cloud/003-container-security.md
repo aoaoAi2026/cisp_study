@@ -1,5 +1,19 @@
 # 容器安全从入门到精通：Docker / containerd 安全基线
 
+> **📘 文档定位**：CISP 考试容器安全核心内容 | 难度：⭐⭐⭐ | 预计阅读：18 分钟
+> 容器安全覆盖构建、分发、运行、销毁全生命周期。本文从 Dockerfile 最佳实践、运行时安全基线、镜像签名到 rootless 沙箱，全面梳理容器安全知识体系。
+
+---
+
+## 导航目录
+- [一、容器安全生命周期四阶段](#一容器安全生命周期四阶段)
+- [二、Dockerfile 安全最佳实践](#二dockerfile-安全最佳实践)
+- [三、运行时安全基线](#三运行时安全基线)
+- [四、镜像签名与信任链](#四镜像签名与信任链)
+- [五、rootless 容器与沙箱方案](#五rootless-容器与沙箱方案)
+- [六、生产环境加固 Checklist](#六生产环境加固-checklist)
+- [七、高分考点与知识巧记](#七高分考点与知识巧记)
+
 ---
 
 ## 一、容器安全生命周期四阶段
@@ -121,3 +135,38 @@ cat /etc/containerd/config.toml | grep -A3 "rootless"
 - [ ] 部署 Falco / Tracee 做运行时异常行为检测
 - [ ] 使用 CIS Docker Benchmark 定期自查
 - [ ] 开启 container registry 不可变 tag（防止 tag 被覆盖投毒）
+
+---
+
+## 七、高分考点与知识巧记
+
+> 🔑 **高分考点**：容器安全高频考点集中在 Dockerfile 加固原则、危险参数识别、镜像签名机制。考试侧重"什么不能做"而非"怎么做"，尤其关注 `--privileged`、`--net=host`、docker.sock 挂载等危险配置。
+
+| 考点 | 频次 | 核心记忆点 |
+|:---|:---:|:---|
+| Dockerfile 安全原则 | ⭐⭐⭐⭐⭐ | 非 root、多阶段构建、锁定 sha256、.dockerignore |
+| 危险容器参数 | ⭐⭐⭐⭐ | --privileged、--net=host、-v docker.sock、--cap-add SYS_ADMIN |
+| seccomp/AppArmor | ⭐⭐⭐⭐ | seccomp 限制系统调用，AppArmor 限制文件/网络访问 |
+| 镜像签名 | ⭐⭐⭐ | Cosign + Sigstore，推送签名、部署验证 |
+| rootless 方案 | ⭐⭐⭐ | Rootless Docker/Podman、gVisor、Kata Containers |
+
+> 💡 **知识巧记**：容器安全生命周期记作"建分运销"——构建（Build）、分发（Ship）、运行（Run）、销毁（Destroy）。危险参数五兄弟：privileged 全权限、host 网络栈、pid 看进程、docker.sock 可逃逸、SYS_ADMIN 近 root。加固口诀：非 root 运行 + drop ALL cap + 只读根文件系统 + seccomp 兜底。
+
+### 高分考点速查表
+
+| 考察维度 | 关键结论 | 常见干扰项 |
+|:---|:---|:---|
+| 镜像 tag | 锁定 sha256 摘要，避免 latest | "使用 latest 是安全的" ❌ |
+| 运行用户 | 必须非 root，UID ≥ 10000 | "容器内 root 不等于宿主机 root" ⚠️ 部分真 |
+| privileged | 绝不应出现在业务容器中 | "特权容器仅用于调试，用完即删" ⚠️ |
+| docker.sock | 挂载即等于宿主机 root 权限 | "只读挂载 docker.sock 就安全" ❌ |
+| seccomp | RuntimeDefault 是推荐的默认配置 | "禁用 seccomp 提高兼容性" ❌ |
+
+### 知识巧记口诀
+
+> **容器安全加固口诀**：
+> 构建锁定 sha256，多阶段构建减攻击。
+> 非 root 运行是铁律，敏感文件 ignore 弃。
+> 危险参数五大忌，特权套接字 SYS_ADMIN 去。
+> 镜像签名 Cosign 记，部署之前先 verify。
+> seccomp 兜底限调用，rootless 逃逸也无效。
