@@ -34,7 +34,11 @@ import {
   Lightbulb,
   AlertOctagon,
   Briefcase,
+  Loader2,
+  RotateCcw,
+  Check,
 } from 'lucide-react';
+import Editor from '@monaco-editor/react';
 import { useLearningStore, useAchievementStore } from '../store';
 import { experiments } from '../data/learningData';
 import { securityScripts, scriptCategories } from '../data/securityScripts';
@@ -88,6 +92,32 @@ export const CodeLab: React.FC = () => {
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
   const [expandedScript, setExpandedScript] = useState<string | null>(null);
 
+  // ====== 代码实验交互验证状态 ======
+  const [codeEditorContent, setCodeEditorContent] = useState<Record<string, string>>({});
+  const [codeOutputs, setCodeOutputs] = useState<Record<string, string>>({});
+  const [runningCode, setRunningCode] = useState<string | null>(null);
+  const [showHint, setShowHint] = useState<Record<string, boolean>>({});
+  const [experimentPassed, setExperimentPassed] = useState<Record<string, boolean>>({});
+  const pyodideRef = React.useRef<any>(null);
+  const [pyodideReady, setPyodideReady] = useState(false);
+  const [pyodideLoading, setPyodideLoading] = useState(false);
+
+  // ====== 脚本仓库运行状态 ======
+  const [scriptOutputs, setScriptOutputs] = useState<Record<string, string>>({});
+  const [runningScript, setRunningScript] = useState<string | null>(null);
+  const scriptPyodideRef = React.useRef<any>(null);
+  const [scriptPyodideReady, setScriptPyodideReady] = useState(false);
+  const [scriptPyodideLoading, setScriptPyodideLoading] = useState(false);
+
+  // ====== 法律法规测验状态 ======
+  const [showLawQuiz, setShowLawQuiz] = useState<string | null>(null);
+  const [lawQuizAnswers, setLawQuizAnswers] = useState<Record<string, number | number[]>>({});
+  const [lawQuizSubmitted, setLawQuizSubmitted] = useState<Record<string, boolean>>({});
+
+  // ====== 应急处理演练状态 ======
+  const [emergencyDrillStep, setEmergencyDrillStep] = useState<Record<string, number>>({});
+  const [emergencyChoices, setEmergencyChoices] = useState<Record<string, number>>({});
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -100,6 +130,109 @@ export const CodeLab: React.FC = () => {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
   };
+
+  // ====== Pyodide 代码运行环境初始化 ======
+  const initPyodide = React.useCallback(async () => {
+    if (pyodideRef.current) return pyodideRef.current;
+    setPyodideLoading(true);
+    try {
+      if (!(window as any).loadPyodide) {
+        await new Promise<void>((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js';
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error('Pyodide 加载失败，请检查网络'));
+          document.head.appendChild(script);
+        });
+      }
+      pyodideRef.current = await (window as any).loadPyodide({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/',
+      });
+      setPyodideReady(true);
+      return pyodideRef.current;
+    } finally {
+      setPyodideLoading(false);
+    }
+  }, []);
+
+  // ====== 脚本仓库 Pyodide 初始化 ======
+  const initScriptPyodide = React.useCallback(async () => {
+    if (scriptPyodideRef.current) return scriptPyodideRef.current;
+    setScriptPyodideLoading(true);
+    try {
+      if (!(window as any).loadPyodide) {
+        await new Promise<void>((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js';
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error('Pyodide 加载失败，请检查网络'));
+          document.head.appendChild(script);
+        });
+      }
+      scriptPyodideRef.current = await (window as any).loadPyodide({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/',
+      });
+      setScriptPyodideReady(true);
+      return scriptPyodideRef.current;
+    } finally {
+      setScriptPyodideLoading(false);
+    }
+  }, []);
+
+  // ====== 运行实验代码 ======
+  const runExperimentCode = React.useCallback(async (expId: string, code: string) => {
+    setRunningCode(expId);
+    try {
+      const pyodide = await initPyodide();
+      let output = '';
+      pyodide.setStdout({
+        batched: (text: string) => { output += text + '\n'; },
+      });
+      pyodide.setStderr({
+        batched: (text: string) => { output += '[stderr] ' + text + '\n'; },
+      });
+      await pyodide.runPythonAsync(code);
+      setCodeOutputs(prev => ({ ...prev, [expId]: output || '(代码执行完毕，无输出)' }));
+
+      // 检查是否通过实验
+      const exp = experiments.find(e => e.id === expId);
+      if (exp && output.includes(exp.expectedOutput)) {
+        setExperimentPassed(prev => ({ ...prev, [expId]: true }));
+      }
+    } catch (e: any) {
+      setCodeOutputs(prev => ({ ...prev, [expId]: `❌ 错误：${e.message}` }));
+    } finally {
+      setRunningCode(null);
+    }
+  }, [initPyodide]);
+
+  // ====== 运行脚本代码 ======
+  const runScriptCode = React.useCallback(async (scriptId: string, code: string) => {
+    setRunningScript(scriptId);
+    try {
+      const pyodide = await initScriptPyodide();
+      let output = '';
+      pyodide.setStdout({
+        batched: (text: string) => { output += text + '\n'; },
+      });
+      pyodide.setStderr({
+        batched: (text: string) => { output += '[stderr] ' + text + '\n'; },
+      });
+      await pyodide.runPythonAsync(code);
+      setScriptOutputs(prev => ({ ...prev, [scriptId]: output || '(脚本执行完毕，无输出)' }));
+    } catch (e: any) {
+      setScriptOutputs(prev => ({ ...prev, [scriptId]: `❌ 错误：${e.message}` }));
+    } finally {
+      setRunningScript(null);
+    }
+  }, [initScriptPyodide]);
+
+  // 切换实验时清空输出
+  React.useEffect(() => {
+    setCodeOutputs({});
+    setCodeEditorContent({});
+    setShowHint({});
+  }, [selectedExperiment]);
 
   const handleExperimentComplete = (experimentId: string) => {
     if (!completedLabs.includes(experimentId)) {
@@ -288,29 +421,143 @@ export const CodeLab: React.FC = () => {
                       </ol>
                     </div>
 
+                    {/* 代码编辑器 */}
                     <div>
-                      <h4 className="text-sm font-medium text-cyber-green mb-2">
-                        初始代码
-                      </h4>
-                      <pre className="code-block text-xs">
-                        <code>{exp.initialCode}</code>
-                      </pre>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-sm font-medium text-cyber-green">
+                          实验代码
+                        </h4>
+                        <div className="flex items-center gap-2">
+                          {pyodideLoading && (
+                            <span className="text-xs text-cyber-gold flex items-center gap-1">
+                              <Loader2 size={12} className="animate-spin" />
+                              加载Python环境...
+                            </span>
+                          )}
+                          <button
+                            onClick={() => {
+                              setCodeEditorContent(prev => { const n = { ...prev }; delete n[exp.id]; return n; });
+                              setCodeOutputs(prev => { const n = { ...prev }; delete n[exp.id]; return n; });
+                              setExperimentPassed(prev => { const n = { ...prev }; delete n[exp.id]; return n; });
+                            }}
+                            className="text-xs text-gray-500 hover:text-white flex items-center gap-1"
+                            title="重置代码"
+                          >
+                            <RotateCcw size={12} />
+                            重置
+                          </button>
+                        </div>
+                      </div>
+                      <div className="border border-cyber-purple/30 rounded-lg overflow-hidden">
+                        <div className="h-64">
+                          <Editor
+                            height="100%"
+                            defaultLanguage="python"
+                            theme="vs-dark"
+                            value={codeEditorContent[exp.id] ?? exp.initialCode}
+                            onChange={(val) => setCodeEditorContent(prev => ({ ...prev, [exp.id]: val || '' }))}
+                            options={{
+                              minimap: { enabled: false },
+                              fontSize: 13,
+                              lineNumbers: 'on',
+                              scrollBeyondLastLine: false,
+                              wordWrap: 'on',
+                              padding: { top: 8 },
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="flex gap-3">
+                    {/* 输出区域 */}
+                    {codeOutputs[exp.id] && (
+                      <div className="bg-cyber-black/80 border border-cyber-purple/20 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-gray-400 font-medium">运行结果</span>
+                          <button
+                            onClick={() => setCodeOutputs(prev => { const n = { ...prev }; delete n[exp.id]; return n; })}
+                            className="text-xs text-gray-600 hover:text-gray-400"
+                          >
+                            清除
+                          </button>
+                        </div>
+                        <pre className="text-xs text-gray-300 font-mono whitespace-pre-wrap">
+                          {codeOutputs[exp.id]}
+                        </pre>
+                      </div>
+                    )}
+
+                    {/* 提示 */}
+                    {exp.hints && exp.hints.length > 0 && (
+                      <div>
+                        <button
+                          onClick={() => setShowHint(prev => ({ ...prev, [exp.id]: !prev[exp.id] }))}
+                          className="text-sm text-cyber-gold hover:text-cyber-gold/80 flex items-center gap-1"
+                        >
+                          <Lightbulb size={14} />
+                          {showHint[exp.id] ? '收起提示' : `查看提示 (${exp.hints.length})`}
+                        </button>
+                        {showHint[exp.id] && (
+                          <div className="mt-2 space-y-1">
+                            {exp.hints.map((hint, hi) => (
+                              <p key={hi} className="text-xs text-gray-400 flex items-start gap-2">
+                                <span className="text-cyber-gold">💡</span>
+                                {hint}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* 操作按钮 */}
+                    <div className="flex items-center gap-3 flex-wrap">
                       <Button
                         size="sm"
-                        icon={Play}
+                        icon={runningCode === exp.id ? Loader2 : Play}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleExperimentComplete(exp.id);
+                          const code = codeEditorContent[exp.id] ?? exp.initialCode;
+                          runExperimentCode(exp.id, code);
                         }}
+                        disabled={runningCode === exp.id}
+                        className={runningCode === exp.id ? 'opacity-50' : ''}
                       >
-                        {isCompleted ? '再次完成' : '开始实验'}
+                        {runningCode === exp.id ? '运行中...' : '▶ 运行代码'}
                       </Button>
-                      {isCompleted && (
-                        <Badge variant="green">已完成</Badge>
+
+                      {experimentPassed[exp.id] && (
+                        <Badge variant="green" className="flex items-center gap-1">
+                          <CheckCircle size={14} />
+                          实验通过
+                        </Badge>
                       )}
+
+                      {experimentPassed[exp.id] && !isCompleted && (
+                        <Button
+                          size="sm"
+                          icon={Check}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleExperimentComplete(exp.id);
+                          }}
+                        >
+                          标记完成
+                        </Button>
+                      )}
+
+                      {isCompleted && (
+                        <Badge variant="green" className="flex items-center gap-1">
+                          <CheckCircle size={14} />
+                          已完成
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* 期望输出提示 */}
+                    <div className="text-xs text-gray-500 bg-cyber-purple/10 rounded-lg p-2">
+                      <span className="text-cyber-blue">期望输出包含：</span>
+                      {exp.expectedOutput}
                     </div>
                   </div>
                 )}
@@ -610,6 +857,83 @@ export const CodeLab: React.FC = () => {
                                 </div>
                               )}
 
+                              {/* 在线运行脚本 */}
+                              {script.language === 'Python' && (
+                                <div>
+                                  <div className="flex items-center justify-between mb-2">
+                                    <h4 className="text-sm font-medium text-cyber-green flex items-center gap-2">
+                                      <Play size={14} /> 在线运行
+                                    </h4>
+                                    {scriptPyodideLoading && (
+                                      <span className="text-xs text-cyber-gold flex items-center gap-1">
+                                        <Loader2 size={12} className="animate-spin" />
+                                        加载Python环境...
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="border border-cyber-purple/30 rounded-lg overflow-hidden">
+                                    <div className="h-48">
+                                      <Editor
+                                        height="100%"
+                                        defaultLanguage="python"
+                                        theme="vs-dark"
+                                        value={script.examples[0]?.input || '# 在这里输入代码\n'}
+                                        options={{
+                                          minimap: { enabled: false },
+                                          fontSize: 12,
+                                          lineNumbers: 'on',
+                                          scrollBeyondLastLine: false,
+                                          wordWrap: 'on',
+                                          padding: { top: 8 },
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="mt-2 flex gap-2">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        // 从编辑器获取代码（这里用示例代码）
+                                        const code = script.examples[0]?.input || 'print("Hello")';
+                                        runScriptCode(script.id, code);
+                                      }}
+                                      disabled={runningScript === script.id}
+                                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-cyber-green/20 text-cyber-green hover:bg-cyber-green/30 transition-colors disabled:opacity-50"
+                                    >
+                                      {runningScript === script.id ? (
+                                        <>
+                                          <Loader2 size={14} className="animate-spin" />
+                                          运行中...
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Play size={14} />
+                                          运行脚本
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+
+                                  {/* 脚本输出 */}
+                                  {scriptOutputs[script.id] && (
+                                    <div className="mt-3 bg-cyber-black/80 border border-cyber-purple/20 rounded-lg p-3">
+                                      <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm text-gray-400">运行结果</span>
+                                        <button
+                                          onClick={() => setScriptOutputs(prev => { const n = { ...prev }; delete n[script.id]; return n; })}
+                                          className="text-xs text-gray-600 hover:text-gray-400"
+                                        >
+                                          清除
+                                        </button>
+                                      </div>
+                                      <pre className="text-xs text-gray-300 font-mono whitespace-pre-wrap">
+                                        {scriptOutputs[script.id]}
+                                      </pre>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
                               {/* Tags */}
                               <div className="flex flex-wrap gap-2 pt-2">
                                 {script.tags.map((tag, i) => (
@@ -810,6 +1134,157 @@ export const CodeLab: React.FC = () => {
                                   </div>
                                 </div>
                               )}
+
+                              {/* 法规配套测验 */}
+                              <div className="bg-cyber-green/5 border border-cyber-green/20 rounded-lg p-4">
+                                <div className="flex items-center justify-between mb-3">
+                                  <h4 className="text-sm font-medium text-cyber-green flex items-center gap-2">
+                                    <Trophy size={14} /> 知识测验
+                                  </h4>
+                                  {!showLawQuiz[law.id] && (
+                                    <button
+                                      onClick={() => setShowLawQuiz(prev => ({ ...prev, [law.id]: true }))}
+                                      className="px-3 py-1 rounded bg-cyber-green/20 text-cyber-green hover:bg-cyber-green/30 text-xs transition-colors"
+                                    >
+                                      开始测验
+                                    </button>
+                                  )}
+                                </div>
+
+                                {showLawQuiz[law.id] && (
+                                  <div className="space-y-4">
+                                    {/* 测验题目 */}
+                                    <div className="space-y-3">
+                                      <div>
+                                        <p className="text-xs text-gray-300 mb-2">
+                                          1. 根据《{law.name}》，以下哪项描述是正确的？
+                                        </p>
+                                        <div className="space-y-2">
+                                          {[
+                                            law.keyProvisions[0] || '规定了重要的安全保护要求',
+                                            law.applicableScope[0] || '适用于各类网络运营者',
+                                            law.penalties[0] || '明确了法律责任',
+                                            '以上都不是'
+                                          ].map((option, i) => (
+                                            <label
+                                              key={i}
+                                              className={`flex items-start gap-2 p-2 rounded cursor-pointer transition-colors ${
+                                                lawQuizAnswers[`${law.id}-1`] === i
+                                                  ? lawQuizSubmitted[law.id]
+                                                    ? i === 0
+                                                      ? 'bg-cyber-green/20 border border-cyber-green/40'
+                                                      : 'bg-cyber-red/20 border border-cyber-red/40'
+                                                    : 'bg-cyber-purple/10 border border-cyber-purple/20 hover:bg-cyber-purple/20'
+                                                  : lawQuizSubmitted[law.id] && i === 0
+                                                    ? 'bg-cyber-green/20 border border-cyber-green/40'
+                                                    : 'bg-cyber-purple/10 border border-cyber-purple/20 hover:bg-cyber-purple/20'
+                                              }`}
+                                            >
+                                              <input
+                                                type="radio"
+                                                name={`${law.id}-1`}
+                                                value={i}
+                                                checked={lawQuizAnswers[`${law.id}-1`] === i}
+                                                onChange={() => !lawQuizSubmitted[law.id] && setLawQuizAnswers(prev => ({ ...prev, [`${law.id}-1`]: i }))}
+                                                disabled={lawQuizSubmitted[law.id]}
+                                                className="mt-1"
+                                              />
+                                              <span className="text-xs text-gray-300">{option}</span>
+                                            </label>
+                                          ))}
+                                        </div>
+                                        {lawQuizSubmitted[law.id] && lawQuizAnswers[`${law.id}-1`] !== 0 && (
+                                          <p className="text-xs text-cyber-gold mt-1">
+                                            💡 提示：{law.keyProvisions[0] || '建议查看上面的核心制度内容'}
+                                          </p>
+                                        )}
+                                      </div>
+
+                                      <div>
+                                        <p className="text-xs text-gray-300 mb-2">
+                                          2. {law.name}的适用范围包括哪些？（多选）
+                                        </p>
+                                        <div className="space-y-2">
+                                          {[
+                                            ...law.applicableScope.slice(0, 2),
+                                            '仅限外资企业',
+                                            '个人用户'
+                                          ].map((option, i) => {
+                                            const selectedAnswers = lawQuizAnswers[`${law.id}-2`] as number[] || [];
+                                            const isSelected = selectedAnswers.includes(i);
+                                            const isCorrect = i < 2;
+
+                                            return (
+                                              <label
+                                                key={i}
+                                                className={`flex items-start gap-2 p-2 rounded cursor-pointer transition-colors ${
+                                                  lawQuizSubmitted[law.id]
+                                                    ? isCorrect
+                                                      ? 'bg-cyber-green/20 border border-cyber-green/40'
+                                                      : isSelected
+                                                        ? 'bg-cyber-red/20 border border-cyber-red/40'
+                                                        : 'bg-cyber-purple/10 border border-cyber-purple/20'
+                                                    : isSelected
+                                                      ? 'bg-cyber-purple/20 border border-cyber-purple/40'
+                                                      : 'bg-cyber-purple/10 border border-cyber-purple/20 hover:bg-cyber-purple/20'
+                                                }`}
+                                              >
+                                                <input
+                                                  type="checkbox"
+                                                  checked={isSelected}
+                                                  onChange={() => {
+                                                    if (!lawQuizSubmitted[law.id]) {
+                                                      const newAnswers = isSelected
+                                                        ? selectedAnswers.filter(a => a !== i)
+                                                        : [...selectedAnswers, i];
+                                                      setLawQuizAnswers(prev => ({ ...prev, [`${law.id}-2`]: newAnswers }));
+                                                    }
+                                                  }}
+                                                  disabled={lawQuizSubmitted[law.id]}
+                                                  className="mt-1"
+                                                />
+                                                <span className="text-xs text-gray-300">{option}</span>
+                                              </label>
+                                            );
+                                          })}
+                                        </div>
+                                        {lawQuizSubmitted[law.id] && (
+                                          <p className="text-xs text-cyber-gold mt-1">
+                                            💡 正确答案：{law.applicableScope.slice(0, 2).join('、')}
+                                          </p>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* 提交按钮 */}
+                                    {!lawQuizSubmitted[law.id] ? (
+                                      <button
+                                        onClick={() => setLawQuizSubmitted(prev => ({ ...prev, [law.id]: true }))}
+                                        disabled={lawQuizAnswers[`${law.id}-1`] === undefined}
+                                        className="px-4 py-2 rounded bg-cyber-green text-black font-medium hover:bg-cyber-green/90 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+                                      >
+                                        提交答案
+                                      </button>
+                                    ) : (
+                                      <div className="flex items-center gap-2">
+                                        <Badge variant="green" className="flex items-center gap-1">
+                                          <CheckCircle size={12} />
+                                          测验完成
+                                        </Badge>
+                                        <button
+                                          onClick={() => {
+                                            setLawQuizAnswers(prev => ({ ...prev, [`${law.id}-1`]: undefined, [`${law.id}-2`]: [] }));
+                                            setLawQuizSubmitted(prev => ({ ...prev, [law.id]: false }));
+                                          }}
+                                          className="px-3 py-1 rounded bg-cyber-purple/20 text-gray-300 hover:bg-cyber-purple/30 text-xs"
+                                        >
+                                          重新测验
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
 
                               {/* Applicable Scope */}
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1288,6 +1763,187 @@ export const CodeLab: React.FC = () => {
                                   ))}
                                 </div>
                               )}
+
+                              {/* 模拟演练 */}
+                              <div className="bg-cyber-red/5 border border-cyber-red/20 rounded-lg p-4">
+                                <div className="flex items-center justify-between mb-3">
+                                  <h4 className="text-sm font-medium text-cyber-red flex items-center gap-2">
+                                    <Activity size={14} /> 模拟演练
+                                  </h4>
+                                  {emergencyDrillStep[scenario.id] !== undefined && emergencyDrillStep[scenario.id] > 0 && (
+                                    <button
+                                      onClick={() => {
+                                        setEmergencyDrillStep(prev => ({ ...prev, [scenario.id]: 0 }));
+                                        setEmergencyChoices(prev => ({ ...prev, [scenario.id]: undefined }));
+                                      }}
+                                      className="px-3 py-1 rounded bg-cyber-purple/20 text-gray-300 hover:bg-cyber-purple/30 text-xs"
+                                    >
+                                      重新开始
+                                    </button>
+                                  )}
+                                </div>
+
+                                <p className="text-xs text-gray-400 mb-3">
+                                  模拟一个 {scenario.title} 场景，测试您的应急响应能力
+                                </p>
+
+                                {/* 演练步骤 */}
+                                <div className="space-y-3">
+                                  {/* 步骤1：发现与报告 */}
+                                  <div className={`p-3 rounded-lg ${emergencyDrillStep[scenario.id] === 0 ? 'bg-cyber-red/20 border border-cyber-red/30' : emergencyChoices[scenario.id] !== undefined ? 'bg-cyber-green/10 border border-cyber-green/20' : 'bg-cyber-purple/10'}`}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="w-6 h-6 rounded-full bg-cyber-red/20 flex items-center justify-center text-xs text-cyber-red font-medium">
+                                        1
+                                      </span>
+                                      <span className="text-sm font-medium text-white">发现异常：{scenario.phases[0]?.actions[0]?.title || '检测到安全事件'}</span>
+                                    </div>
+
+                                    {emergencyDrillStep[scenario.id] === undefined && (
+                                      <p className="text-xs text-gray-400 mb-2">
+                                        {scenario.phases[0]?.actions[0]?.description?.substring(0, 50)}...
+                                      </p>
+                                    )}
+
+                                    {emergencyDrillStep[scenario.id] === undefined && (
+                                      <div className="space-y-2 mt-3">
+                                        <p className="text-xs text-gray-400">您应该怎么做？</p>
+                                        {[
+                                          { choice: '立即断网，防止扩散', correct: true, result: '正确！第一时间断网可以有效阻止威胁扩散。' },
+                                          { choice: '继续观察，等事态扩大', correct: false, result: '错误！这可能导致威胁进一步扩大。' },
+                                          { choice: '立即报告管理层', correct: true, result: '正确！及时报告是应急响应的关键步骤。' }
+                                        ].map((option, i) => (
+                                          <button
+                                            key={i}
+                                            onClick={() => {
+                                              setEmergencyDrillStep(prev => ({ ...prev, [scenario.id]: 1 }));
+                                              setEmergencyChoices(prev => ({ ...prev, [scenario.id]: i }));
+                                            }}
+                                            className={`w-full text-left p-2 rounded text-xs transition-colors ${
+                                              emergencyChoices[scenario.id] === i
+                                                ? option.correct
+                                                  ? 'bg-cyber-green/30 border border-cyber-green/40'
+                                                  : 'bg-cyber-red/30 border border-cyber-red/40'
+                                                : 'bg-cyber-purple/10 border border-cyber-purple/20 hover:bg-cyber-purple/20'
+                                            }`}
+                                          >
+                                            {option.choice}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    )}
+
+                                    {emergencyChoices[scenario.id] !== undefined && (
+                                      <div className="mt-2">
+                                        <p className={`text-xs ${['bg-cyber-green/20', 'bg-cyber-red/20', 'bg-cyber-green/20'][emergencyChoices[scenario.id]]} p-2 rounded`}>
+                                          {['正确！第一时间断网可以有效阻止威胁扩散。', '错误！这可能导致威胁进一步扩大。', '正确！及时报告是应急响应的关键步骤。'][emergencyChoices[scenario.id]]}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* 步骤2：遏制 */}
+                                  <div className={`p-3 rounded-lg ${emergencyDrillStep[scenario.id] === 1 ? 'bg-cyber-gold/20 border border-cyber-gold/30' : 'bg-cyber-purple/10'}`}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="w-6 h-6 rounded-full bg-cyber-gold/20 flex items-center justify-center text-xs text-cyber-gold font-medium">
+                                        2
+                                      </span>
+                                      <span className="text-sm font-medium text-white">遏制威胁</span>
+                                    </div>
+
+                                    {emergencyDrillStep[scenario.id] === 1 && (
+                                      <>
+                                        <p className="text-xs text-gray-400 mb-2">
+                                          威胁已被发现，现在需要采取措施遏制其扩散。
+                                        </p>
+                                        <div className="space-y-2 mt-3">
+                                          {[
+                                            { choice: '隔离受感染主机', correct: true, result: '正确！隔离是遏制威胁扩散的有效方法。' },
+                                            { choice: '直接格式化硬盘', correct: false, result: '不推荐！应该先保存证据。' }
+                                          ].map((option, i) => (
+                                            <button
+                                              key={i}
+                                              onClick={() => {
+                                                setEmergencyDrillStep(prev => ({ ...prev, [scenario.id]: 2 }));
+                                              }}
+                                              className={`w-full text-left p-2 rounded text-xs transition-colors bg-cyber-purple/10 border border-cyber-purple/20 hover:bg-cyber-purple/20`}
+                                            >
+                                              {option.choice}
+                                            </button>
+                                          ))}
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>
+
+                                  {/* 步骤3：根除 */}
+                                  <div className={`p-3 rounded-lg ${emergencyDrillStep[scenario.id] === 2 ? 'bg-cyber-blue/20 border border-cyber-blue/30' : 'bg-cyber-purple/10'}`}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="w-6 h-6 rounded-full bg-cyber-blue/20 flex items-center justify-center text-xs text-cyber-blue font-medium">
+                                        3
+                                      </span>
+                                      <span className="text-sm font-medium text-white">根除威胁</span>
+                                    </div>
+
+                                    {emergencyDrillStep[scenario.id] === 2 && (
+                                      <>
+                                        <p className="text-xs text-gray-400 mb-2">
+                                          威胁已得到遏制，现在需要彻底清除。
+                                        </p>
+                                        <button
+                                          onClick={() => {
+                                            setEmergencyDrillStep(prev => ({ ...prev, [scenario.id]: 3 }));
+                                          }}
+                                          className="w-full text-left p-2 rounded text-xs transition-colors bg-cyber-purple/10 border border-cyber-purple/20 hover:bg-cyber-purple/20"
+                                        >
+                                          清除恶意软件并修复漏洞
+                                        </button>
+                                      </>
+                                    )}
+                                  </div>
+
+                                  {/* 步骤4：恢复 */}
+                                  <div className={`p-3 rounded-lg ${emergencyDrillStep[scenario.id] === 3 ? 'bg-cyber-green/20 border border-cyber-green/30' : 'bg-cyber-purple/10'}`}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="w-6 h-6 rounded-full bg-cyber-green/20 flex items-center justify-center text-xs text-cyber-green font-medium">
+                                        4
+                                      </span>
+                                      <span className="text-sm font-medium text-white">恢复正常运营</span>
+                                    </div>
+
+                                    {emergencyDrillStep[scenario.id] === 3 && (
+                                      <>
+                                        <p className="text-xs text-gray-400 mb-2">
+                                          威胁已清除，现在恢复系统正常运营。
+                                        </p>
+                                        <button
+                                          onClick={() => {
+                                            setEmergencyDrillStep(prev => ({ ...prev, [scenario.id]: 4 }));
+                                          }}
+                                          className="w-full text-left p-2 rounded text-xs transition-colors bg-cyber-purple/10 border border-cyber-purple/20 hover:bg-cyber-purple/20"
+                                        >
+                                          恢复备份并加强监控
+                                        </button>
+                                      </>
+                                    )}
+                                  </div>
+
+                                  {/* 演练完成 */}
+                                  {emergencyDrillStep[scenario.id] === 4 && (
+                                    <div className="bg-cyber-green/20 border border-cyber-green/30 rounded-lg p-4">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <CheckCircle size={20} className="text-cyber-green" />
+                                        <span className="text-sm font-medium text-cyber-green">演练完成</span>
+                                      </div>
+                                      <p className="text-xs text-gray-300">
+                                        恭喜您完成了 {scenario.title} 的应急响应演练！您已经了解了处理该类安全事件的基本流程。
+                                      </p>
+                                      <p className="text-xs text-cyber-gold mt-2">
+                                        💡 提示：以上为简化演练流程，真实的应急响应需要更详细的步骤和专业的安全人员参与。
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
                             </div>
                           </motion.div>
                         )}
