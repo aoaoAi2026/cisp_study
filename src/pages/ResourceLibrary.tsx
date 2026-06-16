@@ -27,6 +27,7 @@ export const ResourceLibrary: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [isDark, setIsDark] = useState(true);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -56,7 +57,21 @@ export const ResourceLibrary: React.FC = () => {
       setLoading(false);
     }
     fetchData();
+    // Load favorites
+    try {
+      const saved = localStorage.getItem('cisp_favorites');
+      if (saved) setFavorites(new Set(JSON.parse(saved)));
+    } catch {}
   }, []);
+
+  const toggleFavorite = (id: string) => {
+    setFavorites(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      localStorage.setItem('cisp_favorites', JSON.stringify([...next]));
+      return next;
+    });
+  };
 
   const stats = getStats(resources);
 
@@ -302,8 +317,12 @@ export const ResourceLibrary: React.FC = () => {
                     阅读全文
                     <ChevronRight size={16} />
                   </Button>
-                  <Button variant="outline" size="sm">
-                    收藏
+                  <Button
+                    variant={favorites.has(resource.id) ? 'primary' : 'outline'}
+                    size="sm"
+                    onClick={(e) => { e.stopPropagation(); toggleFavorite(resource.id); }}
+                  >
+                    {favorites.has(resource.id) ? '❤️ 已收藏' : '收藏'}
                   </Button>
                 </div>
               </div>

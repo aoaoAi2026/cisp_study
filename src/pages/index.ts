@@ -3,6 +3,7 @@ export { LearningPath } from './LearningPath';
 export { DailyLearning } from './DailyLearning';
 export { CodeLab } from './CodeLab';
 export { LabEnvironment } from './LabEnvironment';
+export { CodeRunner } from './CodeRunner';
 export { QuizCenter } from './QuizCenter';
 export { Achievements } from './Achievements';
 export { Community } from './Community';

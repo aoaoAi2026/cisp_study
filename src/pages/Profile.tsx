@@ -189,14 +189,41 @@ export const Profile: React.FC = () => {
                   <p className="text-xs text-gray-500">导出或重置学习进度</p>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-cyber-red border-cyber-red/30 hover:bg-cyber-red/10"
-                onClick={handleResetProgress}
-              >
-                重置进度
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const data = {
+                      user: user,
+                      completedDays: completedDays,
+                      completedLabs: completedLabs,
+                      quizResults: quizResults,
+                      badges: unlockedBadgeIds,
+                      points: points,
+                      streak: streak,
+                      exportedAt: new Date().toISOString(),
+                    };
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `cisp_backup_${new Date().toISOString().split('T')[0]}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                >
+                  导出数据
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-cyber-red border-cyber-red/30 hover:bg-cyber-red/10"
+                  onClick={handleResetProgress}
+                >
+                  重置进度
+                </Button>
+              </div>
             </div>
           </div>
         </Card>

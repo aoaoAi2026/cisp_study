@@ -31,6 +31,20 @@ export default function AuthPage() {
     }
   }
 
+  const handleGuestLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const guestUser = { id: -Date.now(), name: '游客' + Math.random().toString(36).slice(2, 6), email: '', joinDate: new Date().toISOString().split('T')[0] };
+      login(guestUser);
+      navigate('/');
+    } catch (err: any) {
+      setError(err.message || '游客登录失败');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white px-4"
       style={{ background: 'radial-gradient(circle at 20% 30%, #00ff8820, transparent), radial-gradient(circle at 80% 70%, #00d4ff20, transparent), #0f172a' }}>
@@ -122,6 +136,19 @@ export default function AuthPage() {
             {loading ? '处理中...' : (mode === 'login' ? '登录' : '注册账号')}
           </button>
         </form>
+
+        {mode === 'login' && (
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={handleGuestLogin}
+              disabled={loading}
+              className="w-full py-2.5 border border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 font-medium rounded-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              👤 游客体验（无需注册）
+            </button>
+          </div>
+        )}
 
         <div className="text-center text-xs text-slate-500 mt-6">
           数据将安全存储在后端 SQLite 数据库中

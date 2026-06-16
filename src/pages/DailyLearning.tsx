@@ -23,7 +23,8 @@ import {
   ExternalLink,
   StickyNote,
   Award,
-  User
+  User,
+  RefreshCw
 } from 'lucide-react';
 import { useLearningStore, useAchievementStore } from '../store';
 import { useQuizExam, useWrongQuestionBook } from '../hooks';
@@ -43,9 +44,10 @@ export const DailyLearning: React.FC = () => {
   const [mdContent, setMdContent] = useState<string | null>(null);
   const [mdLoading, setMdLoading] = useState<boolean>(true);
   const [mdError, setMdError] = useState<string | null>(null);
+  const [codeOutput, setCodeOutput] = useState<string | null>(null);
+  const [codeRunning, setCodeRunning] = useState(false);
   const noteSaveTimer = useRef<number | null>(null);
 
-  const quiz = useQuizExam(currentDay.quiz || []);
   const wrongQuestionBook = useWrongQuestionBook();
   const [quizResult, setQuizResult] = useState<{ correct: number; total: number; score: number } | null>(null);
 
@@ -106,6 +108,7 @@ export const DailyLearning: React.FC = () => {
   };
 
   const currentDay = learningData.find(d => d.id === dayId) || learningData[0];
+  const quiz = useQuizExam(currentDay.quiz || []);
   const dayIndex = learningData.findIndex(d => d.id === dayId);
   const prevDay = dayIndex > 0 ? learningData[dayIndex - 1] : null;
   const nextDay = dayIndex < learningData.length - 1 ? learningData[dayIndex + 1] : null;
@@ -435,14 +438,52 @@ export const DailyLearning: React.FC = () => {
                       <Button
                         size="sm"
                         icon={Play}
-                        onClick={() => {
-                          // In a real app, this would run the code
-                          alert('代码执行功能需要在真实环境中运行');
+                        onClick={async () => {
+                          setCodeRunning(true);
+                          setCodeOutput(null);
+                          const code = currentDay.codeExample?.code || '';
+                          let lang = (currentDay.codeExample?.language || 'python').toLowerCase();
+                          // 映射语言
+                          if (lang === 'py') lang = 'python';
+                          if (lang === 'js') lang = 'javascript';
+                          if (!['python', 'javascript', 'java'].includes(lang)) {
+                            setCodeOutput(`[提示] ${lang} 语言暂不支持后端执行\n支持: Python / JavaScript / Java`);
+                            setCodeRunning(false);
+                            return;
+                          }
+                          try {
+                            const resp = await fetch('/api/execute', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ language: lang, code }),
+                            });
+                            const data = await resp.json();
+                            if (resp.ok) {
+                              const out = [
+                                data.stdout ? data.stdout.trimEnd() : '',
+                                data.stderr ? `\n[stderr]\n${data.stderr.trimEnd()}` : '',
+                                `\n--- 退出码: ${data.exitCode} | 耗时: ${data.executionTime}ms ---`,
+                              ].filter(Boolean).join('');
+                              setCodeOutput(out || '(无输出)');
+                            } else {
+                              setCodeOutput(`[请求失败] ${data.error || '未知错误'}\n${data.detail || ''}`);
+                            }
+                          } catch (e: any) {
+                            setCodeOutput(`[网络错误] ${e.message}\n请确认后端服务已启动 (node backend/server.js)`);
+                          } finally {
+                            setCodeRunning(false);
+                          }
                         }}
+                        loading={codeRunning}
                       >
                         运行代码
                       </Button>
                     </div>
+                    {codeOutput && (
+                      <pre className="mt-3 p-3 bg-black/70 rounded-lg text-xs text-green-400 overflow-x-auto font-mono whitespace-pre-wrap">
+                        {codeOutput}
+                      </pre>
+                    )}
                   </>
                 ) : (
                   <p className="text-gray-500 text-center py-8">暂无代码示例</p>

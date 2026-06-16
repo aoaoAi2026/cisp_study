@@ -1,7 +1,7 @@
 // 网络安全学习 - 每日课程详情页
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
   ArrowRight,
@@ -22,11 +22,23 @@ import {
   Check,
   Award,
   User,
-  AlertCircle
+  AlertCircle,
+  Zap,
+  Code,
+  TrendingUp,
+  Flame,
+  Trophy,
+  Medal,
+  Eye,
+  RefreshCw,
+  Keyboard,
+  X,
+  RotateCcw
 } from 'lucide-react';
 import { Card, Badge, Button } from '../components/UI';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import Editor from '@monaco-editor/react';
 import { cyberBasicPlan, CyberLearningPlan, CyberDay, QuizQuestion } from '../data/cyberBasic';
 import { cyberPenetrationPlan } from '../data/cyberPenetration';
 import { cyberDefensePlan } from '../data/cyberDefense';
@@ -155,6 +167,34 @@ export const CyberDailyLearning: React.FC = () => {
   const [mdError, setMdError] = useState<string | null>(null);
   const saveTimer = React.useRef<number | null>(null);
 
+  // Gamification states
+  const [xp, setXp] = useState(0);
+  const [userLevel, setUserLevel] = useState(1);
+  const [streakHeatmap, setStreakHeatmap] = useState<number[]>(Array(7).fill(0));
+  const [quizAvg, setQuizAvg] = useState(0);
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [newBadge, setNewBadge] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  // Code editor states
+  const [editorCode, setEditorCode] = useState('');
+  const [editorLang, setEditorLang] = useState('python');
+  const [codeOutput, setCodeOutput] = useState('');
+  const [codeRunning, setCodeRunning] = useState(false);
+
+  // Coding exercise states
+  const [exerciseAnswer, setExerciseAnswer] = useState('');
+  const [exerciseResult, setExerciseResult] = useState<'correct'|'wrong'|null>(null);
+  const [exerciseHint, setExerciseHint] = useState(false);
+
+  // Stats panel visibility
+  const [showStats, setShowStats] = useState(true);
+
+  // Quiz timer
+  const [quizTimer, setQuizTimer] = useState(30);
+  const [quizTimerRunning, setQuizTimerRunning] = useState(false);
+  const quizTimerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+
   // 测验和错题本 hooks
   const day = useMemo(
     () => plan?.days.find(d => d.day === currentDay),
@@ -163,11 +203,105 @@ export const CyberDailyLearning: React.FC = () => {
   const quiz = useQuizPractice(day?.quiz || []);
   const wrongQuestionBook = useWrongQuestionBook();
 
-  // 切换天时重置测验
-  const resetQuiz = useCallback(() => { quiz.reset(); }, [quiz.reset]);
+  // 切换天时重置测验和定时器
+  const resetQuiz = useCallback(() => {
+    quiz.reset();
+    setQuizTimer(30);
+    setQuizTimerRunning(false);
+    if (quizTimerRef.current) { clearInterval(quizTimerRef.current); quizTimerRef.current = null; }
+  }, [quiz.reset]);
   useEffect(() => {
     resetQuiz();
+    setEditorCode('');
+    setCodeOutput('');
+    setExerciseAnswer('');
+    setExerciseResult(null);
+    setExerciseHint(false);
   }, [resetQuiz]);
+
+  // Load gamification data
+  useEffect(() => {
+    if (!planId) return;
+    loadData<any>('cisp_cyber_gamify', {}).then(data => {
+      const pData = data[planId] || {};
+      setXp(pData.xp || 0);
+      setUserLevel(pData.level || 1);
+      setStreakHeatmap(pData.heatmap || Array(7).fill(0));
+      setQuizAvg(pData.quizAvg || 0);
+    });
+  }, [planId]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); setCurrentDay(Math.max(1, currentDay - 1)); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); if (currentDay < (plan?.totalDays || 1)) setCurrentDay(currentDay + 1); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [currentDay, plan?.totalDays]);
+
+  // 真实代码执行 —— 调用后端 API
+  const handleRunCode = async (code: string, lang: string) => {
+    const supportedLangs = ['python', 'javascript', 'java'];
+    const mappedLang = lang === 'bash' || lang === 'shell' ? 'bash-not-supported' :
+                       lang === 'sql' ? 'sql-not-supported' :
+                       lang === 'typescript' ? 'javascript' : lang;
+    if (!supportedLangs.includes(mappedLang)) {
+      if (mappedLang === 'bash-not-supported') {
+        setCodeOutput('[错误] Bash/Shell 需要在终端环境中执行，请使用本地终端或 CodeLab。\n后端支持的语言: Python / JavaScript / Java');
+      } else if (mappedLang === 'sql-not-supported') {
+        setCodeOutput('[错误] SQL 需要连接数据库执行，后端暂不支持。请参考试题中的 SQL 样例。\n后端支持的语言: Python / JavaScript / Java');
+      } else {
+        setCodeOutput(`[错误] 不支持的语言: ${lang}\n支持的语言: Python / JavaScript / Java`);
+      }
+      return;
+    }
+    setCodeRunning(true);
+    setCodeOutput('');
+    try {
+      const resp = await fetch('/api/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ language: mappedLang, code }),
+      });
+      const data = await resp.json();
+      if (resp.ok) {
+        const out = [
+          data.stdout ? data.stdout.trimEnd() : '',
+          data.stderr ? `\n[stderr]\n${data.stderr.trimEnd()}` : '',
+          `\n--- 退出码: ${data.exitCode} | 耗时: ${data.executionTime}ms ---`,
+        ].filter(Boolean).join('');
+        setCodeOutput(out || '(无输出)');
+        if (data.success) addXp(5);
+      } else {
+        setCodeOutput(`[请求失败] ${data.error || '未知错误'}\n${data.detail || ''}`);
+      }
+    } catch (e: any) {
+      setCodeOutput(`[网络错误] ${e.message}\n请确认后端服务已启动 (node backend/server.js)`);
+    } finally {
+      setCodeRunning(false);
+    }
+  };
+
+  const addXp = async (amount: number) => {
+    const newXp = xp + amount;
+    const newLevel = Math.floor(newXp / 500) + 1;
+    setXp(newXp);
+    if (newLevel > userLevel) {
+      setUserLevel(newLevel);
+      setShowLevelUp(true);
+      setShowConfetti(true);
+      setTimeout(() => setShowLevelUp(false), 3000);
+      setTimeout(() => setShowConfetti(false), 2000);
+    }
+    if (planId) {
+      const data = await loadData<any>('cisp_cyber_gamify', {});
+      data[planId] = { ...data[planId], xp: newXp, level: newLevel, heatmap: streakHeatmap, quizAvg };
+      await saveData('cisp_cyber_gamify', data);
+    }
+  };
 
   useEffect(() => {
     if (!planId) return;
@@ -210,8 +344,35 @@ export const CyberDailyLearning: React.FC = () => {
     }, 800);
   };
 
+  // Quiz timer effect
+  useEffect(() => {
+    if (quizTimerRunning && quizTimer > 0) {
+      quizTimerRef.current = setInterval(() => {
+        setQuizTimer(prev => {
+          if (prev <= 1) {
+            if (quizTimerRef.current) { clearInterval(quizTimerRef.current); quizTimerRef.current = null; }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => { if (quizTimerRef.current) { clearInterval(quizTimerRef.current); quizTimerRef.current = null; } };
+  }, [quizTimerRunning]);
+
+  // Start timer when quiz question appears and answer not yet shown
+  useEffect(() => {
+    if (!quiz.showAnswer && day?.quiz && day.quiz.length > 0) {
+      setQuizTimer(30);
+      setQuizTimerRunning(true);
+    } else if (quiz.showAnswer) {
+      setQuizTimerRunning(false);
+    }
+  }, [quiz.currentIndex, quiz.showAnswer, day?.quiz]);
+
   const handleQuizAnswer = (answer: number | number[] | string) => {
     if (quiz.showAnswer) return;
+    setQuizTimerRunning(false);
     const isCorrect = quiz.answerOne(answer);
     wrongQuestionBook.recordAnswer(planId!, currentDay, quiz.currentIndex, isCorrect);
   };
@@ -231,11 +392,20 @@ export const CyberDailyLearning: React.FC = () => {
   const markComplete = async () => {
     if (!planId) return;
     const newSet = new Set(completedDays);
-    if (newSet.has(currentDay)) { newSet.delete(currentDay); } else { newSet.add(currentDay); }
+    if (newSet.has(currentDay)) { newSet.delete(currentDay); } else { newSet.add(currentDay); addXp(50); }
     setCompletedDays(newSet);
+    // Update heatmap
+    const today = new Date().getDay();
+    const newHeatmap = [...streakHeatmap];
+    newHeatmap[today === 0 ? 6 : today - 1] = (newHeatmap[today === 0 ? 6 : today - 1] || 0) + 1;
+    setStreakHeatmap(newHeatmap);
     const data = await loadData<any>('cisp_cyber_progress', {});
     data[planId] = { ...data[planId], completedDays: Array.from(newSet) };
     await saveData('cisp_cyber_progress', data);
+    // Save gamification
+    const gData = await loadData<any>('cisp_cyber_gamify', {});
+    gData[planId] = { ...gData[planId], xp, level: userLevel, heatmap: newHeatmap, quizAvg };
+    await saveData('cisp_cyber_gamify', gData);
   };
 
   const copyToClipboard = (text: string, id: string) => {
@@ -335,6 +505,109 @@ export const CyberDailyLearning: React.FC = () => {
         </Card>
       </motion.div>
 
+      {/* Gamification Stats Panel */}
+      <motion.div variants={itemVariants}>
+        <Card className={`${color.cardBorder} overflow-hidden`}>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className={`text-sm font-medium ${color.main} flex items-center gap-2`}>
+              <TrendingUp size={16} /> 学习统计
+            </h3>
+            <button onClick={() => setShowStats(!showStats)}
+              className="text-xs text-gray-500 hover:text-white transition">
+              {showStats ? '收起' : '展开'}
+            </button>
+          </div>
+          {showStats && (
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              {/* XP Bar */}
+              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
+                <Zap size={20} className="mx-auto mb-1 text-cyber-gold" />
+                <p className="text-lg font-bold text-white">{xp}</p>
+                <p className="text-xs text-gray-400">经验值 XP</p>
+                <div className="w-full h-1.5 bg-gray-700 rounded-full mt-1">
+                  <div className="h-full bg-cyber-gold rounded-full" style={{width:`${(xp%500)/5}%`}}/>
+                </div>
+              </div>
+              {/* Level */}
+              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
+                <Trophy size={20} className="mx-auto mb-1 text-cyber-gold" />
+                <p className="text-lg font-bold text-white">Lv.{userLevel}</p>
+                <p className="text-xs text-gray-400">当前等级</p>
+              </div>
+              {/* Streak */}
+              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
+                <Flame size={20} className="mx-auto mb-1 text-cyber-red" />
+                <p className="text-lg font-bold text-white">{completedDays.size}</p>
+                <p className="text-xs text-gray-400">完成天数</p>
+              </div>
+              {/* Quiz Average */}
+              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
+                <Target size={20} className="mx-auto mb-1 text-cyber-blue" />
+                <p className="text-lg font-bold text-white">{quizAvg}%</p>
+                <p className="text-xs text-gray-400">测验均分</p>
+              </div>
+              {/* Badges */}
+              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
+                <Medal size={20} className="mx-auto mb-1 text-cyber-purple" />
+                <p className="text-lg font-bold text-white">{Math.floor(xp/100)}</p>
+                <p className="text-xs text-gray-400">徽章数</p>
+              </div>
+            </div>
+          )}
+          {/* Heatmap */}
+          {showStats && (
+            <div className="mt-3 flex items-center gap-1 justify-center">
+              <span className="text-xs text-gray-500 mr-2">本周:</span>
+              {streakHeatmap.map((val, i) => (
+                <div key={i}
+                  className={`w-6 h-6 rounded text-xs flex items-center justify-center ${
+                    val > 3 ? 'bg-green-500 text-white' :
+                    val > 1 ? 'bg-green-500/60 text-white' :
+                    val > 0 ? 'bg-green-500/30 text-gray-300' :
+                    'bg-gray-700 text-gray-500'
+                  }`}
+                  title={`${val} 次学习`}>
+                  {['一','二','三','四','五','六','日'][i]}
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      </motion.div>
+
+      {/* Confetti Effect */}
+      {showConfetti && (
+        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+          {Array.from({length:30}).map((_,i) => (
+            <motion.div key={i}
+              initial={{opacity:1,y:-50,x:Math.random()*window.innerWidth}}
+              animate={{opacity:0,y:window.innerHeight+50,x:Math.random()*window.innerWidth}}
+              transition={{duration:1.5+Math.random(),delay:Math.random()*0.5}}
+              className="absolute w-2 h-2 rounded-full"
+              style={{background:['#ffd700','#ff4444','#44ff88','#44aaff','#ff44ff'][i%5]}}/>
+          ))}
+        </div>
+      )}
+
+      {/* Level Up Modal */}
+      <AnimatePresence>
+        {showLevelUp && (
+          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={() => setShowLevelUp(false)}>
+            <motion.div initial={{scale:0.5}} animate={{scale:1}} exit={{scale:0.5}}
+              className="bg-slate-900 border border-cyber-gold/30 rounded-2xl p-8 text-center max-w-sm mx-4" onClick={e=>e.stopPropagation()}>
+              <Trophy size={64} className="mx-auto mb-4 text-cyber-gold" />
+              <h2 className="font-orbitron text-2xl text-cyber-gold mb-2">🎉 升级了！</h2>
+              <p className="text-white text-lg mb-1">恭喜达到 <span className="text-cyber-gold font-bold">Level {userLevel}</span></p>
+              <p className="text-gray-400 text-sm mb-4">继续努力学习，解锁更多成就！</p>
+              <Button onClick={() => setShowLevelUp(false)} className="!bg-yellow-500 !text-black hover:!bg-yellow-400">
+                太棒了！
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main Content */}
       {day && (
         <motion.div
@@ -382,6 +655,62 @@ export const CyberDailyLearning: React.FC = () => {
                   ))}
                 </div>
               </div>
+            </Card>
+          </motion.div>
+
+          {/* 课程大纲（可折叠章节树） */}
+          <motion.div variants={itemVariants}>
+            <Card>
+              <button
+                onClick={() => setExpanded(expanded === 'outline' ? null : 'outline')}
+                className="flex items-center justify-between w-full mb-2"
+              >
+                <h3 className={`text-sm font-medium ${color.main} flex items-center gap-2`}>
+                  <BookOpen size={16} />
+                  课程大纲
+                </h3>
+                {expanded === 'outline' ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+              </button>
+              {expanded === 'outline' && (
+                <div className="space-y-2 mt-3 border-l-2 border-cyber-purple/30 pl-4">
+                  {(() => {
+                    const content = mdContent || day.content;
+                    const lines = content.split(/\n/);
+                    const outline: { level: number; title: string; }[] = [];
+                    lines.forEach(line => {
+                      const m = line.match(/^(#{2,4})\s+(.+)/);
+                      if (m) {
+                        outline.push({ level: m[1].length, title: m[2].replace(/[*#]+/g, '').trim() });
+                      }
+                    });
+                    if (outline.length === 0) {
+                      // Fallback: use objectives as outline
+                      day.objectives.forEach(obj => outline.push({ level: 2, title: obj }));
+                    }
+                    return outline.map((item, i) => (
+                      <div key={i} className="flex items-start gap-2 group cursor-pointer hover:text-cyber-green transition-colors"
+                        onClick={() => {
+                          setExpanded('content');
+                          setTimeout(() => {
+                            const el = document.querySelector(`[data-heading="${CSS.escape(item.title)}"]`);
+                            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          }, 100);
+                        }}>
+                        <span className="text-cyber-purple mt-0.5 text-xs">
+                          {item.level === 2 ? '●' : item.level === 3 ? '○' : '·'}
+                        </span>
+                        <span className={`text-sm ${item.level === 2 ? 'text-gray-200 font-medium' : item.level === 3 ? 'text-gray-400' : 'text-gray-500'}`}
+                          style={{ paddingLeft: (item.level - 2) * 16 }}>
+                          {item.title}
+                        </span>
+                      </div>
+                    ));
+                  })()}
+                </div>
+              )}
+              {expanded !== 'outline' && (
+                <div className="text-xs text-gray-500 italic">点击展开查看课程大纲</div>
+              )}
             </Card>
           </motion.div>
 
@@ -457,6 +786,132 @@ export const CyberDailyLearning: React.FC = () => {
                       </div>
                     </div>
                   ))}
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Monaco 代码编辑器 */}
+          <motion.div variants={itemVariants}>
+            <Card className={color.cardBorder}>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className={`text-sm font-medium ${color.main} flex items-center gap-2`}>
+                  <Code size={16} />
+                  代码编辑器
+                </h3>
+                <div className="flex items-center gap-2">
+                  <select value={editorLang} onChange={e => setEditorLang(e.target.value)}
+                    className="text-xs px-2 py-1 bg-cyber-black/50 border border-gray-700 rounded text-gray-300">
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="java">Java</option>
+                    <option value="bash">Bash</option>
+                    <option value="sql">SQL</option>
+                  </select>
+                </div>
+              </div>
+              <div className="relative border border-gray-700 rounded-lg overflow-hidden" style={{ height: 280 }}>
+                <Editor
+                  language={editorLang === 'bash' ? 'shell' : editorLang === 'sql' ? 'sql' : editorLang}
+                  value={editorCode}
+                  onChange={(val) => setEditorCode(val || '')}
+                  theme="vs-dark"
+                  options={{
+                    fontSize: 13,
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    lineNumbers: 'on',
+                    tabSize: 2,
+                    automaticLayout: true,
+                  }}
+                  onMount={(editor, monaco) => {
+                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                      handleRunCode(editor.getValue(), editorLang);
+                    });
+                  }}
+                  loading={<div className="flex items-center justify-center h-full text-gray-500 text-sm">加载编辑器...</div>}
+                />
+                <div className="absolute bottom-2 right-2 flex gap-2">
+                  <button
+                    onClick={() => handleRunCode(editorCode, editorLang)}
+                    disabled={codeRunning || !editorCode.trim()}
+                    className={`px-3 py-1 rounded text-xs font-medium flex items-center gap-1 ${!editorCode.trim() ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-cyber-green text-black hover:bg-emerald-400'}`}
+                  >
+                    {codeRunning ? <RefreshCw size={12} className="animate-spin"/> : <Play size={12}/>}
+                    运行
+                  </button>
+                  <button onClick={() => setEditorCode('')}
+                    className="px-2 py-1 rounded text-xs text-gray-400 hover:text-white bg-gray-700/50">
+                    <RotateCcw size={12}/>
+                  </button>
+                </div>
+              </div>
+              {codeOutput && (
+                <pre className="mt-3 p-3 bg-black/70 rounded-lg text-xs text-green-400 overflow-x-auto font-mono whitespace-pre-wrap max-h-48 overflow-y-auto">
+                  {codeOutput}
+                </pre>
+              )}
+              <p className="text-xs text-gray-500 mt-2">💡 提示: 按 Ctrl+Enter 快速运行代码 | 支持 Python / JavaScript / Java（Bash 和 SQL 建议使用本地终端）</p>
+            </Card>
+          </motion.div>
+
+          {/* 编程练习 */}
+          {day.codeExamples && day.codeExamples.length > 0 && (
+            <motion.div variants={itemVariants}>
+              <Card className="bg-gradient-to-br from-cyber-blue/5 to-cyber-purple/5 border-cyber-blue/20">
+                <h3 className={`text-sm font-medium text-cyber-blue mb-3 flex items-center gap-2`}>
+                  <Target size={16} />
+                  编程练习
+                </h3>
+                <div className="space-y-3">
+                  <div className="p-3 rounded-lg bg-cyber-black/30">
+                    <p className="text-sm text-white mb-2">✏️ 根据以下需求编写代码:</p>
+                    <p className="text-xs text-gray-400">{day.codeExamples[0].explanation}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xs px-2 py-0.5 rounded bg-cyber-blue/20 text-cyber-blue">难度: ⭐⭐</span>
+                      <span className="text-xs px-2 py-0.5 rounded bg-cyber-green/20 text-cyber-green">奖励: +15 XP</span>
+                    </div>
+                  </div>
+                  <textarea
+                    value={exerciseAnswer}
+                    onChange={e => setExerciseAnswer(e.target.value)}
+                    placeholder="在这里编写你的代码..."
+                    className="w-full h-24 bg-cyber-black/50 border border-gray-700 rounded-lg p-3 text-sm text-green-400 font-mono outline-none focus:border-cyber-blue resize-y"
+                  />
+                  <div className="flex gap-2">
+                    <Button onClick={() => {
+                      if (exerciseAnswer.trim().length > 10) {
+                        setExerciseResult('correct');
+                        addXp(15);
+                      } else {
+                        setExerciseResult('wrong');
+                      }
+                    }}>
+                      提交答案
+                    </Button>
+                    <Button variant="outline" onClick={() => setExerciseHint(!exerciseHint)}>
+                      {exerciseHint ? '隐藏提示' : '💡 查看提示'}
+                    </Button>
+                  </div>
+                  {exerciseHint && (
+                    <div className="p-3 rounded-lg bg-cyber-gold/5 border border-cyber-gold/20 text-xs text-gray-400">
+                      💡 参考上方代码示例中的实现方式，注意变量命名和函数结构
+                    </div>
+                  )}
+                  {exerciseResult === 'correct' && (
+                    <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}
+                      className="p-3 rounded-lg bg-green-500/10 border border-green-500/30 flex items-center gap-2">
+                      <CheckCircle size={16} className="text-green-400"/>
+                      <span className="text-sm text-green-400">✅ 太棒了！答案通过测试！+15 XP</span>
+                    </motion.div>
+                  )}
+                  {exerciseResult === 'wrong' && (
+                    <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}
+                      className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center gap-2">
+                      <AlertCircle size={16} className="text-red-400"/>
+                      <span className="text-sm text-red-400">❌ 还需要改进，请再试一次</span>
+                    </motion.div>
+                  )}
                 </div>
               </Card>
             </motion.div>
@@ -615,9 +1070,20 @@ export const CyberDailyLearning: React.FC = () => {
                     <Target size={16} />
                     随堂测验
                   </h3>
-                  <span className="text-xs text-gray-400">
-                    {quiz.currentIndex + 1} / {day.quiz.length}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    {/* 30秒计时器 */}
+                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-bold ${
+                      quizTimer <= 10 ? 'bg-red-500/20 text-red-400 animate-pulse' :
+                      quizTimer <= 20 ? 'bg-yellow-500/20 text-yellow-400' :
+                      'bg-cyber-green/20 text-cyber-green'
+                    }`}>
+                      <Clock size={13} />
+                      {quizTimer}s
+                    </div>
+                    <span className="text-xs text-gray-400">
+                      {quiz.currentIndex + 1} / {day.quiz.length}
+                    </span>
+                  </div>
                 </div>
                 
                 {day.quiz[quiz.currentIndex] && (() => {
@@ -898,6 +1364,25 @@ export const CyberDailyLearning: React.FC = () => {
               下一天
               <ArrowRight size={16} />
             </Button>
+          </motion.div>
+
+          {/* Keyboard shortcuts hint */}
+          <motion.div variants={itemVariants} className="flex items-center justify-center gap-4 text-xs text-gray-500">
+            <span className="flex items-center gap-1">
+              <Keyboard size={12} />
+              <kbd className="px-1.5 py-0.5 bg-cyber-purple/30 rounded text-gray-400">←</kbd>
+              上一天
+            </span>
+            <span className="flex items-center gap-1">
+              <Keyboard size={12} />
+              <kbd className="px-1.5 py-0.5 bg-cyber-purple/30 rounded text-gray-400">→</kbd>
+              下一天
+            </span>
+            <span className="flex items-center gap-1">
+              <Keyboard size={12} />
+              <kbd className="px-1.5 py-0.5 bg-cyber-purple/30 rounded text-gray-400">Ctrl+Enter</kbd>
+              运行代码
+            </span>
           </motion.div>
         </motion.div>
       )}

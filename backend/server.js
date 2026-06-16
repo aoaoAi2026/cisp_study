@@ -8,6 +8,7 @@ require('./db');
 const authRoutes = require('./routes/auth');
 const progressRoutes = require('./routes/progress');
 const labsRoutes = require('./routes/labs');
+const executeRoutes = require('./routes/execute');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -22,6 +23,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/labs', labsRoutes);
+app.use('/api/execute', executeRoutes);
 
 const distDir = path.join(__dirname, '..', 'dist');
 app.use(express.static(distDir));

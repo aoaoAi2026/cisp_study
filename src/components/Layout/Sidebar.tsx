@@ -18,7 +18,8 @@ import {
   Shield,
   Globe,
   Brain,
-  Library
+  Library,
+  Terminal
 } from 'lucide-react';
 import { SearchBox } from './SearchBox';
 
@@ -39,6 +40,7 @@ const navItems = [
   { path: '/mock-exam', icon: Play, label: '模拟考试' },
   { path: '/study-tips', icon: Lightbulb, label: '学习技巧' },
   { path: '/lab', icon: Code, label: '代码实验室' },
+  { path: '/code-runner', icon: Terminal, label: '代码运行中心' },
   { path: '/lab-environment', icon: Server, label: '实验环境' },
   { path: '/tool-sites', icon: Globe, label: '工具网站' },
   { path: '/quiz', icon: Target, label: '测验中心' },

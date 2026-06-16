@@ -21,12 +21,17 @@ export const LearningPath: React.FC = () => {
   const navigate = useNavigate();
   const { completedDays, currentDay, streak } = useLearningStore();
   const [expandedWeek, setExpandedWeek] = useState<number | null>(null);
+  const [studyMode, setStudyMode] = useState<'full' | 'sprint'>('full');
 
-  const progress = (completedDays.length / 90) * 100;
+  const progress = studyMode === 'full' ? (completedDays.length / 90) * 100 : (completedDays.length / 30) * 100;
+
+  // Full: 90 days across 12 weeks, Sprint: first 30 days across 4 weeks
+  const displayWeeks = studyMode === 'full' ? weekThemes : weekThemes.slice(0, 4);
+  const displayDays = studyMode === 'full' ? learningData : learningData.filter(d => d.day <= 30);
 
   // Group learning data by week
-  const weeksData = weekThemes.map((theme, weekIndex) => {
-    const days = learningData.filter(d => d.week === weekIndex + 1);
+  const weeksData = displayWeeks.map((theme, weekIndex) => {
+    const days = displayDays.filter(d => d.week === weekIndex + 1);
     return { ...theme, week: weekIndex + 1, days };
   });
 
@@ -52,7 +57,7 @@ export const LearningPath: React.FC = () => {
             学习路径
           </h1>
           <p className="text-gray-400 mt-1">
-            90天系统学习计划，完成你的CISP认证之路
+            {studyMode === 'full' ? '90天系统学习计划，完成你的CISP认证之路' : '30天强化冲刺，快速掌握核心考点'}
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -67,14 +72,28 @@ export const LearningPath: React.FC = () => {
       {/* Mode Selector */}
       <Card>
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
+          <button
+            onClick={() => { setStudyMode('full'); setExpandedWeek(null); }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
+              studyMode === 'full'
+                ? 'bg-cyber-green/20 text-cyber-green border border-cyber-green/30'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
             <Badge variant="green">完整模式</Badge>
-            <span className="text-sm text-gray-400">90天系统学习</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge>冲刺模式</Badge>
-            <span className="text-sm text-gray-500">30天强化学习</span>
-          </div>
+            <span>90天系统学习</span>
+          </button>
+          <button
+            onClick={() => { setStudyMode('sprint'); setExpandedWeek(null); }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
+              studyMode === 'sprint'
+                ? 'bg-cyber-gold/20 text-cyber-gold border border-cyber-gold/30'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <Badge variant="gold">冲刺模式</Badge>
+            <span>30天强化学习</span>
+          </button>
         </div>
       </Card>
 

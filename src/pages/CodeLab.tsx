@@ -110,7 +110,7 @@ export const CodeLab: React.FC = () => {
   const [scriptPyodideLoading, setScriptPyodideLoading] = useState(false);
 
   // ====== 法律法规测验状态 ======
-  const [showLawQuiz, setShowLawQuiz] = useState<string | null>(null);
+  const [showLawQuiz, setShowLawQuiz] = useState<Record<string, boolean>>({});
   const [lawQuizAnswers, setLawQuizAnswers] = useState<Record<string, number | number[]>>({});
   const [lawQuizSubmitted, setLawQuizSubmitted] = useState<Record<string, boolean>>({});
 

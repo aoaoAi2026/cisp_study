@@ -6,6 +6,7 @@ import {
   DailyLearning,
   CodeLab,
   LabEnvironment,
+  CodeRunner,
   QuizCenter,
   Achievements,
   Community,
@@ -72,6 +73,7 @@ function App() {
           <Route path="learning/:dayId" element={<DailyLearning />} />
           <Route path="lab" element={<CodeLab />} />
           <Route path="lab-environment" element={<LabEnvironment />} />
+          <Route path="code-runner" element={<CodeRunner />} />
           <Route path="flashcards" element={<Flashcards />} />
           <Route path="cyber-learning" element={<CyberLearningMain />} />
           <Route path="cyber-learning/:planId" element={<CyberDailyLearning />} />
