@@ -1,8 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import {
   Dashboard,
-  LearningPath,
   DailyLearning,
   CodeLab,
   LabEnvironment,
@@ -25,6 +24,12 @@ import {
 import AuthPage from "./pages/AuthPage";
 import { useUserStore } from "./store/userStore";
 import { useEffect, useState } from "react";
+
+// 旧 /learning 重定向到 /cyber-learning/cisp
+function CispDayRedirect() {
+  const { dayId } = useParams<{ dayId: string }>();
+  return <Navigate to={`/cyber-learning/cisp/${dayId}`} replace />;
+}
 
 // 受保护的路由组件
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -69,13 +74,14 @@ function App() {
           </ProtectedRoute>
         }>
           <Route index element={<Dashboard />} />
-          <Route path="learning" element={<LearningPath />} />
-          <Route path="learning/:dayId" element={<DailyLearning />} />
+          <Route path="learning" element={<Navigate to="/cyber-learning" replace />} />
+          <Route path="learning/:dayId" element={<CispDayRedirect />} />
           <Route path="lab" element={<CodeLab />} />
           <Route path="lab-environment" element={<LabEnvironment />} />
           <Route path="code-runner" element={<CodeRunner />} />
           <Route path="flashcards" element={<Flashcards />} />
           <Route path="cyber-learning" element={<CyberLearningMain />} />
+          <Route path="cyber-learning/cisp/:dayId" element={<DailyLearning />} />
           <Route path="cyber-learning/:planId" element={<CyberDailyLearning />} />
           <Route path="quiz" element={<QuizCenter />} />
           <Route path="outline" element={<ExamOutline />} />

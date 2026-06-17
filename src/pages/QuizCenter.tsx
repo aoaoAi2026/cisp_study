@@ -240,7 +240,7 @@ export const QuizCenter: React.FC = () => {
                 <p className="text-gray-400">完成每天的学习后才能解锁章节测验</p>
                 <Button
                   className="mt-4"
-                  onClick={() => navigate('/learning')}
+                  onClick={() => navigate('/cyber-learning')}
                 >
                   去学习
                 </Button>

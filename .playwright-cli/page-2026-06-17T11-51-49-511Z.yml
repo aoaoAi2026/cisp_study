@@ -1,0 +1,195 @@
+- generic [ref=e1]:
+  - generic [ref=e23]:
+    - complementary [ref=e24]:
+      - generic [ref=e26]:
+        - generic [ref=e28]: C
+        - generic [ref=e29]:
+          - heading "CISP学习" [level=1] [ref=e30]
+          - paragraph [ref=e31]: 零基础入门
+      - generic [ref=e34]:
+        - img [ref=e35]
+        - textbox "搜索课程/题目/工具..." [ref=e38]
+      - navigation [ref=e39]:
+        - link "首页仪表盘" [ref=e40] [cursor=pointer]:
+          - /url: /
+          - img [ref=e41]
+          - generic [ref=e44]: 首页仪表盘
+        - link "学习路径" [ref=e45] [cursor=pointer]:
+          - /url: /learning
+          - img [ref=e46]
+          - generic [ref=e48]: 学习路径
+        - link "🛡️ 网络安全学习" [active] [ref=e49] [cursor=pointer]:
+          - /url: /cyber-learning
+          - img [ref=e50]
+          - generic [ref=e53]: 🛡️ 网络安全学习
+        - link "安全资源库" [ref=e54] [cursor=pointer]:
+          - /url: /resources
+          - img [ref=e55]
+          - generic [ref=e57]: 安全资源库
+        - link "闪卡复习" [ref=e58] [cursor=pointer]:
+          - /url: /flashcards
+          - img [ref=e59]
+          - generic [ref=e69]: 闪卡复习
+        - link "考试大纲" [ref=e70] [cursor=pointer]:
+          - /url: /outline
+          - img [ref=e71]
+          - generic [ref=e74]: 考试大纲
+        - link "历年真题" [ref=e75] [cursor=pointer]:
+          - /url: /past-papers
+          - img [ref=e76]
+          - generic [ref=e79]: 历年真题
+        - link "模拟考试" [ref=e80] [cursor=pointer]:
+          - /url: /mock-exam
+          - img [ref=e81]
+          - generic [ref=e83]: 模拟考试
+        - link "学习技巧" [ref=e84] [cursor=pointer]:
+          - /url: /study-tips
+          - img [ref=e85]
+          - generic [ref=e87]: 学习技巧
+        - link "代码实验室" [ref=e88] [cursor=pointer]:
+          - /url: /lab
+          - img [ref=e89]
+          - generic [ref=e92]: 代码实验室
+        - link "代码运行中心" [ref=e93] [cursor=pointer]:
+          - /url: /code-runner
+          - img [ref=e94]
+          - generic [ref=e96]: 代码运行中心
+        - link "实验环境" [ref=e97] [cursor=pointer]:
+          - /url: /lab-environment
+          - img [ref=e98]
+          - generic [ref=e101]: 实验环境
+        - link "工具网站" [ref=e102] [cursor=pointer]:
+          - /url: /tool-sites
+          - img [ref=e103]
+          - generic [ref=e106]: 工具网站
+        - link "测验中心" [ref=e107] [cursor=pointer]:
+          - /url: /quiz
+          - img [ref=e108]
+          - generic [ref=e112]: 测验中心
+        - link "成就系统" [ref=e113] [cursor=pointer]:
+          - /url: /achievements
+          - img [ref=e114]
+          - generic [ref=e117]: 成就系统
+        - link "社区交流" [ref=e118] [cursor=pointer]:
+          - /url: /community
+          - img [ref=e119]
+          - generic [ref=e124]: 社区交流
+        - link "个人中心" [ref=e125] [cursor=pointer]:
+          - /url: /profile
+          - img [ref=e126]
+          - generic [ref=e129]: 个人中心
+      - generic [ref=e131]:
+        - paragraph [ref=e132]: CISP学习平台 v1.0
+        - paragraph [ref=e133]: 90天成为安全专家
+    - button [ref=e134] [cursor=pointer]:
+      - img [ref=e135]
+    - generic [ref=e136]:
+      - banner [ref=e137]:
+        - generic [ref=e138]:
+          - generic [ref=e140]:
+            - img [ref=e141]
+            - textbox "搜索知识点、实验..." [ref=e144]
+          - generic [ref=e145]:
+            - button [ref=e146] [cursor=pointer]:
+              - img [ref=e147]
+            - generic [ref=e151]:
+              - generic [ref=e153]: 游
+              - generic [ref=e154]:
+                - paragraph [ref=e155]: 游客kk89
+                - paragraph [ref=e156]: 已学习 0 天
+              - generic [ref=e157]:
+                - button "设置" [ref=e158] [cursor=pointer]:
+                  - img [ref=e159]
+                - button "退出" [ref=e162] [cursor=pointer]:
+                  - img [ref=e163]
+      - main [ref=e166]:
+        - generic [ref=e916]:
+          - generic [ref=e918]:
+            - img [ref=e920]
+            - generic [ref=e923]:
+              - heading "网络安全学习中心" [level=1] [ref=e924]
+              - paragraph [ref=e925]: 四个阶段 · 120天系统学习 · 从基础到高级
+          - generic [ref=e926]:
+            - generic [ref=e928]:
+              - generic [ref=e929]: "120"
+              - generic [ref=e930]: 总学习天数
+            - generic [ref=e933]: 已完成天数
+            - generic [ref=e935]:
+              - generic [ref=e936]: "4"
+              - generic [ref=e937]: 学习阶段
+            - generic [ref=e939]:
+              - generic [ref=e940]: 0%
+              - generic [ref=e941]: 总进度
+          - generic [ref=e942]:
+            - generic [ref=e945]:
+              - img [ref=e947]
+              - generic [ref=e949]:
+                - generic [ref=e950]:
+                  - heading "🛡️ 网络安全基础" [level=2] [ref=e951]
+                  - generic [ref=e952]:
+                    - img [ref=e953]
+                    - text: 入门
+                - paragraph [ref=e955]: 从零开始，系统掌握网络安全基础知识体系，覆盖网络协议、Web安全、密码学、漏洞原理等核心领域。
+                - generic [ref=e958]: 0/30 天 (0%)
+              - generic [ref=e959]:
+                - button "详情 ▼" [ref=e960] [cursor=pointer]
+                - button "开始学习" [ref=e961] [cursor=pointer]:
+                  - text: 开始学习
+                  - img [ref=e962]
+            - generic [ref=e966]:
+              - img [ref=e968]
+              - generic [ref=e972]:
+                - generic [ref=e973]:
+                  - heading "🎯 渗透测试实战" [level=2] [ref=e974]
+                  - generic [ref=e975]:
+                    - img [ref=e976]
+                    - text: 进阶
+                - paragraph [ref=e978]: 从信息收集到权限维持，系统学习渗透测试完整流程，掌握主流渗透工具和实战技术。
+                - generic [ref=e981]: 0/30 天 (0%)
+              - generic [ref=e982]:
+                - button "详情 ▼" [ref=e983] [cursor=pointer]
+                - button "开始学习" [ref=e984] [cursor=pointer]:
+                  - text: 开始学习
+                  - img [ref=e985]
+            - generic [ref=e989]:
+              - img [ref=e991]
+              - generic [ref=e994]:
+                - generic [ref=e995]:
+                  - heading "🔒 安全运维与防御" [level=2] [ref=e996]
+                  - generic [ref=e997]:
+                    - img [ref=e998]
+                    - text: 高级
+                - paragraph [ref=e1001]: 学习安全运营中心建设、应急响应流程、等保合规防护，构建完整的安全防御体系。
+                - generic [ref=e1004]: 0/30 天 (0%)
+              - generic [ref=e1005]:
+                - button "详情 ▼" [ref=e1006] [cursor=pointer]
+                - button "开始学习" [ref=e1007] [cursor=pointer]:
+                  - text: 开始学习
+                  - img [ref=e1008]
+            - generic [ref=e1012]:
+              - img [ref=e1014]
+              - generic [ref=e1024]:
+                - generic [ref=e1025]:
+                  - heading "🤖 AI网络安全" [level=2] [ref=e1026]
+                  - generic [ref=e1027]:
+                    - img [ref=e1028]
+                    - text: 高级
+                - paragraph [ref=e1031]: 系统学习AI在安全领域的应用，覆盖ML/DL入侵检测、对抗攻防、LLM安全、AI安全工程等前沿方向。
+                - generic [ref=e1034]: 0/168 天 (0%)
+              - generic [ref=e1035]:
+                - button "详情 ▼" [ref=e1036] [cursor=pointer]
+                - button "开始学习" [ref=e1037] [cursor=pointer]:
+                  - text: 开始学习
+                  - img [ref=e1038]
+          - generic [ref=e1042]:
+            - img [ref=e1044]
+            - generic [ref=e1050]:
+              - heading "🏆 CISP认证学习" [level=2] [ref=e1051]
+              - paragraph [ref=e1052]: CISP官方教材配套学习，涵盖信息安全保障、风险管理、安全运营等核心知识域
+            - button "进入学习" [ref=e1053] [cursor=pointer]:
+              - img [ref=e1054]
+              - text: 进入学习
+              - img [ref=e1056]
+  - generic [ref=e915]:
+    - alert
+    - alert

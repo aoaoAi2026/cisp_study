@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
@@ -25,17 +25,27 @@ import {
   StickyNote,
   Award,
   User,
-  RefreshCw
+  RefreshCw,
+  TrendingUp,
+  Trophy,
+  Keyboard,
+  RotateCcw,
+  Sparkles
 } from 'lucide-react';
+import Editor from '@monaco-editor/react';
 import { useLearningStore, useAchievementStore } from '../store';
 import { useQuizExam, useWrongQuestionBook } from '../hooks';
 import { learningData, weekThemes } from '../data/learningData';
 import { Card, Badge, Button } from '../components/UI';
 import { Pomodoro } from '../components/Pomodoro';
+import { saveData, loadData } from '../data/persistData';
 
 export const DailyLearning: React.FC = () => {
   const { dayId } = useParams<{ dayId: string }>();
   const navigate = useNavigate();
+
+  const basePath = '/cyber-learning/cisp';
+  const backPath = '/cyber-learning';
   const { markDayComplete, completedDays } = useLearningStore();
   const { checkAndUnlockBadge } = useAchievementStore();
 
@@ -47,10 +57,27 @@ export const DailyLearning: React.FC = () => {
   const [mdError, setMdError] = useState<string | null>(null);
   const [codeOutput, setCodeOutput] = useState<string | null>(null);
   const [codeRunning, setCodeRunning] = useState(false);
+  const [bilibiliBvid, setBilibiliBvid] = useState<string | null>(null);
+  const [bilibiliVideoTitle, setBilibiliVideoTitle] = useState<string>('');
+  const [videoLoading, setVideoLoading] = useState(false);
   const noteSaveTimer = useRef<number | null>(null);
 
   const wrongQuestionBook = useWrongQuestionBook();
   const [quizResult, setQuizResult] = useState<{ correct: number; total: number; score: number } | null>(null);
+
+  // Gamification stats
+  const [xp, setXp] = useState(0);
+  const [userLevel, setUserLevel] = useState(1);
+  const [streakHeatmap, setStreakHeatmap] = useState<number[]>(Array(7).fill(0));
+  const [quizAvg, setQuizAvg] = useState(0);
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [newBadge, setNewBadge] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showStats, setShowStats] = useState(true);
+
+  // Monaco editor
+  const [editorCode, setEditorCode] = useState('');
+  const [editorLang, setEditorLang] = useState('python');
 
   useEffect(() => {
     const raw = localStorage.getItem('cisp_notes');
@@ -108,6 +135,27 @@ export const DailyLearning: React.FC = () => {
     }, 800);
   };
 
+  // Bilibili 视频搜索
+  useEffect(() => {
+    if (activeTab !== 'video') return;
+    const day = learningData.find(d => d.id === dayId);
+    if (!day) return;
+    setVideoLoading(true);
+    setBilibiliBvid(null);
+    const keyword = encodeURIComponent(day.title + ' CISP 网络安全');
+    fetch(`/api-bili/x/web-interface/search/type?search_type=video&keyword=${keyword}&page=1`)
+      .then(res => res.json())
+      .then(data => {
+        if (data?.data?.result?.length > 0) {
+          const first = data.data.result[0];
+          setBilibiliBvid(first.bvid);
+          setBilibiliVideoTitle(first.title || '');
+        }
+      })
+      .catch(() => {})
+      .finally(() => setVideoLoading(false));
+  }, [activeTab, dayId]);
+
   const currentDay = learningData.find(d => d.id === dayId) || learningData[0];
   const quiz = useQuizExam(currentDay.quiz || []);
   const dayIndex = learningData.findIndex(d => d.id === dayId);
@@ -128,6 +176,12 @@ export const DailyLearning: React.FC = () => {
       if (dayIndex === 6) {
         checkAndUnlockBadge('complete_week_1');
       }
+      // Update heatmap & XP
+      const today = new Date().getDay();
+      const newHeatmap = [...streakHeatmap];
+      newHeatmap[today] = (newHeatmap[today] || 0) + 1;
+      setStreakHeatmap(newHeatmap);
+      addXp(100);
     }
   };
 
@@ -143,6 +197,88 @@ export const DailyLearning: React.FC = () => {
     }
     if (result.score >= 90) {
       checkAndUnlockBadge('quiz_90');
+    }
+    addXp(result.score >= 80 ? 50 : 20);
+  };
+
+  // XP / Level system
+  const addXp = async (amount: number) => {
+    const newXp = xp + amount;
+    const newLevel = Math.floor(newXp / 500) + 1;
+    setXp(newXp);
+    if (newLevel > userLevel) {
+      setUserLevel(newLevel);
+      setShowLevelUp(true);
+      setShowConfetti(true);
+      setTimeout(() => setShowLevelUp(false), 3000);
+      setTimeout(() => setShowConfetti(false), 2000);
+    }
+    try { saveData('cisp_gamify', { xp: newXp, level: newLevel, heatmap: streakHeatmap, quizAvg }); } catch {}
+  };
+
+  // Load gamification data
+  useEffect(() => {
+    loadData<any>('cisp_gamify', {}).then(data => {
+      setXp(data.xp || 0);
+      setUserLevel(data.level || 1);
+      setStreakHeatmap(data.heatmap || Array(7).fill(0));
+      setQuizAvg(data.quizAvg || 0);
+    });
+  }, []);
+
+  // Editor code init
+  useEffect(() => {
+    if (currentDay.codeExample) {
+      setEditorCode(currentDay.codeExample.code || '');
+      setEditorLang((currentDay.codeExample.language || 'python').toLowerCase());
+    }
+  }, [dayId]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || (e.target as HTMLElement)?.closest?.('.monaco-editor')) return;
+      if (e.key === 'ArrowLeft' && prevDay) { e.preventDefault(); navigate(`${basePath}/${prevDay.id}`); }
+      if (e.key === 'ArrowRight' && nextDay) { e.preventDefault(); navigate(`${basePath}/${nextDay.id}`); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [prevDay, nextDay, navigate]);
+
+  // 代码执行
+  const handleRunCode = async (code: string, lang: string) => {
+    setCodeRunning(true);
+    setCodeOutput(null);
+    let language = lang.toLowerCase();
+    if (language === 'py') language = 'python';
+    if (language === 'js') language = 'javascript';
+    if (!['python', 'javascript', 'java'].includes(language)) {
+      setCodeOutput(`[提示] ${lang} 语言暂不支持后端执行，仅支持: Python / JavaScript / Java`);
+      setCodeRunning(false);
+      return;
+    }
+    try {
+      const resp = await fetch('/api/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ language, code }),
+      });
+      const data = await resp.json();
+      if (resp.ok) {
+        const out = [
+          data.stdout ? data.stdout.trimEnd() : '',
+          data.stderr ? `\n[stderr]\n${data.stderr.trimEnd()}` : '',
+          `\n--- 退出码: ${data.exitCode} | 耗时: ${data.executionTime}ms ---`,
+        ].filter(Boolean).join('');
+        setCodeOutput(out || '(无输出)');
+      } else {
+        setCodeOutput(`[请求失败] ${data.error || '未知错误'}\n${data.detail || ''}`);
+      }
+    } catch (e: any) {
+      setCodeOutput(`[网络错误] ${e.message}\n请确认后端服务已启动 (node backend/server.js)`);
+    } finally {
+      setCodeRunning(false);
+      addXp(5);
     }
   };
 
@@ -167,7 +303,7 @@ export const DailyLearning: React.FC = () => {
           variant="outline"
           size="sm"
           icon={ArrowLeft}
-          onClick={() => navigate('/learning')}
+          onClick={() => navigate(backPath)}
         >
           返回路径
         </Button>
@@ -177,7 +313,7 @@ export const DailyLearning: React.FC = () => {
               variant="outline"
               size="sm"
               icon={ChevronLeft}
-              onClick={() => navigate(`/learning/${prevDay.id}`)}
+              onClick={() => navigate(`${basePath}/${prevDay.id}`)}
             >
               前一天
             </Button>
@@ -187,7 +323,7 @@ export const DailyLearning: React.FC = () => {
               variant="outline"
               size="sm"
               icon={ChevronRight}
-              onClick={() => navigate(`/learning/${nextDay.id}`)}
+              onClick={() => navigate(`${basePath}/${nextDay.id}`)}
             >
               下一天
             </Button>
@@ -238,6 +374,99 @@ export const DailyLearning: React.FC = () => {
               <span className="text-cyber-green font-medium">已完成</span>
             </div>
           )}
+        </motion.div>
+
+        {/* Gamification Stats Panel */}
+        <motion.div variants={itemVariants}>
+          <Card className="mt-4 border-cyber-blue/20 overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-cyber-blue flex items-center gap-2">
+                <TrendingUp size={16} /> 学习统计
+              </h3>
+              <button
+                onClick={() => setShowStats(!showStats)}
+                className="text-xs text-gray-500 hover:text-cyber-blue transition-colors"
+              >
+                {showStats ? '收起 ▲' : '展开 ▼'}
+              </button>
+            </div>
+            {showStats && (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                  <div className="bg-cyber-blue/10 rounded-lg p-3 text-center">
+                    <div className="text-xs text-gray-400 mb-1">经验值</div>
+                    <div className="text-lg font-bold text-cyber-blue">{xp}</div>
+                    <div className="w-full bg-cyber-blue/20 rounded-full h-1.5 mt-1">
+                      <div className="bg-cyber-blue h-1.5 rounded-full" style={{ width: `${(xp % 500) / 5}%` }} />
+                    </div>
+                  </div>
+                  <div className="bg-cyber-green/10 rounded-lg p-3 text-center">
+                    <div className="text-xs text-gray-400 mb-1">等级</div>
+                    <div className="text-lg font-bold text-cyber-green">Lv.{userLevel}</div>
+                  </div>
+                  <div className="bg-cyber-gold/10 rounded-lg p-3 text-center">
+                    <div className="text-xs text-gray-400 mb-1">连续完成</div>
+                    <div className="text-lg font-bold text-cyber-gold">
+                      {completedDays.filter(cd => cd.dayId?.startsWith('day-')).length}天
+                    </div>
+                  </div>
+                  <div className="bg-cyber-purple/10 rounded-lg p-3 text-center">
+                    <div className="text-xs text-gray-400 mb-1">测验均分</div>
+                    <div className="text-lg font-bold text-cyber-purple">{quizAvg > 0 ? `${quizAvg}%` : '--'}</div>
+                  </div>
+                  <div className="bg-cyber-gold/10 rounded-lg p-3 text-center">
+                    <div className="text-xs text-gray-400 mb-1">徽章</div>
+                    <div className="text-lg font-bold text-cyber-gold">{Math.floor(xp / 100)}</div>
+                  </div>
+                </div>
+                {/* Weekly heatmap */}
+                <div className="mt-4 flex items-center gap-2">
+                  <span className="text-xs text-gray-500 whitespace-nowrap">本周:</span>
+                  {streakHeatmap.map((count, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 h-6 rounded"
+                      style={{
+                        background: count > 0
+                          ? `rgba(51,136,238,${0.3 + Math.min(count / 5, 1) * 0.7})`
+                          : 'rgba(75,85,99,0.15)',
+                      }}
+                      title={`Day ${i + 1}: 完成${count}次`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </Card>
+        </motion.div>
+
+        {/* Day Navigation */}
+        <motion.div variants={itemVariants}>
+          <Card className="mt-4 border-cyber-blue/20">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              {learningData.map((d) => {
+                const done = completedDays.some(cd => cd.dayId === d.id);
+                return (
+                  <button
+                    key={d.id}
+                    onClick={() => navigate(`${basePath}/${d.id}`)}
+                    className={`
+                      flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-xs font-medium
+                      transition-all duration-200
+                      ${d.id === dayId
+                        ? 'bg-cyber-blue/30 text-cyber-blue border border-cyber-blue/40'
+                        : done
+                          ? 'bg-cyber-green/10 text-cyber-green border border-cyber-green/20'
+                          : 'bg-cyber-purple/10 text-gray-400 border border-cyber-purple/20 hover:bg-cyber-purple/20'
+                      }
+                    `}
+                  >
+                    {done ? <CheckCircle size={14} /> : d.day}
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
         </motion.div>
 
         {/* Learning Objectives */}
@@ -365,7 +594,7 @@ export const DailyLearning: React.FC = () => {
         {/* Tabs */}
         <motion.div variants={itemVariants} className="flex gap-2 mt-6">
           {[
-            { id: 'content', label: '知识点', icon: BookOpen },
+            { id: 'content', label: '课程内容', icon: BookOpen },
             { id: 'video', label: '视频教程', icon: Video },
             { id: 'code', label: '代码示例', icon: Code },
             { id: 'quiz', label: '练习题', icon: FileQuestion },
@@ -413,97 +642,105 @@ export const DailyLearning: React.FC = () => {
 
             {activeTab === 'video' && (
               <div className="space-y-4">
-                {currentDay.videoUrl ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Video size={18} className="text-cyber-blue" />
-                      <span className="text-cyber-blue font-medium">视频教程</span>
-                      <span className="text-xs text-gray-500">Day {currentDay.day} · {currentDay.title}</span>
-                    </div>
-                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                      <iframe
-                        src={currentDay.videoUrl}
-                        className="absolute inset-0 w-full h-full rounded-lg border border-cyber-blue/20"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        title={`Day ${currentDay.day} 视频教程`}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Video size={18} className="text-cyber-blue" />
-                      <span className="text-cyber-blue font-medium">视频教程</span>
-                      <span className="text-xs text-gray-500">搜索相关学习视频</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Bilibili 搜索 */}
-                      <a
-                        href={`https://search.bilibili.com/all?keyword=${encodeURIComponent(currentDay.title + ' 网络安全')}&order=click`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block p-4 rounded-lg bg-gradient-to-br from-pink-500/10 to-blue-500/10 border border-pink-500/20 hover:border-pink-500/50 hover:from-pink-500/20 hover:to-blue-500/20 transition-all group"
-                      >
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center">
-                            <Play size={20} className="text-pink-400" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium text-white group-hover:text-pink-300 transition-colors">Bilibili 搜索</h4>
-                            <p className="text-xs text-gray-500">搜索「{currentDay.title}」相关视频</p>
-                          </div>
-                        </div>
-                        <p className="text-xs text-gray-400 mt-2">在 Bilibili 上搜索网络安全相关教程，包含实战演示和技术讲解</p>
-                      </a>
+                <div className="flex items-center gap-2 mb-2">
+                  <Video size={18} className="text-cyber-blue" />
+                  <span className="text-cyber-blue font-medium">视频教程</span>
+                  <span className="text-xs text-gray-500">Day {currentDay.day} · {currentDay.title}</span>
+                </div>
 
-                      {/* YouTube 搜索 */}
-                      <a
-                        href={`https://www.youtube.com/results?search_query=${encodeURIComponent(currentDay.title + ' cybersecurity tutorial')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block p-4 rounded-lg bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20 hover:border-red-500/50 hover:from-red-500/20 hover:to-orange-500/20 transition-all group"
-                      >
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
-                            <Play size={20} className="text-red-400" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium text-white group-hover:text-red-300 transition-colors">YouTube 搜索</h4>
-                            <p className="text-xs text-gray-500">搜索「{currentDay.title}」英文教程</p>
-                          </div>
-                        </div>
-                        <p className="text-xs text-gray-400 mt-2">在 YouTube 上搜索网络安全英文教程，包含国际认证备考和实验演示</p>
-                      </a>
-                    </div>
-
-                    {/* 通用视频平台入口 */}
-                    <div className="mt-4 p-4 rounded-lg bg-cyber-blue/5 border border-cyber-blue/15">
-                      <h4 className="text-sm font-medium text-cyber-blue mb-3 flex items-center gap-2">
-                        <ExternalLink size={14} />
-                        更多视频平台
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {[
-                          { name: '腾讯课堂', url: `https://ke.qq.com/course/list/${encodeURIComponent(currentDay.title + ' 网络安全')}` },
-                          { name: '网易云课堂', url: `https://study.163.com/search.htm?p=${encodeURIComponent(currentDay.title + ' 网络安全')}` },
-                          { name: '慕课网', url: `https://www.imooc.com/search/?words=${encodeURIComponent(currentDay.title + ' 安全')}` },
-                          { name: 'FreeBuf', url: `https://www.freebuf.com/search?q=${encodeURIComponent(currentDay.title)}` },
-                        ].map(platform => (
-                          <a
-                            key={platform.name}
-                            href={platform.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-3 py-1.5 text-xs rounded-full bg-cyber-blue/10 text-cyber-blue hover:bg-cyber-blue/20 transition-colors border border-cyber-blue/20"
-                          >
-                            {platform.name}
-                          </a>
-                        ))}
-                      </div>
+                {/* Bilibili 嵌入式播放器（API 动态搜索） */}
+                {videoLoading && (
+                  <div className="relative w-full rounded-lg bg-gray-800/40 border border-cyber-blue/10" style={{ paddingBottom: '56.25%' }}>
+                    <div className="absolute inset-0 flex items-center justify-center text-gray-400 gap-2">
+                      <RefreshCw size={20} className="animate-spin" />
+                      <span>正在 Bilibili 搜索相关视频...</span>
                     </div>
                   </div>
                 )}
+                {bilibiliBvid && !videoLoading && (
+                  <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                      src={`https://player.bilibili.com/player.html?bvid=${bilibiliBvid}&page=1&high_quality=1&autoplay=0`}
+                      className="absolute inset-0 w-full h-full rounded-lg border border-cyber-blue/20"
+                      allowFullScreen
+                      title={bilibiliVideoTitle || `Day ${currentDay.day} 视频教程`}
+                    />
+                  </div>
+                )}
+                {!bilibiliBvid && !videoLoading && (
+                  <div className="relative w-full rounded-lg bg-gray-800/30 border border-gray-700/30" style={{ paddingBottom: '56.25%' }}>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 gap-3">
+                      <Play size={36} className="text-gray-600" />
+                      <span className="text-sm">暂未找到匹配视频，请使用下方搜索</span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Bilibili 搜索 */}
+                  <a
+                    href={`https://search.bilibili.com/all?keyword=${encodeURIComponent(currentDay.title + ' 网络安全')}&order=click`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-4 rounded-lg bg-gradient-to-br from-pink-500/10 to-blue-500/10 border border-pink-500/20 hover:border-pink-500/50 hover:from-pink-500/20 hover:to-blue-500/20 transition-all group"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                        <Play size={20} className="text-pink-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white group-hover:text-pink-300 transition-colors">Bilibili 搜索</h4>
+                        <p className="text-xs text-gray-500">搜索「{currentDay.title}」相关视频</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">在 Bilibili 上搜索网络安全相关教程，包含实战演示和技术讲解</p>
+                  </a>
+
+                  {/* YouTube 搜索 */}
+                  <a
+                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(currentDay.title + ' cybersecurity tutorial')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-4 rounded-lg bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20 hover:border-red-500/50 hover:from-red-500/20 hover:to-orange-500/20 transition-all group"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+                        <Play size={20} className="text-red-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white group-hover:text-red-300 transition-colors">YouTube 搜索</h4>
+                        <p className="text-xs text-gray-500">搜索「{currentDay.title}」英文教程</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">在 YouTube 上搜索网络安全英文教程，包含国际认证备考和实验演示</p>
+                  </a>
+                </div>
+
+                {/* 通用视频平台入口 */}
+                <div className="mt-4 p-4 rounded-lg bg-cyber-blue/5 border border-cyber-blue/15">
+                  <h4 className="text-sm font-medium text-cyber-blue mb-3 flex items-center gap-2">
+                    <ExternalLink size={14} />
+                    更多视频平台
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { name: '腾讯课堂', url: `https://ke.qq.com/course/list/${encodeURIComponent(currentDay.title + ' 网络安全')}` },
+                      { name: '网易云课堂', url: `https://study.163.com/search.htm?p=${encodeURIComponent(currentDay.title + ' 网络安全')}` },
+                      { name: '慕课网', url: `https://www.imooc.com/search/?words=${encodeURIComponent(currentDay.title + ' 安全')}` },
+                      { name: 'FreeBuf', url: `https://www.freebuf.com/search?q=${encodeURIComponent(currentDay.title)}` },
+                    ].map(platform => (
+                      <a
+                        key={platform.name}
+                        href={platform.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1.5 text-xs rounded-full bg-cyber-blue/10 text-cyber-blue hover:bg-cyber-blue/20 transition-colors border border-cyber-blue/20"
+                      >
+                        {platform.name}
+                      </a>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
@@ -523,62 +760,83 @@ export const DailyLearning: React.FC = () => {
                         size="sm"
                         icon={Copy}
                         onClick={() => {
-                          navigator.clipboard.writeText(currentDay.codeExample?.code || '');
+                          navigator.clipboard.writeText(editorCode || '');
                         }}
                       >
                         复制代码
                       </Button>
                     </div>
-                    <pre className="code-block overflow-x-auto">
-                      <code>{currentDay.codeExample.code}</code>
-                    </pre>
-                    <div className="flex gap-2">
+
+                    {/* Monaco 代码编辑器 */}
+                    <div className="relative border border-gray-700 rounded-lg overflow-hidden" style={{ height: 320 }}>
+                      <Editor
+                        language={
+                          editorLang === 'py' ? 'python' :
+                          editorLang === 'js' ? 'javascript' :
+                          editorLang === 'bash' ? 'shell' :
+                          editorLang === 'sql' ? 'sql' :
+                          editorLang
+                        }
+                        value={editorCode}
+                        onChange={(val) => setEditorCode(val || '')}
+                        theme="vs-dark"
+                        options={{
+                          fontSize: 13,
+                          minimap: { enabled: false },
+                          scrollBeyondLastLine: false,
+                          lineNumbers: 'on',
+                          tabSize: 2,
+                          automaticLayout: true,
+                        }}
+                        onMount={(editor, monaco) => {
+                          editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                            handleRunCode(editor.getValue(), editorLang);
+                          });
+                        }}
+                        loading={
+                          <div className="flex items-center justify-center h-full text-gray-500">
+                            <RefreshCw size={20} className="animate-spin mr-2" />
+                            加载编辑器...
+                          </div>
+                        }
+                      />
+                    </div>
+
+                    <div className="flex gap-2 items-center">
+                      <select
+                        value={editorLang}
+                        onChange={e => setEditorLang(e.target.value)}
+                        className="bg-cyber-purple/20 border border-cyber-purple/30 rounded-lg px-3 py-1.5 text-xs text-white"
+                      >
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="java">Java</option>
+                        <option value="bash">Bash</option>
+                        <option value="sql">SQL</option>
+                      </select>
                       <Button
                         size="sm"
                         icon={Play}
-                        onClick={async () => {
-                          setCodeRunning(true);
-                          setCodeOutput(null);
-                          const code = currentDay.codeExample?.code || '';
-                          let lang = (currentDay.codeExample?.language || 'python').toLowerCase();
-                          // 映射语言
-                          if (lang === 'py') lang = 'python';
-                          if (lang === 'js') lang = 'javascript';
-                          if (!['python', 'javascript', 'java'].includes(lang)) {
-                            setCodeOutput(`[提示] ${lang} 语言暂不支持后端执行\n支持: Python / JavaScript / Java`);
-                            setCodeRunning(false);
-                            return;
-                          }
-                          try {
-                            const resp = await fetch('/api/execute', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ language: lang, code }),
-                            });
-                            const data = await resp.json();
-                            if (resp.ok) {
-                              const out = [
-                                data.stdout ? data.stdout.trimEnd() : '',
-                                data.stderr ? `\n[stderr]\n${data.stderr.trimEnd()}` : '',
-                                `\n--- 退出码: ${data.exitCode} | 耗时: ${data.executionTime}ms ---`,
-                              ].filter(Boolean).join('');
-                              setCodeOutput(out || '(无输出)');
-                            } else {
-                              setCodeOutput(`[请求失败] ${data.error || '未知错误'}\n${data.detail || ''}`);
-                            }
-                          } catch (e: any) {
-                            setCodeOutput(`[网络错误] ${e.message}\n请确认后端服务已启动 (node backend/server.js)`);
-                          } finally {
-                            setCodeRunning(false);
-                          }
-                        }}
+                        onClick={() => handleRunCode(editorCode, editorLang)}
                         loading={codeRunning}
                       >
                         运行代码
                       </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        icon={RotateCcw}
+                        onClick={() => {
+                          setEditorCode(currentDay.codeExample?.code || '');
+                          setCodeOutput(null);
+                        }}
+                      >
+                        重置
+                      </Button>
+                      <span className="text-xs text-gray-500 ml-auto">Ctrl+Enter 快速运行</span>
                     </div>
                     {codeOutput && (
-                      <pre className="mt-3 p-3 bg-black/70 rounded-lg text-xs text-green-400 overflow-x-auto font-mono whitespace-pre-wrap">
+                      <pre className="mt-3 p-3 bg-black/70 rounded-lg text-xs text-green-400 overflow-x-auto font-mono whitespace-pre-wrap max-h-48 overflow-y-auto">
                         {codeOutput}
                       </pre>
                     )}
@@ -715,7 +973,7 @@ export const DailyLearning: React.FC = () => {
               <Button
                 variant="outline"
                 icon={ArrowLeft}
-                onClick={() => navigate(`/learning/${prevDay.id}`)}
+                onClick={() => navigate(`${basePath}/${prevDay.id}`)}
               >
                 {prevDay.title}
               </Button>
@@ -731,14 +989,81 @@ export const DailyLearning: React.FC = () => {
             {nextDay && (
               <Button
                 icon={ArrowRight}
-                onClick={() => navigate(`/learning/${nextDay.id}`)}
+                onClick={() => navigate(`${basePath}/${nextDay.id}`)}
               >
                 下一节
               </Button>
             )}
           </div>
         </motion.div>
+
+        {/* Keyboard shortcut hints */}
+        <motion.div variants={itemVariants} className="flex items-center justify-center gap-6 text-xs text-gray-500 mt-4">
+          <span className="flex items-center gap-1">
+            <Keyboard size={12} />
+            <kbd className="px-1.5 py-0.5 bg-cyber-purple/30 rounded text-gray-300">←</kbd>
+            <kbd className="px-1.5 py-0.5 bg-cyber-purple/30 rounded text-gray-300">→</kbd>
+            <span>切换天</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 bg-cyber-purple/30 rounded text-gray-300">Ctrl+Enter</kbd>
+            <span>运行代码</span>
+          </span>
+        </motion.div>
       </motion.div>
+
+      {/* Confetti Effect */}
+      <AnimatePresence>
+        {showConfetti && (
+          <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+            {Array.from({ length: 30 }).map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 1, y: -50, x: Math.random() * window.innerWidth }}
+                animate={{ opacity: 0, y: window.innerHeight + 50, x: Math.random() * window.innerWidth }}
+                transition={{ duration: 1.5 + Math.random(), delay: Math.random() * 0.5 }}
+                className="absolute w-2 h-2 rounded-full"
+                style={{ background: ['#ffd700', '#ff4444', '#44ff88', '#44aaff', '#ff44ff'][i % 5] }}
+              />
+            ))}
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Level Up Modal */}
+      <AnimatePresence>
+        {showLevelUp && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+            onClick={() => setShowLevelUp(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.5 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.5 }}
+              className="bg-slate-900 border border-cyber-gold/30 rounded-2xl p-8 text-center max-w-sm mx-4"
+              onClick={e => e.stopPropagation()}
+            >
+              <Trophy size={64} className="mx-auto mb-4 text-cyber-gold" />
+              <h2 className="font-orbitron text-2xl text-cyber-gold mb-2">
+                <Sparkles size={20} className="inline mr-2" />
+                升级了！
+              </h2>
+              <p className="text-white text-lg mb-1">
+                恭喜达到{' '}
+                <span className="text-cyber-gold font-bold">Level {userLevel}</span>
+              </p>
+              <p className="text-gray-400 text-sm mb-4">继续努力学习，解锁更多成就！</p>
+              <Button onClick={() => { setShowLevelUp(false); }}>
+                太棒了！
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

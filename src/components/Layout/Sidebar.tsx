@@ -2,7 +2,6 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   Home,
-  BookOpen,
   Code,
   FileQuestion,
   Award,
@@ -31,7 +30,6 @@ interface SidebarProps {
 
 const navItems = [
   { path: '/', icon: Home, label: '首页仪表盘' },
-  { path: '/learning', icon: BookOpen, label: '学习路径' },
   { path: '/cyber-learning', icon: Globe, label: '🛡️ 网络安全学习' },
   { path: '/resources', icon: Library, label: '安全资源库' },
   { path: '/flashcards', icon: Brain, label: '闪卡复习' },

@@ -198,8 +198,8 @@ export const Dashboard: React.FC = () => {
                   else if (todayChallenge.title.includes('工具')) navigate('/tools');
                   else if (todayChallenge.title.includes('社区')) navigate('/community');
                   else if (todayChallenge.title.includes('实验')) navigate('/lab');
-                  else if (todayChallenge.title.includes('笔记')) navigate(`/learning/day-${currentDay}`);
-                  else navigate('/learning');
+                  else if (todayChallenge.title.includes('笔记')) navigate(`/cyber-learning/cisp/day-${currentDay}`);
+                  else navigate('/cyber-learning');
                 }}
               >
                 接受挑战 <Target size={16} />
@@ -338,7 +338,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                   <Button
                     className="w-full"
-                    onClick={() => navigate(`/learning/day-${currentDay}`)}
+                    onClick={() => navigate(`/cyber-learning/cisp/day-${currentDay}`)}
                   >
                     开始学习 <ArrowRight size={16} />
                   </Button>
@@ -351,7 +351,7 @@ export const Dashboard: React.FC = () => {
                   <div
                     key={day.id}
                     className="flex items-center justify-between p-3 rounded-lg bg-cyber-black/20 border border-cyber-green/5 hover:border-cyber-green/20 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/learning/${day.id}`)}
+                    onClick={() => navigate(`/cyber-learning/cisp/${day.id}`)}
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-cyber-blue/20 flex items-center justify-center text-sm font-medium text-cyber-green">
@@ -376,7 +376,7 @@ export const Dashboard: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card
               className="text-center cursor-pointer group"
-              onClick={() => navigate('/learning')}
+              onClick={() => navigate('/cyber-learning')}
               glow
             >
               <BookOpen size={32} className="mx-auto mb-2 text-cyber-green group-hover:scale-110 transition-transform" />
@@ -428,7 +428,7 @@ export const Dashboard: React.FC = () => {
                       : 'bg-white/[0.05] border-white/10 hover:border-white/20'
                     }
                   `}
-                  onClick={() => navigate('/learning')}
+                  onClick={() => navigate('/cyber-learning')}
                 >
                   <div className="text-xs text-gray-400 mb-1">第{i + 1}周</div>
                   <div

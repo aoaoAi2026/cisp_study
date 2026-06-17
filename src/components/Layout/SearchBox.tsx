@@ -31,7 +31,7 @@ export const SearchBox: React.FC<{ onNavigate?: () => void }> = ({ onNavigate })
           type: 'day',
           title: `第${day.day}天 · ${day.title}`,
           snippet,
-          url: `/learning/${day.id}`, // 匹配 App.tsx path="learning/:dayId"
+          url: `/cyber-learning/cisp/${day.id}`,
         });
         if (out.length >= 30) break;
       }

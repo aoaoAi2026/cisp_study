@@ -1,0 +1,314 @@
+- generic [ref=e23]:
+  - complementary [ref=e24]:
+    - generic [ref=e26]:
+      - generic [ref=e28]: C
+      - generic [ref=e29]:
+        - heading "CISP学习" [level=1] [ref=e30]
+        - paragraph [ref=e31]: 零基础入门
+    - generic [ref=e34]:
+      - img [ref=e35]
+      - textbox "搜索课程/题目/工具..." [ref=e38]
+    - navigation [ref=e39]:
+      - link "首页仪表盘" [ref=e40] [cursor=pointer]:
+        - /url: /
+        - img [ref=e41]
+        - generic [ref=e44]: 首页仪表盘
+      - link "学习路径" [ref=e45] [cursor=pointer]:
+        - /url: /learning
+        - img [ref=e46]
+        - generic [ref=e48]: 学习路径
+      - link "🛡️ 网络安全学习" [ref=e49] [cursor=pointer]:
+        - /url: /cyber-learning
+        - img [ref=e50]
+        - generic [ref=e53]: 🛡️ 网络安全学习
+      - link "安全资源库" [ref=e54] [cursor=pointer]:
+        - /url: /resources
+        - img [ref=e55]
+        - generic [ref=e57]: 安全资源库
+      - link "闪卡复习" [ref=e58] [cursor=pointer]:
+        - /url: /flashcards
+        - img [ref=e59]
+        - generic [ref=e69]: 闪卡复习
+      - link "考试大纲" [ref=e70] [cursor=pointer]:
+        - /url: /outline
+        - img [ref=e71]
+        - generic [ref=e74]: 考试大纲
+      - link "历年真题" [ref=e75] [cursor=pointer]:
+        - /url: /past-papers
+        - img [ref=e76]
+        - generic [ref=e79]: 历年真题
+      - link "模拟考试" [ref=e80] [cursor=pointer]:
+        - /url: /mock-exam
+        - img [ref=e81]
+        - generic [ref=e83]: 模拟考试
+      - link "学习技巧" [ref=e84] [cursor=pointer]:
+        - /url: /study-tips
+        - img [ref=e85]
+        - generic [ref=e87]: 学习技巧
+      - link "代码实验室" [ref=e88] [cursor=pointer]:
+        - /url: /lab
+        - img [ref=e89]
+        - generic [ref=e92]: 代码实验室
+      - link "代码运行中心" [ref=e93] [cursor=pointer]:
+        - /url: /code-runner
+        - img [ref=e94]
+        - generic [ref=e96]: 代码运行中心
+      - link "实验环境" [ref=e97] [cursor=pointer]:
+        - /url: /lab-environment
+        - img [ref=e98]
+        - generic [ref=e101]: 实验环境
+      - link "工具网站" [ref=e102] [cursor=pointer]:
+        - /url: /tool-sites
+        - img [ref=e103]
+        - generic [ref=e106]: 工具网站
+      - link "测验中心" [ref=e107] [cursor=pointer]:
+        - /url: /quiz
+        - img [ref=e108]
+        - generic [ref=e112]: 测验中心
+      - link "成就系统" [ref=e113] [cursor=pointer]:
+        - /url: /achievements
+        - img [ref=e114]
+        - generic [ref=e117]: 成就系统
+      - link "社区交流" [ref=e118] [cursor=pointer]:
+        - /url: /community
+        - img [ref=e119]
+        - generic [ref=e124]: 社区交流
+      - link "个人中心" [ref=e125] [cursor=pointer]:
+        - /url: /profile
+        - img [ref=e126]
+        - generic [ref=e129]: 个人中心
+    - generic [ref=e131]:
+      - paragraph [ref=e132]: CISP学习平台 v1.0
+      - paragraph [ref=e133]: 90天成为安全专家
+  - button [ref=e134] [cursor=pointer]:
+    - img [ref=e135]
+  - generic [ref=e136]:
+    - banner [ref=e137]:
+      - generic [ref=e138]:
+        - generic [ref=e140]:
+          - img [ref=e141]
+          - textbox "搜索知识点、实验..." [ref=e144]
+        - generic [ref=e145]:
+          - button [ref=e146] [cursor=pointer]:
+            - img [ref=e147]
+          - generic [ref=e151]:
+            - generic [ref=e153]: 游
+            - generic [ref=e154]:
+              - paragraph [ref=e155]: 游客kk89
+              - paragraph [ref=e156]: 已学习 0 天
+            - generic [ref=e157]:
+              - button "设置" [ref=e158] [cursor=pointer]:
+                - img [ref=e159]
+              - button "退出" [ref=e162] [cursor=pointer]:
+                - img [ref=e163]
+    - main [ref=e166]:
+      - generic [ref=e168]:
+        - generic [ref=e169]:
+          - heading "游客kk89，加油!" [level=1] [ref=e170]
+          - paragraph [ref=e171]: 你正在学习第 1 天 · 信息安全基础
+          - generic [ref=e172]:
+            - img [ref=e173]
+            - generic [ref=e175]: 最小的权限是最强的防线。
+        - generic [ref=e176]:
+          - generic [ref=e179]:
+            - generic [ref=e180]:
+              - generic [ref=e181]: 📚
+              - generic [ref=e182]:
+                - heading "今日挑战" [level=3] [ref=e183]
+                - paragraph [ref=e184]: 完成挑战可获得 50 积分
+            - paragraph [ref=e185]: 完成今日学习任务
+            - button "接受挑战" [ref=e186] [cursor=pointer]:
+              - text: 接受挑战
+              - img [ref=e187]
+          - generic [ref=e193]:
+            - generic [ref=e194]:
+              - img [ref=e195]
+              - heading "本周打卡" [level=3] [ref=e197]
+            - generic [ref=e198]:
+              - generic [ref=e199]:
+                - generic [ref=e200]: ✓
+                - text: 一
+              - generic [ref=e201]:
+                - generic [ref=e202]: ✓
+                - text: 二
+              - generic [ref=e203]:
+                - generic [ref=e204]: ✓
+                - text: 三
+            - generic [ref=e205]: 连续学习 0 天
+        - generic [ref=e208]:
+          - generic [ref=e209]: 🍅
+          - generic [ref=e210]:
+            - heading "💡 今日学习小贴士" [level=3] [ref=e211]
+            - paragraph [ref=e212]: 试试用番茄工作法学习，25分钟专注学习，5分钟休息
+        - generic [ref=e213]:
+          - generic [ref=e214]:
+            - img [ref=e216]
+            - generic [ref=e218]:
+              - paragraph [ref=e219]: 学习天数
+              - paragraph [ref=e221]: "0"
+          - generic [ref=e222]:
+            - img [ref=e224]
+            - generic [ref=e226]:
+              - paragraph [ref=e227]: 连续学习
+              - paragraph [ref=e229]: 0天
+          - generic [ref=e230]:
+            - img [ref=e232]
+            - generic [ref=e238]:
+              - paragraph [ref=e239]: 获得成就
+              - paragraph [ref=e241]: "0"
+          - generic [ref=e242]:
+            - img [ref=e244]
+            - generic [ref=e246]:
+              - paragraph [ref=e247]: 积分
+              - paragraph [ref=e249]: "0"
+        - generic [ref=e250]:
+          - generic [ref=e252]:
+            - heading "学习进度" [level=2] [ref=e253]
+            - generic [ref=e255]:
+              - img [ref=e256]
+              - generic [ref=e259]:
+                - generic [ref=e260]: 0%
+                - generic [ref=e261]: 完成度
+            - generic [ref=e262]:
+              - generic [ref=e263]:
+                - generic [ref=e264]: 当前周数
+                - generic [ref=e265]: 第1周/共12周
+              - generic [ref=e266]:
+                - generic [ref=e267]: 本周主题
+                - generic [ref=e268]: 信息安全基础
+              - generic [ref=e269]:
+                - generic [ref=e270]: 等级
+                - generic [ref=e271]: 安全小白
+            - button "查看成就" [ref=e272] [cursor=pointer]
+          - generic [ref=e274]:
+            - generic [ref=e275]:
+              - heading "今日任务" [level=2] [ref=e276]:
+                - img [ref=e277]
+                - text: 今日任务
+              - generic [ref=e281]: Day 1
+            - generic [ref=e282]:
+              - heading "信息安全的定义" [level=3] [ref=e283]
+              - generic [ref=e284]:
+                - generic [ref=e285]:
+                  - img [ref=e286]
+                  - text: 理解信息安全概念
+                - generic [ref=e289]:
+                  - img [ref=e290]
+                  - text: 掌握CIA三要素
+                - generic [ref=e293]:
+                  - img [ref=e294]
+                  - text: 了解安全威胁分类
+              - button "开始学习" [ref=e297] [cursor=pointer]:
+                - text: 开始学习
+                - img [ref=e298]
+            - generic [ref=e300]:
+              - heading "待完成任务" [level=4] [ref=e301]
+              - generic [ref=e302] [cursor=pointer]:
+                - generic [ref=e303]:
+                  - generic [ref=e304]: "1"
+                  - generic [ref=e305]:
+                    - paragraph [ref=e306]: 信息安全的定义
+                    - paragraph [ref=e307]: 第1周 · 3个学习目标
+                - img [ref=e308]
+              - generic [ref=e310] [cursor=pointer]:
+                - generic [ref=e311]:
+                  - generic [ref=e312]: "2"
+                  - generic [ref=e313]:
+                    - paragraph [ref=e314]: 信息安全发展历程
+                    - paragraph [ref=e315]: 第1周 · 3个学习目标
+                - img [ref=e316]
+              - generic [ref=e318] [cursor=pointer]:
+                - generic [ref=e319]:
+                  - generic [ref=e320]: "3"
+                  - generic [ref=e321]:
+                    - paragraph [ref=e322]: 网络安全基本概念
+                    - paragraph [ref=e323]: 第1周 · 3个学习目标
+                - img [ref=e324]
+        - generic [ref=e326]:
+          - heading "快捷入口" [level=2] [ref=e327]
+          - generic [ref=e328]:
+            - generic [ref=e329] [cursor=pointer]:
+              - img [ref=e330]
+              - paragraph [ref=e332]: 学习路径
+              - paragraph [ref=e333]: 90天计划
+            - generic [ref=e334] [cursor=pointer]:
+              - img [ref=e335]
+              - paragraph [ref=e338]: 代码实验室
+              - paragraph [ref=e339]: 安全实验
+            - generic [ref=e340] [cursor=pointer]:
+              - img [ref=e341]
+              - paragraph [ref=e344]: 测验中心
+              - paragraph [ref=e345]: 章节测验
+            - generic [ref=e346] [cursor=pointer]:
+              - img [ref=e347]
+              - paragraph [ref=e352]: 社区交流
+              - paragraph [ref=e353]: 学习笔记
+        - generic [ref=e354]:
+          - heading "学习路径总览" [level=2] [ref=e355]
+          - generic [ref=e357]:
+            - generic [ref=e358] [cursor=pointer]:
+              - generic [ref=e359]: 第1周
+              - generic [ref=e360]: 信息安全
+            - generic [ref=e361] [cursor=pointer]:
+              - generic [ref=e362]: 第2周
+              - generic [ref=e363]: 信息安全
+            - generic [ref=e364] [cursor=pointer]:
+              - generic [ref=e365]: 第3周
+              - generic [ref=e366]: 访问控制
+            - generic [ref=e367] [cursor=pointer]:
+              - generic [ref=e368]: 第4周
+              - generic [ref=e369]: 安全运营
+            - generic [ref=e370] [cursor=pointer]:
+              - generic [ref=e371]: 第5周
+              - generic [ref=e372]: 漏洞与攻
+            - generic [ref=e373] [cursor=pointer]:
+              - generic [ref=e374]: 第6周
+              - generic [ref=e375]: 加密技术
+            - generic [ref=e376] [cursor=pointer]:
+              - generic [ref=e377]: 第7周
+              - generic [ref=e378]: 网络安全
+            - generic [ref=e379] [cursor=pointer]:
+              - generic [ref=e380]: 第8周
+              - generic [ref=e381]: 应用安全
+            - generic [ref=e382] [cursor=pointer]:
+              - generic [ref=e383]: 第9周
+              - generic [ref=e384]: 物理安全
+            - generic [ref=e385] [cursor=pointer]:
+              - generic [ref=e386]: 第10周
+              - generic [ref=e387]: 安全工程
+            - generic [ref=e388] [cursor=pointer]:
+              - generic [ref=e389]: 第11周
+              - generic [ref=e390]: 业务安全
+            - generic [ref=e391] [cursor=pointer]:
+              - generic [ref=e392]: 第12周
+              - generic [ref=e393]: 模拟考试
+        - generic [ref=e395]:
+          - generic [ref=e396]:
+            - generic [ref=e397]:
+              - img [ref=e398]
+              - generic [ref=e401]:
+                - generic [ref=e402]: 0%
+                - generic [ref=e403]: 整体进度
+            - heading "学习总进度" [level=3] [ref=e404]
+            - paragraph [ref=e405]: 已完成 0 / 90 天
+          - generic [ref=e406]:
+            - img [ref=e407]
+            - generic [ref=e417]: "0"
+            - heading "闪卡练习" [level=3] [ref=e418]
+            - paragraph [ref=e419]: 正确率 0%
+            - button "继续练习" [ref=e421] [cursor=pointer]
+          - generic [ref=e422]:
+            - img [ref=e423]
+            - generic [ref=e426]: "0"
+            - heading "专注番茄" [level=3] [ref=e427]
+            - paragraph [ref=e428]: 约 0 分钟专注学习
+            - paragraph [ref=e435]: 加油，积累专注时间!
+          - generic [ref=e436]:
+            - img [ref=e437]
+            - generic [ref=e440]: "0"
+            - heading "学习笔记" [level=3] [ref=e441]
+            - paragraph [ref=e442]: 共 0 节课做了笔记
+            - generic [ref=e443]:
+              - generic [ref=e444]: 0 个徽章
+              - generic [ref=e445]: 0 积分
+            - paragraph [ref=e446]: "等级: 安全小白"

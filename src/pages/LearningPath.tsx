@@ -188,7 +188,7 @@ export const LearningPath: React.FC = () => {
                             ${!isAvailable ? 'opacity-50' : ''}
                             ${isAvailable && !isDayCompleted ? 'cursor-pointer hover:bg-cyber-purple/20' : ''}
                           `}
-                          onClick={() => isAvailable && navigate(`/learning/${day.id}`)}
+                          onClick={() => isAvailable && navigate(`/cyber-learning/cisp/${day.id}`)}
                         >
                           {/* Day Status */}
                           <div
@@ -233,7 +233,7 @@ export const LearningPath: React.FC = () => {
                               size="sm"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigate(`/learning/${day.id}`);
+                                navigate(`/cyber-learning/cisp/${day.id}`);
                               }}
                             >
                               {isToday ? '继续' : '开始'}

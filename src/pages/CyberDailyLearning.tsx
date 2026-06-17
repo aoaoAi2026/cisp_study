@@ -33,111 +33,21 @@ import {
   RefreshCw,
   Keyboard,
   X,
-  RotateCcw
+  RotateCcw,
+  Video,
+  FileQuestion
 } from 'lucide-react';
 import { Card, Badge, Button } from '../components/UI';
 import ReactMarkdown from 'react-markdown';
-import supplement from '../data/cyberAiSupplement';
 import remarkGfm from 'remark-gfm';
 import Editor from '@monaco-editor/react';
-import { cyberBasicPlan, CyberLearningPlan, CyberDay, QuizQuestion } from '../data/cyberBasic';
-import { cyberPenetrationPlan } from '../data/cyberPenetration';
-import { cyberDefensePlan } from '../data/cyberDefense';
-import { cyberAiPlan } from '../data/cyberAi';
-import basicSupplement from '../data/cyberBasicSupplement';
-import penetrationSupplement from '../data/cyberPenetrationSupplement';
-import defenseSupplement from '../data/cyberDefenseSupplement';
+import { CyberLearningPlan, CyberDay, QuizQuestion } from '../data/cyberBasic';
 import { Pomodoro } from '../components/Pomodoro';
+import { plans, planSupplements, planColor } from './CyberDailyLearning/constants';
 import { saveData, loadData } from '../data/persistData';
 import { useQuizPractice, useWrongQuestionBook, checkQuizAnswer } from '../hooks';
 
 // 通过 fetch 动态加载 public/ 下的 .md 文件（Vite 不支持 glob 读取 public/）
-
-const plans: Record<string, CyberLearningPlan> = {
-  basic: cyberBasicPlan,
-  penetration: cyberPenetrationPlan,
-  defense: cyberDefensePlan,
-  ai: cyberAiPlan
-};
-
-// 计划补充数据映射
-const planSupplements: Record<string, Record<number, any>> = {
-  basic: basicSupplement,
-  penetration: penetrationSupplement,
-  defense: defenseSupplement,
-  ai: supplement, // 使用原有的AI补充数据
-};
-
-const planColor = (planId: string) => {
-  if (planId === 'basic') return {
-    main: 'text-cyber-green',
-    bg: 'bg-cyber-green',
-    border: 'border-cyber-green',
-    bgLight: 'bg-cyber-green/20',
-    borderLight: 'border-cyber-green/40',
-    borderFaint: 'border-cyber-green/50',
-    borderSoft: 'border-cyber-green/50',
-    borderStrong: 'border-cyber-green/70',
-    cardBorder: 'border-cyber-green/30',
-    textColor: 'text-cyber-green',
-    optionDefault: 'border-cyber-green/40 bg-white/5 hover:border-cyber-green/70 hover:bg-cyber-green/15',
-    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
-    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
-    optionDim: 'border-cyber-green/20 bg-transparent opacity-40',
-    btnDefault: 'bg-[#00cc66] text-black font-semibold hover:bg-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.3)] hover:shadow-[0_0_20px_rgba(0,255,136,0.5)]',
-  };
-  if (planId === 'penetration') return {
-    main: 'text-cyber-red',
-    bg: 'bg-cyber-red',
-    border: 'border-cyber-red',
-    bgLight: 'bg-cyber-red/20',
-    borderLight: 'border-cyber-red/40',
-    borderFaint: 'border-cyber-red/50',
-    borderSoft: 'border-cyber-red/50',
-    borderStrong: 'border-cyber-red/70',
-    cardBorder: 'border-cyber-red/30',
-    textColor: 'text-cyber-red',
-    optionDefault: 'border-cyber-red/40 bg-white/5 hover:border-cyber-red/70 hover:bg-cyber-red/15',
-    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
-    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
-    optionDim: 'border-cyber-red/20 bg-transparent opacity-40',
-    btnDefault: 'bg-[#e04444] text-white font-semibold hover:bg-[#ff5555] shadow-[0_0_12px_rgba(255,68,68,0.3)] hover:shadow-[0_0_20px_rgba(255,68,68,0.5)]',
-  };
-  if (planId === 'ai') return {
-    main: 'text-gray-200',
-    bg: 'bg-cyber-purple',
-    border: 'border-cyber-purple',
-    bgLight: 'bg-cyber-purple/15',
-    borderLight: 'border-white/15',
-    borderFaint: 'border-white/25',
-    borderSoft: 'border-white/30',
-    borderStrong: 'border-white/40',
-    cardBorder: 'border-white/10',
-    textColor: 'text-gray-300',
-    optionDefault: 'border-white/30 bg-white/5 text-gray-200 hover:border-white/50 hover:bg-white/10',
-    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
-    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
-    optionDim: 'border-white/15 bg-transparent opacity-40',
-    btnDefault: 'bg-[#7b6ba8] text-white font-semibold hover:bg-[#9588c0] shadow-[0_0_12px_rgba(123,107,168,0.35)] hover:shadow-[0_0_18px_rgba(123,107,168,0.5)]',
-  };
-  return {
-    main: 'text-cyber-blue',
-    bg: 'bg-cyber-blue',
-    border: 'border-cyber-blue',
-    bgLight: 'bg-cyber-blue/20',
-    borderLight: 'border-cyber-blue/40',
-    borderFaint: 'border-cyber-blue/50',
-    borderSoft: 'border-cyber-blue/50',
-    borderStrong: 'border-cyber-blue/70',
-    cardBorder: 'border-cyber-blue/30',
-    textColor: 'text-cyber-blue',
-    optionDefault: 'border-cyber-blue/40 bg-white/5 hover:border-cyber-blue/70 hover:bg-cyber-blue/15',
-    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
-    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
-    optionDim: 'border-cyber-blue/20 bg-transparent opacity-40',
-    btnDefault: 'bg-[#3388ee] text-white font-semibold hover:bg-[#5599ff] shadow-[0_0_12px_rgba(51,136,238,0.3)] hover:shadow-[0_0_20px_rgba(51,136,238,0.5)]',
-  };
-};
 
 export const CyberDailyLearning: React.FC = () => {
   const { planId } = useParams<{ planId: string }>();
@@ -178,6 +88,14 @@ export const CyberDailyLearning: React.FC = () => {
 
   // Stats panel visibility
   const [showStats, setShowStats] = useState(true);
+
+  // Tab navigation
+  const [activeTab, setActiveTab] = useState<'content' | 'video' | 'code' | 'quiz' | 'expert'>('content');
+
+  // Bilibili video
+  const [bilibiliBvid, setBilibiliBvid] = useState<string | null>(null);
+  const [bilibiliVideoTitle, setBilibiliVideoTitle] = useState<string>('');
+  const [videoLoading, setVideoLoading] = useState(false);
 
   // Quiz timer
   const [quizTimer, setQuizTimer] = useState(30);
@@ -255,6 +173,25 @@ export const CyberDailyLearning: React.FC = () => {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [currentDay, plan?.totalDays]);
+
+  // Bilibili 视频搜索
+  useEffect(() => {
+    if (activeTab !== 'video' || !day) return;
+    setVideoLoading(true);
+    setBilibiliBvid(null);
+    const keyword = encodeURIComponent(day.title + ' 网络安全 CISP');
+    fetch(`/api-bili/x/web-interface/search/type?search_type=video&keyword=${keyword}&page=1`)
+      .then(res => res.json())
+      .then(data => {
+        if (data?.data?.result?.length > 0) {
+          const first = data.data.result[0];
+          setBilibiliBvid(first.bvid);
+          setBilibiliVideoTitle(first.title || '');
+        }
+      })
+      .catch(() => {})
+      .finally(() => setVideoLoading(false));
+  }, [activeTab, day?.title]);
 
   // 真实代码执行 —— 调用后端 API
   const handleRunCode = async (code: string, lang: string) => {
@@ -685,6 +622,36 @@ export const CyberDailyLearning: React.FC = () => {
             </Card>
           </motion.div>
 
+          {/* Tabs */}
+          <motion.div variants={itemVariants} className="flex gap-2">
+            {[
+              { id: 'content', label: '课程内容', icon: BookOpen },
+              { id: 'video', label: '视频教程', icon: Video },
+              { id: 'code', label: '代码实战', icon: Code },
+              { id: 'quiz', label: '随堂测验', icon: FileQuestion },
+              ...(day.expertNotes && day.expertNotes.length > 0
+                ? [{ id: 'expert', label: '大神笔记', icon: Award }]
+                : []),
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all text-sm
+                  ${activeTab === tab.id
+                    ? color.tabActive
+                    : 'text-gray-400 hover:text-white hover:bg-cyber-purple/40'
+                  }`}
+              >
+                <tab.icon size={16} />
+                {tab.label}
+              </button>
+            ))}
+          </motion.div>
+
+          {/* ===== Tab: 课程内容 ===== */}
+          {activeTab === 'content' && (
+            <>
+
           {/* 课程大纲（可折叠章节树） */}
           <motion.div variants={itemVariants}>
             <Card>
@@ -775,6 +742,87 @@ export const CyberDailyLearning: React.FC = () => {
               )}
             </Card>
           </motion.div>
+            </>
+          )}
+
+          {/* ===== Tab: 视频教程 ===== */}
+          {activeTab === 'video' && (
+            <div className="space-y-4">
+              <motion.div variants={itemVariants}>
+                <Card>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Video size={18} className={color.main} />
+                    <span className={`font-medium ${color.main}`}>视频教程</span>
+                    <span className="text-xs text-gray-500">Day {currentDay} · {day.title}</span>
+                  </div>
+
+                  {videoLoading && (
+                    <div className="relative w-full rounded-lg bg-gray-800/40 border border-gray-700/30" style={{ paddingBottom: '56.25%' }}>
+                      <div className="absolute inset-0 flex items-center justify-center text-gray-400 gap-2">
+                        <RefreshCw size={20} className="animate-spin" />
+                        <span>正在 Bilibili 搜索相关视频...</span>
+                      </div>
+                    </div>
+                  )}
+                  {bilibiliBvid && !videoLoading && (
+                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                      <iframe
+                        src={`https://player.bilibili.com/player.html?bvid=${bilibiliBvid}&page=1&high_quality=1&autoplay=0`}
+                        className="absolute inset-0 w-full h-full rounded-lg border border-gray-700/30"
+                        allowFullScreen
+                        title={bilibiliVideoTitle || `Day ${currentDay} 视频教程`}
+                      />
+                    </div>
+                  )}
+                  {!bilibiliBvid && !videoLoading && (
+                    <div className="relative w-full rounded-lg bg-gray-800/30 border border-gray-700/30" style={{ paddingBottom: '56.25%' }}>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 gap-3">
+                        <Play size={36} className="text-gray-600" />
+                        <span className="text-sm">暂未找到匹配视频，请使用下方搜索</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <a
+                      href={`https://search.bilibili.com/all?keyword=${encodeURIComponent(day.title + ' 网络安全')}&order=click`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="block p-3 rounded-lg bg-gradient-to-br from-pink-500/10 to-blue-500/10 border border-pink-500/20 hover:border-pink-500/50 transition-all group"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                          <Play size={16} className="text-pink-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-white text-sm group-hover:text-pink-300">Bilibili 搜索</h4>
+                          <p className="text-xs text-gray-500">搜索更多相关视频</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      href={`https://www.youtube.com/results?search_query=${encodeURIComponent(day.title + ' cybersecurity tutorial')}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="block p-3 rounded-lg bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20 hover:border-red-500/50 transition-all group"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center">
+                          <Play size={16} className="text-red-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-white text-sm group-hover:text-red-300">YouTube 搜索</h4>
+                          <p className="text-xs text-gray-500">搜索英文教程</p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </Card>
+              </motion.div>
+            </div>
+          )}
+
+          {/* ===== Tab: 代码实战 ===== */}
+          {activeTab === 'code' && (
+            <>
 
           {/* 代码示例 */}
           {day.codeExamples && day.codeExamples.length > 0 && (
@@ -943,6 +991,8 @@ export const CyberDailyLearning: React.FC = () => {
               </Card>
             </motion.div>
           )}
+            </>
+          )}
 
           {/* 推荐工具 */}
           {day.recommendedTools && day.recommendedTools.length > 0 && (
@@ -1087,6 +1137,10 @@ export const CyberDailyLearning: React.FC = () => {
               </Card>
             </motion.div>
           )}
+
+          {/* ===== Tab: 随堂测验 ===== */}
+          {activeTab === 'quiz' && day.quiz && day.quiz.length > 0 && (
+            <>
 
           {/* 随堂测验 */}
           {day.quiz && day.quiz.length > 0 && (
@@ -1268,6 +1322,12 @@ export const CyberDailyLearning: React.FC = () => {
               </Card>
             </motion.div>
           )}
+            </>
+          )}
+
+          {/* ===== Tab: 大神笔记 ===== */}
+          {activeTab === 'expert' && day.expertNotes && day.expertNotes.length > 0 && (
+            <>
 
           {/* 大神笔记 */}
           {day.expertNotes && day.expertNotes.length > 0 && (
@@ -1303,6 +1363,8 @@ export const CyberDailyLearning: React.FC = () => {
                 </div>
               </Card>
             </motion.div>
+          )}
+            </>
           )}
 
           {/* 错题本入口 */}

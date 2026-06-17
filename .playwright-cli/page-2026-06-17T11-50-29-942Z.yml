@@ -1,0 +1,18 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e6]: 🛡️
+    - heading "CISP 学习平台" [level=1] [ref=e7]
+    - paragraph [ref=e8]: 欢迎回来，请登录
+  - generic [ref=e9]:
+    - button "登录" [ref=e10] [cursor=pointer]
+    - button "注册" [ref=e11] [cursor=pointer]
+  - generic [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]: 用户名
+      - textbox "至少3个字符" [ref=e15]
+    - generic [ref=e16]:
+      - generic [ref=e17]: 密码
+      - textbox "至少6个字符" [ref=e18]
+    - button "登录" [ref=e19] [cursor=pointer]
+  - button "👤 游客体验（无需注册）" [ref=e21] [cursor=pointer]
+  - generic [ref=e22]: 数据将安全存储在后端 SQLite 数据库中

@@ -1,5 +1,5 @@
 // 网络安全学习综合页面
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -14,7 +14,8 @@ import {
   Zap,
   Globe,
   Cpu,
-  Brain
+  Brain,
+  GraduationCap
 } from 'lucide-react';
 import { Card } from '../components/UI';
 import { cyberBasicPlan, CyberLearningPlan } from '../data/cyberBasic';
@@ -23,6 +24,7 @@ import { cyberDefensePlan } from '../data/cyberDefense';
 import { cyberAiPlan } from '../data/cyberAi';
 import { learningData as cispLearningData } from '../data/learningData';
 import { loadData } from '../data/persistData';
+import { useLearningStore } from '../store';
 
 interface CyberLearningMainProps {}
 
@@ -71,6 +73,17 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState<string | null>(null);
   const [progressMap, setProgressMap] = useState<Record<string, number>>({});
+  const { completedDays } = useLearningStore();
+
+  const cispCompleted = completedDays.filter(cd => cd.dayId?.startsWith('day-')).length;
+  const cispTotal = cispLearningData.length;
+  const cispPct = Math.round((cispCompleted / cispTotal) * 100);
+  // 下一个未完成的天
+  const cispNextDay = useMemo(() => {
+    const doneIds = new Set(completedDays.map(cd => cd.dayId));
+    const firstUndone = cispLearningData.find(d => !doneIds.has(d.id));
+    return firstUndone?.id || 'day-1';
+  }, [completedDays]);
 
   useEffect(() => {
     loadData<any>('cisp_cyber_progress', {}).then(data => {
@@ -290,27 +303,53 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
 
       {/* CISP学习入口 */}
       <motion.div variants={itemVariants}>
-        <Card className="bg-gradient-to-br from-cyber-gold/5 to-transparent border border-cyber-gold/20">
-          <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-xl bg-cyber-gold/20 flex items-center justify-center flex-shrink-0">
-              <Trophy size={32} className="text-cyber-gold" />
+        <Card className="bg-gradient-to-br from-cyber-gold/5 to-transparent border border-cyber-gold/20 hover:border-cyber-gold/40 transition-all duration-300">
+          <div className="flex items-start gap-5">
+            <div className="w-20 h-20 rounded-xl bg-cyber-gold/20 flex items-center justify-center flex-shrink-0">
+              <GraduationCap size={40} className="text-cyber-gold" />
             </div>
-            <div className="flex-1">
-              <h2 className="font-orbitron text-lg font-bold text-cyber-gold mb-1">
-                🏆 CISP认证学习
-              </h2>
-              <p className="text-sm text-gray-400">
-                CISP官方教材配套学习，涵盖信息安全保障、风险管理、安全运营等核心知识域
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="font-orbitron text-lg font-bold text-cyber-gold">
+                  🏆 CISP 认证学习
+                </h2>
+                <span className="text-xs px-2 py-0.5 rounded-full border border-cyber-gold/30 text-cyber-gold flex items-center gap-1">
+                  <Trophy size={10} />
+                  认证备考
+                </span>
+              </div>
+              <p className="text-sm text-gray-400 mb-3">
+                70天系统化备考 CISP 认证，涵盖信息安全保障、风险管理、安全工程等核心知识域
               </p>
+              {/* 进度条 */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1 h-2.5 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-cyber-gold to-yellow-400 transition-all duration-500 rounded-full"
+                    style={{ width: `${cispPct}%` }}
+                  />
+                </div>
+                <span className="text-xs text-gray-400 flex-shrink-0">
+                  {cispCompleted}/{cispTotal} 天 ({cispPct}%)
+                </span>
+              </div>
             </div>
-            <button
-              onClick={() => navigate('/learning')}
-              className="flex items-center gap-2 px-5 py-3 rounded-lg bg-cyber-gold/20 text-cyber-gold hover:bg-cyber-gold/30 font-medium transition-colors flex-shrink-0"
-            >
-              <BookOpen size={18} />
-              进入学习
-              <ChevronRight size={16} />
-            </button>
+            <div className="flex flex-col gap-2 flex-shrink-0">
+              <button
+                onClick={() => navigate(`/cyber-learning/cisp/${cispNextDay}`)}
+                className="flex items-center gap-2 px-5 py-3 rounded-lg bg-cyber-gold/20 text-cyber-gold hover:bg-cyber-gold/30 font-medium transition-colors"
+              >
+                <BookOpen size={18} />
+                {cispCompleted > 0 ? '继续学习' : '开始学习'}
+                <ChevronRight size={16} />
+              </button>
+              <button
+                onClick={() => navigate('/cyber-learning/cisp/day-1')}
+                className="text-xs text-gray-500 hover:text-cyber-gold transition-colors text-center"
+              >
+                从第1天开始
+              </button>
+            </div>
           </div>
         </Card>
       </motion.div>

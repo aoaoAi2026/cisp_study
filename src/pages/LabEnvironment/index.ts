@@ -1,0 +1,13 @@
+export { XSSSandbox } from './XSSSandbox';
+export { SQLInjectionLab } from './SQLInjectionLab';
+export { CTFChallengesComp } from './CTFChallenges';
+export { PasswordCracking } from './PasswordCracking';
+export { CryptoTools } from './CryptoTools';
+export { NetworkVisualization } from './NetworkVisualization';
+export { VulnCodeCompare } from './VulnCodeCompare';
+export { BurpSimulator } from './BurpSimulator';
+export { WAFRulesBuilder } from './WAFRulesBuilder';
+export { LogAnalysis } from './LogAnalysis';
+export { LogicVulnerabilities } from './LogicVulnerabilities';
+export { LAB_MODULES } from './modules';
+export type { LabModule, CTFChallenge } from './types';

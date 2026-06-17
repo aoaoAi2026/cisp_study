@@ -1,0 +1,249 @@
+- generic [ref=e23]:
+  - complementary [ref=e24]:
+    - generic [ref=e26]:
+      - generic [ref=e28]: C
+      - generic [ref=e29]:
+        - heading "CISP学习" [level=1] [ref=e30]
+        - paragraph [ref=e31]: 零基础入门
+    - generic [ref=e34]:
+      - img [ref=e35]
+      - textbox "搜索课程/题目/工具..." [ref=e38]
+    - navigation [ref=e39]:
+      - link "首页仪表盘" [ref=e40] [cursor=pointer]:
+        - /url: /
+        - img [ref=e41]
+        - generic [ref=e44]: 首页仪表盘
+      - link "学习路径" [ref=e45] [cursor=pointer]:
+        - /url: /learning
+        - img [ref=e46]
+        - generic [ref=e48]: 学习路径
+      - link "🛡️ 网络安全学习" [ref=e49] [cursor=pointer]:
+        - /url: /cyber-learning
+        - img [ref=e50]
+        - generic [ref=e53]: 🛡️ 网络安全学习
+      - link "安全资源库" [ref=e54] [cursor=pointer]:
+        - /url: /resources
+        - img [ref=e55]
+        - generic [ref=e57]: 安全资源库
+      - link "闪卡复习" [ref=e58] [cursor=pointer]:
+        - /url: /flashcards
+        - img [ref=e59]
+        - generic [ref=e69]: 闪卡复习
+      - link "考试大纲" [ref=e70] [cursor=pointer]:
+        - /url: /outline
+        - img [ref=e71]
+        - generic [ref=e74]: 考试大纲
+      - link "历年真题" [ref=e75] [cursor=pointer]:
+        - /url: /past-papers
+        - img [ref=e76]
+        - generic [ref=e79]: 历年真题
+      - link "模拟考试" [ref=e80] [cursor=pointer]:
+        - /url: /mock-exam
+        - img [ref=e81]
+        - generic [ref=e83]: 模拟考试
+      - link "学习技巧" [ref=e84] [cursor=pointer]:
+        - /url: /study-tips
+        - img [ref=e85]
+        - generic [ref=e87]: 学习技巧
+      - link "代码实验室" [active] [ref=e88] [cursor=pointer]:
+        - /url: /lab
+        - img [ref=e89]
+        - generic [ref=e92]: 代码实验室
+      - link "代码运行中心" [ref=e93] [cursor=pointer]:
+        - /url: /code-runner
+        - img [ref=e94]
+        - generic [ref=e96]: 代码运行中心
+      - link "实验环境" [ref=e97] [cursor=pointer]:
+        - /url: /lab-environment
+        - img [ref=e98]
+        - generic [ref=e101]: 实验环境
+      - link "工具网站" [ref=e102] [cursor=pointer]:
+        - /url: /tool-sites
+        - img [ref=e103]
+        - generic [ref=e106]: 工具网站
+      - link "测验中心" [ref=e107] [cursor=pointer]:
+        - /url: /quiz
+        - img [ref=e108]
+        - generic [ref=e112]: 测验中心
+      - link "成就系统" [ref=e113] [cursor=pointer]:
+        - /url: /achievements
+        - img [ref=e114]
+        - generic [ref=e117]: 成就系统
+      - link "社区交流" [ref=e118] [cursor=pointer]:
+        - /url: /community
+        - img [ref=e119]
+        - generic [ref=e124]: 社区交流
+      - link "个人中心" [ref=e125] [cursor=pointer]:
+        - /url: /profile
+        - img [ref=e126]
+        - generic [ref=e129]: 个人中心
+    - generic [ref=e131]:
+      - paragraph [ref=e132]: CISP学习平台 v1.0
+      - paragraph [ref=e133]: 90天成为安全专家
+  - button [ref=e134] [cursor=pointer]:
+    - img [ref=e135]
+  - generic [ref=e136]:
+    - banner [ref=e137]:
+      - generic [ref=e138]:
+        - generic [ref=e140]:
+          - img [ref=e141]
+          - textbox "搜索知识点、实验..." [ref=e144]
+        - generic [ref=e145]:
+          - button [ref=e146] [cursor=pointer]:
+            - img [ref=e147]
+          - generic [ref=e151]:
+            - generic [ref=e153]: 游
+            - generic [ref=e154]:
+              - paragraph [ref=e155]: 游客kk89
+              - paragraph [ref=e156]: 已学习 0 天
+            - generic [ref=e157]:
+              - button "设置" [ref=e158] [cursor=pointer]:
+                - img [ref=e159]
+              - button "退出" [ref=e162] [cursor=pointer]:
+                - img [ref=e163]
+    - main [ref=e166]:
+      - generic [ref=e447]:
+        - generic [ref=e448]:
+          - heading "代码实验室" [level=1] [ref=e449]
+          - paragraph [ref=e450]: 通过动手实验深入理解安全概念，所有实验都在安全模拟环境中进行
+        - generic [ref=e451]:
+          - button "代码实验" [ref=e452] [cursor=pointer]:
+            - generic [ref=e453]:
+              - img [ref=e454]
+              - text: 代码实验
+          - button "脚本仓库 (39)" [ref=e456] [cursor=pointer]:
+            - generic [ref=e457]:
+              - img [ref=e458]
+              - text: 脚本仓库 (39)
+          - button "法律法规 (9)" [ref=e462] [cursor=pointer]:
+            - generic [ref=e463]:
+              - img [ref=e464]
+              - text: 法律法规 (9)
+          - button "应急处理 (9)" [ref=e466] [cursor=pointer]:
+            - generic [ref=e467]:
+              - img [ref=e468]
+              - text: 应急处理 (9)
+        - generic [ref=e470]:
+          - generic [ref=e471]:
+            - generic [ref=e472]:
+              - img [ref=e473]
+              - paragraph [ref=e476]: "13"
+              - paragraph [ref=e477]: 实验总数
+            - generic [ref=e478]:
+              - img [ref=e479]
+              - paragraph [ref=e482]: "0"
+              - paragraph [ref=e483]: 已完成
+            - generic [ref=e484]:
+              - img [ref=e485]
+              - paragraph [ref=e487]: 0%
+              - paragraph [ref=e488]: 完成率
+          - generic [ref=e489]:
+            - generic [ref=e492] [cursor=pointer]:
+              - img [ref=e494]
+              - generic [ref=e498]:
+                - heading "SQL注入攻击模拟" [level=3] [ref=e500]
+                - paragraph [ref=e501]: 学习如何发现和防止SQL注入漏洞
+                - generic [ref=e502]:
+                  - generic [ref=e503]: 中等
+                  - generic [ref=e504]: 4个步骤
+            - generic [ref=e507] [cursor=pointer]:
+              - img [ref=e509]
+              - generic [ref=e511]:
+                - heading "XSS跨站脚本攻击" [level=3] [ref=e513]
+                - paragraph [ref=e514]: 了解XSS攻击的原理和防护措施
+                - generic [ref=e515]:
+                  - generic [ref=e516]: 简单
+                  - generic [ref=e517]: 4个步骤
+            - generic [ref=e520] [cursor=pointer]:
+              - img [ref=e522]
+              - generic [ref=e524]:
+                - heading "密码暴力破解模拟" [level=3] [ref=e526]
+                - paragraph [ref=e527]: 理解弱密码的危险性
+                - generic [ref=e528]:
+                  - generic [ref=e529]: 简单
+                  - generic [ref=e530]: 3个步骤
+            - generic [ref=e533] [cursor=pointer]:
+              - img [ref=e535]
+              - generic [ref=e540]:
+                - heading "日志分析练习" [level=3] [ref=e542]
+                - paragraph [ref=e543]: 学习从日志中发现安全威胁
+                - generic [ref=e544]:
+                  - generic [ref=e545]: 中等
+                  - generic [ref=e546]: 3个步骤
+            - generic [ref=e549] [cursor=pointer]:
+              - img [ref=e551]
+              - generic [ref=e554]:
+                - heading "哈希函数实践" [level=3] [ref=e556]
+                - paragraph [ref=e557]: 理解哈希在数据完整性中的应用
+                - generic [ref=e558]:
+                  - generic [ref=e559]: 简单
+                  - generic [ref=e560]: 3个步骤
+            - generic [ref=e563] [cursor=pointer]:
+              - img [ref=e565]
+              - generic [ref=e567]:
+                - heading "对称加密演示" [level=3] [ref=e569]
+                - paragraph [ref=e570]: 学习对称加密的原理
+                - generic [ref=e571]:
+                  - generic [ref=e572]: 中等
+                  - generic [ref=e573]: 3个步骤
+            - generic [ref=e576] [cursor=pointer]:
+              - img [ref=e578]
+              - generic [ref=e583]:
+                - heading "防火墙规则配置" [level=3] [ref=e585]
+                - paragraph [ref=e586]: 学习基本的防火墙规则
+                - generic [ref=e587]:
+                  - generic [ref=e588]: 困难
+                  - generic [ref=e589]: 3个步骤
+            - generic [ref=e592] [cursor=pointer]:
+              - img [ref=e594]
+              - generic [ref=e596]:
+                - heading "端口扫描模拟" [level=3] [ref=e598]
+                - paragraph [ref=e599]: 学习Nmap端口扫描原理
+                - generic [ref=e600]:
+                  - generic [ref=e601]: 中等
+                  - generic [ref=e602]: 4个步骤
+            - generic [ref=e605] [cursor=pointer]:
+              - img [ref=e607]
+              - generic [ref=e609]:
+                - heading "漏洞扫描练习" [level=3] [ref=e611]
+                - paragraph [ref=e612]: 学习漏洞扫描工具使用
+                - generic [ref=e613]:
+                  - generic [ref=e614]: 困难
+                  - generic [ref=e615]: 4个步骤
+            - generic [ref=e618] [cursor=pointer]:
+              - img [ref=e620]
+              - generic [ref=e622]:
+                - heading "访问控制模型" [level=3] [ref=e624]
+                - paragraph [ref=e625]: 理解DAC/MAC/RBAC模型
+                - generic [ref=e626]:
+                  - generic [ref=e627]: 中等
+                  - generic [ref=e628]: 4个步骤
+            - generic [ref=e631] [cursor=pointer]:
+              - img [ref=e633]
+              - generic [ref=e635]:
+                - heading "安全事件响应" [level=3] [ref=e637]
+                - paragraph [ref=e638]: 学习应急响应流程
+                - generic [ref=e639]:
+                  - generic [ref=e640]: 中等
+                  - generic [ref=e641]: 4个步骤
+            - generic [ref=e644] [cursor=pointer]:
+              - img [ref=e646]
+              - generic [ref=e648]:
+                - heading "风险评估计算" [level=3] [ref=e650]
+                - paragraph [ref=e651]: 学习信息安全风险评估方法
+                - generic [ref=e652]:
+                  - generic [ref=e653]: 简单
+                  - generic [ref=e654]: 4个步骤
+            - generic [ref=e657] [cursor=pointer]:
+              - img [ref=e659]
+              - generic [ref=e661]:
+                - heading "OWASP Top 10漏洞识别" [level=3] [ref=e663]
+                - paragraph [ref=e664]: 识别常见Web安全漏洞
+                - generic [ref=e665]:
+                  - generic [ref=e666]: 中等
+                  - generic [ref=e667]: 4个步骤
+          - generic [ref=e669]:
+            - img [ref=e670]
+            - generic [ref=e672]:
+              - heading "安全实验环境" [level=3] [ref=e673]
+              - paragraph [ref=e674]: 所有实验都在隔离的虚拟环境中进行，不会对真实系统造成任何影响。这些实验仅用于学习目的，帮助你理解安全威胁和防御机制。

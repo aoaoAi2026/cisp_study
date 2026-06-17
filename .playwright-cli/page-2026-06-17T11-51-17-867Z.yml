@@ -1,0 +1,178 @@
+- generic [ref=e23]:
+  - complementary [ref=e24]:
+    - generic [ref=e26]:
+      - generic [ref=e28]: C
+      - generic [ref=e29]:
+        - heading "CISP学习" [level=1] [ref=e30]
+        - paragraph [ref=e31]: 零基础入门
+    - generic [ref=e34]:
+      - img [ref=e35]
+      - textbox "搜索课程/题目/工具..." [ref=e38]
+    - navigation [ref=e39]:
+      - link "首页仪表盘" [ref=e40] [cursor=pointer]:
+        - /url: /
+        - img [ref=e41]
+        - generic [ref=e44]: 首页仪表盘
+      - link "学习路径" [ref=e45] [cursor=pointer]:
+        - /url: /learning
+        - img [ref=e46]
+        - generic [ref=e48]: 学习路径
+      - link "🛡️ 网络安全学习" [ref=e49] [cursor=pointer]:
+        - /url: /cyber-learning
+        - img [ref=e50]
+        - generic [ref=e53]: 🛡️ 网络安全学习
+      - link "安全资源库" [ref=e54] [cursor=pointer]:
+        - /url: /resources
+        - img [ref=e55]
+        - generic [ref=e57]: 安全资源库
+      - link "闪卡复习" [ref=e58] [cursor=pointer]:
+        - /url: /flashcards
+        - img [ref=e59]
+        - generic [ref=e69]: 闪卡复习
+      - link "考试大纲" [ref=e70] [cursor=pointer]:
+        - /url: /outline
+        - img [ref=e71]
+        - generic [ref=e74]: 考试大纲
+      - link "历年真题" [ref=e75] [cursor=pointer]:
+        - /url: /past-papers
+        - img [ref=e76]
+        - generic [ref=e79]: 历年真题
+      - link "模拟考试" [ref=e80] [cursor=pointer]:
+        - /url: /mock-exam
+        - img [ref=e81]
+        - generic [ref=e83]: 模拟考试
+      - link "学习技巧" [ref=e84] [cursor=pointer]:
+        - /url: /study-tips
+        - img [ref=e85]
+        - generic [ref=e87]: 学习技巧
+      - link "代码实验室" [ref=e88] [cursor=pointer]:
+        - /url: /lab
+        - img [ref=e89]
+        - generic [ref=e92]: 代码实验室
+      - link "代码运行中心" [active] [ref=e93] [cursor=pointer]:
+        - /url: /code-runner
+        - img [ref=e94]
+        - generic [ref=e96]: 代码运行中心
+      - link "实验环境" [ref=e97] [cursor=pointer]:
+        - /url: /lab-environment
+        - img [ref=e98]
+        - generic [ref=e101]: 实验环境
+      - link "工具网站" [ref=e102] [cursor=pointer]:
+        - /url: /tool-sites
+        - img [ref=e103]
+        - generic [ref=e106]: 工具网站
+      - link "测验中心" [ref=e107] [cursor=pointer]:
+        - /url: /quiz
+        - img [ref=e108]
+        - generic [ref=e112]: 测验中心
+      - link "成就系统" [ref=e113] [cursor=pointer]:
+        - /url: /achievements
+        - img [ref=e114]
+        - generic [ref=e117]: 成就系统
+      - link "社区交流" [ref=e118] [cursor=pointer]:
+        - /url: /community
+        - img [ref=e119]
+        - generic [ref=e124]: 社区交流
+      - link "个人中心" [ref=e125] [cursor=pointer]:
+        - /url: /profile
+        - img [ref=e126]
+        - generic [ref=e129]: 个人中心
+    - generic [ref=e131]:
+      - paragraph [ref=e132]: CISP学习平台 v1.0
+      - paragraph [ref=e133]: 90天成为安全专家
+  - button [ref=e134] [cursor=pointer]:
+    - img [ref=e135]
+  - generic [ref=e136]:
+    - banner [ref=e137]:
+      - generic [ref=e138]:
+        - generic [ref=e140]:
+          - img [ref=e141]
+          - textbox "搜索知识点、实验..." [ref=e144]
+        - generic [ref=e145]:
+          - button [ref=e146] [cursor=pointer]:
+            - img [ref=e147]
+          - generic [ref=e151]:
+            - generic [ref=e153]: 游
+            - generic [ref=e154]:
+              - paragraph [ref=e155]: 游客kk89
+              - paragraph [ref=e156]: 已学习 0 天
+            - generic [ref=e157]:
+              - button "设置" [ref=e158] [cursor=pointer]:
+                - img [ref=e159]
+              - button "退出" [ref=e162] [cursor=pointer]:
+                - img [ref=e163]
+    - main [ref=e166]:
+      - generic [ref=e676]:
+        - generic [ref=e678]:
+          - img [ref=e680]
+          - generic [ref=e682]:
+            - heading "代码运行中心" [level=1] [ref=e683]
+            - paragraph [ref=e684]: 多标签编辑 · 安全审计 · 性能基准 · 分屏模式 · Ctrl+Enter 运行
+        - generic [ref=e685]:
+          - generic [ref=e686]:
+            - generic [ref=e687]:
+              - generic "代码 1" [ref=e689] [cursor=pointer]
+              - button "新建标签页" [ref=e690] [cursor=pointer]:
+                - img [ref=e691]
+            - generic [ref=e693]:
+              - generic [ref=e695]:
+                - img [ref=e696]
+                - generic [ref=e698]: "无法获取运行环境: Unexpected end of JSON input"
+              - generic [ref=e699]:
+                - button "切换为左右分屏" [ref=e700] [cursor=pointer]:
+                  - img [ref=e701]
+                - button "安全代码审计" [disabled] [ref=e704]:
+                  - img [ref=e705]
+                - button "性能基准测试" [disabled] [ref=e707]:
+                  - img [ref=e708]
+                - button "代码Diff对比" [ref=e711] [cursor=pointer]:
+                  - img [ref=e712]
+                - button "项目保存/加载" [ref=e718] [cursor=pointer]:
+                  - img [ref=e719]
+                - button "代码片段库" [ref=e721] [cursor=pointer]:
+                  - img [ref=e722]
+                - button "重置" [ref=e724] [cursor=pointer]:
+                  - img [ref=e725]
+                - button "格式化" [ref=e728] [cursor=pointer]:
+                  - img [ref=e729]
+                - button "下载代码" [disabled] [ref=e733]:
+                  - img [ref=e734]
+                - button "历史面板" [ref=e738] [cursor=pointer]:
+                  - img [ref=e739]
+                - button "全屏" [ref=e742] [cursor=pointer]:
+                  - img [ref=e743]
+                - button "运行 ⌃↵" [disabled] [ref=e748]:
+                  - img [ref=e749]
+                  - text: 运行
+                  - generic [ref=e751]: ⌃↵
+            - generic [ref=e753]:
+              - generic [ref=e754]:
+                - generic [ref=e756]: 📥 标准输入 (stdin)
+                - textbox "input() / Scanner 读取的数据，每行一个值..." [ref=e757]
+              - generic [ref=e758]:
+                - generic [ref=e760]: ⚙️ 命令行参数 (CLI Args)
+                - 'textbox "空格分隔的参数，如: --debug --port 8080 input.txt" [ref=e761]'
+            - generic [ref=e762]:
+              - generic [ref=e765]: Loading...
+              - generic [ref=e766]:
+                - generic [ref=e767]:
+                  - button "📤 输出结果" [ref=e768] [cursor=pointer]
+                  - button "🛡️ 安全审计" [ref=e769] [cursor=pointer]
+                  - button "⚡ 基准测试" [ref=e770] [cursor=pointer]
+                - generic [ref=e772]:
+                  - img [ref=e773]
+                  - generic [ref=e775]: 点击「运行」或 Ctrl+Enter 查看输出
+          - generic [ref=e776]:
+            - generic [ref=e777]:
+              - generic [ref=e778]:
+                - img [ref=e779]
+                - heading "执行历史" [level=4] [ref=e783]
+                - generic [ref=e784]: (0)
+              - generic [ref=e785]:
+                - button "Diff 对比" [disabled] [ref=e786]:
+                  - img [ref=e787]
+                - button "清空历史" [disabled] [ref=e789]:
+                  - img [ref=e790]
+            - generic [ref=e794]:
+              - img [ref=e795]
+              - generic [ref=e799]: 暂无执行记录

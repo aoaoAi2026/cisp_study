@@ -28,6 +28,14 @@ export default defineConfig({
         target: 'http://localhost:3003',
         changeOrigin: true,
       },
+      '/api-bili': {
+        target: 'https://api.bilibili.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-bili/, ''),
+        headers: {
+          Referer: 'https://www.bilibili.com',
+        },
+      },
     },
   },
   build: {

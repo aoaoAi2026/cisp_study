@@ -1,0 +1,452 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e23]:
+    - complementary [ref=e24]:
+      - generic [ref=e26]:
+        - generic [ref=e28]: C
+        - generic [ref=e29]:
+          - heading "CISP学习" [level=1] [ref=e30]
+          - paragraph [ref=e31]: 零基础入门
+      - generic [ref=e34]:
+        - img [ref=e35]
+        - textbox "搜索课程/题目/工具..." [ref=e38]
+      - navigation [ref=e39]:
+        - link "首页仪表盘" [ref=e40] [cursor=pointer]:
+          - /url: /
+          - img [ref=e41]
+          - generic [ref=e44]: 首页仪表盘
+        - link "学习路径" [ref=e45] [cursor=pointer]:
+          - /url: /learning
+          - img [ref=e46]
+          - generic [ref=e48]: 学习路径
+        - link "🛡️ 网络安全学习" [ref=e49] [cursor=pointer]:
+          - /url: /cyber-learning
+          - img [ref=e50]
+          - generic [ref=e53]: 🛡️ 网络安全学习
+        - link "安全资源库" [ref=e54] [cursor=pointer]:
+          - /url: /resources
+          - img [ref=e55]
+          - generic [ref=e57]: 安全资源库
+        - link "闪卡复习" [ref=e58] [cursor=pointer]:
+          - /url: /flashcards
+          - img [ref=e59]
+          - generic [ref=e69]: 闪卡复习
+        - link "考试大纲" [ref=e70] [cursor=pointer]:
+          - /url: /outline
+          - img [ref=e71]
+          - generic [ref=e74]: 考试大纲
+        - link "历年真题" [ref=e75] [cursor=pointer]:
+          - /url: /past-papers
+          - img [ref=e76]
+          - generic [ref=e79]: 历年真题
+        - link "模拟考试" [ref=e80] [cursor=pointer]:
+          - /url: /mock-exam
+          - img [ref=e81]
+          - generic [ref=e83]: 模拟考试
+        - link "学习技巧" [ref=e84] [cursor=pointer]:
+          - /url: /study-tips
+          - img [ref=e85]
+          - generic [ref=e87]: 学习技巧
+        - link "代码实验室" [ref=e88] [cursor=pointer]:
+          - /url: /lab
+          - img [ref=e89]
+          - generic [ref=e92]: 代码实验室
+        - link "代码运行中心" [ref=e93] [cursor=pointer]:
+          - /url: /code-runner
+          - img [ref=e94]
+          - generic [ref=e96]: 代码运行中心
+        - link "实验环境" [ref=e97] [cursor=pointer]:
+          - /url: /lab-environment
+          - img [ref=e98]
+          - generic [ref=e101]: 实验环境
+        - link "工具网站" [ref=e102] [cursor=pointer]:
+          - /url: /tool-sites
+          - img [ref=e103]
+          - generic [ref=e106]: 工具网站
+        - link "测验中心" [ref=e107] [cursor=pointer]:
+          - /url: /quiz
+          - img [ref=e108]
+          - generic [ref=e112]: 测验中心
+        - link "成就系统" [ref=e113] [cursor=pointer]:
+          - /url: /achievements
+          - img [ref=e114]
+          - generic [ref=e117]: 成就系统
+        - link "社区交流" [ref=e118] [cursor=pointer]:
+          - /url: /community
+          - img [ref=e119]
+          - generic [ref=e124]: 社区交流
+        - link "个人中心" [ref=e125] [cursor=pointer]:
+          - /url: /profile
+          - img [ref=e126]
+          - generic [ref=e129]: 个人中心
+      - generic [ref=e131]:
+        - paragraph [ref=e132]: CISP学习平台 v1.0
+        - paragraph [ref=e133]: 90天成为安全专家
+    - button [ref=e134] [cursor=pointer]:
+      - img [ref=e135]
+    - generic [ref=e136]:
+      - banner [ref=e137]:
+        - generic [ref=e138]:
+          - generic [ref=e140]:
+            - img [ref=e141]
+            - textbox "搜索知识点、实验..." [ref=e144]
+          - generic [ref=e145]:
+            - button [ref=e146] [cursor=pointer]:
+              - img [ref=e147]
+            - generic [ref=e151]:
+              - generic [ref=e153]: 游
+              - generic [ref=e154]:
+                - paragraph [ref=e155]: 游客kk89
+                - paragraph [ref=e156]: 已学习 0 天
+              - generic [ref=e157]:
+                - button "设置" [ref=e158] [cursor=pointer]:
+                  - img [ref=e159]
+                - button "退出" [ref=e162] [cursor=pointer]:
+                  - img [ref=e163]
+      - main [ref=e166]:
+        - generic [ref=e1058]:
+          - generic [ref=e1059]:
+            - generic [ref=e1060]:
+              - button [ref=e1061] [cursor=pointer]:
+                - img [ref=e1062]
+              - generic [ref=e1064]:
+                - generic [ref=e1065]:
+                  - generic [ref=e1066]: 🛡️ 网络安全基础
+                  - generic [ref=e1067]: 第1天
+                - paragraph [ref=e1068]: 从零开始，系统掌握网络安全基础知识体系，覆盖网络协议、Web安全、密码学、漏洞原理等核心领域。
+            - button "完成今日学习" [ref=e1069] [cursor=pointer]:
+              - img [ref=e1070]
+              - text: 完成今日学习
+          - generic [ref=e1074]:
+            - button "1" [ref=e1075] [cursor=pointer]
+            - button "2" [ref=e1076] [cursor=pointer]
+            - button "3" [ref=e1077] [cursor=pointer]
+            - button "4" [ref=e1078] [cursor=pointer]
+            - button "5" [ref=e1079] [cursor=pointer]
+            - button "6" [ref=e1080] [cursor=pointer]
+            - button "7" [ref=e1081] [cursor=pointer]
+            - button "8" [ref=e1082] [cursor=pointer]
+            - button "9" [ref=e1083] [cursor=pointer]
+            - button "10" [ref=e1084] [cursor=pointer]
+            - button "11" [ref=e1085] [cursor=pointer]
+            - button "12" [ref=e1086] [cursor=pointer]
+            - button "13" [ref=e1087] [cursor=pointer]
+            - button "14" [ref=e1088] [cursor=pointer]
+            - button "15" [ref=e1089] [cursor=pointer]
+            - button "16" [ref=e1090] [cursor=pointer]
+            - button "17" [ref=e1091] [cursor=pointer]
+            - button "18" [ref=e1092] [cursor=pointer]
+            - button "19" [ref=e1093] [cursor=pointer]
+            - button "20" [ref=e1094] [cursor=pointer]
+            - button "21" [ref=e1095] [cursor=pointer]
+            - button "22" [ref=e1096] [cursor=pointer]
+            - button "23" [ref=e1097] [cursor=pointer]
+            - button "24" [ref=e1098] [cursor=pointer]
+            - button "25" [ref=e1099] [cursor=pointer]
+            - button "26" [ref=e1100] [cursor=pointer]
+            - button "27" [ref=e1101] [cursor=pointer]
+            - button "28" [ref=e1102] [cursor=pointer]
+            - button "29" [ref=e1103] [cursor=pointer]
+            - button "30" [ref=e1104] [cursor=pointer]
+          - generic [ref=e1106]:
+            - generic [ref=e1107]:
+              - heading "学习统计" [level=3] [ref=e1108]:
+                - img [ref=e1109]
+                - text: 学习统计
+              - button "收起" [ref=e1112] [cursor=pointer]
+            - generic [ref=e1113]:
+              - generic [ref=e1114]:
+                - img [ref=e1115]
+                - paragraph [ref=e1117]: "0"
+                - paragraph [ref=e1118]: 经验值 XP
+              - generic [ref=e1120]:
+                - img [ref=e1121]
+                - paragraph [ref=e1127]: Lv.1
+                - paragraph [ref=e1128]: 当前等级
+              - generic [ref=e1129]:
+                - img [ref=e1130]
+                - paragraph [ref=e1132]: "0"
+                - paragraph [ref=e1133]: 完成天数
+              - generic [ref=e1134]:
+                - img [ref=e1135]
+                - paragraph [ref=e1139]: 0%
+                - paragraph [ref=e1140]: 测验均分
+              - generic [ref=e1141]:
+                - img [ref=e1142]
+                - paragraph [ref=e1148]: "0"
+                - paragraph [ref=e1149]: 徽章数
+            - generic [ref=e1150]:
+              - generic [ref=e1151]: "本周:"
+              - generic "0 次学习" [ref=e1152]: 一
+              - generic "0 次学习" [ref=e1153]: 二
+              - generic "0 次学习" [ref=e1154]: 三
+              - generic "0 次学习" [ref=e1155]: 四
+              - generic "0 次学习" [ref=e1156]: 五
+              - generic "0 次学习" [ref=e1157]: 六
+              - generic "0 次学习" [ref=e1158]: 日
+          - generic [ref=e1159]:
+            - generic [ref=e1161]:
+              - heading "网络安全概述" [level=2] [ref=e1162]
+              - paragraph [ref=e1163]: Security Overview
+              - generic [ref=e1164]:
+                - heading "学习目标" [level=3] [ref=e1165]:
+                  - img [ref=e1166]
+                  - text: 学习目标
+                - generic [ref=e1170]:
+                  - generic [ref=e1171]:
+                    - generic [ref=e1172]: ▸
+                    - generic [ref=e1173]: 理解网络安全定义
+                  - generic [ref=e1174]:
+                    - generic [ref=e1175]: ▸
+                    - generic [ref=e1176]: 了解行业发展
+                  - generic [ref=e1177]:
+                    - generic [ref=e1178]: ▸
+                    - generic [ref=e1179]: 认识就业方向
+              - generic [ref=e1180]:
+                - heading "核心知识点" [level=3] [ref=e1181]:
+                  - img [ref=e1182]
+                  - text: 核心知识点
+                - generic [ref=e1184]:
+                  - generic [ref=e1185]:
+                    - generic [ref=e1186]: ★
+                    - generic [ref=e1187]: CIA是信息安全核心目标
+                  - generic [ref=e1188]:
+                    - generic [ref=e1189]: ★
+                    - generic [ref=e1190]: 保密性-完整性-可用性
+                  - generic [ref=e1191]:
+                    - generic [ref=e1192]: ★
+                    - generic [ref=e1193]: 威胁分外部和内部
+                  - generic [ref=e1194]:
+                    - generic [ref=e1195]: ★
+                    - generic [ref=e1196]: 社会工程利用人性弱点
+                  - generic [ref=e1197]:
+                    - generic [ref=e1198]: ★
+                    - generic [ref=e1199]: 网络安全已上升为国家战略
+            - generic [ref=e1201]:
+              - button "课程大纲" [ref=e1202] [cursor=pointer]:
+                - heading "课程大纲" [level=3] [ref=e1203]:
+                  - img [ref=e1204]
+                  - text: 课程大纲
+                - img [ref=e1206]
+              - generic [ref=e1208]: 点击展开查看课程大纲
+            - generic [ref=e1210]:
+              - button "课程内容" [ref=e1211] [cursor=pointer]:
+                - heading "课程内容" [level=3] [ref=e1212]:
+                  - img [ref=e1213]
+                  - text: 课程内容
+                - img [ref=e1215]
+              - generic [ref=e1217]: 点击展开查看课程内容
+            - generic [ref=e1219]:
+              - heading "代码示例" [level=3] [ref=e1220]:
+                - img [ref=e1221]
+                - text: 代码示例
+              - generic [ref=e1223]:
+                - generic [ref=e1224]:
+                  - generic [ref=e1225]:
+                    - generic [ref=e1226]:
+                      - generic [ref=e1227]: 密码强度检测
+                      - generic [ref=e1228]: python
+                    - button "复制" [ref=e1229] [cursor=pointer]:
+                      - img [ref=e1230]
+                      - text: 复制
+                  - code [ref=e1234]: "import re def check_password_strength(password): \"\"\"检测密码强度\"\"\" score = 0 feedback = [] # 长度检查 if len(password) >= 8: score += 1 else: feedback.append(\"密码长度至少需要8位\") if len(password) >= 12: score += 1 # 包含大写字母 if re.search(r\"[A-Z]\", password): score += 1 else: feedback.append(\"建议包含大写字母\") # 包含小写字母 if re.search(r\"[a-z]\", password): score += 1 else: feedback.append(\"建议包含小写字母\") # 包含数字 if re.search(r\"[0-9]\", password): score += 1 else: feedback.append(\"建议包含数字\") # 包含特殊字符 if re.search(r\"[!@#$%^&*(),.?\":{}|<>]\", password): score += 1 else: feedback.append(\"建议包含特殊字符\") # 评估等级 if score <= 2: level = \"弱\" color = \"红色\" elif score <= 4: level = \"中等\" color = \"黄色\" else: level = \"强\" color = \"绿色\" return { \"score\": score, \"level\": level, \"color\": color, \"feedback\": feedback } # 测试 password = input(\"请输入密码: \") result = check_password_strength(password) print(f\"密码强度: {result['level']} ({result['color']})\") if result[\"feedback\"]: print(\"建议:\") for tip in result[\"feedback\"]: print(f\" - {tip}\")"
+                  - paragraph [ref=e1236]: 💡检测密码强度，包含长度、大小写字母、数字和特殊字符检查
+                - generic [ref=e1237]:
+                  - generic [ref=e1238]:
+                    - generic [ref=e1239]:
+                      - generic [ref=e1240]: CIA三要素代码演示
+                      - generic [ref=e1241]: python
+                    - button "复制" [ref=e1242] [cursor=pointer]:
+                      - img [ref=e1243]
+                      - text: 复制
+                  - code [ref=e1247]: "# CIA三要素代码演示 import hashlib from cryptography.fernet import Fernet # 保密性(Confidentiality): 加密 key = Fernet.generate_key() cipher = Fernet(key) encrypted = cipher.encrypt(b\"Sensitive Data\") print(f\"[保密性] 加密: {encrypted[:20].hex()}...\") # 完整性(Integrity): 哈希校验 data = \"重要数据\" hash_val = hashlib.sha256(data.encode()).hexdigest() print(f\"[完整性] SHA256: {hash_val[:16]}...\") # 可用性(Availability): 模拟冗余 servers = [True, True, False] available = any(servers) print(f\"[可用性] 服务器可用: {available} ({sum(servers)}/3在线)\")"
+                  - paragraph [ref=e1249]: 💡用代码直观展示CIA三要素
+            - generic [ref=e1251]:
+              - generic [ref=e1252]:
+                - heading "代码编辑器" [level=3] [ref=e1253]:
+                  - img [ref=e1254]
+                  - text: 代码编辑器
+                - combobox [ref=e1258]:
+                  - option "Python" [selected]
+                  - option "JavaScript"
+                  - option "Java"
+                  - option "Bash"
+                  - option "SQL"
+              - generic [ref=e1259]:
+                - code [ref=e1262]:
+                  - generic [ref=e1263]:
+                    - textbox "Editor content"
+                    - textbox [ref=e1264]
+                    - generic [ref=e1269]: "1"
+                - generic [ref=e1276]:
+                  - button "运行" [disabled] [ref=e1277]:
+                    - img [ref=e1278]
+                    - text: 运行
+                  - button [ref=e1280] [cursor=pointer]:
+                    - img [ref=e1281]
+              - paragraph [ref=e1284]: "💡 提示: 按 Ctrl+Enter 快速运行代码 | 支持 Python / JavaScript / Java（Bash 和 SQL 建议使用本地终端）"
+            - generic [ref=e1286]:
+              - heading "编程练习" [level=3] [ref=e1287]:
+                - img [ref=e1288]
+                - text: 编程练习
+              - generic [ref=e1292]:
+                - generic [ref=e1293]:
+                  - paragraph [ref=e1294]: "✏️ 根据以下需求编写代码:"
+                  - paragraph [ref=e1295]: 检测密码强度，包含长度、大小写字母、数字和特殊字符检查
+                  - generic [ref=e1296]:
+                    - generic [ref=e1297]: "难度: ⭐⭐"
+                    - generic [ref=e1298]: "奖励: +15 XP"
+                - textbox "在这里编写你的代码..." [ref=e1299]
+                - generic [ref=e1300]:
+                  - button "提交答案" [ref=e1301] [cursor=pointer]
+                  - button "💡 查看提示" [ref=e1302] [cursor=pointer]
+            - generic [ref=e1304]:
+              - heading "推荐工具" [level=3] [ref=e1305]:
+                - img [ref=e1306]
+                - text: 推荐工具
+              - generic [ref=e1308]:
+                - link "Wireshark 网络协议分析器" [ref=e1309] [cursor=pointer]:
+                  - /url: https://www.wireshark.org/
+                  - img [ref=e1310]
+                  - generic [ref=e1312]:
+                    - generic [ref=e1313]: Wireshark
+                    - generic [ref=e1314]: 网络协议分析器
+                  - img [ref=e1315]
+                - link "tcpdump 命令行抓包工具" [ref=e1319] [cursor=pointer]:
+                  - /url: https://www.tcpdump.org/
+                  - img [ref=e1320]
+                  - generic [ref=e1322]:
+                    - generic [ref=e1323]: tcpdump
+                    - generic [ref=e1324]: 命令行抓包工具
+                  - img [ref=e1325]
+            - generic [ref=e1330]:
+              - heading "实验靶场" [level=3] [ref=e1331]:
+                - img [ref=e1332]
+                - text: 实验靶场
+              - generic [ref=e1336]:
+                - generic [ref=e1337]:
+                  - generic [ref=e1338]: Wireshark抓包分析
+                  - generic [ref=e1339]: 本地
+                - paragraph [ref=e1340]: 使用Wireshark分析TCP三次握手
+                - generic [ref=e1341]:
+                  - paragraph [ref=e1342]: 📋 搭建步骤：
+                  - generic [ref=e1343]: "1. 下载安装Wireshark: https://www.wireshark.org/ 2. 选择网络接口开始抓包 3. 过滤HTTP流量: http 4. 追踪TCP流查看完整通信 5. 观察SYN→SYN-ACK→ACK握手过程"
+                - generic [ref=e1344]:
+                  - paragraph [ref=e1345]: ✅ 预期效果：
+                  - text: 能看到完整的TCP三次握手过程，四次挥手断开过程
+                - link "访问" [ref=e1346] [cursor=pointer]:
+                  - /url: https://www.wireshark.org/
+                  - img [ref=e1347]
+                  - text: 访问
+            - generic [ref=e1352]:
+              - heading "学习资源" [level=3] [ref=e1353]:
+                - img [ref=e1354]
+                - text: 学习资源
+              - link "OSI模型详解 文章" [ref=e1357] [cursor=pointer]:
+                - /url: https://刊目网.com/article/116.html
+                - img [ref=e1359]
+                - generic [ref=e1361]:
+                  - generic [ref=e1362]: OSI模型详解
+                  - generic [ref=e1363]: 文章
+                - img [ref=e1364]
+            - generic [ref=e1369]:
+              - generic [ref=e1370]:
+                - heading "随堂测验" [level=3] [ref=e1371]:
+                  - img [ref=e1372]
+                  - text: 随堂测验
+                - generic [ref=e1376]:
+                  - generic [ref=e1377]:
+                    - img [ref=e1378]
+                    - text: 30s
+                  - generic [ref=e1381]: 1 / 14
+              - generic [ref=e1382]:
+                - generic [ref=e1383]:
+                  - generic [ref=e1384]: 单选
+                  - paragraph [ref=e1385]: CIA三要素不包括以下哪个？
+                - generic [ref=e1386]:
+                  - button "A.A. 保密性" [ref=e1387] [cursor=pointer]:
+                    - generic [ref=e1388]: A.
+                    - text: A. 保密性
+                  - button "B.B. 完整性" [ref=e1389] [cursor=pointer]:
+                    - generic [ref=e1390]: B.
+                    - text: B. 完整性
+                  - button "C.C. 可用性" [ref=e1391] [cursor=pointer]:
+                    - generic [ref=e1392]: C.
+                    - text: C. 可用性
+                  - button "D.D. 可控性" [ref=e1393] [cursor=pointer]:
+                    - generic [ref=e1394]: D.
+                    - text: D. 可控性
+            - generic [ref=e1396]:
+              - heading "大神笔记" [level=3] [ref=e1397]:
+                - img [ref=e1398]
+                - text: 大神笔记
+              - generic [ref=e1401]:
+                - generic [ref=e1402]:
+                  - generic [ref=e1403]:
+                    - img [ref=e1404]
+                    - generic [ref=e1407]: 刘迟
+                    - generic [ref=e1408]: ·
+                    - generic [ref=e1409]: 网络协议学习心得
+                  - paragraph [ref=e1410]: 学习网络协议最好的方法就是抓包分析。建议用Wireshark抓取正常网络流量，逐一分析每个数据包的各层头部信息，理解封装和分用的过程。推荐书籍：《TCP/IP详解》卷1，《计算机网络：自顶向下方法》。
+                  - link "查看原文" [ref=e1411] [cursor=pointer]:
+                    - /url: https://book.douban.com/subject/10794055/
+                    - img [ref=e1412]
+                    - text: 查看原文
+                - generic [ref=e1416]:
+                  - generic [ref=e1417]:
+                    - img [ref=e1418]
+                    - generic [ref=e1421]: 秦错误
+                    - generic [ref=e1422]: ·
+                    - generic [ref=e1423]: 网络基础学习建议
+                  - paragraph [ref=e1424]: 很多人忽视物理层和数据链路层，但这些是网络的基础。建议学习：1)理解二进制和十六进制转换，2)理解MAC地址结构，3)理解ARP协议的工作原理，4)理解交换机和路由器的区别。这些对后续学习网络安全非常重要。
+                  - link "查看原文" [ref=e1425] [cursor=pointer]:
+                    - /url: https://zhuanlan.zhihu.com/p/26341615
+                    - img [ref=e1426]
+                    - text: 查看原文
+            - generic [ref=e1430]:
+              - generic [ref=e1432]:
+                - generic [ref=e1433]:
+                  - heading "📝 学习笔记" [level=3] [ref=e1434]
+                  - generic [ref=e1435]: 自动保存
+                - textbox "记录学习心得、疑问、重点..." [ref=e1436]
+                - generic [ref=e1437]: 共 0 字 · 第1天笔记
+              - generic [ref=e1439]:
+                - generic [ref=e1440]:
+                  - generic [ref=e1441]:
+                    - img [ref=e1442]
+                    - text: 番茄钟 · 专注学习
+                  - button "切换" [ref=e1452] [cursor=pointer]
+                - generic [ref=e1454]: 25:00
+                - generic [ref=e1456]:
+                  - button "开始" [ref=e1457] [cursor=pointer]:
+                    - img [ref=e1458]
+                    - text: 开始
+                  - button [ref=e1460] [cursor=pointer]:
+                    - img [ref=e1461]
+                - generic [ref=e1464]:
+                  - text: 今日已完成
+                  - generic [ref=e1466]: "0"
+                  - text: 个番茄
+            - generic [ref=e1467]:
+              - button "上一天" [disabled] [ref=e1468]:
+                - img [ref=e1469]
+                - text: 上一天
+              - generic [ref=e1471]: 第 1 天 / 共 30 天
+              - button "下一天" [ref=e1472] [cursor=pointer]:
+                - text: 下一天
+                - img [ref=e1473]
+            - generic [ref=e1475]:
+              - generic [ref=e1476]:
+                - img [ref=e1477]
+                - generic [ref=e1479]: ←
+                - text: 上一天
+              - generic [ref=e1480]:
+                - img [ref=e1481]
+                - generic [ref=e1483]: →
+                - text: 下一天
+              - generic [ref=e1484]:
+                - img [ref=e1485]
+                - generic [ref=e1487]: Ctrl+Enter
+                - text: 运行代码
+  - generic [ref=e915]:
+    - alert
+    - alert
