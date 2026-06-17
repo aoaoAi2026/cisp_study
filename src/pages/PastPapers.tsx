@@ -135,10 +135,10 @@ export const PastPapers: React.FC = () => {
           className="text-center mb-8"
         >
           <h1 className="text-4xl font-bold text-slate-800 mb-4">
-            🛡️ CISP 历年真题库
+            🛡️ CISP 备考练习题库
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            涵盖 {stats.totalQuestions}+ 道精选历年真题，覆盖全部 CISP 知识域
+            涵盖 {stats.totalQuestions}+ 道精选备考练习题，覆盖全部 CISP 知识域
           </p>
           
           {/* Stats */}

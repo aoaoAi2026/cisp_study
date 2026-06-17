@@ -176,7 +176,7 @@ export const LearningPath: React.FC = () => {
                     {week.days.map((day) => {
                       const isDayCompleted = completedDays.some(cd => cd.dayId === day.id);
                       const isToday = day.day === currentDay;
-                      const isAvailable = day.day <= currentDay || isDayCompleted;
+                      const isAvailable = true; // 全部解锁
 
                       return (
                         <div

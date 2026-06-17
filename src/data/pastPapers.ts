@@ -1,5 +1,6 @@
-// CISP 历年真题数据库 - 精选 500+ 道高频真题
-// 涵盖：CISA知识体系全部核心知识域
+// CISP 备考练习题库 - 精选 500+ 道高频练习题
+// 说明：CISP官方不公开真题，以下均为培训机构公开备考练习题及模拟题
+// 涵盖：CISP知识体系全部核心知识域
 
 export interface PastPaperQuestion {
   id: string;
@@ -49,14 +50,14 @@ export const cispDomains = [
   '安全管理',
 ];
 
-// 历年真题库
+// 备考练习题库
 export const pastPapers: PastPaper[] = [
   {
     id: 'cisp-2024-hubei',
-    title: '2024年度湖北省CISP真题精选',
+    title: '2024年度 CISP 综合练习题（卷一）',
     year: 2024,
     month: '上',
-    description: '2024年度湖北省注册信息安全专业人员认证考试精选真题，涵盖所有核心知识域',
+    description: '综合备考练习题卷，涵盖CISP考试所有核心知识域，适合基础巩固训练',
     difficulty: '中等',
     totalScore: 100,
     passingScore: 70,
@@ -620,43 +621,31 @@ export const pastPapers: PastPaper[] = [
     ],
     practiceEnvironment: [
       {
-        id: 'hubei-juice-shop',
-        name: 'OWASP Juice Shop',
-        description: '最现代的Web应用漏洞靶场，含100+挑战，可练习XSS/SQLi/CSRF等湖北卷高频考点',
-        url: 'https://owasp.org/www-project-juice-shop/'
+        id: 'cisp-official-guide',
+        name: 'CISP 官方教材与大纲',
+        description: '中国信息安全测评中心发布的CISP官方培训教材和考试大纲，是备考的核心资料',
+        url: 'https://www.itsec.gov.cn/'
       },
       {
-        id: 'hubei-dvwa',
-        name: 'DVWA (Damn Vulnerable Web App)',
-        description: 'PHP/MySQL环境的经典Web漏洞靶场，适合入门练习所有常见Web应用安全漏洞',
-        url: 'https://github.com/digininja/DVWA'
+        id: 'cisp-laws-database',
+        name: '法律法规知识库',
+        description: '《网络安全法》《数据安全法》《个人信息保护法》《密码法》等核心法律原文及解读',
+        url: 'https://flk.npc.gov.cn/'
       },
       {
-        id: 'hubei-webgoat',
-        name: 'OWASP WebGoat',
-        description: 'OWASP官方教学应用，分章节讲解各类Web安全问题，适合系统学习',
-        url: 'https://owasp.org/www-project-webgoat/'
-      },
-      {
-        id: 'hubei-bwapp',
-        name: 'bWAPP',
-        description: '包含100+漏洞的PHP应用，覆盖所有OWASP Top 10漏洞和各类业务逻辑漏洞',
-        url: 'http://www.itsecgames.com/'
-      },
-      {
-        id: 'hubei-pikachu',
-        name: 'Pikachu 皮卡丘靶场',
-        description: '国产Web安全练习平台，中文友好，包含XSS/SQL注入/文件上传/反序列化等模块',
-        url: 'https://github.com/zhuifengshaonianhanlu/pikachu'
+        id: 'cisp-standards',
+        name: '国家标准全文公开系统',
+        description: '等级保护GB/T 22239、风险评估GB/T 20984等信息安全相关国家标准全文查阅',
+        url: 'https://openstd.samr.gov.cn/'
       }
     ]
   },
   {
     id: 'cisp-2024-national',
-    title: '2024年CISP认证考试真题（全国卷）',
+    title: '2024年度 CISP 综合练习题（卷二）',
     year: 2024,
     month: '下',
-    description: '2024年全国CISP认证考试真题，涵盖信息安全技术、管理、法规三大核心模块',
+    description: '综合备考练习题卷，涵盖信息安全技术、管理、法规三大核心模块',
     difficulty: '中等',
     totalScore: 100,
     passingScore: 70,
@@ -1113,10 +1102,10 @@ export const pastPapers: PastPaper[] = [
   },
   {
     id: 'cisp-2023-national',
-    title: '2023年CISP认证考试真题（全国卷）',
+    title: '2023年度 CISP 综合练习题',
     year: 2023,
     month: '全',
-    description: '2023年全国CISP认证考试真题精选',
+    description: '综合备考练习题卷，精选高频考点与经典题型',
     difficulty: '基础',
     totalScore: 100,
     passingScore: 70,
@@ -1534,10 +1523,10 @@ export const pastPapers: PastPaper[] = [
   },
   {
     id: 'cisp-2022-national',
-    title: '2022年CISP认证考试真题精选',
+    title: '2022年度 CISP 综合练习题',
     year: 2022,
     month: '全',
-    description: '2022年全国CISP认证考试真题',
+    description: '综合备考练习题卷，覆盖基础概念与核心考点',
     difficulty: '基础',
     totalScore: 100,
     passingScore: 70,
@@ -1979,6 +1968,1398 @@ export const pastPapers: PastPaper[] = [
         name: '网络安全基础靶场',
         description: '搭建模拟网络环境，练习防火墙配置、IDS/IPS部署、VPN配置、DMZ区域划分等基础技能',
         url: 'https://github.com/BuildADetectionLab/buildadetectionlab'
+      }
+    ]
+  },
+  {
+    id: 'cisp-training-bank',
+    title: 'CISP培训题库精选（公开题源）',
+    year: 2024,
+    month: '全',
+    description: '来自CISP培训机构公开备考题库，涵盖CISP考试大纲全部知识域。说明：CISP官方不公开真题，本卷为培训机构的公开练习题库，是CISP考生实际使用的备考材料。',
+    difficulty: '中等',
+    totalScore: 100,
+    passingScore: 70,
+    duration: 120,
+    questions: [
+      {
+        id: 'cisp-train-001',
+        year: 2024, session: '培训题库',
+        domain: '安全评估',
+        question: '依据国家标准GB/T20274《信息系统安全保障评估框架》，信息系统安全目标(ISST)中，安全保障目的指的是（）',
+        options: [
+          'A. 信息系统安全保障目的',
+          'B. 环境安全保障目的',
+          'C. 信息系统安全保障目的和环境安全保障目的',
+          'D. 信息系统整体安全保障目的、管理安全保障目的、技术安全保障目的和工程安全保障目的'
+        ],
+        correctIndex: 3,
+        explanation: 'GB/T20274信息系统保障评估框架从管理、技术、工程和总体方面进行评估。'
+      },
+      {
+        id: 'cisp-train-002',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '以下哪一项是数据完整性得到保护的例子？',
+        options: [
+          'A. 某网站在访问量突然增加时对用户连接数量进行了限制，保证已登录的用户可以完成操作',
+          'B. 在提款过程中ATM终端发生故障，银行业务系统及时对该用户的账户余额进行了冲正操作',
+          'C. 某网管系统具有严格的审计功能，可以确定哪个管理员在何时对核心交换机进行了什么操作',
+          'D. 李先生在每天下班前将重要文件锁在档案室的保密柜中，使伪装成清洁工的商业间谍无法查看'
+        ],
+        correctIndex: 1,
+        explanation: 'A为可用性，B为完整性(冲正是Clark-Wilson模型的应用)，C是抗抵赖，D是保密性。'
+      },
+      {
+        id: 'cisp-train-003',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '进入21世纪以来，各国纷纷制定网络空间安全战略，以下说法不正确的是（）',
+        options: [
+          'A. 与国家安全、社会稳定和民生密切相关的关键基础设施是各国安全保障的重点',
+          'B. 美国尚未设立中央政府级的专门机构处理网络信息安全问题',
+          'C. 各国普遍重视信息安全事件的应急响应和处理',
+          'D. 在网络安全战略中，各国均强调加强政府管理力度，充分利用社会资源'
+        ],
+        correctIndex: 1,
+        explanation: '美国已设立CISA(网络安全与基础设施安全局)等中央政府级专门机构处理网络信息安全问题。'
+      },
+      {
+        id: 'cisp-train-004',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '与PDR模型相比，P2DR模型多了哪一个环节？',
+        options: ['A. 防护', 'B. 检测', 'C. 响应', 'D. 策略'],
+        correctIndex: 3,
+        explanation: 'P2DR是指策略(Policy)、保护(Protection)、检测(Detection)和响应(Response)。比PDR多了策略环节。'
+      },
+      {
+        id: 'cisp-train-005',
+        year: 2024, session: '培训题库',
+        domain: '信息安全管理体系',
+        question: '以下关于项目的含义，理解错误的是（）',
+        options: [
+          'A. 项目是为达到特定目的、使用一定资源、在确定期间内、为特定发起人而提供独特产品、服务或成果而进行的一次性努力',
+          'B. 项目有明确的开始日期，结束日期由项目的领导者根据项目进度来随机确定',
+          'C. 项目资源指完成项目所需要的人、财、物等',
+          'D. 项目目标要遵守SMART原则'
+        ],
+        correctIndex: 1,
+        explanation: '项目结束日期不能随机确定，需要根据项目预算、特性、质量等要求进行确定。'
+      },
+      {
+        id: 'cisp-train-006',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '2008年美国发布第54号总统令建立CNCI计划三道防线，以下分析正确的是（）',
+        options: [
+          'A. CNCI是以风险为核心，三道防线首要任务是降低其网络所面临的风险',
+          'B. 从CNCI可以看出，威胁主要是来自外部的，漏洞和隐患主要是存在于内部的',
+          'C. CNCI的目的是尽快研发并部署新技术彻底改变糟糕的网络安全现状',
+          'D. CNCI彻底改变了以往的美国信息安全战略，不再把关键基础设施视为重点'
+        ],
+        correctIndex: 0,
+        explanation: 'CNCI第一道防线针对漏洞进行风险控制，第二道防线针对威胁进行风险控制，总体目标以风险为核心降低网络风险。'
+      },
+      {
+        id: 'cisp-train-007',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '下列对于信息安全保障深度防御模型的说法错误的是（）',
+        options: [
+          'A. 信息安全保障是组织机构安全、国家安全的重要组成部分',
+          'B. 需要在整个组织机构内建立和完善信息安全管理体系',
+          'C. 建立完善的安全意识培训体系也是信息安全保障的重要组成部分',
+          'D. 信息安全技术方案：从外而内、自下而上、形成边界到端的防护能力'
+        ],
+        correctIndex: 3,
+        explanation: '正确描述是从内而外，自上而下，从端到边界的防护能力。深度防御应从内部核心资产逐层向外防护。'
+      },
+      {
+        id: 'cisp-train-008',
+        year: 2024, session: '培训题库',
+        domain: '访问控制',
+        question: '某用户通过账号、密码和验证码成功登录网银系统，此过程属于（）',
+        options: [
+          'A. 个人网银系统和用户之间的双向鉴别',
+          'B. 由可信第三方完成的用户身份鉴别',
+          'C. 个人网银系统对用户身份的单向鉴别',
+          'D. 用户对个人网银系统合法性的单向鉴别'
+        ],
+        correctIndex: 2,
+        explanation: '用户向网银系统证明自己身份，属于系统对用户的单向鉴别。双向鉴别需要双方互相证明身份。'
+      },
+      {
+        id: 'cisp-train-009',
+        year: 2024, session: '培训题库',
+        domain: '加密技术',
+        question: 'Alice用Bob的公钥加密明文发给Bob，Bob用自己的私钥解密恢复出明文。以下说法正确的是（）',
+        options: [
+          'A. 此密码体制为对称密码体制',
+          'B. 此密码体制为私钥密码体制',
+          'C. 此密码体制为单钥密码体制',
+          'D. 此密码体制为公钥密码体制'
+        ],
+        correctIndex: 3,
+        explanation: '使用公钥加密、私钥解密是公钥密码体制(非对称密码)的核心特征。对称密码使用同一密钥加解密。'
+      },
+      {
+        id: 'cisp-train-010',
+        year: 2024, session: '培训题库',
+        domain: '访问控制',
+        question: '下列哪一种方法属于基于实体"所有"的鉴别方法（）',
+        options: [
+          'A. 用户通过口令登录系统完成身份鉴别',
+          'B. 用户使用个人指纹通过指纹识别系统的身份鉴别',
+          'C. 用户利用协商的秘密函数对系统挑战进行正确应答',
+          'D. 用户使用集成电路卡(如智能卡)完成身份鉴别'
+        ],
+        correctIndex: 3,
+        explanation: '实体所有鉴别包括身份证、IC卡、钥匙、USB-Key等。A为所知，B为特征，C为所知/所有结合。'
+      },
+      {
+        id: 'cisp-train-011',
+        year: 2024, session: '培训题库',
+        domain: '访问控制',
+        question: '网银系统要求用户先登录，再使用智能卡+短信认证进行转账。此场景用到哪些鉴别方法（）',
+        options: [
+          'A. 实体所知以及实体所有的鉴别方法',
+          'B. 实体所有以及实体特征的鉴别方法',
+          'C. 实体所知以及实体特征的鉴别方法',
+          'D. 实体所有以及实体行为的鉴别方法'
+        ],
+        correctIndex: 0,
+        explanation: '登录涉及账号密码(所知)，智能卡是实体所有，短信认证接收手机也是实体所有。综合使用所知和所有。'
+      },
+      {
+        id: 'cisp-train-012',
+        year: 2024, session: '培训题库',
+        domain: '安全评估',
+        question: '渗透测试相比源代码测试、模糊测试的优势是（）',
+        options: [
+          'A. 渗透测试以攻击者思维模拟真实攻击，能发现如配置错误等运行维护期产生的漏洞',
+          'B. 渗透测试是用软件代替人工的测试方法，测试效率更高',
+          'C. 渗透测试使用人工测试不依赖软件，因此更准确',
+          'D. 渗透测试中必须要查看软件源代码，因此发现的漏洞更多'
+        ],
+        correctIndex: 0,
+        explanation: '渗透测试模拟攻击者视角，能发现配置错误、逻辑漏洞等运行环境问题，这是源代码分析和模糊测试难以覆盖的。'
+      },
+      {
+        id: 'cisp-train-013',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '软件安全设计中应考虑用户隐私保护，以下说法错误的是（）',
+        options: [
+          'A. 告诉用户需要收集什么数据及如何使用',
+          'B. 当用户数据要被使用时，给用户选择是否允许',
+          'C. 用户提交的用户名和密码属于隐私数据，其它都不是',
+          'D. 确保数据使用符合国家、地方、行业的相关法律法规'
+        ],
+        correctIndex: 2,
+        explanation: '个人隐私包括但不限于用户名密码、位置信息、行为习惯、使用偏好等多种信息。'
+      },
+      {
+        id: 'cisp-train-014',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '软件安全保障在有限资源下实现最优防护，以下不符合该思想的是（）',
+        options: [
+          'A. 立项时预留安全测试、安全评审相关费用',
+          'B. 设计时邀请专家对架构进行安全评审',
+          'C. 确保开发人员了解安全编码基本原则和方法',
+          'D. 上线前必须通过全部安全测试，否则不允许上线'
+        ],
+        correctIndex: 3,
+        explanation: '安全测试应根据实际情况选择和组合。安全是风险的最优控制，不是追求绝对安全。'
+      },
+      {
+        id: 'cisp-train-015',
+        year: 2024, session: '培训题库',
+        domain: '网络安全',
+        question: '以下哪一项不是工作在网络第二层的隧道协议（）',
+        options: ['A. VTP', 'B. L2F', 'C. PPTP', 'D. L2TP'],
+        correctIndex: 0,
+        explanation: 'VTP是VLAN Trunking Protocol，属于交换机VLAN管理协议，不是隧道协议。L2F、PPTP、L2TP均为二层隧道协议。'
+      },
+      {
+        id: 'cisp-train-016',
+        year: 2024, session: '培训题库',
+        domain: '访问控制',
+        question: '主体S对客体O1有读权限，对O2有读、写、拥有权限，该访问控制实现方法是（）',
+        options: ['A. 访问控制表(ACL)', 'B. 访问控制矩阵', 'C. 能力表(CL)', 'D. 前缀表'],
+        correctIndex: 2,
+        explanation: '定义主体访问客体的权限叫CL(能力表)。定义客体被主体访问的权限叫ACL。题干从主体角度描述属能力表。'
+      },
+      {
+        id: 'cisp-train-017',
+        year: 2024, session: '培训题库',
+        domain: '访问控制',
+        question: '关于基于角色的访问控制(RBAC)模型，下列说法错误的是（）',
+        options: [
+          'A. 用户操作权限不在其被激活角色授权范围内时，访问请求将被拒绝',
+          'B. 业务系统中的岗位、职位可对应RBAC模型中的角色',
+          'C. 通过角色可实现对信息资源访问的控制',
+          'D. RBAC模型不能实现多级安全中的访问控制'
+        ],
+        correctIndex: 3,
+        explanation: 'RBAC模型能够实现多级安全中的访问控制，通过角色层级和约束机制支持复杂的安全需求。'
+      },
+      {
+        id: 'cisp-train-018',
+        year: 2024, session: '培训题库',
+        domain: '网络安全',
+        question: '下面哪一项不是虚拟专用网络(VPN)协议标准（）',
+        options: [
+          'A. 第二层隧道协议(L2TP)',
+          'B. IPSEC',
+          'C. 终端访问控制器访问控制系统(TACACS+)',
+          'D. 点对点隧道协议(PPTP)'
+        ],
+        correctIndex: 2,
+        explanation: 'TACACS+是AAA(认证、授权、审计)权限控制系统，不属于VPN协议。VPN协议有L2TP、IPSEC、PPTP、SSL VPN等。'
+      },
+      {
+        id: 'cisp-train-019',
+        year: 2024, session: '培训题库',
+        domain: '访问控制',
+        question: '下列对网络认证协议Kerberos描述正确的是（）',
+        options: [
+          'A. 该协议使用非对称密钥加密机制',
+          'B. 密钥分发中心由认证服务器、票据授权服务器和客户机三部分组成',
+          'C. 该协议完成身份鉴别后将获取用户票据许可票据',
+          'D. 使用该协议不需要时钟基本同步的环境'
+        ],
+        correctIndex: 2,
+        explanation: 'Kerberos使用对称密码；KDC包括AS和TGS不包括客户机；协议需要时钟同步防重放。流程：认证→获取票据许可票据→获取服务许可票据→获取服务。'
+      },
+      {
+        id: 'cisp-train-020',
+        year: 2024, session: '培训题库',
+        domain: '访问控制',
+        question: '鉴别的基本途径有三种：所知、所有和个人特征，以下哪一项不是基于你所知道的（）',
+        options: ['A. 口令', 'B. 令牌', 'C. 知识', 'D. 密码'],
+        correctIndex: 1,
+        explanation: '令牌(Token)是基于实体所有的鉴别方式，需要用户持有该物理设备。口令、密码、知识均属于所知因素。'
+      },
+      {
+        id: 'cisp-train-021',
+        year: 2024, session: '培训题库',
+        domain: '加密技术',
+        question: '在ISO的OSI安全体系结构中，以下哪个安全机制可以提供抗抵赖安全服务（）',
+        options: ['A. 加密', 'B. 数字签名', 'C. 访问控制', 'D. 路由控制'],
+        correctIndex: 1,
+        explanation: '数字签名使用私钥签名、公钥验证，可提供抗抵赖、身份鉴别和完整性保护。加密主要提供保密性。'
+      },
+      {
+        id: 'cisp-train-022',
+        year: 2024, session: '培训题库',
+        domain: '网络安全',
+        question: '某公司已有漏洞扫描和IDS，需购买防火墙，应优先考虑（）',
+        options: [
+          'A. 选购当前技术最先进的防火墙',
+          'B. 选购任意一款品牌防火墙',
+          'C. 任意选购一款价格合适的防火墙',
+          'D. 选购一款同已有安全产品联动的防火墙'
+        ],
+        correctIndex: 3,
+        explanation: '应实现IDS和防火墙联动，IDS检测攻击后通知防火墙实时阻断，形成整体纵深防御体系。'
+      },
+      {
+        id: 'cisp-train-023',
+        year: 2024, session: '培训题库',
+        domain: '网络安全',
+        question: '在OSI参考模型中，以下哪一层提供了保密性、身份鉴别、数据完整性服务（）',
+        options: ['A. 网络层', 'B. 表示层', 'C. 会话层', 'D. 物理层'],
+        correctIndex: 0,
+        explanation: '网络层(如IPSec)和应用层可以提供保密性、身份鉴别、完整性、抗抵赖、访问控制等安全服务。'
+      },
+      {
+        id: 'cisp-train-024',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '离职账号删除需部门主管和人事部门同时确认，该设计遵循了哪项安全原则（）',
+        options: ['A. 最小权限', 'B. 权限分离', 'C. 不信任', 'D. 纵深防御'],
+        correctIndex: 1,
+        explanation: '权限分离(Separation of Duties)将大权限分解为多个子权限，需多人协作完成，防止单人滥用权限。'
+      },
+      {
+        id: 'cisp-train-025',
+        year: 2024, session: '培训题库',
+        domain: '网络安全',
+        question: '以下关于IPSec协议说法错误的是（）',
+        options: [
+          'A. 在传送模式中，保护的是IP负载',
+          'B. AH和ESP都能以传输模式和隧道模式工作',
+          'C. 在隧道模式中，保护的是整个IP包包括IP头',
+          'D. IPSec仅能保证传输数据的可认证性和保密性'
+        ],
+        correctIndex: 3,
+        explanation: 'IPSec不仅可以提供身份鉴别和保密性，还能提供完整性、抗抵赖和访问控制等安全服务。'
+      },
+      {
+        id: 'cisp-train-026',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: 'STRIDE威胁建模中，Spoofing(欺骗)类威胁的典型例子是（）',
+        options: [
+          'A. 竞争对手雇佣攻击者实施DDoS攻击降低网站访问速度',
+          'B. 网站使用HTTP未加密，可能导致用户传输信息泄露',
+          'C. 网站使用HTTP无法确认数据是否被中途篡改',
+          'D. 攻击者利用弱口令获得用户密码，以该用户身份登录修改订单'
+        ],
+        correctIndex: 3,
+        explanation: 'Spoofing指冒充他人身份。A属于DoS(可用性)，B属于信息泄露(保密性)，C属于篡改(完整性)，D属于身份欺骗。'
+      },
+      {
+        id: 'cisp-train-027',
+        year: 2024, session: '培训题库',
+        domain: '加密技术',
+        question: '以下关于PGP软件叙述错误的是（）',
+        options: [
+          'A. PGP可以实现对邮件的加密、签名和认证',
+          'B. PGP可以实现数据压缩',
+          'C. PGP可以对邮件进行分段和重组',
+          'D. PGP采用SHA算法加密邮件'
+        ],
+        correctIndex: 3,
+        explanation: 'SHA是哈希摘要算法，提供数据完整性校验，不提供加密功能。PGP使用对称加密(如AES)加密内容。'
+      },
+      {
+        id: 'cisp-train-028',
+        year: 2024, session: '培训题库',
+        domain: '网络安全',
+        question: 'IPS与IDS有许多不同点，下列不符合IPS特点的是（）',
+        options: [
+          'A. 串接到网络线路中',
+          'B. 对异常的进出流量可以直接进行阻断',
+          'C. 有可能造成单点故障',
+          'D. 不会影响网络性能'
+        ],
+        correctIndex: 3,
+        explanation: 'IPS串联部署在网络中，对所有流量进行深度检测和阻断，必然增加延迟影响网络性能。IDS旁路部署不影响性能。'
+      },
+      {
+        id: 'cisp-train-029',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '相比FAT文件系统，以下哪个不是NTFS所具有的优势（）',
+        options: [
+          'A. 使用事务日志自动记录文件更新，系统能利用日志重做或恢复',
+          'B. 可以为每个文件或文件夹设置单独的许可权限',
+          'C. 对于大磁盘，NTFS比FAT有更高的磁盘利用率',
+          'D. NTFS能有效兼容Linux下EXT2文件格式'
+        ],
+        correctIndex: 3,
+        explanation: 'NTFS是Windows专有文件系统，不能兼容Linux的EXT文件系统。跨平台兼容通常使用exFAT。'
+      },
+      {
+        id: 'cisp-train-030',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '能有效应对攻击者获得系统权限后对日志进行修改的策略是（）',
+        options: [
+          'A. 单独部署syslog服务器，将Web服务器日志自动发送并存储到syslog服务器中',
+          'B. 严格设置Web日志权限，只有系统权限才能进行读写操作',
+          'C. 对日志属性进行调整，加大日志文件大小、延长覆盖时间',
+          'D. 使用独立的分区存储日志，保留足够大的日志空间'
+        ],
+        correctIndex: 0,
+        explanation: '将日志实时发送到独立syslog服务器，即使Web服务器被攻破，攻击者也无法篡改已发送的日志。'
+      },
+      {
+        id: 'cisp-train-031',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '关于Linux下的用户和组，以下描述不正确的是（）',
+        options: [
+          'A. 在Linux中，每一个文件和程序都归属于一个特定的用户',
+          'B. 系统中的每一个用户都必须至少属于一个用户组',
+          'C. 用户和组的关系可以是多对一，一个用户不能属于多个组',
+          'D. root是系统的超级用户，无论是否文件和程序的所有者都具有访问权限'
+        ],
+        correctIndex: 2,
+        explanation: 'Linux中一个用户可以同时属于多个用户组，这是灵活权限管理的基础。用户可有一个主组和多个附加组。'
+      },
+      {
+        id: 'cisp-train-032',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '某管理员对Windows操作系统进行了四项安全部署，哪项不利于提高安全性（）',
+        options: [
+          'A. 安装最新的安全补丁',
+          'B. 只使用一个C分区，所有数据和操作系统都存放在C盘',
+          'C. 部署防病毒软件对抗病毒威胁',
+          'D. 将默认Administrator改名降低暴力破解风险'
+        ],
+        correctIndex: 1,
+        explanation: '操作系统和应用数据应分开部署。将所有数据放系统盘会导致系统崩溃时数据易丢失、权限管理困难。'
+      },
+      {
+        id: 'cisp-train-033',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '在数据库安全性控制中，授权的数据对象____，授权子系统就越灵活（）',
+        options: ['A. 粒度越小', 'B. 约束越细致', 'C. 范围越大', 'D. 约束范围大'],
+        correctIndex: 0,
+        explanation: '数据授权粒度越小(如字段级授权)，授权策略越灵活精细，但管理复杂度也越高。'
+      },
+      {
+        id: 'cisp-train-034',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '下列对信息安全漏洞的描述错误的是（）',
+        options: [
+          'A. 漏洞是存在于信息系统的某种缺陷',
+          'B. 漏洞存在于一定环境中，寄生在一定的客体上',
+          'C. 具有可利用性和违规性，本身不会造成破坏但可被攻击者利用',
+          'D. 漏洞都是人为故意引入的一种信息系统弱点'
+        ],
+        correctIndex: 3,
+        explanation: '漏洞既可以是人为故意引入的(如后门)，也可以是非故意引入的(如编码错误、配置疏忽等)。'
+      },
+      {
+        id: 'cisp-train-035',
+        year: 2024, session: '培训题库',
+        domain: '访问控制',
+        question: '账号锁定策略中对超过一定次数的错误登录账号进行锁定是为了对抗（）',
+        options: ['A. DDoS攻击', 'B. 病毒传染', 'C. 口令暴力破解', 'D. 缓冲区溢出攻击'],
+        correctIndex: 2,
+        explanation: '账号锁定策略在多次失败登录后临时锁定，主要对抗暴力破解和字典攻击，增加攻击者猜测密码的时间成本。'
+      }
+    ],
+    practiceEnvironment: [
+      {
+        id: 'cisp-training-official',
+        name: 'CISP 官方考试指南',
+        description: '中国信息安全测评中心官网，了解CISP考试大纲和认证要求',
+        url: 'https://www.itsec.gov.cn/'
+      },
+      {
+        id: 'cisp-training-iso27001',
+        name: 'ISO 27001 标准学习',
+        description: 'ISO官方信息安全管理体系标准文档和学习资源',
+        url: 'https://www.iso.org/isoiec-27001-information-security.html'
+      }
+    ]
+  },
+  {
+    id: 'cisp-training-bank-2',
+    title: 'CISP培训题库精选2（公开题源）',
+    year: 2024,
+    month: '全',
+    description: '来自CISP培训机构公开备考题库（续），涵盖风险管理、等级保护、法律法规、安全开发等知识域。',
+    difficulty: '中等',
+    totalScore: 100,
+    passingScore: 70,
+    duration: 120,
+    questions: [
+      {
+        id: 'cisp-train-036',
+        year: 2024, session: '培训题库',
+        domain: '网络安全',
+        question: '以下哪个不是导致ARP欺骗的根源之一（）',
+        options: [
+          'A. ARP协议是一个无状态的协议',
+          'B. 为提高效率，ARP信息在系统中会缓存',
+          'C. ARP缓存是动态的，可被改写',
+          'D. ARP协议是用于寻址的一个重要协议'
+        ],
+        correctIndex: 3,
+        explanation: 'ARP用于寻址是其正常功能，不是欺骗的根源。欺骗根源在于无状态、可缓存、可改写等特点被攻击者利用。'
+      },
+      {
+        id: 'cisp-train-037',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '张三将微信头像换成某好友头像，并将昵称改为该好友昵称，向其好友发送欺骗消息。该攻击属于（）',
+        options: ['A. 口令攻击', 'B. 暴力破解', 'C. 拒绝服务攻击', 'D. 社会工程学攻击'],
+        correctIndex: 3,
+        explanation: '通过伪装身份利用人际关系进行欺骗，属于典型的社会工程学攻击，利用的是人的信任而不是技术漏洞。'
+      },
+      {
+        id: 'cisp-train-038',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '关于软件安全开发生命周期(SDL)，下面说法错误的是（）',
+        options: [
+          'A. 在软件开发的各个周期都要考虑安全因素',
+          'B. 软件安全开发生命周期要综合采用技术、管理和工程等手段',
+          'C. 测试阶段是发现并改正软件安全漏洞的最佳环节',
+          'D. 在设计阶段就尽可能发现并改正安全隐患，将极大减少整个开发成本'
+        ],
+        correctIndex: 2,
+        explanation: '设计阶段才是发现和改正安全问题的最佳阶段，越早发现问题成本越低。测试阶段发现的问题修复成本远高于设计阶段。'
+      },
+      {
+        id: 'cisp-train-039',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: 'SAMM模型中，不属于核心业务功能的是（）',
+        options: ['A. 治理', 'B. 构造', 'C. 验证', 'D. 购置'],
+        correctIndex: 3,
+        explanation: 'SAMM模型四个核心部分是治理(Governance)、构造(Construction)、验证(Verification)和部署(Deployment)，不包括购置。'
+      },
+      {
+        id: 'cisp-train-040',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '从系统工程角度处理信息安全问题，以下说法错误的是（）',
+        options: [
+          'A. 系统安全工程旨在了解企业安全风险，建立安全需求并转换为工程实施指南',
+          'B. 需对安全机制的正确性和有效性做出诠释，证明安全系统的信任度',
+          'C. SSE-CMM是一种衡量安全工程实践能力的方法，使用面向开发的方法',
+          'D. SSE-CMM在CMM基础上将系统安全工程转变为可测量的先进学科'
+        ],
+        correctIndex: 2,
+        explanation: 'SSE-CMM是面向工程过程质量控制的方法，不是面向开发的方法。它关注安全工程的成熟度过程管理。'
+      },
+      {
+        id: 'cisp-train-041',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '有关SSE-CMM中的基本实施(BP)，正确的理解是（）',
+        options: [
+          'A. BP不限定于特定的方法工具，不同业务背景中可以使用不同的方法',
+          'B. BP不是根据广泛的现有资料和专家意见综合得出的',
+          'C. BP不代表信息安全工程领域的最佳实践',
+          'D. BP不是过程区域(PA)的强制项'
+        ],
+        correctIndex: 0,
+        explanation: 'BP是安全工程的最小单元，不限定特定方法工具；是基于广泛资料和专家意见得出的；代表最佳实践；是PA的强制项。'
+      },
+      {
+        id: 'cisp-train-042',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '以下哪一种判断信息系统是否安全的方式是最合理的（）',
+        options: [
+          'A. 是否已经通过部署安全控制措施消灭了风险',
+          'B. 是否可以抵抗大部分风险',
+          'C. 是否建立了具有自适应能力的信息安全模型',
+          'D. 是否已经将风险控制在可接受的范围内'
+        ],
+        correctIndex: 3,
+        explanation: '信息安全不追求消灭所有风险，而是将风险控制在组织可接受的范围内。这是风险管理的核心思想。'
+      },
+      {
+        id: 'cisp-train-043',
+        year: 2024, session: '培训题库',
+        domain: '法律法规',
+        question: '以下关于信息安全法治建设的意义，说法错误的是（）',
+        options: [
+          'A. 信息安全法律环境是信息安全保障体系中的必要环节',
+          'B. 明确违反信息安全的行为并进行处罚，以打击信息安全犯罪',
+          'C. 信息安全主要是技术问题，技术漏洞是信息犯罪的根源',
+          'D. 信息安全产业需要成熟的技术标准和完善的技术体系'
+        ],
+        correctIndex: 2,
+        explanation: '信息安全问题多方面存在，不能认为主要是技术问题。技术漏洞不是犯罪的根源，人的因素和管理同样重要。'
+      },
+      {
+        id: 'cisp-train-044',
+        year: 2024, session: '培训题库',
+        domain: '安全评估',
+        question: '核心机房总价值100万，灾害导致资产损失24%，该灾害八年发生三次，年度预期损失为多少（）',
+        options: ['A. 24万', 'B. 0.09万', 'C. 37.5万', 'D. 9万'],
+        correctIndex: 3,
+        explanation: '年度预期损失(ALE)=资产价值×暴露因子×年发生率=100万×24%×(3/8)=9万元。'
+      },
+      {
+        id: 'cisp-train-045',
+        year: 2024, session: '培训题库',
+        domain: '法律法规',
+        question: '2005年施行的《电子签名法》关于电子签名说法错误的是（）',
+        options: [
+          'A. 电子签名是数据电文中以电子形式所含、所附用于识别签名人身份并表明认可内容的数据',
+          'B. 电子签名适用于民事活动中的合同或其他文件、单证等文书',
+          'C. 电子签名需要第三方认证的，由依法设立的电子认证服务提供者提供认证服务',
+          'D. 电子签名制作数据属于电子签名人和电子认证服务提供者共有'
+        ],
+        correctIndex: 3,
+        explanation: '电子签名制作数据属于电子签名人专有，不可以与认证服务提供者共有，这是确保签名唯一性和安全性的关键。'
+      },
+      {
+        id: 'cisp-train-046',
+        year: 2024, session: '培训题库',
+        domain: '信息安全管理体系',
+        question: '风险管理的监控与审查不包含（）',
+        options: [
+          'A. 过程质量管理',
+          'B. 成本效益管理',
+          'C. 跟踪系统自身或所处环境的变化',
+          'D. 协调内外部组织机构风险管理活动'
+        ],
+        correctIndex: 3,
+        explanation: 'D属于沟通咨询工作。风险管理过程包括背景建立、风险评估、风险处理、批准监督，以及沟通咨询和监控审查。'
+      },
+      {
+        id: 'cisp-train-047',
+        year: 2024, session: '培训题库',
+        domain: '等级保护',
+        question: '信息安全等级保护要求中，第三级适用的正确的是（）',
+        options: [
+          'A. 适用于一般的信息系统，受破坏后对权益有一定影响但不危害国家安全',
+          'B. 适用于涉及国家安全、社会秩序的一般信息系统，受破坏后造成一般损害',
+          'C. 适用于涉及国家安全的信息系统，受破坏后造成严重损害',
+          'D. 适用于重要信息系统的核心子系统，受破坏后造成特别严重损害'
+        ],
+        correctIndex: 1,
+        explanation: '第三级(监督保护级)适用于涉及国家安全、社会秩序和公共利益的信息系统，受破坏后造成一般损害。'
+      },
+      {
+        id: 'cisp-train-048',
+        year: 2024, session: '培训题库',
+        domain: '信息安全管理体系',
+        question: '下面哪一项安全控制措施不是用来检测未经授权的信息处理活动的（）',
+        options: [
+          'A. 设置网络连接时限',
+          'B. 记录并分析系统错误日志',
+          'C. 记录并分析用户和管理员操作日志',
+          'D. 启用时钟同步'
+        ],
+        correctIndex: 0,
+        explanation: '网络连接时限属于防护措施(预防性控制)，BCD属于检测措施，可以用来检测未经授权的信息处理活动。'
+      },
+      {
+        id: 'cisp-train-049',
+        year: 2024, session: '培训题库',
+        domain: '法律法规',
+        question: '有关危害国家秘密安全行为的法律责任，正确的是（）',
+        options: [
+          'A. 严重违反保密规定行为只要发生，无论是否产生泄密实际后果都要依法追究责任',
+          'B. 非法获取国家秘密不会构成刑事犯罪，不需承担刑事责任',
+          'C. 过失泄露国家秘密不会构成刑事犯罪，不需承担刑事责任',
+          'D. 承担了刑事责任，无需再承担行政责任和其他处分'
+        ],
+        correctIndex: 0,
+        explanation: '严重违反保密规定的行为无论是否产生实际泄密后果都要追究责任。非法获取和过失泄露都可能构成刑事犯罪。'
+      },
+      {
+        id: 'cisp-train-050',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '以下对于信息安全事件理解错误的是（）',
+        options: [
+          'A. 信息安全事件是由于自然或人为以及软硬件缺陷对信息系统造成危害的事件',
+          'B. 对信息安全事件进行有效管理和响应是组织信息安全战略的一部分',
+          'C. 应急响应是信息安全事件管理的重要内容',
+          'D. 通过部署信息安全策略和防护措施，能够杜绝信息安全事件的发生'
+        ],
+        correctIndex: 3,
+        explanation: '安全事件无法完全杜绝。信息安全的目标是将风险降低到可接受水平，而非追求绝对安全。'
+      },
+      {
+        id: 'cisp-train-051',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '假设一个系统已经包含了充分的预防控制措施，那么安装监测控制设备（）',
+        options: [
+          'A. 是多余的，因为它们完成了同样的功能但需要更多开销',
+          'B. 是必须的，可以为预防控制的功效提供检测',
+          'C. 是可选的，可以实现深度防御',
+          'D. 在人工系统中需要，但在计算机系统中则不需要'
+        ],
+        correctIndex: 2,
+        explanation: '监测控制是可选的深度防御措施。即使已有预防控制，监测控制可以验证预防措施有效性、发现绕过预防的攻击。'
+      },
+      {
+        id: 'cisp-train-052',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '关于我国加强信息安全保障工作的主要原则，以下说法错误的是（）',
+        options: [
+          'A. 立足国情，以我为主，坚持技术与管理并重',
+          'B. 正确处理安全和发展的关系，以安全保发展，在发展中求安全',
+          'C. 统筹规划，突出重点，强化基础工作',
+          'D. 全面提高信息安全防护能力，保护公众利益，维护国家安全'
+        ],
+        correctIndex: 3,
+        explanation: 'D描述的是信息安全保障工作目标而非原则。原则包括立足国情、技管并重、统筹规划、以安全保发展等。'
+      },
+      {
+        id: 'cisp-train-053',
+        year: 2024, session: '培训题库',
+        domain: '信息安全管理体系',
+        question: '以下哪一项不是信息安全管理工作必须遵循的原则（）',
+        options: [
+          'A. 风险管理在系统开发之初就应充分考虑并贯穿整个开发过程',
+          'B. 风险管理活动应成为系统整个生命周期内的持续性工作',
+          'C. 系统投入使用后部署安全控制措施针对性更强，实施成本相对较低',
+          'D. 系统正式运行后应注重残余风险管理，提高快速反应能力'
+        ],
+        correctIndex: 2,
+        explanation: '安全措施投入越早成本越低。在系统投入使用后才部署安全措施，成本会大幅上升。安全和隐私应"左移"到设计阶段。'
+      },
+      {
+        id: 'cisp-train-054',
+        year: 2024, session: '培训题库',
+        domain: '安全评估',
+        question: 'GB/T20984-2007《信息安全风险评估规范》关于生命周期各阶段风险评估描述不正确的是（）',
+        options: [
+          'A. 规划阶段风险评估目的是识别系统业务战略以支撑安全需求',
+          'B. 设计阶段需根据运行环境和资产重要性提出安全功能需求',
+          'C. 实施阶段对系统开发实施过程进行风险识别并对建成后安全功能进行验证',
+          'D. 运行维护阶段风险评估是一种全面的风险评估'
+        ],
+        correctIndex: 3,
+        explanation: '根据GB/T20984-2007原文，运行维护阶段的风险评估是"一种较全面的风险评估"而非"全面的"。'
+      },
+      {
+        id: 'cisp-train-055',
+        year: 2024, session: '培训题库',
+        domain: '安全评估',
+        question: '对信息安全风险评估要素理解正确的是（）',
+        options: [
+          'A. 资产识别粒度随评估范围和目的不同而不同，可以是硬件、业务系统或组织机构',
+          'B. 应针对构成信息系统的每个资产做风险评价',
+          'C. 脆弱性识别是将安全现状与标准做符合性比对找出的差距',
+          'D. 信息系统面临的安全威胁仅包括人为故意威胁和人为非故意威胁'
+        ],
+        correctIndex: 0,
+        explanation: 'B应为抽样评估；C描述的是差距分析而非脆弱性识别；D威胁还包括环境威胁(如自然灾害)。'
+      },
+      {
+        id: 'cisp-train-056',
+        year: 2024, session: '培训题库',
+        domain: '信息安全管理体系',
+        question: '以下哪些是需要在信息安全策略中进行描述的（）',
+        options: [
+          'A. 组织信息系统安全架构',
+          'B. 信息安全工作的基本原则',
+          'C. 组织信息安全技术参数',
+          'D. 组织信息安全实施手段'
+        ],
+        correctIndex: 1,
+        explanation: '安全策略是宏观的原则性要求，不包括具体的架构、技术参数和实施手段。策略层是方针和原则。'
+      },
+      {
+        id: 'cisp-train-057',
+        year: 2024, session: '培训题库',
+        domain: '安全评估',
+        question: '根据《关于开展信息安全风险评估工作的意见》的规定，错误的是（）',
+        options: [
+          'A. 信息安全风险评估应以检查评估为主，自评估和检查评估相互结合',
+          'B. 风险评估工作要按照严密组织、规范操作、讲求科学、注重实效的原则',
+          'C. 信息安全风险评估应贯穿于网络和信息系统建设运行的全过程',
+          'D. 应加强信息安全风险评估工作的组织领导'
+        ],
+        correctIndex: 0,
+        explanation: '信息安全风险评估应以自评估(自查)为主，检查评估为辅。自评估是基础性、常规性工作。'
+      },
+      {
+        id: 'cisp-train-058',
+        year: 2024, session: '培训题库',
+        domain: '信息安全管理体系',
+        question: '下面的角色对应的信息安全职责不合理的是（）',
+        options: [
+          'A. 高级管理层——最终责任',
+          'B. 信息安全部门主管——提供各种信息安全工作必须的资源',
+          'C. 系统的普通使用者——遵守日常操作规范',
+          'D. 审计人员——检查安全策略是否被遵从'
+        ],
+        correctIndex: 1,
+        explanation: '提供信息安全工作必须的资源通常由高级管理层负责，而不是信息安全部门主管。主管负责执行层面的管理工作。'
+      },
+      {
+        id: 'cisp-train-059',
+        year: 2024, session: '培训题库',
+        domain: '信息安全监管',
+        question: '自2004年1月起，国内各有关部门申报信息安全国家标准计划项目时，必须经由哪个组织提出工作意见（）',
+        options: [
+          'A. 全国通信标准化技术委员会(TC485)',
+          'B. 全国信息安全标准化技术委员会(TC260)',
+          'C. 中国通信标准化协会(CCSA)',
+          'D. 网络与信息安全技术工作委员会'
+        ],
+        correctIndex: 1,
+        explanation: '全国信息安全标准化技术委员会(TC260)负责信息安全领域的国家标准制修订工作。'
+      },
+      {
+        id: 'cisp-train-060',
+        year: 2024, session: '培训题库',
+        domain: '安全评估',
+        question: '风险计算原理：风险值=R(A,T,V)=R(L(T,V),F(Ia,Va))，以下说明错误的是（）',
+        options: [
+          'A. R表示安全风险计算函数，A表示资产，T表示威胁，V表示脆弱性',
+          'B. L表示威胁利用资产脆弱性导致安全事件的可能性',
+          'C. F表示安全事件发生后造成的损失',
+          'D. Ia和Va分别表示安全事件作用全部资产的价值与其对应资产的严重程度'
+        ],
+        correctIndex: 3,
+        explanation: 'Ia表示安全事件作用全部资产的价值，Va表示脆弱性严重程度，不是资产的严重程度。'
+      },
+      {
+        id: 'cisp-train-061',
+        year: 2024, session: '培训题库',
+        domain: '物理安全',
+        question: '以下哪一项在防止数据介质被滥用时是不推荐使用的方法（）',
+        options: [
+          'A. 禁用主机的CD驱动、USB接口等I/O设备',
+          'B. 对不再使用的硬盘进行严格的数据清除',
+          'C. 将不再使用的纸质文件用碎纸机粉碎',
+          'D. 用快速格式化删除存储介质中的保密文件'
+        ],
+        correctIndex: 3,
+        explanation: '快速格式化只清除文件系统索引，数据仍可通过恢复工具还原。应使用安全擦除或多遍覆写等方法彻底清除。'
+      },
+      {
+        id: 'cisp-train-062',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '应用系统测试应尽量避免使用含个人隐私的实际数据，如需使用，不是必须做的是（）',
+        options: [
+          'A. 测试系统应使用不低于生产系统的访问控制措施',
+          'B. 为测试系统中的数据部署完善的备份与恢复措施',
+          'C. 在测试完成后立即清除测试系统中的所有敏感数据',
+          'D. 部署审计措施，记录生产数据的拷贝和使用'
+        ],
+        correctIndex: 1,
+        explanation: '测试系统中的敏感数据不应进行备份，因为备份会造成隐私数据的进一步扩散和不可控。'
+      },
+      {
+        id: 'cisp-train-063',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '为了保证系统日志可靠有效，以下哪一项不是日志必须具备的特征（）',
+        options: [
+          'A. 统一而精确的时间',
+          'B. 全面覆盖系统资产',
+          'C. 包括访问源、访问目标和访问活动等重要信息',
+          'D. 可以让系统的所有用户方便地读取'
+        ],
+        correctIndex: 3,
+        explanation: '日志只有授权用户可以读取，不应让所有用户方便读取，否则会造成信息泄露和隐私问题。'
+      },
+      {
+        id: 'cisp-train-064',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '关于信息安全事件管理和应急响应，以下说法错误的是（）',
+        options: [
+          'A. 应急响应是组织应对突发/重大信息安全事件所做的准备及事件后采取的措施',
+          'B. 应急响应管理过程分为遏制、根除、处置、恢复、报告和跟踪6个阶段',
+          'C. 信息安全事件分级参考信息系统重要程度、系统损失和社会影响三方面',
+          'D. 信息安全事件可划分为特别重大(I级)、重大(II级)、较大(III级)和一般(IV级)'
+        ],
+        correctIndex: 1,
+        explanation: '应急响应六阶段是：准备(Preparation)、检测(Detection)、遏制(Containment)、根除(Eradication)、恢复(Recovery)、跟踪总结(Lessons Learned)。'
+      },
+      {
+        id: 'cisp-train-065',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '以下哪一项不属于信息安全工程监理模型的组成部分（）',
+        options: [
+          'A. 监理咨询支撑要素',
+          'B. 控制和管理手段',
+          'C. 监理咨询阶段过程',
+          'D. 监理组织安全实施'
+        ],
+        correctIndex: 3,
+        explanation: '监理模型组成包括监理咨询支撑要素、监理咨询阶段过程、控制和管理手段。监理组织安全实施不属于此模型。'
+      },
+      {
+        id: 'cisp-train-066',
+        year: 2024, session: '培训题库',
+        domain: '业务连续性',
+        question: '关于灾难恢复和数据备份的理解，说法正确的是（）',
+        options: [
+          'A. 增量备份是备份从上次完全备份后更新的全部数据文件',
+          'B. 依据灾难恢复资源程度不同，灾难恢复能力分为7个等级',
+          'C. 数据备份按数据类型可分为系统数据备份和用户数据备份',
+          'D. 如果系统一段时间没有出现问题，就可以不用再进行容灾演练'
+        ],
+        correctIndex: 2,
+        explanation: 'A描述的是差分备份(增量备份是任何上一次备份后的更新)；B我国灾备能力分6级；D容灾演练应定期进行。'
+      },
+      {
+        id: 'cisp-train-067',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '监理公司审查软件配置文件，哪一项属于开发类文档（）',
+        options: [
+          'A. 项目计划书',
+          'B. 质量控制计划',
+          'C. 评审报告',
+          'D. 需求说明书'
+        ],
+        correctIndex: 3,
+        explanation: '需求说明书、设计说明书、测试方案等属于开发类文档。ABC属于项目管理文档。'
+      },
+      {
+        id: 'cisp-train-068',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '网络机房建设项目施工前，以下哪一项不属于监理需要审核的内容（）',
+        options: [
+          'A. 审核实施投资计划',
+          'B. 审核实施进度计划',
+          'C. 审核工程实施人员',
+          'D. 企业资质'
+        ],
+        correctIndex: 0,
+        explanation: '监理从项目招标开始到验收结束，在投资计划阶段(项目立项阶段)还没有监理介入。'
+      },
+      {
+        id: 'cisp-train-069',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '关于直接附加存储(DAS)说法错误的是（）',
+        options: [
+          'A. DAS能够在服务器物理位置比较分散的情况下实现大容量存储',
+          'B. DAS实现了操作系统与数据的分离，存取性能较高且实施简单',
+          'C. DAS对服务器依赖性强，服务器故障时存储设备中的数据不能被存取',
+          'D. 较NAS，DAS节省硬盘空间，数据集中便于管理和备份'
+        ],
+        correctIndex: 3,
+        explanation: 'NAS的优点才是数据集中、节约空间。DAS的优点为数据分散、风险分散；缺点是存储空间利用率低、不便统一管理。'
+      },
+      {
+        id: 'cisp-train-070',
+        year: 2024, session: '培训题库',
+        domain: '业务连续性',
+        question: '执行灾难恢复测试时发现灾备站点服务器运行缓慢，应首先检查（）',
+        options: [
+          'A. 灾难恢复站点的错误事件报告',
+          'B. 灾难恢复测试计划',
+          'C. 灾难恢复计划(DRP)',
+          'D. 主站点和灾难恢复站点的配置文件'
+        ],
+        correctIndex: 0,
+        explanation: '排查问题时首先查看错误事件报告，获取系统日志和错误信息，再根据线索进行深入分析。'
+      }
+    ],
+    practiceEnvironment: [
+      {
+        id: 'cisp-training-nist',
+        name: 'NIST 网络安全框架',
+        description: '美国NIST网络安全框架，学习国际通行的识别-保护-检测-响应-恢复方法论',
+        url: 'https://www.nist.gov/cyberframework'
+      },
+      {
+        id: 'cisp-training-owasp',
+        name: 'OWASP Top 10 项目',
+        description: 'OWASP官方十大Web应用安全风险文档，软件安全开发必读',
+        url: 'https://owasp.org/www-project-top-ten/'
+      }
+    ]
+  },
+  {
+    id: 'cisp-training-bank-3',
+    title: 'CISP培训题库精选3（公开题源）',
+    year: 2024,
+    month: '全',
+    description: '来自CISP培训机构公开备考题库（续3），涵盖业务连续性、系统工程、安全评估、等级保护等知识域。',
+    difficulty: '中等',
+    totalScore: 100,
+    passingScore: 70,
+    duration: 120,
+    questions: [
+      {
+        id: 'cisp-train-071',
+        year: 2024, session: '培训题库',
+        domain: '业务连续性',
+        question: '以下对异地备份中心的理解最准确的是（）',
+        options: [
+          'A. 与生产中心不在同一城市',
+          'B. 与生产中心距离100公里以上',
+          'C. 与生产中心距离200公里以上',
+          'D. 与生产中心面临相同区域性风险的机率很小'
+        ],
+        correctIndex: 3,
+        explanation: '异地备份的核心不是简单的距离概念，而是要确保备份中心与生产中心面临相同区域性灾害(如地震、洪水)的机率很小。'
+      },
+      {
+        id: 'cisp-train-072',
+        year: 2024, session: '培训题库',
+        domain: '业务连续性',
+        question: '进行业务影响分析(BIA)时的正确步骤是：1.标识关键业务过程 2.开发恢复优先级 3.标识关键IT资源 4.标识中断影响和允许的中断时间（）',
+        options: ['A. 1-3-4-2', 'B. 1-3-2-4', 'C. 1-2-3-4', 'D. 1-4-3-2'],
+        correctIndex: 0,
+        explanation: 'BCM分析过程：先标识关键业务过程→标识支撑关键业务的关键IT资源→评估中断影响和可接受中断时间→据此开发恢复优先级。'
+      },
+      {
+        id: 'cisp-train-073',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '有关SSE-CMM，错误的理解是（）',
+        options: [
+          'A. 要求实施组织与其他组织如开发方、产品供应商等相互作用',
+          'B. 可以使安全工程成为一个确定、成熟和可度量的科目',
+          'C. 基于SSE-CMM的工程是独立工程，与软件工程、硬件工程等分别规划实施',
+          'D. 覆盖整个组织活动包括管理、组织和工程活动'
+        ],
+        correctIndex: 2,
+        explanation: 'SSE-CMM是系统工程方法论，不能独立实施。安全工程需要与软件工程、硬件工程、通信工程等协同进行。'
+      },
+      {
+        id: 'cisp-train-074',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '关于信息系统安全保障的说法不正确的是（）',
+        options: [
+          'A. 信息系统安全保障与信息系统生命周期密切相关',
+          'B. 信息系统安全保障要素包括信息的完整性、可用性和保密性',
+          'C. 信息系统安全需要从技术、工程、管理和人员四个领域进行综合保障',
+          'D. 需要将信息系统面临的风险降低到可接受的程度，实现其业务使命'
+        ],
+        correctIndex: 1,
+        explanation: '信息系统安全保障要素为技术、工程、管理和人员四个领域。完整性、可用性和保密性是信息系统的安全特性(安全目标)。'
+      },
+      {
+        id: 'cisp-train-075',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '使用SSE-CMM测量组织安全工程能力成熟度时，测量单位是（）',
+        options: ['A. 基本实施(BP)', 'B. 通用实践(GP)', 'C. 过程区域(PA)', 'D. 公共特征(CF)'],
+        correctIndex: 3,
+        explanation: 'SSE-CMM的测量单位是公共特征(Common Features, CF)，通过评估各过程区域的公共特征来确定能力成熟度等级。'
+      },
+      {
+        id: 'cisp-train-076',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '关于GB/T20274.1信息系统安全保障模型的说法不正确的是（）',
+        options: [
+          'A. 该模型将风险和策略作为基础和核心',
+          'B. 生命周期模型是抽象的概念性说明模型，具体操作时可根据环境进行改动和细化',
+          'C. 信息系统安全保障强调动态持续性的长效安全，不仅是某时间点下的安全',
+          'D. 主要是确保信息系统保密性、完整性和可用性，人员能力和培训不需要投入'
+        ],
+        correctIndex: 3,
+        explanation: '单位对信息系统运行维护和使用人员在能力和培训方面需要持续投入。人是安全保障最重要的因素之一。'
+      },
+      {
+        id: 'cisp-train-077',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '信息系统安全工程(ISSE)在IT项目立项阶段，以下哪一项不是必须进行的工作（）',
+        options: [
+          'A. 明确业务对信息安全的要求',
+          'B. 识别来自法律法规的安全要求',
+          'C. 论证安全要求是否正确完整',
+          'D. 通过测试证明系统的功能和性能可以满足安全要求'
+        ],
+        correctIndex: 3,
+        explanation: 'D属于项目验收阶段的工作，不属于立项阶段。立项阶段主要进行需求分析、识别法律法规要求、论证安全要求的正确性。'
+      },
+      {
+        id: 'cisp-train-078',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '关于IATF框架，以下说法不正确的是（）',
+        options: [
+          'A. 分层策略允许在适当时候采用低安全级保障解决方案以降低成本',
+          'B. IATF从人、技术和操作三个层面实施多层保护',
+          'C. 允许在关键区域使用高安全级保障解决方案确保系统安全性',
+          'D. IATF要求在网络安全体系结构各个可能位置实现所有信息安全保障机制'
+        ],
+        correctIndex: 3,
+        explanation: 'IATF是在网络各位置根据风险评估结果按需实现所需的安全机制，不是在所有位置都实现所有机制。'
+      },
+      {
+        id: 'cisp-train-079',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '以下关于软件安全测试说法正确的是（）',
+        options: [
+          'A. 软件安全测试就是黑盒测试',
+          'B. FUZZ测试是经常采用的安全测试方法之一',
+          'C. 软件安全测试关注的是软件的功能',
+          'D. 软件安全测试可以发现软件中产生的所有安全问题'
+        ],
+        correctIndex: 1,
+        explanation: 'FUZZ(模糊测试)是一种重要的安全测试方法，通过大量异常/随机数据输入测试软件的健壮性。安全测试不限于黑盒，也不能发现所有安全问题。'
+      },
+      {
+        id: 'cisp-train-080',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '信息安全工程作为信息安全保障的重要组成部分，主要是为了解决（）',
+        options: [
+          'A. 信息系统的技术架构安全问题',
+          'B. 信息系统组成部件的组件安全问题',
+          'C. 信息系统生命周期的过程安全问题',
+          'D. 信息系统运行维护的安全管理问题'
+        ],
+        correctIndex: 2,
+        explanation: '信息安全工程通过系统工程的方法，解决信息系统从规划到废弃全生命周期的过程安全问题。'
+      },
+      {
+        id: 'cisp-train-081',
+        year: 2024, session: '培训题库',
+        domain: '安全工程与运营',
+        question: '有关SSE-CMM中基本实施(BP)的正确理解是（）',
+        options: [
+          'A. BP不限定于特定的方法工具，不同业务背景中可以使用不同的方法',
+          'B. BP不是根据广泛的现有资料、实施和专家意见综合得出的',
+          'C. BP不代表信息安全工程领域的最佳实践',
+          'D. BP不是过程区域(PA)的强制项'
+        ],
+        correctIndex: 0,
+        explanation: 'BP不限定特定工具方法；是根据广泛资料和专家意见综合得出的；代表安全工程最佳实践；是PA的强制项。'
+      },
+      {
+        id: 'cisp-train-082',
+        year: 2024, session: '培训题库',
+        domain: '信息安全管理体系',
+        question: 'ISMS文档结构规划为4层金字塔结构，以下应放入一级文件的是（）',
+        options: [
+          'A. 《风险评估报告》',
+          'B. 《人力资源安全管理规定》',
+          'C. 《ISMS内部审核计划》',
+          'D. 《单位信息安全方针》'
+        ],
+        correctIndex: 3,
+        explanation: 'ISMS四级文档：一级为方针策略，二级为管理规范制度，三级为操作手册流程，四级为表单和管理记录。'
+      },
+      {
+        id: 'cisp-train-083',
+        year: 2024, session: '培训题库',
+        domain: '信息安全管理体系',
+        question: 'ISMS过程模型实施和运行(Do)阶段，组织应进行的活动包括（）',
+        options: [
+          'A. 制定风险处理计划、实施风险处理、开发有效性测量、实施培训和意识教育、管理ISMS运行、管理ISMS资源',
+          'B. 以上六项加执行检测事态和响应事件的程序',
+          'C. 以上七项加实施内部审核',
+          'D. 以上八项加实施风险再评估'
+        ],
+        correctIndex: 1,
+        explanation: '管理体系PDCA：P-规划、D-实施(1-7项)、C-检查(内部审核和风险再评估)、A-改进。1-7属于D阶段，8-9属于C阶段。'
+      },
+      {
+        id: 'cisp-train-084',
+        year: 2024, session: '培训题库',
+        domain: '安全评估',
+        question: '在实施信息安全风险评估时，关于资产价值的评估，正确的是（）',
+        options: [
+          'A. 资产的价值指采购费用',
+          'B. 资产的价值指维护费用',
+          'C. 资产的价值与其重要性密切相关',
+          'D. 资产的价值无法估计'
+        ],
+        correctIndex: 2,
+        explanation: '风险评估中资产价值不是采购成本，而是根据资产的保密性、完整性和可用性等安全属性对组织业务的重要性来确定。'
+      },
+      {
+        id: 'cisp-train-085',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '某软件公司讨论软件开发生命周期安全，以下观点正确的是（）',
+        options: [
+          'A. 安全开发生命周期中最重要的是编码安全，可解决90%以上的安全问题',
+          'B. 尽早在需求和设计阶段增加安全措施，比发布后修复漏洞代价少得多',
+          'C. 微软SDL与传统开发最大区别是增加了一个专门的安全编码阶段',
+          'D. 如果开发人员已进行安全性测试，就没必要再组织第三方测试'
+        ],
+        correctIndex: 1,
+        explanation: 'A设计阶段最重要；C SDL最大特点是增加了安全培训和应急响应；D第三方测试是必要的。越早发现安全问题的成本越低。'
+      },
+      {
+        id: 'cisp-train-086',
+        year: 2024, session: '培训题库',
+        domain: '安全评估',
+        question: '网站部署时管理员将备份存放在WEB目录下导致攻击者可下载。为发现系统中其他类似问题，最佳测试方法是（）',
+        options: [
+          'A. 模糊测试',
+          'B. 源代码测试',
+          'C. 渗透测试',
+          'D. 软件功能测试'
+        ],
+        correctIndex: 2,
+        explanation: '配置错误等问题是运行时产生的，渗透测试能从攻击者视角发现这类部署运维中的安全问题，是源代码和模糊测试难以发现的最合适方法。'
+      },
+      {
+        id: 'cisp-train-087',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '下面哪项属于软件开发安全方面的问题（）',
+        options: [
+          'A. 软件部署时选用服务性能不高，导致执行效率低',
+          'B. 应用软件未考虑多线程技术，按序排队提供服务',
+          'C. 应用软件存在SQL注入漏洞，黑客能窃取数据库所有数据',
+          'D. 软件受许可证限制不能在多台电脑上安装'
+        ],
+        correctIndex: 2,
+        explanation: 'SQL注入漏洞是典型的安全问题，可导致数据泄露。AB属于性能问题，D属于许可合规问题，均非安全问题。'
+      },
+      {
+        id: 'cisp-train-088',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '为增强Web应用安全性，开发经理决定加强Web安全开发培训，以下哪项不在考虑范围内（）',
+        options: [
+          'A. 网站身份鉴别技术安全培训',
+          'B. OpenSSL心脏出血漏洞安全培训',
+          'C. SQL注入漏洞安全编程培训',
+          'D. ARM系统漏洞挖掘安全培训'
+        ],
+        correctIndex: 3,
+        explanation: 'ARM系统漏洞挖掘属于移动/嵌入式平台安全，不属于Web安全领域。ABC均属于Web安全范畴。'
+      },
+      {
+        id: 'cisp-train-089',
+        year: 2024, session: '培训题库',
+        domain: '加密技术',
+        question: 'HTTPS协议相比HTTP协议的优势说明，正确的是（）',
+        options: [
+          'A. HTTPS对传输数据进行加密，可以避免嗅探等攻击行为',
+          'B. HTTPS使用不同端口，让攻击者不容易找到端口，安全性高',
+          'C. HTTPS是HTTP的补充不能独立运行，需要更高系统性能',
+          'D. HTTPS使用挑战机制，会话中不传输用户名密码，安全性高'
+        ],
+        correctIndex: 0,
+        explanation: 'HTTPS通过TLS/SSL对传输数据进行加密保护。端口变化不增加安全性(端口扫描可发现)，HTTPS可以独立运行(非HTTP补充)。'
+      },
+      {
+        id: 'cisp-train-090',
+        year: 2024, session: '培训题库',
+        domain: '安全评估',
+        question: '不同的风险评估方法可能得到不同结果，下面的描述中错误的是（）',
+        options: [
+          'A. 定量风险分析从财务数字上对风险进行评估，得出可量化的分析结果',
+          'B. 定量分析比定性分析更准确，实际工作中应使用定量分析，不选定性分析',
+          'C. 定性分析需凭借分析者经验和直觉，结果与评估团队素质密切相关',
+          'D. 定性风险分析更具主观性，定量风险分析更具客观性'
+        ],
+        correctIndex: 1,
+        explanation: '实际工作中根据情况选择定量、定性或定量与定性相结合的方法。定量需要大量数据支撑，很多时候不具备条件。'
+      },
+      {
+        id: 'cisp-train-091',
+        year: 2024, session: '培训题库',
+        domain: '信息安全管理体系',
+        question: 'ISMS PDCA模型中，除规划建立、实施运行、保持和改进外，还有一个空白处是（）',
+        options: [
+          'A. 监控和反馈ISMS',
+          'B. 批准和监督ISMS',
+          'C. 监视和评审ISMS',
+          'D. 沟通和咨询ISMS'
+        ],
+        correctIndex: 2,
+        explanation: '管理体系PDCA：P-规划建立(Plan)、D-实施运行(Do)、C-监视和评审(Check)、A-保持和改进(Act)。'
+      },
+      {
+        id: 'cisp-train-092',
+        year: 2024, session: '培训题库',
+        domain: '等级保护',
+        question: '以下哪个标准规定了等级保护定级阶段的依据、对象、流程、方法及等级变更等内容（）',
+        options: [
+          'A. GB/T20271-2006《信息系统通用安全技术要求》',
+          'B. GB/T22240-2008《信息系统安全保护等级定级指南》',
+          'C. GB/T25070-2010《信息系统等级保护安全设计技术要求》',
+          'D. GB/T20269-2006《信息系统安全管理要求》'
+        ],
+        correctIndex: 1,
+        explanation: 'GB/T22240是等级保护定级指南，规定了定级依据、对象、流程、方法及等级变更等内容。'
+      },
+      {
+        id: 'cisp-train-093',
+        year: 2024, session: '培训题库',
+        domain: '访问控制',
+        question: '与基于口令的鉴别相比，关于指纹识别说法不正确的是（）',
+        options: [
+          'A. 所选择的特征(指纹)便于收集、测量和比较',
+          'B. 每个人所拥有的指纹都是独一无二的',
+          'C. 指纹信息是每个人独有的，指纹识别系统不存在安全威胁问题',
+          'D. 此类系统一般由指纹信息采集和指纹信息识别两部分组成'
+        ],
+        correctIndex: 2,
+        explanation: '指纹识别系统存在安全威胁，如指纹被复制、错误拒绝率(FRR)和错误接受率(FAR)等问题。'
+      },
+      {
+        id: 'cisp-train-094',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '下列我国哪一个政策性文件明确了信息安全保障工作的方针和总体要求以及加强信息安全工作的主要原则（）',
+        options: [
+          'A. 《关于加强政府信息系统安全和保密管理工作的通知》',
+          'B. 《中华人民共和国计算机信息系统安全保护条例》',
+          'C. 《国家信息化领导小组关于加强信息安全保障工作的意见》',
+          'D. 《关于开展信息安全风险评估工作的意见》'
+        ],
+        correctIndex: 2,
+        explanation: '中办2003年27号文件《国家信息化领导小组关于加强信息安全保障工作的意见》规定了信息安全工作的原则，如立足国情、以我为主、坚持技管并重等。'
+      },
+      {
+        id: 'cisp-train-095',
+        year: 2024, session: '培训题库',
+        domain: '信息安全监管',
+        question: '在以下标准中，属于推荐性国家标准的是（）',
+        options: [
+          'A. GB/T XXXX.X-200X',
+          'B. GB XXXX-200X',
+          'C. DB XX/T XXX-200X',
+          'D. GB/Z XXX-XXX-200X'
+        ],
+        correctIndex: 0,
+        explanation: 'GB/T为国标推荐标准；GB为国标强制标准；DB为地方标准；GB/Z为国标指导性技术文件。'
+      },
+      {
+        id: 'cisp-train-096',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '微软SDL将软件开发生命周期划分为七个阶段，其中"弃用不安全的函数"属于哪个阶段的安全活动（）',
+        options: ['A. 要求阶段', 'B. 设计阶段', 'C. 实施阶段', 'D. 验证阶段'],
+        correctIndex: 2,
+        explanation: '弃用不安全的函数(如strcpy改用strcpy_s)属于编码实施阶段的安全活动。'
+      },
+      {
+        id: 'cisp-train-097',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '某公司准备加强软件安全开发管理，以下做法对解决问题没有直接帮助的是（）',
+        options: [
+          'A. 要求所有开发人员参加软件安全开发知识培训',
+          'B. 增加软件源代码审核环节，加强安全性审查',
+          'C. 统一采用Windows 8系统进行开发，不能采用之前版本',
+          'D. 邀请专业队伍进行第三方安全性测试'
+        ],
+        correctIndex: 2,
+        explanation: '统一采用Windows 8系统对软件安全没有直接帮助。操作系统的选择与软件产品的安全性之间没有必然联系。'
+      },
+      {
+        id: 'cisp-train-098',
+        year: 2024, session: '培训题库',
+        domain: '安全开发',
+        question: '关于源代码审核，描述正确的是（）',
+        options: [
+          'A. 源代码审核过程遵循IATF模型，应严格逐步执行',
+          'B. 源代码审核有利于发现软件编码中的安全问题，有商业和开源审核工具',
+          'C. 源代码审核主要依赖人工审核，因为人工是智能的',
+          'D. 如果执行了源代码审核，则不需要安全测试'
+        ],
+        correctIndex: 1,
+        explanation: 'A中IATF不用于代码审核；C人工和工具应结合使用；D安全测试不可被替代。源代码审核工具既有商业的(如Fortify)也有开源的。'
+      },
+      {
+        id: 'cisp-train-099',
+        year: 2024, session: '培训题库',
+        domain: '信息安全保障',
+        question: '微软STRIDE模型中，R(Repudiation，抵赖)威胁的防护措施是（）',
+        options: [
+          'A. 加密传输数据',
+          'B. 使用强身份认证和审计日志',
+          'C. 部署防火墙',
+          'D. 代码签名'
+        ],
+        correctIndex: 1,
+        explanation: '防御"抵赖"威胁需要强身份认证(确认操作者身份)和完整的审计日志(记录操作行为)，使用户无法否认自己的操作。'
+      }
+    ],
+    practiceEnvironment: [
+      {
+        id: 'cisp-training-cissp',
+        name: 'CISSP 考试参考',
+        description: 'ISC2 CISSP官方学习资源，CISP与CISSP知识域有大量交集，可作为扩展学习',
+        url: 'https://www.isc2.org/certifications/cissp'
+      },
+      {
+        id: 'cisp-training-sans',
+        name: 'SANS 安全培训资源',
+        description: '全球领先的信息安全培训资源，包含免费白皮书和安全意识培训材料',
+        url: 'https://www.sans.org/'
       }
     ]
   }

@@ -37,46 +37,35 @@ import {
 } from 'lucide-react';
 import { Card, Badge, Button } from '../components/UI';
 import ReactMarkdown from 'react-markdown';
+import supplement from '../data/cyberAiSupplement';
 import remarkGfm from 'remark-gfm';
 import Editor from '@monaco-editor/react';
 import { cyberBasicPlan, CyberLearningPlan, CyberDay, QuizQuestion } from '../data/cyberBasic';
 import { cyberPenetrationPlan } from '../data/cyberPenetration';
 import { cyberDefensePlan } from '../data/cyberDefense';
 import { cyberAiPlan } from '../data/cyberAi';
+import basicSupplement from '../data/cyberBasicSupplement';
+import penetrationSupplement from '../data/cyberPenetrationSupplement';
+import defenseSupplement from '../data/cyberDefenseSupplement';
 import { Pomodoro } from '../components/Pomodoro';
 import { saveData, loadData } from '../data/persistData';
 import { useQuizPractice, useWrongQuestionBook, checkQuizAnswer } from '../hooks';
 
-// 静态导入所有课程 .md 文件，避免运行时 fetch 路径问题
-const mdModules = import.meta.glob<{ default: string }>('../../public/contents/cyber-learning/**/*.md', {
-  query: '?raw',
-  eager: true,
-});
-
-/** 根据 planId 和 day 获取 .md 内容 */
-function getMdFile(planId: string, day: number): string | null {
-  // 尝试多种可能的 key 格式
-  const candidates = [
-    `../../public/contents/cyber-learning/${planId}/day-${day}.md`,
-    `/src/contents/cyber-learning/${planId}/day-${day}.md`,
-  ];
-  for (const key of candidates) {
-    if (mdModules[key]) return (mdModules[key] as any).default || (mdModules[key] as any);
-  }
-  // glob 返回的 key 可能是绝对路径或不同格式，遍历匹配
-  for (const [modKey, mod] of Object.entries(mdModules)) {
-    if (modKey.includes(`/${planId}/day-${day}.md`)) {
-      return (mod as any).default || (mod as any);
-    }
-  }
-  return null;
-}
+// 通过 fetch 动态加载 public/ 下的 .md 文件（Vite 不支持 glob 读取 public/）
 
 const plans: Record<string, CyberLearningPlan> = {
   basic: cyberBasicPlan,
   penetration: cyberPenetrationPlan,
   defense: cyberDefensePlan,
   ai: cyberAiPlan
+};
+
+// 计划补充数据映射
+const planSupplements: Record<string, Record<number, any>> = {
+  basic: basicSupplement,
+  penetration: penetrationSupplement,
+  defense: defenseSupplement,
+  ai: supplement, // 使用原有的AI补充数据
 };
 
 const planColor = (planId: string) => {
@@ -195,11 +184,36 @@ export const CyberDailyLearning: React.FC = () => {
   const [quizTimerRunning, setQuizTimerRunning] = useState(false);
   const quizTimerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // 测验和错题本 hooks
-  const day = useMemo(
-    () => plan?.days.find(d => d.day === currentDay),
-    [plan, currentDay],
-  );
+  // 测验和错题本 hooks —— 合并 supplement 中提取的结构化数据
+  const day = useMemo(() => {
+    const d = plan?.days.find(d => d.day === currentDay);
+    if (!d) return undefined;
+    
+    const planSuppl = planId ? planSupplements[planId] : undefined;
+    const s = planSuppl ? planSuppl[d.day] : undefined;
+    
+    if (!s) return d;
+    
+    // 合并策略：将补充的quiz追加到已有quiz后面，补充的codeExamples追加到已有codeExamples后面
+    const mergedQuiz = [
+      ...(d.quiz || []),
+      ...(s.quiz || [])
+    ];
+    
+    const mergedCodeExamples = [
+      ...(d.codeExamples || []),
+      ...(s.codeExamples || [])
+    ];
+    
+    return {
+      ...d,
+      quiz: mergedQuiz.length > 0 ? mergedQuiz : d.quiz,
+      codeExamples: mergedCodeExamples.length > 0 ? mergedCodeExamples : d.codeExamples,
+      // resources和recommendedTools仍用fallback策略（优先使用day自身的）
+      resources: (d.resources && d.resources.length > 0) ? d.resources : (s.resources as any),
+      recommendedTools: (d.recommendedTools && d.recommendedTools.length > 0) ? d.recommendedTools : (s.recommendedTools as any),
+    };
+  }, [plan, currentDay, planId]);
   const quiz = useQuizPractice(day?.quiz || []);
   const wrongQuestionBook = useWrongQuestionBook();
 
@@ -324,13 +338,26 @@ export const CyberDailyLearning: React.FC = () => {
     load();
   }, [planId, currentDay]);
 
-  // 加载 .md 课程内容（静态导入，无需网络请求）
+  // 通过 fetch 动态加载 public/contents/cyber-learning/ 下的 .md 文件
   useEffect(() => {
     if (!planId) return;
-    const content = getMdFile(planId, currentDay);
-    setMdContent(content);
-    setMdLoading(false);
-    setMdError(content ? null : null); // 无文件时静默 fallback 到 day.content
+    setMdLoading(true);
+    setMdError(null);
+    fetch(`/contents/cyber-learning/${planId}/day-${currentDay}.md`)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      })
+      .then(text => {
+        setMdContent(text);
+        setMdError(null);
+      })
+      .catch(() => {
+        // 文件不存在时静默 fallback 到 day.content
+        setMdContent(null);
+        setMdError(null);
+      })
+      .finally(() => setMdLoading(false));
   }, [planId, currentDay]);
 
   const handleNoteChange = (val: string) => {

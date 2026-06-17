@@ -1,0 +1,1201 @@
+// 网络安全基础计划(30天)补充数据 - 每天额外5-7道题目 + 编程练习
+// 与当天课程内容紧密关联，补充更多考察维度
+
+export interface SupplementDay {
+  quiz?: {
+    question: string;
+    options: string[];
+    correctIndex: number;
+    correctIndices?: number[];
+    explanation: string;
+  }[];
+  codeExamples?: {
+    title: string;
+    language: string;
+    code: string;
+    explanation: string;
+  }[];
+}
+
+const supplement: Record<number, SupplementDay> = {
+
+1: {
+  quiz: [
+    { question: "以下哪个不属于信息安全的基本属性？", options: ["A. 机密性", "B. 完整性", "C. 可用性", "D. 可追溯性"], correctIndex: 3, explanation: "信息安全核心三要素是机密性(Confidentiality)、完整性(Integrity)、可用性(Availability)。可追溯性属于审计和安全取证范畴，不是基本属性。" },
+    { question: "内部威胁相比外部威胁的特点是什么？", options: ["A. 更容易检测", "B. 已有合法访问权限", "C. 攻击手段更简单", "D. 影响范围更小"], correctIndex: 1, explanation: "内部威胁因为内部人员已有合法访问权限，其恶意行为难以被区分，是安全防护的难点。" },
+    { question: "《网络安全法》于何时正式实施？", options: ["A. 2016年6月1日", "B. 2017年6月1日", "C. 2017年1月1日", "D. 2018年6月1日"], correctIndex: 1, explanation: "《网络安全法》2017年6月1日正式实施，确立了等级保护制度的法律地位。" },
+    { question: "社会工程学攻击主要利用什么？", options: ["A. 系统漏洞", "B. 网络协议缺陷", "C. 人性弱点", "D. 加密算法缺陷"], correctIndex: 2, explanation: "社会工程学不依赖技术漏洞，而是利用人的信任、好奇、恐惧等心理弱点获取信息或权限。" },
+    { question: "以下哪些属于网络安全行业方向？（多选）", options: ["A. 渗透测试", "B. 安全运维", "C. 威胁情报", "D. 安全架构"], correctIndex: -1, correctIndices: [0, 1, 2, 3], explanation: "渗透测试、安全运维、威胁情报分析、安全架构都是网络安全行业的核心方向。" },
+    { question: "保障数据不被未授权修改的目标称为？", options: ["A. 保密性", "B. 完整性", "C. 可用性", "D. 不可否认性"], correctIndex: 1, explanation: "完整性(Integrity)确保数据在传输和存储过程中不被未授权修改或破坏。" },
+  ],
+  codeExamples: [{ title: "CIA三要素代码演示", language: "python", code: `# CIA三要素代码演示
+import hashlib
+from cryptography.fernet import Fernet
+
+# 保密性(Confidentiality): 加密
+key = Fernet.generate_key()
+cipher = Fernet(key)
+encrypted = cipher.encrypt(b"Sensitive Data")
+print(f"[保密性] 加密: {encrypted[:20].hex()}...")
+
+# 完整性(Integrity): 哈希校验
+data = "重要数据"
+hash_val = hashlib.sha256(data.encode()).hexdigest()
+print(f"[完整性] SHA256: {hash_val[:16]}...")
+
+# 可用性(Availability): 模拟冗余
+servers = [True, True, False]
+available = any(servers)
+print(f"[可用性] 服务器可用: {available} ({sum(servers)}/3在线)")
+`, explanation: "用代码直观展示CIA三要素" }]
+},
+
+2: {
+  quiz: [
+    { question: "路由器工作在OSI模型的哪一层？", options: ["A. 物理层", "B. 数据链路层", "C. 网络层", "D. 传输层"], correctIndex: 2, explanation: "路由器根据IP地址进行路由选择，工作在OSI模型的第三层——网络层。" },
+    { question: "TCP三次握手中，第二次握手服务器发送的包是？", options: ["A. SYN", "B. ACK", "C. SYN+ACK", "D. FIN+ACK"], correctIndex: 2, explanation: "服务器收到SYN后返回SYN+ACK包，同时确认客户端的SYN并发送自己的SYN。" },
+    { question: "以下哪个不属于应用层协议？", options: ["A. HTTP", "B. FTP", "C. ICMP", "D. DNS"], correctIndex: 2, explanation: "ICMP(Internet控制报文协议)工作在网络层，用于诊断和差错报告(如ping)。其余都是应用层协议。" },
+    { question: "数据从应用层向下传输时，每一层添加的信息称为？", options: ["A. 解密", "B. 解封装", "C. 封装", "D. 路由"], correctIndex: 2, explanation: "数据从高层到低层传输时，每层添加自己的协议头部信息，这个过程称为封装(Encapsulation)。" },
+    { question: "ARP协议的作用是什么？", options: ["A. IP地址解析为域名", "B. IP地址解析为MAC地址", "C. 端口号解析为服务名", "D. 域名解析为IP"], correctIndex: 1, explanation: "ARP(Address Resolution Protocol)将IP地址解析为对应的MAC地址，用于局域网内的数据链路层通信。" },
+    { question: "TCP和UDP的主要区别是？（多选）", options: ["A. TCP面向连接，UDP无连接", "B. TCP可靠，UDP不可靠", "C. TCP有流量控制，UDP没有", "D. TCP头部更大"], correctIndex: -1, correctIndices: [0, 1, 2, 3], explanation: "TCP是面向连接的可靠传输协议，提供流量控制和拥塞控制；UDP是无连接的轻量级协议。" },
+  ],
+  codeExamples: [{ title: "TCP三次握手模拟", language: "python", code: `# 模拟TCP三次握手状态机
+class TCPHandshake:
+    def __init__(self):
+        self.state = "CLOSED"
+        self.seq_client = 1000
+        self.seq_server = 5000
+    
+    def step1_syn(self):
+        self.state = "SYN_SENT"
+        print(f"[客户端] -> SYN (seq={self.seq_client})")
+        print(f"状态: {self.state}")
+    
+    def step2_syn_ack(self):
+        self.state = "SYN_RCVD"
+        self.seq_server += 1
+        print(f"[服务器] -> SYN-ACK (seq={self.seq_server}, ack={self.seq_client+1})")
+        print(f"状态: {self.state}")
+    
+    def step3_ack(self):
+        self.state = "ESTABLISHED"
+        self.seq_client += 1
+        print(f"[客户端] -> ACK (seq={self.seq_client}, ack={self.seq_server+1})")
+        print(f"状态: {self.state} ✅ 连接已建立")
+
+hs = TCPHandshake()
+hs.step1_syn()
+hs.step2_syn_ack()
+hs.step3_ack()
+`, explanation: "状态机模拟TCP三次握手全过程" }]
+},
+
+3: {
+  quiz: [
+    { question: "MySQL数据库的默认端口是？", options: ["A. 1433", "B. 3306", "C. 5432", "D. 6379"], correctIndex: 1, explanation: "MySQL/MariaDB默认3306端口。1433是MSSQL，5432是PostgreSQL，6379是Redis。" },
+    { question: "以下哪个端口在Linux上绑定需要root权限？", options: ["A. 8080", "B. 3306", "C. 80", "D. 3000"], correctIndex: 2, explanation: "1-1023为知名端口(特权端口)，Linux上只有root用户能绑定，80端口属于此范围。" },
+    { question: "FTP协议中，21端口和20端口分别用于？", options: ["A. 两者都是数据传输", "B. 21控制命令，20数据传输", "C. 20控制命令，21数据传输", "D. 都是控制命令"], correctIndex: 1, explanation: "FTP使用21端口传输控制命令，20端口传输实际数据(主动模式)。" },
+    { question: "Redis默认端口6379暴露在公网的主要风险是？", options: ["A. 性能下降", "B. 未授权访问和入侵", "C. 数据自动删除", "D. 流量增加"], correctIndex: 1, explanation: "Redis默认无密码认证，端口暴露公网可被未授权访问，攻击者可写入SSH公钥或执行系统命令。" },
+    { question: "telnet使用哪个端口，为什么不安全？", options: ["A. 21端口，容易被DDoS", "B. 23端口，明文传输无加密", "C. 22端口，速度太慢", "D. 25端口，容易丢包"], correctIndex: 1, explanation: "Telnet使用23端口，所有数据(包括密码)都是明文传输，应使用SSH(22端口)替代。" },
+    { question: "以下哪些属于Web服务相关端口？（多选）", options: ["A. 80", "B. 443", "C. 8080", "D. 8443"], correctIndex: -1, correctIndices: [0, 1, 2, 3], explanation: "80(HTTP)和443(HTTPS)是标准Web端口，8080和8443是常用的替代Web端口。" },
+  ],
+  codeExamples: [{ title: "常见端口扫描器", language: "python", code: `import socket
+import threading
+
+SERVICES = {
+    21: "FTP", 22: "SSH", 23: "Telnet", 25: "SMTP",
+    53: "DNS", 80: "HTTP", 443: "HTTPS",
+    3306: "MySQL", 5432: "PostgreSQL",
+    6379: "Redis", 27017: "MongoDB", 3389: "RDP"
+}
+
+def scan_port(host, port):
+    try:
+        s = socket.socket()
+        s.settimeout(0.5)
+        if s.connect_ex((host, port)) == 0:
+            svc = SERVICES.get(port, "Unknown")
+            print(f"  [OPEN] {port:5d} -> {svc}")
+        s.close()
+    except: pass
+
+print("端口扫描中...")
+threads = []
+for port in sorted(SERVICES.keys()):
+    t = threading.Thread(target=scan_port, args=("127.0.0.1", port))
+    t.start(); threads.append(t)
+for t in threads: t.join()
+print("扫描完成")
+`, explanation: "多线程端口扫描，自动识别常见服务" }]
+},
+
+4: {
+  quiz: [
+    { question: "Nmap中使用TCP SYN半开扫描的参数是？", options: ["A. -sT", "B. -sS", "C. -sU", "D. -sA"], correctIndex: 1, explanation: "-sS是SYN半开扫描(默认扫描)，只发送SYN包不完成握手，比-sT全连接扫描更隐蔽。" },
+    { question: "收到RST+ACK响应时，说明端口状态是？", options: ["A. 开放", "B. 关闭", "C. 被过滤", "D. 不确定"], correctIndex: 1, explanation: "收到RST+ACK表示端口关闭。收到SYN+ACK表示开放，无响应或ICMP不可达表示被过滤。" },
+    { question: "Nmap中用于操作系统检测的参数是？", options: ["A. -sV", "B. -O", "C. -A", "D. -oS"], correctIndex: 1, explanation: "-O用于操作系统指纹识别，-sV是服务版本检测，-A组合了OS检测、版本检测、脚本扫描和路由追踪。" },
+    { question: "UDP端口扫描比TCP扫描慢的原因？", options: ["A. UDP端口更多", "B. UDP无连接，需要等待超时", "C. 防火墙拦截更多", "D. 协议更复杂"], correctIndex: 1, explanation: "UDP无连接不返回确认，扫描需等待ICMP不可达响应或超时重传，速度远慢于TCP扫描。" },
+    { question: "端口扫描的目的不包括？", options: ["A. 发现开放服务", "B. 识别操作系统", "C. 获取数据内容", "D. 评估攻击面"], correctIndex: 2, explanation: "端口扫描只能发现开放的端口和服务类型，不能获取具体的通信数据内容。" },
+    { question: "以下哪种扫描方式最隐蔽？", options: ["A. TCP Connect扫描(-sT)", "B. SYN扫描(-sS)", "C. NULL扫描(-sN)", "D. ACK扫描(-sA)"], correctIndex: 2, explanation: "NULL扫描不设置任何TCP标志位，某些防火墙和IDS不会记录此类异常包。ACK扫描用于探测防火墙规则。" },
+  ],
+  codeExamples: [{ title: "Nmap扫描结果解析", language: "python", code: `import subprocess
+import re
+
+def scan_with_nmap(target, ports="1-1000"):
+    """使用Nmap扫描并解析结果"""
+    cmd = ["nmap", "-sV", "-p", ports, target]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        
+        # 解析开放端口
+        open_ports = re.findall(
+            r'(\\d+)/tcp\\s+(open)\\s+(\\S+)',
+            result.stdout
+        )
+        
+        print(f"=== {target} 扫描结果 ===")
+        for port, state, service in open_ports:
+            print(f"  [{state.upper()}] {port}/tcp -> {service}")
+        
+        if not open_ports:
+            print("  未发现开放端口")
+            
+        # 操作系统检测
+        os_match = re.search(r'OS details: (.+)', result.stdout)
+        if os_match:
+            print(f"\\n操作系统: {os_match.group(1)}")
+            
+    except FileNotFoundError:
+        print("错误: 请先安装Nmap")
+    except Exception as e:
+        print(f"扫描失败: {e}")
+
+# 使用示例:
+# scan_with_nmap("192.168.1.1")
+print("提示: 调用scan_with_nmap('目标IP')开始扫描")
+`, explanation: "通过Python调用Nmap进行端口扫描并解析结果" }]
+},
+
+5: {
+  quiz: [
+    { question: "以下哪个是对称加密算法？", options: ["A. RSA", "B. AES", "C. ECC", "D. Diffie-Hellman"], correctIndex: 1, explanation: "AES是对称加密算法(加密解密用同一密钥)。RSA和ECC是非对称加密，DH是密钥交换协议。" },
+    { question: "AES-256的密钥长度是多少位？", options: ["A. 128位", "B. 192位", "C. 256位", "D. 512位"], correctIndex: 2, explanation: "AES-256使用256位密钥。AES有128/192/256三种密钥长度，密钥越长安全性越高。" },
+    { question: "非对称加密相比对称加密的主要优势是？", options: ["A. 速度更快", "B. 密钥分发更安全", "C. 算法更简单", "D. 不需要密钥"], correctIndex: 1, explanation: "非对称加密的公钥可以公开分发，解决了对称加密中密钥安全分发的难题(DH密钥交换也可解决此问题)。" },
+    { question: "以下哪个说法是正确的？", options: ["A. DES目前仍然足够安全", "B. 3DES安全性是DES的3倍", "C. AES是目前推荐使用的对称加密标准", "D. 加密算法越复杂越好"], correctIndex: 2, explanation: "DES已被破解(56位密钥太短)，3DES只是过渡方案，AES是当前对称加密的行业标准。" },
+    { question: "混合加密方案中，通常如何组合使用？", options: ["A. 对称加密数据，非对称加密对称密钥", "B. 全部用非对称加密", "C. 全部用对称加密", "D. 两种算法分别加密一半数据"], correctIndex: 0, explanation: "HTTPS等协议使用混合加密：非对称加密(RSA/ECDHE)交换对称密钥，对称加密(AES)加密大量数据，兼顾安全与性能。" },
+    { question: "以下哪些是对称加密算法？（多选）", options: ["A. DES", "B. 3DES", "C. AES", "D. ChaCha20"], correctIndex: -1, correctIndices: [0, 1, 2, 3], explanation: "这四个都是对称加密算法。DES已过时，3DES是过渡方案，AES是当前标准，ChaCha20是流密码常用于移动设备。" },
+  ],
+  codeExamples: [{ title: "AES加解密实战", language: "python", code: `import os
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding
+
+def aes_encrypt(plaintext: str, key: bytes) -> bytes:
+    """AES-256-CBC加密"""
+    iv = os.urandom(16)
+    padder = padding.PKCS7(128).padder()
+    padded = padder.update(plaintext.encode()) + padder.finalize()
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+    encryptor = cipher.encryptor()
+    ct = encryptor.update(padded) + encryptor.finalize()
+    return iv + ct
+
+def aes_decrypt(data: bytes, key: bytes) -> str:
+    """AES-256-CBC解密"""
+    iv, ct = data[:16], data[16:]
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+    decryptor = cipher.decryptor()
+    padded = decryptor.update(ct) + decryptor.finalize()
+    unpadder = padding.PKCS7(128).unpadder()
+    return (unpadder.update(padded) + unpadder.finalize()).decode()
+
+key = os.urandom(32)  # AES-256密钥
+msg = "网络安全的加密实践"
+enc = aes_encrypt(msg, key)
+dec = aes_decrypt(enc, key)
+print(f"明文: {msg}")
+print(f"密文: {enc.hex()[:32]}...")
+print(f"解密: {dec}")
+print(f"结果: {'成功' if msg == dec else '失败'}")
+`, explanation: "完整的AES-256-CBC加解密实现" }]
+},
+
+6: {
+  quiz: [
+    { question: "SHA-256的输出长度是多少位？", options: ["A. 128位", "B. 160位", "C. 256位", "D. 512位"], correctIndex: 2, explanation: "SHA-256输出256位(32字节)哈希值。SHA-1输出160位(已被攻破)，SHA-512输出512位。" },
+    { question: "数字签名使用发送方的什么密钥？", options: ["A. 发送方公钥", "B. 发送方私钥", "C. 接收方公钥", "D. 共享密钥"], correctIndex: 1, explanation: "数字签名使用发送方私钥加密消息哈希值，接收方用发送方公钥验证：私钥签名，公钥验证。" },
+    { question: "以下哪个不是安全哈希算法的特性？", options: ["A. 抗原像攻击", "B. 抗碰撞", "C. 可逆性", "D. 雪崩效应"], correctIndex: 2, explanation: "安全哈希算法必须是不可逆的(单向)。可逆性恰恰是哈希不应该具有的特性。" },
+    { question: "CRC32为什么不适合安全用途？", options: ["A. 输出太短", "B. 设计用于检测随机错误，容易构造碰撞", "C. 速度太慢", "D. 算法不公开"], correctIndex: 1, explanation: "CRC32是循环冗余校验，用于检测随机传输错误，可以轻松构造相同CRC32值的不同输入。" },
+    { question: "以下哪个说法正确？", options: ["A. MD5仍适合密码存储", "B. SHA-1已被碰撞攻击破解", "C. 所有哈希算法都相同", "D. 哈希不需要加盐"], correctIndex: 1, explanation: "SHA-1在2017年被Google成功进行碰撞攻击(SHAttered)，已不推荐用于安全场景。" },
+    { question: "哈希加盐(Salt)的主要目的是？（多选）", options: ["A. 防止彩虹表攻击", "B. 使相同密码产生不同哈希", "C. 增加暴力破解难度", "D. 加速哈希计算"], correctIndex: -1, correctIndices: [0, 1, 2], explanation: "加盐使预计算好的哈希表(彩虹表)无效，即使两个用户密码相同，哈希值也不同，增加破解成本。" },
+  ],
+  codeExamples: [{ title: "RSA数字签名演示", language: "python", code: `from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import hashes
+import hashlib
+
+# 生成RSA密钥
+private_key = rsa.generate_private_key(65537, 2048)
+public_key = private_key.public_key()
+
+# 1. 对消息做哈希
+message = b"转账100元到账号12345"
+hash_obj = hashlib.sha256(message)
+print(f"原始消息: {message.decode()}")
+print(f"SHA256: {hash_obj.hexdigest()[:20]}...")
+
+# 2. 私钥签名
+signature = private_key.sign(
+    message,
+    padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH),
+    hashes.SHA256()
+)
+print(f"\\n签名: {signature.hex()[:40]}...")
+
+# 3. 公钥验证
+try:
+    public_key.verify(
+        signature, message,
+        padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH),
+        hashes.SHA256()
+    )
+    print("验证通过 - 签名有效!")
+except:
+    print("验证失败 - 消息被篡改!")`, explanation: "RSA数字签名的完整流程：哈希→签名→验证" }]
+},
+
+7: {
+  quiz: [
+    { question: "HTTP状态码403表示什么？", options: ["A. 未找到", "B. 禁止访问", "C. 服务器内部错误", "D. 重定向"], correctIndex: 1, explanation: "403 Forbidden表示服务器理解请求但拒绝执行(权限不足)。404是未找到，500是服务器内部错误。" },
+    { question: "HTTP/2相比HTTP/1.1的主要改进不包括？", options: ["A. 多路复用", "B. 头部压缩", "C. 服务器推送", "D. 明文传输"], correctIndex: 3, explanation: "HTTP/2引入了二进制分帧、多路复用、头部压缩(HPACK)、服务器推送等特性，浏览器实现均要求TLS加密。" },
+    { question: "以下哪个HTTP方法是安全的(不修改服务器资源)？", options: ["A. POST", "B. PUT", "C. GET", "D. DELETE"], correctIndex: 2, explanation: "GET是安全方法，只读取数据不修改服务器资源。POST/PUT/DELETE都会修改服务器状态。" },
+    { question: "Content-Type请求头的作用是？", options: ["A. 告诉服务器客户端接受什么类型", "B. 标识请求体的数据格式", "C. 压缩响应内容", "D. 加密传输数据"], correctIndex: 1, explanation: "Content-Type告诉服务器请求体的MIME类型(application/json等)。Accept头才是告诉服务器客户端接受什么类型。" },
+    { question: "HTTPS中TLS握手发生在HTTP通信的哪个阶段？", options: ["A. HTTP请求之前", "B. HTTP请求之后", "C. 服务器响应之前", "D. 与HTTP同时"], correctIndex: 0, explanation: "TLS握手在TCP连接建立后、HTTP数据交换前完成，建立加密通道后再传输HTTP数据。" },
+    { question: "以下哪些HTTP方法通常被认为是幂等的？（多选）", options: ["A. GET", "B. PUT", "C. DELETE", "D. POST"], correctIndex: -1, correctIndices: [0, 1, 2], explanation: "幂等表示多次相同请求产生相同结果。GET(只读)、PUT(完整替换)、DELETE都幂等，POST不幂等。" },
+  ],
+  codeExamples: [{ title: "HTTP安全头检查工具", language: "python", code: `import requests
+
+def check_security_headers(url):
+    """检查HTTP响应安全头"""
+    try:
+        r = requests.get(url, timeout=10)
+        headers = {
+            'Strict-Transport-Security': 'HSTS强制HTTPS',
+            'Content-Security-Policy': 'XSS/注入防护',
+            'X-Content-Type-Options': 'MIME嗅探防护',
+            'X-Frame-Options': '点击劫持防护',
+            'Referrer-Policy': 'Referrer控制',
+        }
+        print(f"=== {url} ===\\n状态: {r.status_code}\\n")
+        score = 0
+        for h, desc in headers.items():
+            if h in r.headers:
+                print(f"  [OK]  {h} - {desc}")
+                score += 1
+            else:
+                print(f"  [MISS] {h} - {desc}")
+        print(f"\\n安全评分: {score}/{len(headers)}")
+    except Exception as e:
+        print(f"检查失败: {e}")`, explanation: "自动化检查网站HTTP安全头配置" }]
+},
+
+8: {
+  quiz: [
+    { question: "以下哪种XSS最难被WAF检测？", options: ["A. 反射型XSS", "B. 存储型XSS", "C. DOM型XSS", "D. 都一样"], correctIndex: 2, explanation: "DOM型XSS完全在客户端执行，攻击载荷不经过服务器，WAF无法检测，需要前端安全编码来防御。" },
+    { question: "HttpOnly Cookie能防御什么？", options: ["A. 所有XSS攻击", "B. JavaScript读取Cookie", "C. CSRF攻击", "D. SQL注入"], correctIndex: 1, explanation: "HttpOnly标记使Cookie无法被JavaScript(document.cookie)读取，减轻XSS攻击中Cookie窃取的风险，但不能防止XSS本身。" },
+    { question: "CSP(内容安全策略)的核心防御机制是？", options: ["A. 加密响应内容", "B. 限制网页可以加载的资源来源", "C. 过滤用户输入", "D. 隐藏页面源代码"], correctIndex: 1, explanation: "CSP通过声明白名单限制哪些来源的脚本、样式等资源可以被加载，有效缓解XSS和数据注入攻击。" },
+    { question: "防止XSS攻击最根本的措施是？", options: ["A. 使用WAF", "B. 对输出进行上下文相关编码", "C. 使用HTTPS", "D. 禁用JavaScript"], correctIndex: 1, explanation: "对所有用户可控内容的输出按照所在上下文(HTML/JS/URL/CSS)进行正确编码，是防御XSS的根本措施。" },
+    { question: "以下哪个XSS防御措施效果最差？", options: ["A. HTML实体编码", "B. 过滤<script>标签", "C. CSP策略", "D. HttpOnly Cookie"], correctIndex: 1, explanation: "仅过滤<script>标签容易被绕过(如<img onerror>、<svg onload>等)，需配合HTML实体编码和其他多层防御。" },
+    { question: "XSS攻击的三种类型是？（多选）", options: ["A. 反射型(Reflected)", "B. 存储型(Stored)", "C. DOM型", "D. 加密型"], correctIndex: -1, correctIndices: [0, 1, 2], explanation: "XSS分为反射型(一次性)、存储型(持久化)、DOM型(客户端)三种，各有不同的攻击和防御方式。" },
+  ],
+  codeExamples: [{ title: "XSS过滤演示", language: "python", code: `import html
+
+def xss_sanitize(user_input: str) -> str:
+    """将用户输入转换为安全的HTML实体"""
+    return html.escape(user_input, quote=True)
+
+# 测试各种XSS载荷
+payloads = [
+    "<script>alert('xss')</script>",
+    "<img src=x onerror=alert(1)>",
+    "<svg onload=alert(1)>",
+    "javascript:alert(1)",
+    "正常用户评论"
+]
+
+print("=== XSS过滤演示 ===\\n")
+for p in payloads:
+    safe = xss_sanitize(p)
+    is_safe = p != safe
+    print(f"输入:  {p}")
+    print(f"输出:  {safe}")
+    print(f"安全:  {'安全' if is_safe else '需要转义'}\\n")
+`, explanation: "HTML实体编码防御XSS攻击" }]
+},
+
+9: {
+  quiz: [
+    { question: "CSRF Token最不应该存放在哪里？", options: ["A. 表单隐藏字段", "B. 自定义HTTP头", "C. Cookie中", "D. Session中关联"], correctIndex: 2, explanation: "CSRF Token存放在Cookie中会随跨站请求自动发送，完全失去防护作用。应放在表单字段或自定义请求头中。" },
+    { question: "SameSite Cookie属性设为Lax的含义是？", options: ["A. Cookie从不发送", "B. Cookie随所有请求发送", "C. Cookie随顶级导航GET请求发送", "D. Cookie只随POST发送"], correctIndex: 2, explanation: "SameSite=Lax时，Cookie随同站请求发送，跨站仅随顶级导航(如用户点击链接)的GET请求发送。" },
+    { question: "为什么验证Referer/Origin头不是CSRF防护的最可靠方案？", options: ["A. 性能太差", "B. 这些头可能被浏览器策略或代理移除", "C. 算法太复杂", "D. 兼容性不好"], correctIndex: 1, explanation: "Referer头可能被浏览器隐私设置、代理服务器或HTTPS→HTTP降级时移除，不能作为唯一防护手段。" },
+    { question: "CSRF攻击成功的前提是？", options: ["A. 用户安装了恶意软件", "B. 用户在目标网站已登录", "C. 目标网站使用HTTP", "D. 浏览器有漏洞"], correctIndex: 1, explanation: "CSRF利用用户在目标网站已有的登录状态(Cookie自动携带)，在用户不知情的情况下发起恶意请求。" },
+    { question: "CSRF和XSS的根本区别是什么？", options: ["A. CSRF更危险", "B. XSS执行恶意脚本，CSRF借用身份发请求", "C. 没有区别", "D. XSS影响更大"], correctIndex: 1, explanation: "XSS是注入并执行恶意脚本，可获取页面数据。CSRF是借用已登录用户身份发起请求，通常不获取响应内容。" },
+  ],
+  codeExamples: [{ title: "CSRF Token生成验证", language: "python", code: `import secrets, hashlib, time
+
+class CSRFTokenManager:
+    def __init__(self, secret_key=None):
+        self.key = secret_key or secrets.token_hex(32)
+    
+    def create_token(self, session_id: str, ttl=3600) -> str:
+        """创建有时效的CSRF Token"""
+        nonce = secrets.token_hex(16)
+        expires = int(time.time()) + ttl
+        payload = f"{session_id}|{nonce}|{expires}"
+        sig = hashlib.sha256(f"{payload}{self.key}".encode()).hexdigest()
+        return f"{payload}|{sig}"
+    
+    def verify_token(self, session_id: str, token: str) -> bool:
+        """验证CSRF Token"""
+        try:
+            parts = token.rsplit("|", 1)
+            payload, sig = parts
+            payload_parts = payload.split("|")
+            sid, nonce, expires = payload_parts
+            
+            # 检查过期
+            if int(expires) < time.time():
+                return False
+            
+            # 检查session匹配
+            if sid != session_id:
+                return False
+            
+            # 验证签名
+            expected = hashlib.sha256(f"{payload}{self.key}".encode()).hexdigest()
+            return secrets.compare_digest(sig, expected)
+        except:
+            return False
+
+# 演示
+mgr = CSRFTokenManager()
+token = mgr.create_token("user_session_123")
+print(f"Token: {token[:50]}...")
+print(f"验证(正确): {mgr.verify_token('user_session_123', token)}")
+print(f"验证(伪造): {mgr.verify_token('hacker_session', token)}")
+`, explanation: "CSRF Token生成和验证的完整实现" }]
+},
+
+10: {
+  quiz: [
+    { question: "文件上传防御采用白名单验证的好处是？", options: ["A. 实现更简单", "B. 只允许已知安全的文件类型", "C. 支持更多格式", "D. 性能更好"], correctIndex: 1, explanation: "白名单只允许明确安全的文件类型，比黑名单(禁止某些、允许其余)更安全，不会遗漏未知的危险文件类型。" },
+    { question: "上传文件的最佳存储位置是？", options: ["A. Web根目录下", "B. Web根目录外通过脚本读取", "C. /tmp临时目录", "D. 数据库BLOB字段"], correctIndex: 1, explanation: "将上传文件存于Web根目录外，通过服务端脚本代理读取，可防止上传的恶意脚本被直接URL访问执行。" },
+    { question: "以下哪种文件上传绕过手段是正确的？", options: ["A. 修改Content-Type头即上传成功", "B. 双扩展名如shell.php.jpg可能绕过黑名单", "C. 所有绕过都已无法使用", "D. 文件上传漏洞已绝迹"], correctIndex: 1, explanation: "双扩展名、大小写混淆、空格/点截断等可能绕过仅基于扩展名的黑名单验证。需多层防护。" },
+    { question: "以下哪个措施不能有效防御文件上传漏洞？", options: ["A. 验证MIME类型", "B. 重命名用户上传的文件", "C. 限制文件大小", "D. 仅检查文件扩展名"], correctIndex: 3, explanation: "仅靠扩展名检查是最不可靠的，可被多种方式绕过。应结合MIME检测、文件头分析、存储隔离等多层措施。" },
+    { question: "文件上传漏洞最严重的后果是？", options: ["A. 磁盘空间耗尽", "B. 服务器被完全控制(上传Webshell)", "C. 带宽被占用", "D. 日志过多"], correctIndex: 1, explanation: "攻击者上传Webshell后可在服务器执行任意命令，导致服务器完全沦陷，是最严重的后果。" },
+  ],
+  codeExamples: [{ title: "安全文件上传检查", language: "python", code: `import os, magic
+
+ALLOWED = {
+    'image/jpeg': ['.jpg', '.jpeg'],
+    'image/png': ['.png'],
+    'application/pdf': ['.pdf'],
+}
+
+def safe_upload_check(filepath: str) -> str:
+    """多层文件安全检查"""
+    name = os.path.basename(filepath)
+    ext = os.path.splitext(name)[1].lower()
+    
+    # 层1: 扩展名白名单
+    valid = [e for exts in ALLOWED.values() for e in exts]
+    if ext not in valid:
+        return f"禁止的扩展名: {ext}"
+    
+    # 层2: MIME类型检测
+    try:
+        mime = magic.from_file(filepath, mime=True)
+    except:
+        mime = "unknown"
+    
+    if mime not in ALLOWED:
+        return f"MIME类型不匹配: {mime}"
+    if ext not in ALLOWED[mime]:
+        return f"扩展名与MIME不一致: {ext} vs {mime}"
+    
+    # 层3: 内容扫描
+    with open(filepath, 'rb') as f:
+        head = f.read(2048)
+        if b'<?php' in head or b'eval(' in head or b'<script' in head:
+            return "检测到可疑代码!"
+    
+    return f"通过: {name} ({mime})"
+
+# 假设存在测试文件
+print("文件安全检查演示")
+print(f"test.jpg: {safe_upload_check('test.jpg')}")
+`, explanation: "三层文件上传安全检测" }]
+},
+
+11: {
+  quiz: [
+    { question: "SSRF攻击可以让服务器访问什么资源？", options: ["A. 仅公网服务", "B. 仅内网服务", "C. 公网、内网和本地服务", "D. 仅Web服务"], correctIndex: 2, explanation: "SSRF让服务器代替攻击者发起请求，可访问公网、内网(如Redis/MySQL)和本地服务(127.0.0.1)。" },
+    { question: "防御SSRF最有效的方式是？", options: ["A. URL黑名单过滤", "B. URL白名单验证", "C. 使用HTTPS", "D. 限制请求频率"], correctIndex: 1, explanation: "白名单只允许访问预定义的URL是最有效的SSRF防御。黑名单容易被各种方式绕过(如DNS rebinding、302跳转等)。" },
+    { question: "SSRF攻击中file://协议可以用来做什么？", options: ["A. 发送邮件", "B. 读取服务器本地文件", "C. 建立WebSocket连接", "D. 执行命令"], correctIndex: 1, explanation: "file://协议可使服务器读取本地文件内容(如file:///etc/passwd)，SSRF防御应禁用不安全的URL协议。" },
+    { question: "云环境SSRF攻击的常见目标是？", options: ["A. 日志文件", "B. 元数据API(169.254.169.254)", "C. 数据库备份", "D. 网站静态资源"], correctIndex: 1, explanation: "169.254.169.254是云平台元数据API地址，可获取临时凭证等敏感信息，是云环境SSRF的首要目标。" },
+    { question: "以下哪项不能有效防御SSRF？", options: ["A. 禁用file://、gopher://等协议", "B. 限制请求的目标IP范围", "C. 仅检查URL是否包含内网IP", "D. 使用白名单URL"], correctIndex: 2, explanation: "仅检查URL特征(如是否含内网IP)可被多种方式绕过(DNS重绑定、短网址跳转、302重定向等)，需多重验证。" },
+  ],
+  codeExamples: [{ title: "SSRF漏洞演示与防御", language: "python", code: `import ipaddress, socket
+from urllib.parse import urlparse
+
+BLOCKED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0']
+BLOCKED_NETS = [
+    ipaddress.ip_network('10.0.0.0/8'),
+    ipaddress.ip_network('172.16.0.0/12'),
+    ipaddress.ip_network('192.168.0.0/16'),
+]
+
+def is_internal_ip(hostname: str) -> bool:
+    """检测是否为内网地址"""
+    try:
+        ip = ipaddress.ip_address(hostname)
+        if ip.is_loopback or ip.is_private or ip.is_link_local:
+            return True
+    except ValueError:
+        try:
+            ip = ipaddress.ip_address(socket.gethostbyname(hostname))
+            if ip.is_private or ip.is_loopback:
+                return True
+        except:
+            pass
+    return False
+
+def safe_fetch(url: str) -> str:
+    """安全的URL请求(SSRF防护)"""
+    parsed = urlparse(url)
+    
+    # 1. 协议白名单
+    if parsed.scheme not in ('http', 'https'):
+        return f"禁止协议: {parsed.scheme}"
+    
+    # 2. 主机名检查
+    hostname = parsed.hostname
+    if hostname in BLOCKED_HOSTS:
+        return f"禁止访问: {hostname}"
+    
+    # 3. 内网IP检测
+    if is_internal_ip(hostname):
+        return f"禁止内网地址: {hostname}"
+    
+    return f"请求URL: {url} (已通过SSRF检查)"
+
+print("=== SSRF防护演示 ===")
+for url in [
+    "http://example.com/api",
+    "http://127.0.0.1/admin",
+    "file:///etc/passwd",
+    "http://192.168.1.1/config",
+]:
+    print(safe_fetch(url))
+`, explanation: "SSRF防护：协议白名单+主机检查+内网IP检测" }]
+},
+
+12: {
+  quiz: [
+    { question: "数字证书中不包含什么？", options: ["A. 域名信息", "B. 公钥", "C. 私钥", "D. CA签名"], correctIndex: 2, explanation: "数字证书包含持有者信息、公钥、有效期和CA签名等，绝不包含私钥。私钥始终由持有者自己保管。" },
+    { question: "CA(证书颁发机构)的核心职责是什么？", options: ["A. 加密网络流量", "B. 验证身份并签发数字证书", "C. 存储用户密码", "D. 扫描漏洞"], correctIndex: 1, explanation: "CA负责验证申请者身份后签发数字证书，是PKI体系的信任锚点。" },
+    { question: "自签名证书和CA签发证书的根本区别？", options: ["A. 加密强度不同", "B. 自签名证书未经信任第三方验证", "C. 证书格式不同", "D. 证书有效期不同"], correctIndex: 1, explanation: "自签名证书不存在信任链，浏览器无法验证其真实性。CA签发的证书有完整信任链可被浏览器自动信任。" },
+    { question: "HTTPS中TLS握手的哪个步骤使用了PKI？", options: ["A. TCP连接建立", "B. 服务器证书验证", "C. 数据传输加密", "D. 连接关闭"], correctIndex: 1, explanation: "客户端通过PKI验证服务器证书的有效性(CA签名、有效期、域名匹配等)，确保证书可信后才继续TLS握手。" },
+    { question: "证书吊销列表(CRL)的作用是？", options: ["A. 记录所有曾签发的证书", "B. 列出已被撤销的证书", "C. 存储用户公钥", "D. 发布新证书"], correctIndex: 1, explanation: "CRL(Certificate Revocation List)记录已被CA撤销的证书(如私钥泄露)，客户端应检查并拒绝吊销的证书。" },
+  ],
+  codeExamples: [{ title: "证书信息提取", language: "python", code: `import ssl, socket
+from datetime import datetime
+
+def check_cert(hostname: str, port: int = 443):
+    """获取并分析SSL证书"""
+    ctx = ssl.create_default_context()
+    try:
+        with socket.create_connection((hostname, port), timeout=5) as sock:
+            with ctx.wrap_socket(sock, server_hostname=hostname) as ssock:
+                cert = ssock.getpeercert()
+                
+                print(f"=== {hostname}:{port} 证书信息 ===\\n")
+                print(f"颁发给: {dict(cert['subject']).get('commonName', 'N/A')}")
+                print(f"颁发者: {dict(cert['issuer']).get('commonName', 'N/A')}")
+                print(f"有效期从: {cert['notBefore']}")
+                print(f"有效期至: {cert['notAfter']}")
+                
+                # 检查到期
+                expires = datetime.strptime(cert['notAfter'], '%b %d %H:%M:%S %Y %Z')
+                days_left = (expires - datetime.now()).days
+                status = "正常" if days_left > 30 else "即将到期!" if days_left > 0 else "已过期!"
+                print(f"剩余天数: {days_left}天 ({status})")
+    except Exception as e:
+        print(f"检查失败: {e}")`, explanation: "通过Python SSL库获取服务器证书信息" }]
+},
+
+13: {
+  quiz: [
+    { question: "多因素认证(MFA)的标准三类因素是什么？", options: ["A. 密码/令牌/指纹", "B. 用户名/密码/验证码", "C. 邮件/短信/电话", "D. 登录/操作/登出"], correctIndex: 0, explanation: "三类因素：你知道的(密码)、你拥有的(令牌/手机)、你是什么(指纹/面部等生物特征)。" },
+    { question: "JWT的Payload部分是什么格式？", options: ["A. 加密的二进制数据", "B. Base64URL编码的JSON(非加密)", "C. 纯文本JSON", "D. MD5哈希值"], correctIndex: 1, explanation: "JWT Payload只是Base64URL编码，任何人都可解码查看，不是加密！敏感信息不应放在JWT的payload中。" },
+    { question: "OAuth 2.0中Authorization Code模式相比Implicit模式好在哪？", options: ["A. 实现更简单", "B. Access Token不经过浏览器URL", "C. 不需要服务端", "D. 速度更快"], correctIndex: 1, explanation: "Authorization Code模式中token在后端通过code交换获得，不暴露在浏览器地址栏，更安全。" },
+    { question: "密码存储的最佳实践是？", options: ["A. MD5加盐哈希", "B. bcrypt/scrypt/Argon2慢哈希", "C. AES加密存储", "D. Base64编码"], correctIndex: 1, explanation: "bcrypt等专门设计的密码哈希算法刻意缓慢且有内置加盐，能有效抵御暴力破解。MD5不适合，AES可逆解密不安全。" },
+    { question: "Session Fixation攻击的原理是？", options: ["A. 窃取Cookie", "B. 攻击者预设Session ID让受害者使用", "C. 暴力破解密码", "D. SQL注入"], correctIndex: 1, explanation: "攻击者先获取一个Session ID，诱骗受害者在认证时使用同一ID，攻击者就能以受害者身份操作。" },
+  ],
+  codeExamples: [{ title: "密码哈希与验证", language: "python", code: `import hashlib, os, time
+
+def hash_password_secure(password: str) -> str:
+    """使用PBKDF2安全哈希密码"""
+    salt = os.urandom(32)
+    key = hashlib.pbkdf2_hmac(
+        'sha256', password.encode(), salt, 100000, dklen=32
+    )
+    return salt.hex() + ':' + key.hex()
+
+def verify_password(password: str, stored: str) -> bool:
+    """验证密码"""
+    salt_hex, key_hex = stored.split(':')
+    salt = bytes.fromhex(salt_hex)
+    key = hashlib.pbkdf2_hmac(
+        'sha256', password.encode(), salt, 100000, dklen=32
+    )
+    return key.hex() == key_hex
+
+# 测试
+start = time.time()
+hashed = hash_password_secure("MySecureP@ss123")
+elapsed = (time.time() - start) * 1000
+print(f"哈希值: {hashed}")
+print(f"耗时: {elapsed:.1f}ms (慢哈希特性)")
+print(f"验证正确密码: {verify_password('MySecureP@ss123', hashed)}")
+print(f"验证错误密码: {verify_password('WrongPass', hashed)}")
+`, explanation: "PBKDF2安全密码哈希与验证" }]
+},
+
+14: {
+  quiz: [
+    { question: "水平越权和垂直越权的区别？", options: ["A. 没有区别", "B. 水平=同权限访问他人数据，垂直=低权限执行高权限操作", "C. 垂直越权更常见", "D. 只有水平越权存在"], correctIndex: 1, explanation: "水平越权：用户A访问用户B的同级数据。垂直越权：普通用户执行管理员操作。两种都需要服务端权限校验防范。" },
+    { question: "前端隐藏按钮可以防止越权吗？", options: ["A. 可以，用户看不到按钮", "B. 不可以，攻击者可直接调用API", "C. 部分可以", "D. 取决于框架"], correctIndex: 1, explanation: "前端权限控制只是UI层面的，攻击者可直接通过浏览器开发者工具或抓包工具调用API。权限校验必须在服务端进行。" },
+    { question: "防止IDOR(不安全的直接对象引用)最有效的措施？", options: ["A. 使用复杂不可预测的ID", "B. 每次请求验证用户对资源的归属", "C. 加密URL参数", "D. 使用POST代替GET"], correctIndex: 1, explanation: "核心原则：每次资源访问都在服务端检查'当前用户是否有权访问该资源'。仅靠不可预测的ID(security by obscurity)不可靠。" },
+    { question: "以下哪个是越权漏洞的典型示例？", options: ["A. SQL注入获取数据", "B. 修改URL中的userId查看他人订单", "C. XSS窃取Cookie", "D. DDoS攻击"], correctIndex: 1, explanation: "通过修改URL参数中的userId访问其他用户订单数据，是最常见的水乎越权(IDOR)漏洞。" },
+  ],
+  codeExamples: [{ title: "越权防护中间件", language: "python", code: `# 越权防护示例 - 资源归属验证
+class AccessControl:
+    def __init__(self):
+        # 用户-资源映射表(实际应从数据库查询)
+        self.user_resources = {
+            'user_1': ['order_101', 'order_102'],
+            'user_2': ['order_201', 'order_202'],
+        }
+    
+    def check_access(self, user_id: str, resource_id: str) -> bool:
+        """检查用户是否有权访问指定资源"""
+        allowed = self.user_resources.get(user_id, [])
+        return resource_id in allowed
+
+# API端点模拟
+def get_order(user_id: str, order_id: str, acl: AccessControl):
+    if not acl.check_access(user_id, order_id):
+        return f"403: 无权访问订单 {order_id}"
+    return f"200: 返回订单 {order_id} 数据"
+
+acl = AccessControl()
+print(get_order('user_1', 'order_101', acl))  # 正常
+print(get_order('user_1', 'order_201', acl))  # 越权!
+print(get_order('user_2', 'order_201', acl))  # 正常
+`, explanation: "资源归属验证 - 防止水平越权" }]
+},
+
+15: {
+  quiz: [
+    { question: "Nginx隐藏版本号使用哪个指令？", options: ["A. hide_version on", "B. server_tokens off", "C. server_signature off", "D. version_hide on"], correctIndex: 1, explanation: "server_tokens off; 可隐藏Nginx版本号。Apache中使用ServerTokens Prod和ServerSignature Off。" },
+    { question: "Web中间件安全加固不包括？", options: ["A. 删除默认应用和示例", "B. 隐藏版本信息", "C. 限制请求方法", "D. 增加服务器性能"], correctIndex: 3, explanation: "性能优化不属于安全加固。安全加固包括：信息隐藏、访问控制、默认配置修改、安全头设置等。" },
+    { question: "Tomcat安全加固时应删除哪些默认应用？", options: ["A. /manager和/host-manager", "B. 所有WAR文件", "C. ROOT应用", "D. /docs"], correctIndex: 0, explanation: "/manager和/host-manager是Tomcat管理应用，存在已知漏洞，生产环境应删除或严格限制访问。" },
+    { question: "中间件安全配置的原则是什么？", options: ["A. 默认配置最安全", "B. 最小化原则，只启用需要的功能", "C. 所有功能全部开启", "D. 仅依赖防火墙"], correctIndex: 1, explanation: "安全配置遵循最小化原则：最小权限、最少服务、最少暴露面，只启用业务必须的功能。" },
+    { question: "Apache中限制HTTP方法(如禁止TRACE/PUT/DELETE)使用什么指令？", options: ["A. <Limit>", "B. <RequireAll>", "C. <Directory>", "D. <Files>"], correctIndex: 0, explanation: "<Limit>指令可用于限制特定HTTP方法，如<Limit PUT DELETE>禁止PUT和DELETE请求。" },
+  ],
+},
+
+16: {
+  quiz: [
+    { question: "漏洞扫描的工作流程第一步是？", options: ["A. 漏洞利用", "B. 目标发现和存活探测", "C. 报告生成", "D. 修复验证"], correctIndex: 1, explanation: "漏洞扫描流程：目标发现→端口扫描→服务识别→漏洞检测→风险评估→报告生成。" },
+    { question: "Nessus的扫描策略(Policy)主要配置什么？", options: ["A. 扫描速度", "B. 要检查的漏洞类型和插件", "C. 报告格式", "D. 目标操作系统"], correctIndex: 1, explanation: "扫描策略定义要启用哪些漏洞检查插件，如Web扫描、数据库扫描、合规检查等，根据目标类型定制。" },
+    { question: "以下哪个不是漏洞扫描常见结果？", options: ["A. Critical(严重)", "B. High(高危)", "C. Medium(中危)", "D. Ignored(忽略)"], correctIndex: 3, explanation: "通用漏洞分级：Critical/High/Medium/Low/Info。Ignored不是标准分级，是处理策略。" },
+    { question: "为什么漏洞扫描可能产生误报？", options: ["A. 扫描器版本太旧", "B. 基于版本号判断而非实际漏洞验证", "C. 网络速度太慢", "D. 目标系统太新"], correctIndex: 1, explanation: "扫描器通常基于服务版本号匹配已知漏洞，某些系统可能已打补丁但版本号未变，导致误报。需要人工验证。" },
+    { question: "漏洞扫描和渗透测试的主要区别？", options: ["A. 没有区别", "B. 扫描自动化识别漏洞，渗透测试模拟真实攻击", "C. 扫描更精确", "D. 渗透测试使用扫描器"], correctIndex: 1, explanation: "漏洞扫描是自动化(可能产生误报)，渗透测试是人工或半自动化模拟真实攻击，通常更深入且减少误报。" },
+  ],
+  codeExamples: [{ title: "简单漏洞检测脚本", language: "python", code: `import socket, ssl, sys
+from datetime import datetime
+
+VULN_DB = {
+    'OpenSSH': {
+        'pattern': 'OpenSSH',
+        'vulns': {'7.2': 'CVE-2016-6210 用户枚举', '7.4': 'CVE-2017-15906'}
+    },
+    'Apache': {
+        'pattern': 'Apache',
+        'vulns': {'2.4.49': 'CVE-2021-41773 路径穿越'}
+    }
+}
+
+def check_service(host, port):
+    """简单服务版本检测"""
+    try:
+        s = socket.socket()
+        s.settimeout(3)
+        s.connect((host, port))
+        banner = s.recv(1024).decode(errors='ignore')
+        s.close()
+        return banner.strip()
+    except:
+        return None
+
+host, port = "127.0.0.1", 22
+banner = check_service(host, port)
+if banner:
+    print(f"{host}:{port} -> {banner}")
+    for svc, info in VULN_DB.items():
+        if info['pattern'] in banner:
+            print(f"  检测到: {svc}")
+            for ver, vuln in info['vulns'].items():
+                if ver in banner:
+                    print(f"  ⚠️ 漏洞: {vuln}")
+`, explanation: "基于Banner的服务识别与漏洞关联检测" }]
+},
+
+17: {
+  quiz: [
+    { question: "SQLMap中使用--dbs参数的目的是？", options: ["A. 指定目标数据库", "B. 枚举所有数据库名称", "C. 设置数据库类型", "D. 删除数据库"], correctIndex: 1, explanation: "--dbs用于枚举目标系统中所有数据库名称。--current-db获取当前数据库，-D指定数据库，--tables枚举表。" },
+    { question: "SQLMap中--os-shell参数的功能是？", options: ["A. 获取数据库Shell", "B. 获取操作系统命令行Shell", "C. 连接远程主机", "D. 查看数据库版本"], correctIndex: 1, explanation: "--os-shell在特定条件下(如MySQL的INTO OUTFILE)可获取操作系统Shell，是非常危险的高级功能。" },
+    { question: "SQLMap使用什么技术检测SQL注入？", options: ["A. 仅基于报错", "B. 多种技术：布尔盲注、时间盲注、报错注入、UNION查询", "C. 仅基于时间", "D. 仅基于UNION"], correctIndex: 1, explanation: "SQLMap自动尝试多种注入技术：Boolean blind、Time blind、Error based、UNION query、Stacked queries、Out of band。" },
+    { question: "--tamper参数的作用是什么？", options: ["A. 修改请求速度", "B. 使用脚本绕过WAF/IPS", "C. 修改输出格式", "D. 修改目标URL"], correctIndex: 1, explanation: "--tamper指定混淆脚本，对注入payload进行编码/变形以绕过WAF和IPS的检测规则。" },
+    { question: "SQLMap检测到注入点后，使用--dump参数会？", options: ["A. 导出数据库结构", "B. 导出指定表的所有数据", "C. 删除数据", "D. 备份数据库"], correctIndex: 1, explanation: "--dump导出表数据，-T指定表名，-C指定列名，--dump-all导出所有数据库的所有表数据。" },
+  ],
+  codeExamples: [{ title: "手动SQL注入检测", language: "python", code: `import requests
+
+def detect_sqli(url, param):
+    """手动SQL注入检测"""
+    payloads = [
+        ("'", "SQL语法错误"),
+        ("' OR '1'='1", "条件永真绕过"),
+        ("' OR '1'='2", "条件永假对比"),
+        ("' AND 1=1-- ", "注释符注入"),
+        ("' UNION SELECT NULL-- ", "联合查询探测"),
+    ]
+    
+    results = []
+    for payload, desc in payloads:
+        params = {param: payload}
+        try:
+            r = requests.get(url, params=params, timeout=5)
+            results.append({
+                'payload': payload,
+                'desc': desc,
+                'length': len(r.text),
+                'status': r.status_code
+            })
+        except:
+            pass
+    
+    # 分析响应差异
+    lengths = [r['length'] for r in results]
+    if len(set(lengths)) > 1:
+        print("可能存在SQL注入(响应长度不一致)")
+        for r in results:
+            print(f"  {r['desc']}: 长度={r['length']}")
+    else:
+        print("未发现明显注入迹象")
+
+# 示例(仅供学习):
+# detect_sqli("http://example.com/product", "id")
+print("提示: detect_sqli('目标URL', '参数名')")`, explanation: "手动SQL注入检测原理演示" }]
+},
+
+18: {
+  quiz: [
+    { question: "命令注入和代码注入的区别是？", options: ["A. 完全相同", "B. 命令注入执行系统命令，代码注入执行编程语言代码", "C. 代码注入更严重", "D. 命令注入只能读文件"], correctIndex: 1, explanation: "命令注入通过系统Shell执行命令(如ping;whoami)，代码注入执行服务器端编程语言代码(如eval函数)。" },
+    { question: "以下哪个PHP函数最容易导致命令注入？", options: ["A. echo()", "B. system()", "C. strlen()", "D. array()"], correctIndex: 1, explanation: "system()、exec()、shell_exec()、passthru()等PHP函数直接执行系统命令，如果参数可控则存在命令注入风险。" },
+    { question: "防止命令注入最有效的方法是？", options: ["A. 过滤特殊字符", "B. 避免直接拼接用户输入到命令中，使用参数化API", "C. 使用HTTPS", "D. 限制命令长度"], correctIndex: 1, explanation: "不使用Shell拼接用户输入是最根本的防御。如必须执行系统命令，应使用参数化方式传递参数而非拼接字符串。" },
+    { question: "以下哪个是命令注入的典型payload？", options: ["A. <script>alert(1)</script>", "B. 127.0.0.1; whoami", "C. ' OR 1=1--", "D. <img src=x onerror=alert(1)>"], correctIndex: 1, explanation: "利用分号、管道符等Shell元字符在正常命令后拼接恶意命令，如ping时追加;whoami。" },
+    { question: "代码注入中eval()函数的危险在于？", options: ["A. 执行速度慢", "B. 动态执行任意代码", "C. 内存占用大", "D. 兼容性差"], correctIndex: 1, explanation: "eval()动态执行字符串作为代码，如果输入可控则攻击者可执行任意程序逻辑，是最危险的函数之一。" },
+  ],
+  codeExamples: [{ title: "命令注入检测", language: "python", code: `import subprocess, shlex
+
+# 不安全: 直接拼接用户输入
+def unsafe_ping(host):
+    """危险! 容易命令注入"""
+    # host = "127.0.0.1; rm -rf /"
+    cmd = f"ping -c 1 {host}"
+    return subprocess.getoutput(cmd)
+
+# 安全: 使用参数列表
+def safe_ping(host):
+    """安全的命令执行方式"""
+    try:
+        result = subprocess.run(
+            ['ping', '-c', '1', host],
+            capture_output=True, text=True, timeout=5
+        )
+        return result.stdout
+    except subprocess.TimeoutExpired:
+        return "请求超时"
+    except Exception as e:
+        return f"错误: {e}"
+
+print("=== 命令注入对比 ===\\n")
+print("不安全方式(不要使用):")
+print("  cmd = f'ping {用户输入}' -> 可注入!\\n")
+print("安全方式:")
+print("  subprocess.run(['ping', '-c', '1', 用户输入])")
+print("  -> 用户输入作为参数传递，不会被Shell解析\\n")
+
+# 测试安全版本
+print(safe_ping("127.0.0.1"))
+`, explanation: "命令注入漏洞对比：不安全拼接 vs 安全参数传递" }]
+},
+
+19: {
+  quiz: [
+    { question: "反序列化漏洞的根本原因是？", options: ["A. 序列化格式复杂", "B. 反序列化时未验证数据来源和内容", "C. 网络传输不安全", "D. 数据量太大"], correctIndex: 1, explanation: "反序列化漏洞的本质是信任了不可信的数据，攻击者构造恶意序列化数据触发代码执行或对象注入。" },
+    { question: "Java反序列化漏洞中常用于利用的类是？", options: ["A. java.lang.String", "B. java.lang.Runtime", "C. java.lang.Integer", "D. java.lang.Boolean"], correctIndex: 1, explanation: "Runtime.getRuntime().exec()可执行系统命令，攻击者通过构造利用链(Gadget Chain)最终调用Runtime执行命令。" },
+    { question: "以下哪个语言的反序列化最常见PHP反序列化漏洞函数？", options: ["A. json_decode()", "B. unserialize()", "C. json_encode()", "D. serialize()"], correctIndex: 1, explanation: "PHP中unserialize()反序列化不可信数据可能导致对象注入(Object Injection)，触发魔术方法造成安全风险。" },
+    { question: "Python中哪个模块的反序列化最危险？", options: ["A. json", "B. pickle", "C. csv", "D. xml"], correctIndex: 1, explanation: "pickle模块可以序列化任意Python对象，反序列化不可信pickle数据可导致任意代码执行。应使用json替代。" },
+    { question: "防御反序列化漏洞的最佳实践不包括？", options: ["A. 使用安全序列化格式(JSON)", "B. 白名单控制可反序列化的类", "C. 快速反序列化", "D. 完整性校验防篡改"], correctIndex: 2, explanation: "速度不是安全措施。防御包括：使用JSON等安全格式、白名单类、数字签名防篡改、不反序列化不可信数据。" },
+  ],
+  codeExamples: [{ title: "pickle反序列化风险演示", language: "python", code: `import pickle, os
+
+# 危险: pickle反序列化
+class SafeClass:
+    def __reduce__(self):
+        # 攻击者可以在这里注入任意命令!
+        return (os.system, ('echo "危险命令已执行!"',))
+
+# 序列化恶意对象
+malicious = pickle.dumps(SafeClass())
+print(f"恶意序列化数据: {malicious}")
+
+print("\\n=== 安全替代方案: JSON ===")
+import json
+
+data = {"command": "safe", "args": ["test"]}
+safe_data = json.dumps(data)
+loaded = json.loads(safe_data)
+print(f"JSON安全数据: {loaded}")
+
+print("\\n=== 如果必须用pickle ===")
+import hmac, hashlib
+
+SECRET = b'super-secret-key'
+def safe_dumps(obj):
+    data = pickle.dumps(obj)
+    sig = hmac.new(SECRET, data, hashlib.sha256).hexdigest()
+    return sig.encode() + b':' + data
+
+def safe_loads(signed_data):
+    sig, data = signed_data.split(b':', 1)
+    expected = hmac.new(SECRET, data, hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(sig.decode(), expected):
+        raise ValueError("数据签名无效!")
+    return pickle.loads(data)
+`, explanation: "pickle反序列化风险与JSON安全替代方案" }]
+},
+
+20: {
+  quiz: [
+    { question: "OWASP Top 10(2021版)中排名第一的风险是？", options: ["A. 注入", "B. 失效的访问控制", "C. 加密失败", "D. 不安全的设计"], correctIndex: 1, explanation: "2021版OWASP Top 10中，失效的访问控制(Broken Access Control)取代注入(Injection)升至第一位。" },
+    { question: "OWASP Top 10不包括以下哪个风险？", options: ["A. SQL注入", "B. XSS跨站脚本", "C. 操作系统漏洞", "D. 安全配置错误"], correctIndex: 2, explanation: "OWASP Top 10专注于Web应用安全风险，操作系统漏洞属于基础设施安全范畴。2021版包含注入、失效认证等。" },
+    { question: "2021版OWASP Top 10新增了哪项风险？", options: ["A. SQL注入", "B. 不安全的设计", "C. XSS", "D. 安全配置错误"], correctIndex: 1, explanation: "2021版新增了不安全的设计(Insecure Design)、软件和数据完整性故障等类别，强调从设计阶段融入安全。" },
+    { question: "失效的身份认证和会话管理可能导致什么？", options: ["A. 服务器宕机", "B. 攻击者获取用户身份", "C. 页面加载慢", "D. 数据库损坏"], correctIndex: 1, explanation: "身份认证缺陷可能被攻击者利用获得未授权访问，如暴力破解、Session劫持、密码重置漏洞等。" },
+    { question: "以下哪项不是防御OWASP Top 10的最佳实践？", options: ["A. 定期安全测试", "B. 仅依赖WAF防护", "C. 安全编码培训", "D. 威胁建模"], correctIndex: 1, explanation: "WAF可以作为一层防护，但不能替代安全编码。防御需要从设计、编码、测试、运维全生命周期考虑。" },
+    { question: "OWASP Top 10中'注入'风险的典型防御措施是？（多选）", options: ["A. 参数化查询", "B. 输入验证", "C. ORM框架", "D. 输出编码"], correctIndex: -1, correctIndices: [0, 1, 2], explanation: "参数化查询是第一道防线，ORM框架内置防注入，输入验证作为辅助。输出编码主要防XSS而非注入。" },
+  ],
+},
+
+21: {
+  quiz: [
+    { question: "CVE的全称是什么？", options: ["A. Common Vulnerability Exposure", "B. Common Vulnerabilities and Exposures", "C. Critical Vulnerability Engine", "D. Cyber Vulnerability Entry"], correctIndex: 1, explanation: "CVE=Common Vulnerabilities and Exposures，是MITRE维护的公共漏洞标识系统。" },
+    { question: "CVE编号格式通常是？", options: ["A. CVE-年份-编号", "B. CVE编号-年份", "C. 随机字符串", "D. 仅数字"], correctIndex: 0, explanation: "CVE编号格式：CVE-YYYY-NNNNN(如CVE-2021-44228 Log4Shell)，YYYY为年份，NNNNN为流水号。" },
+    { question: "CVSS评分中9.0-10.0的范围代表什么？", options: ["A. 低危", "B. 中危", "C. 高危", "D. 严重(Critical)"], correctIndex: 3, explanation: "CVSS 3.x评分：0无、0.1-3.9低、4.0-6.9中、7.0-8.9高、9.0-10.0严重(Critical)。" },
+    { question: "漏洞管理流程的正确顺序？", options: ["A. 修复→发现→评估→报告", "B. 发现→评估→修复→验证→报告", "C. 报告→发现→修复", "D. 评估→发现→报告→修复"], correctIndex: 1, explanation: "漏洞管理循环：发现(扫描)→评估(风险评级)→修复(打补丁/配置)→验证(复扫)→报告(记录和趋势分析)。" },
+    { question: "CVSS评分考虑哪几个维度？", options: ["A. 仅严重程度", "B. 基本(Base)、时间(Temporal)、环境(Environmental)", "C. 仅影响范围", "D. 仅利用难度"], correctIndex: 1, explanation: "CVSS三个维度：基本指标(漏洞本身特性)、时间指标(随时间变化)、环境指标(特定环境的影响)。" },
+  ],
+  codeExamples: [{ title: "CVE信息查询", language: "python", code: `import json, urllib.request
+
+def lookup_cve(cve_id: str):
+    """查询CVE漏洞信息(使用NVD API)"""
+    url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?cveId={cve_id}"
+    try:
+        with urllib.request.urlopen(url, timeout=10) as resp:
+            data = json.loads(resp.read())
+            vulns = data.get('vulnerabilities', [])
+            if not vulns:
+                return f"未找到 {cve_id}"
+            
+            cve = vulns[0]['cve']
+            desc = cve['descriptions'][0]['value']
+            metrics = cve.get('metrics', {}).get('cvssMetricV31', [])
+            score = metrics[0]['cvssData']['baseScore'] if metrics else 'N/A'
+            
+            return f"{cve_id}: CVSS {score}\\n{desc[:200]}..."
+    except Exception as e:
+        return f"查询失败: {e}"
+
+# print(lookup_cve("CVE-2021-44228"))
+print("提示: lookup_cve('CVE-2021-44228') 查询Log4j漏洞")`, explanation: "通过NVD API查询CVE漏洞详情" }]
+},
+
+22: {
+  quiz: [
+    { question: "SOC的核心职能是什么？", options: ["A. 开发安全产品", "B. 安全监控与事件响应", "C. 网络运维", "D. 数据备份"], correctIndex: 1, explanation: "SOC(Security Operations Center)负责7x24安全监控、威胁检测、事件响应、日志分析等安全运营工作。" },
+    { question: "SIEM系统的核心功能不包括？", options: ["A. 日志收集聚合", "B. 关联分析", "C. 漏洞修复", "D. 告警管理"], correctIndex: 2, explanation: "SIEM负责日志收集、关联分析和告警，不直接执行漏洞修复。漏洞修复属于漏洞管理流程。" },
+    { question: "SOC分析师的L1/L2/L3分级主要区别是？", options: ["A. 工资不同", "B. 分析深度和技能要求递增", "C. 工作地点不同", "D. 工作时间不同"], correctIndex: 1, explanation: "L1初步筛选告警，L2深度分析和事件调查，L3威胁狩猎和高级取证分析。技能和经验要求逐级递增。" },
+    { question: "安全运营中'误报率'指的是？", options: ["A. 所有告警都是假的", "B. 正常行为被误判为攻击的比例", "C. 扫描准确度", "D. 系统故障率"], correctIndex: 1, explanation: "误报(False Positive)是将正常行为错误标记为攻击。高误报率会导致'狼来了'效应，降低分析师对真实告警的敏感度。" },
+    { question: "以下哪个不是安全运营常用的日志来源？", options: ["A. 网络设备日志", "B. 服务器系统日志", "C. 社交媒体动态", "D. 安全设备告警"], correctIndex: 2, explanation: "安全运营主要分析网络设备、服务器、安全设备、应用系统的日志。社交媒体不属于标准日志来源。" },
+  ],
+  codeExamples: [{ title: "日志分析基础", language: "python", code: `import re
+from collections import Counter
+from datetime import datetime
+
+# 模拟Apache访问日志分析
+sample_logs = [
+    '192.168.1.1 - - [10/Jun/2024:14:20:10] "GET /index.html HTTP/1.1" 200 2326',
+    '10.0.0.55 - - [10/Jun/2024:14:20:11] "POST /login HTTP/1.1" 401 512',
+    '192.168.1.1 - - [10/Jun/2024:14:20:12] "GET /admin HTTP/1.1" 403 256',
+    '172.16.0.99 - - [10/Jun/2024:14:20:13] "GET /api/users HTTP/1.1" 200 1024',
+    '10.0.0.55 - - [10/Jun/2024:14:20:14] "POST /login HTTP/1.1" 401 512',
+    '10.0.0.55 - - [10/Jun/2024:14:20:15] "POST /login HTTP/1.1" 401 512',
+]
+
+# 分析登录失败(暴力破解检测)
+failed_logins = [l for l in sample_logs if 'POST /login' in l and '401' in l]
+ip_counts = Counter()
+for log in failed_logins:
+    ip = log.split()[0]
+    ip_counts[ip] += 1
+
+print("=== 登录失败分析 ===")
+for ip, count in ip_counts.items():
+    alert = "⚠️ 可疑! 暴力破解?" if count >= 3 else ""
+    print(f"  {ip}: {count}次失败 {alert}")
+
+# HTTP状态码统计
+status_counts = Counter()
+for log in sample_logs:
+    match = re.search(r'" (\\d{3}) ', log)
+    if match:
+        status_counts[match.group(1)] += 1
+
+print(f"\\n=== HTTP状态码分布 ===")
+for code, count in status_counts.most_common():
+    print(f"  {code}: {count}次")
+`, explanation: "日志分析基础：登录失败检测和状态码统计" }]
+},
+
+23: {
+  quiz: [
+    { question: "应急响应的PDCERF模型包括几个阶段？", options: ["A. 3个", "B. 4个", "C. 5个", "D. 6个"], correctIndex: 3, explanation: "PDCERF共6个阶段：准备(Preparation)、检测(Detection)、抑制(Containment)、根除(Eradication)、恢复(Recovery)、跟踪(Follow-up)。" },
+    { question: "发现勒索软件感染后，第一步应该做什么？", options: ["A. 支付赎金", "B. 拔掉网线隔离受感染主机", "C. 格式化硬盘", "D. 忽略它"], correctIndex: 1, explanation: "抑制(Containment)是应急响应的关键步骤：第一时间隔离受影响系统，防止勒索软件横向扩散到其他主机。" },
+    { question: "应急响应中'Eradication'阶段的目的是？", options: ["A. 发现事件", "B. 彻底清除攻击痕迹和后门", "C. 恢复业务", "D. 通知用户"], correctIndex: 1, explanation: "Eradication(根除)阶段要找到并清除攻击根因：删除恶意软件、关闭后门、修复漏洞、重置被窃凭证。" },
+    { question: "事件响应团队(IRT)通常不包括哪个角色？", options: ["A. 安全分析师", "B. 法务/合规人员", "C. 公关专员", "D. 前端开发工程师"], correctIndex: 3, explanation: "IRT通常包括安全分析师、管理层、法务、公关、IT运维。前端开发不是标准IRT成员(但可能需要技术协助)。" },
+    { question: "应急响应中证据收集的原则是？", options: ["A. 先修复再收集", "B. 尽量减少对原始数据的改变", "C. 只收集日志", "D. 格式化后收集"], correctIndex: 1, explanation: "证据收集应遵循最小改变原则：先做内存镜像，再磁盘镜像，最后才分析，保证证据的完整性和可采信性。" },
+  ],
+  codeExamples: [{ title: "应急响应检查清单", language: "python", code: `# 应急响应流程模拟
+class IncidentResponse:
+    def __init__(self):
+        self.timeline = []
+        self.status = "就绪"
+    
+    def log(self, action):
+        from datetime import datetime
+        ts = datetime.now().strftime("%H:%M:%S")
+        self.timeline.append(f"[{ts}] {action}")
+        print(f"[{ts}] {action}")
+    
+    def respond(self, incident_type):
+        self.status = "响应中"
+        self.log(f"检测到事件: {incident_type}")
+        
+        # 1. 检测与确认
+        self.log("阶段1-检测: 确认事件真实性")
+        
+        # 2. 抑制
+        self.log("阶段2-抑制: 隔离受影响系统")
+        self.log("  - 断开网络连接")
+        self.log("  - 创建内存镜像")
+        self.log("  - 停止受影响服务")
+        
+        # 3. 根除
+        self.log("阶段3-根除: 清除攻击痕迹")
+        self.log("  - 删除恶意文件")
+        self.log("  - 修复漏洞")
+        self.log("  - 重置凭证")
+        
+        # 4. 恢复
+        self.log("阶段4-恢复: 重建系统")
+        self.log("  - 从干净备份恢复")
+        self.log("  - 验证系统完整性")
+        
+        # 5. 总结
+        self.log("阶段5-总结: 编写事件报告")
+        self.status = "已解决"
+        return self.timeline
+
+ir = IncidentResponse()
+ir.respond("勒索软件感染")
+print(f"\\n最终状态: {ir.status}")
+print(f"时间线记录: {len(ir.timeline)}条")
+`, explanation: "应急响应PDCERF流程模拟" }]
+},
+
+24: {
+  quiz: [
+    { question: "iptables中哪个链处理进入本机的数据包？", options: ["A. OUTPUT", "B. INPUT", "C. FORWARD", "D. PREROUTING"], correctIndex: 1, explanation: "INPUT链处理目的地址是本机的入站数据包。FORWARD处理转发的包，OUTPUT处理本机发出的包。" },
+    { question: "防火墙的默认拒绝策略(Default Deny)是什么意思？", options: ["A. 默认允许所有流量", "B. 默认拒绝所有，仅允许明确放行的规则", "C. 根据流量自动判断", "D. 不做任何过滤"], correctIndex: 1, explanation: "Default Deny(白名单模式)：拒绝所有流量，仅根据规则放行需要的。是最安全的防火墙策略。" },
+    { question: "以下哪个不是防火墙的常见类型？", options: ["A. 包过滤防火墙", "B. 状态检测防火墙", "C. 应用代理防火墙", "D. 协议转换防火墙"], correctIndex: 3, explanation: "防火墙类型包括：包过滤、状态检测(Stateful)、应用代理(Proxy)、下一代防火墙(NGFW)。协议转换属于网关功能。" },
+    { question: "iptables规则中-j DROP和-j REJECT的区别？", options: ["A. 完全相同", "B. DROP无声丢弃，REJECT返回拒绝响应", "C. REJECT更安全", "D. DROP会通知发送方"], correctIndex: 1, explanation: "DROP静默丢弃数据包(超时等待)，REJECT返回ICMP拒绝消息(立即告知)。DROP对扫描有迷惑作用但调试不便。" },
+    { question: "DMZ(隔离区)的主要作用是？", options: ["A. 存放机密数据", "B. 隔离对外服务与内部网络", "C. 加速网络", "D. 存储备份"], correctIndex: 1, explanation: "DMZ放置对外提供服务的服务器(Web、邮件等)，与内部网络隔离。即使DMZ被攻破，内网仍然受保护。" },
+  ],
+  codeExamples: [{ title: "iptables规则生成器", language: "python", code: `# iptables基础防火墙规则生成
+def generate_firewall_rules(allowed_ports=None):
+    """生成基础iptables防火墙规则"""
+    rules = [
+        "# === 基础防火墙规则 ===",
+        "# 1. 设置默认策略(白名单模式)",
+        "iptables -P INPUT DROP",
+        "iptables -P FORWARD DROP",
+        "iptables -P OUTPUT ACCEPT",
+        "",
+        "# 2. 允许本地回环",
+        "iptables -A INPUT -i lo -j ACCEPT",
+        "",
+        "# 3. 允许已建立的连接",
+        "iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT",
+    ]
+    
+    if allowed_ports:
+        rules.append("\\n# 4. 开放指定端口")
+        for port, proto, desc in allowed_ports:
+            rules.append(f"iptables -A INPUT -p {proto} --dport {port} -j ACCEPT  # {desc}")
+    
+    rules.extend([
+        "\\n# 5. 防攻击规则",
+        "iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP  # NULL扫描",
+        "iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP    # XMAS扫描",
+        "iptables -A INPUT -m limit --limit 10/min -j ACCEPT    # 速率限制",
+    ])
+    
+    return "\\n".join(rules)
+
+# 生成规则
+allowed = [(22, "tcp", "SSH"), (80, "tcp", "HTTP"), (443, "tcp", "HTTPS")]
+print(generate_firewall_rules(allowed))
+`, explanation: "生成iptables防火墙规则" }]
+},
+
+25: {
+  quiz: [
+    { question: "WAF主要防护哪类攻击？", options: ["A. 物理层攻击", "B. Web应用层攻击(SQL注入/XSS)", "C. 网络DDoS", "D. 操作系统漏洞"], correctIndex: 1, explanation: "WAF(Web应用防火墙)专注防护Web应用层攻击，如SQL注入、XSS、CSRF、文件包含等OSI第七层威胁。" },
+    { question: "ModSecurity属于哪种类型的WAF？", options: ["A. 云WAF", "B. 基于主机的开源WAF模块", "C. 硬件WAF", "D. DNS WAF"], correctIndex: 1, explanation: "ModSecurity是Apache/Nginx的开源WAF模块，部署在Web服务器上(嵌入式)，提供实时Web应用防护。" },
+    { question: "WAF的'学习模式'作用是？", options: ["A. 加快处理速度", "B. 分析正常流量建立白名单基线", "C. 减少误报", "D. 降低内存使用"], correctIndex: 1, explanation: "WAF学习模式记录正常业务流量模式，据此自动生成白名单规则，减少部署初期的误报。" },
+    { question: "以下哪种方式不能绕过WAF？", options: ["A. 编码混淆payload", "B. 分块传输", "C. 使用正确的参数格式", "D. 利用HTTP参数污染"], correctIndex: 2, explanation: "使用正常参数格式是合法请求，不是绕过技术。编码混淆、分块传输、参数污染都是常见的WAF绕过手段。" },
+    { question: "WAF部署在什么位置最合理？", options: ["A. 数据库前面", "B. Web服务器前面(反向代理模式)", "C. 路由器后面", "D. DNS服务器前面"], correctIndex: 1, explanation: "WAF通常以反向代理模式部署在Web服务器前，所有流量先经过WAF检测过滤后再转发到后端Web服务器。" },
+  ],
+},
+
+26: {
+  quiz: [
+    { question: "等级保护2.0将信息系统分为几个安全保护等级？", options: ["A. 3个", "B. 4个", "C. 5个", "D. 6个"], correctIndex: 2, explanation: "等保2.0分为5个等级：一级(自主保护)、二级(指导保护)、三级(监督保护)、四级(强制保护)、五级(专控保护)。" },
+    { question: "等保2.0相比1.0最大的变化是？", options: ["A. 改名了", "B. 新增了云计算、物联网、工控等扩展安全要求", "C. 要求更低了", "D. 取消了"], correctIndex: 1, explanation: "等保2.0新增了云计算安全、移动互联安全、物联网安全、工控安全等扩展要求，覆盖面更广。" },
+    { question: "等保定级三要素是？", options: ["A. 成本、时间、质量", "B. 系统重要性、受侵害客体、侵害程度", "C. 用户数、数据量、带宽", "D. 物理安全、网络安全、主机安全"], correctIndex: 1, explanation: "定级三要素：信息系统受到破坏后侵害的客体(公民/社会/国家)、对客体的侵害程度，综合确定安全等级。" },
+    { question: "三级等保要求每多久进行一次等级测评？", options: ["A. 每月", "B. 每季度", "C. 每年至少一次", "D. 每三年"], correctIndex: 2, explanation: "等保三级要求每年至少进行一次等级测评，二级建议每两年一次，四级每半年一次。" },
+    { question: "等保的安全要求包括哪几个层面？", options: ["A. 仅技术层面", "B. 技术和管理两个层面", "C. 仅管理层面", "D. 仅物理层面"], correctIndex: 1, explanation: "等保要求分为技术安全(物理安全、网络安全、主机安全、应用安全、数据安全)和管理安全(制度、机构、人员、建设、运维)两大层面。" },
+  ],
+},
+
+27: {
+  quiz: [
+    { question: "IDS和IPS的主要区别是？", options: ["A. 完全相同", "B. IDS检测告警，IPS检测并阻断", "C. IDS更先进", "D. IPS只能检测"], correctIndex: 1, explanation: "IDS(入侵检测)只检测和告警不阻断，IPS(入侵防御)检测到攻击后主动阻断。IDS旁路部署，IPS串联部署。" },
+    { question: "Snort规则中sid字段的作用是？", options: ["A. 指定协议", "B. 规则唯一标识符", "C. 设置优先级", "D. 指定端口"], correctIndex: 1, explanation: "sid(Signature ID)是Snort检测规则的唯一标识符，用于区分不同的检测规则。" },
+    { question: "基于签名的检测(Signature-based)的主要局限性？", options: ["A. 速度太慢", "B. 无法检测0day和未知攻击变种", "C. 误报太多", "D. 太复杂"], correctIndex: 1, explanation: "基于签名只能检测已知攻击(签名库已收录)，无法检测0day和签名未覆盖的攻击变种。需配合异常检测和行为分析。" },
+    { question: "Snort部署在什么位置最有效？", options: ["A. 防火墙外部", "B. 内网核心交换机镜像端口", "C. 路由器", "D. DNS服务器"], correctIndex: 1, explanation: "通常部署在防火墙后的核心交换机旁路，通过端口镜像获取全网流量进行分析。" },
+    { question: "Suricata相比Snort的主要优势是？", options: ["A. 免费", "B. 原生多线程支持，高速网络性能更好", "C. 规则更少", "D. 只支持Linux"], correctIndex: 1, explanation: "Suricata原生支持多线程并行处理，在高速网络环境下性能优于传统单线程的Snort。" },
+  ],
+  codeExamples: [{ title: "Snort规则解析", language: "python", code: `# Snort规则结构解析
+def parse_snort_rule(rule):
+    """解析Snort规则的结构"""
+    # 示例规则: alert tcp any any -> 192.168.1.0/24 80
+    parts = {
+        'action': '动作(alert/log/drop)',
+        'protocol': '协议(tcp/udp/icmp)',
+        'src_ip': '源IP',
+        'src_port': '源端口',
+        'direction': '方向(-> 或 <>)',
+        'dst_ip': '目标IP',
+        'dst_port': '目标端口',
+    }
+    
+    print("Snort规则结构:")
+    for key, desc in parts.items():
+        print(f"  {key}: {desc}")
+    
+    print("\\n示例规则:")
+    print('alert tcp any any -> 192.168.1.0/24 80 (')
+    print('  msg:"SQL Injection Attempt";')
+    print('  content:"union select"; nocase;')
+    print('  sid:1000001; rev:1;)')
+
+parse_snort_rule("")
+`, explanation: "Snort入侵检测规则结构解析" }]
+},
+
+28: {
+  quiz: [
+    { question: "蜜罐(Honeypot)的主要用途是什么？", options: ["A. 存储重要数据", "B. 诱捕攻击者并收集其行为信息", "C. 加速网络", "D. 防病毒"], correctIndex: 1, explanation: "蜜罐是故意设置的诱饵系统，用于引诱攻击者并记录其攻击手段、工具和行为模式，不做生产用途。" },
+    { question: "低交互蜜罐和高交互蜜罐的主要区别？", options: ["A. 没有区别", "B. 低交互模拟服务，高交互提供真实系统环境", "C. 低交互更危险", "D. 高交互更便宜"], correctIndex: 1, explanation: "低交互蜜罐(如Honeyd)只模拟网络服务，风险低但信息少；高交互(真实系统)收集信息丰富但风险大。" },
+    { question: "蜜网(Honeynet)是什么？", options: ["A. 单个蜜罐", "B. 由多个蜜罐组成的诱捕网络", "C. 防火墙规则", "D. VPN网络"], correctIndex: 1, explanation: "蜜网是由多个蜜罐组成的网络环境，可以模拟更真实的网络拓扑，捕获更丰富的攻击行为数据。" },
+    { question: "部署蜜罐的主要风险是？", options: ["A. 性能下降", "B. 攻击者可能利用蜜罐作为跳板攻击其他系统", "C. 磁盘空间耗尽", "D. 速度变慢"], correctIndex: 1, explanation: "蜜罐被攻破后可能被攻击者用作跳板攻击其他系统(特别是高交互蜜罐)，必须做好隔离和出站流量控制。" },
+    { question: "以下哪个是知名的开源蜜罐项目？", options: ["A. Wireshark", "B. Cowrie(SSH/Telnet蜜罐)", "C. Nmap", "D. Burp Suite"], correctIndex: 1, explanation: "Cowrie是知名的SSH/Telnet蜜罐，记录攻击者的命令和文件下载。其他如Dionaea(多协议)、Honeyd(低交互框架)。" },
+  ],
+  codeExamples: [{ title: "简单HTTP蜜罐", language: "python", code: `from http.server import HTTPServer, BaseHTTPRequestHandler
+import json, datetime
+
+class HoneypotHandler(BaseHTTPRequestHandler):
+    attack_log = []
+    
+    def log_attack(self, client_ip, method, path, headers, body):
+        self.attack_log.append({
+            'time': datetime.datetime.now().isoformat(),
+            'ip': client_ip,
+            'method': method,
+            'path': path,
+            'headers': dict(headers),
+            'body': body[:500] if body else ''
+        })
+        print(f"[捕获] {client_ip} -> {method} {path}")
+    
+    def do_GET(self):
+        self.log_attack(self.client_address[0], 'GET', 
+                       self.path, self.headers, '')
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(b'<html><body>OK</body></html>')
+    
+    def do_POST(self):
+        length = int(self.headers.get('Content-Length', 0))
+        body = self.rfile.read(length).decode(errors='ignore')
+        self.log_attack(self.client_address[0], 'POST',
+                       self.path, self.headers, body)
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'{"status":"ok"}')
+
+print("HTTP蜜罐启动在 http://0.0.0.0:8888")
+print("提示: 线程中运行以监听攻击请求")
+# server = HTTPServer(('0.0.0.0', 8888), HoneypotHandler)
+# server.serve_forever()
+`, explanation: "简单HTTP蜜罐，记录所有请求用于威胁情报收集" }]
+},
+
+29: {
+  quiz: [
+    { question: "威胁情报中IOC指的是什么？", options: ["A. 输入输出控制", "B. 失陷指标(Indicators of Compromise)", "C. 内部控制", "D. 初始化代码"], correctIndex: 1, explanation: "IOC=Indicators of Compromise，是表明系统可能已被入侵的证据，如恶意IP、域名、文件哈希、注册表项等。" },
+    { question: "STIX标准用于什么目的？", options: ["A. 加密通信", "B. 结构化威胁情报表达和交换", "C. 网络扫描", "D. 漏洞扫描"], correctIndex: 1, explanation: "STIX(Structured Threat Information Expression)是威胁情报的结构化表达和交换标准，由OASIS维护。" },
+    { question: "以下哪个是威胁情报的来源？", options: ["A. 社交媒体", "B. 开源情报(OSINT)、商业情报、行业ISAC", "C. 天气预报", "D. 搜索结果"], correctIndex: 1, explanation: "威胁情报来源包括：开源情报(OSINT)、商业情报厂商、行业信息共享组织(ISAC)、政府CERT等。" },
+    { question: "TTP在威胁情报中代表什么？", options: ["A. 时间、温度、压力", "B. 战术、技术和过程(Tactics, Techniques, Procedures)", "C. 传输协议", "D. 测试工具包"], correctIndex: 1, explanation: "TTP=Tactics(战术)、Techniques(技术)、Procedures(过程)，描述攻击者的行为模式和方法。" },
+    { question: "MITRE ATT&CK框架的核心价值是？", options: ["A. 漏洞扫描", "B. 提供标准化的攻击行为知识库", "C. 加密算法", "D. 防火墙规则"], correctIndex: 1, explanation: "ATT&CK是MITRE维护的全球攻击行为知识库，将攻击技术标准化分类，用于威胁建模、检测规则开发和红蓝对抗。" },
+  ],
+  codeExamples: [{ title: "IOC提取器", language: "python", code: `import re, hashlib
+
+class IOCExtractor:
+    """从文本中提取失陷指标(IOC)"""
+    
+    IP_REGEX = r'\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b'
+    DOMAIN_REGEX = r'\\b(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}\\b'
+    HASH_REGEX = {
+        'MD5': r'\\b[a-fA-F0-9]{32}\\b',
+        'SHA1': r'\\b[a-fA-F0-9]{40}\\b',
+        'SHA256': r'\\b[a-fA-F0-9]{64}\\b',
+    }
+    
+    def extract(self, text):
+        iocs = {
+            'ips': list(set(re.findall(self.IP_REGEX, text))),
+            'domains': list(set(re.findall(self.DOMAIN_REGEX, text))),
+        }
+        for hash_type, pattern in self.HASH_REGEX.items():
+            iocs[hash_type] = list(set(re.findall(pattern, text)))
+        return iocs
+
+extractor = IOCExtractor()
+
+# 模拟威胁情报报告
+report = """
+发现恶意C2通信，IP: 185.130.5.253
+恶意域名: bad.evil.com, malware.c2.org
+关联样本MD5: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6
+"""
+
+iocs = extractor.extract(report)
+print("=== 提取的IOC ===")
+for ioc_type, values in iocs.items():
+    if values:
+        print(f"\\n{ioc_type}:")
+        for v in values:
+            print(f"  - {v}")
+`, explanation: "从威胁情报报告中自动提取IOC" }]
+},
+
+30: {
+  quiz: [
+    { question: "安全开发生命周期(SDL)中，安全需求分析在哪个阶段进行？", options: ["A. 编码完成后", "B. 需求分析和设计阶段", "C. 测试阶段", "D. 上线后"], correctIndex: 1, explanation: "安全需求应在需求和设计阶段就融入，提前识别威胁和风险(威胁建模)，越早发现和修复安全问题成本越低。" },
+    { question: "威胁建模中STRIDE模型不包含哪个威胁？", options: ["A. 欺骗(Spoofing)", "B. 篡改(Tampering)", "C. 拒绝服务(Denial of Service)", "D. 加密失败(Encryption Failure)"], correctIndex: 3, explanation: "STRIDE：Spoofing(欺骗)、Tampering(篡改)、Repudiation(否认)、Information Disclosure(信息泄露)、DoS、Elevation of Privilege(权限提升)。" },
+    { question: "安全编码实践中，以下哪项是正确的？", options: ["A. 信任所有用户输入", "B. 对所有外部输入进行验证", "C. 在客户端做权限校验", "D. 记录所有敏感数据到日志"], correctIndex: 1, explanation: "对所有外部输入进行验证是安全编码的核心原则：永不信任用户输入，在服务端验证所有数据。" },
+    { question: "DevSecOps的核心理念是什么？", options: ["A. 安全是最后一步", "B. 将安全融入DevOps全流程", "C. 不需要安全", "D. 安全是安全团队的事"], correctIndex: 1, explanation: "DevSecOps将安全左移(Shift Left)，融入开发、测试、部署、运维全流程，而非在上线前才做安全检查。" },
+    { question: "以下哪个是SAST和DAST的主要区别？", options: ["A. 完全相同", "B. SAST白盒分析源代码，DAST黑盒测试运行中的应用", "C. SAST更准确", "D. DAST不需要工具"], correctIndex: 1, explanation: "SAST(静态)在编码阶段分析源代码，DAST(动态)在应用运行时模拟攻击测试。两者互补，应结合使用。" },
+    { question: "以下哪些属于安全编码常见漏洞避免措施？（多选）", options: ["A. 使用参数化查询防SQL注入", "B. 对所有输出进行上下文编码防XSS", "C. 使用安全的加密算法和密钥管理", "D. 输入长度限制防缓冲区溢出"], correctIndex: -1, correctIndices: [0, 1, 2, 3], explanation: "这些是安全编码的基本实践，覆盖了OWASP Top 10中最常见的漏洞类型。" },
+  ],
+  codeExamples: [{ title: "安全编码检查清单", language: "python", code: `# 安全编码30天总结 - 关键安全检查项
+SECURE_CODING_CHECKLIST = {
+    "输入验证": [
+        "永远不信任用户输入",
+        "使用白名单而非黑名单",
+        "验证数据类型、长度、格式",
+    ],
+    "输出编码": [
+        "HTML上下文: HTML实体编码",
+        "JavaScript上下文: JS编码",
+        "URL上下文: URL编码",
+    ],
+    "数据库": [
+        "使用参数化查询(PreparedStatement)",
+        "最小权限数据库账户",
+        "加密存储敏感数据",
+    ],
+    "认证授权": [
+        "多因素认证(MFA)",
+        "最小权限原则",
+        "服务端权限校验(非前端)",
+    ],
+    "密码学": [
+        "使用AES-256而非DES",
+        "bcrypt/Argon2存储密码",
+        "不自己发明加密算法",
+    ],
+    "日志审计": [
+        "记录所有安全事件",
+        "不记录密码/Token等敏感信息",
+        "日志防篡改和时间同步",
+    ],
+}
+
+print("=== 30天安全学习总结: 安全编码检查清单 ===\\n")
+for category, items in SECURE_CODING_CHECKLIST.items():
+    print(f"【{category}】")
+    for item in items:
+        print(f"  ✅ {item}")
+    print()
+`, explanation: "30天学习总结：安全编码检查清单" }]
+},
+
+};
+
+export default supplement;

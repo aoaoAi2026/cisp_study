@@ -10,6 +10,7 @@ import {
   CheckCircle,
   Copy,
   Play,
+  Video,
   ChevronLeft,
   ChevronRight,
   Target,
@@ -38,7 +39,7 @@ export const DailyLearning: React.FC = () => {
   const { markDayComplete, completedDays } = useLearningStore();
   const { checkAndUnlockBadge } = useAchievementStore();
 
-  const [activeTab, setActiveTab] = useState<'content' | 'code' | 'quiz' | 'expert'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'video' | 'code' | 'quiz' | 'expert'>('content');
   const [note, setNote] = useState('');
   const [noteSavedAt, setNoteSavedAt] = useState<number | null>(null);
   const [mdContent, setMdContent] = useState<string | null>(null);
@@ -365,6 +366,7 @@ export const DailyLearning: React.FC = () => {
         <motion.div variants={itemVariants} className="flex gap-2 mt-6">
           {[
             { id: 'content', label: '知识点', icon: BookOpen },
+            { id: 'video', label: '视频教程', icon: Video },
             { id: 'code', label: '代码示例', icon: Code },
             { id: 'quiz', label: '练习题', icon: FileQuestion },
             ...(currentDay.expertNotes && currentDay.expertNotes.length > 0
@@ -406,6 +408,102 @@ export const DailyLearning: React.FC = () => {
                     </ReactMarkdown>
                   )}
                 </div>
+              </div>
+            )}
+
+            {activeTab === 'video' && (
+              <div className="space-y-4">
+                {currentDay.videoUrl ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Video size={18} className="text-cyber-blue" />
+                      <span className="text-cyber-blue font-medium">视频教程</span>
+                      <span className="text-xs text-gray-500">Day {currentDay.day} · {currentDay.title}</span>
+                    </div>
+                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                      <iframe
+                        src={currentDay.videoUrl}
+                        className="absolute inset-0 w-full h-full rounded-lg border border-cyber-blue/20"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title={`Day ${currentDay.day} 视频教程`}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Video size={18} className="text-cyber-blue" />
+                      <span className="text-cyber-blue font-medium">视频教程</span>
+                      <span className="text-xs text-gray-500">搜索相关学习视频</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Bilibili 搜索 */}
+                      <a
+                        href={`https://search.bilibili.com/all?keyword=${encodeURIComponent(currentDay.title + ' 网络安全')}&order=click`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block p-4 rounded-lg bg-gradient-to-br from-pink-500/10 to-blue-500/10 border border-pink-500/20 hover:border-pink-500/50 hover:from-pink-500/20 hover:to-blue-500/20 transition-all group"
+                      >
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                            <Play size={20} className="text-pink-400" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-white group-hover:text-pink-300 transition-colors">Bilibili 搜索</h4>
+                            <p className="text-xs text-gray-500">搜索「{currentDay.title}」相关视频</p>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-2">在 Bilibili 上搜索网络安全相关教程，包含实战演示和技术讲解</p>
+                      </a>
+
+                      {/* YouTube 搜索 */}
+                      <a
+                        href={`https://www.youtube.com/results?search_query=${encodeURIComponent(currentDay.title + ' cybersecurity tutorial')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block p-4 rounded-lg bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20 hover:border-red-500/50 hover:from-red-500/20 hover:to-orange-500/20 transition-all group"
+                      >
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+                            <Play size={20} className="text-red-400" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-white group-hover:text-red-300 transition-colors">YouTube 搜索</h4>
+                            <p className="text-xs text-gray-500">搜索「{currentDay.title}」英文教程</p>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-2">在 YouTube 上搜索网络安全英文教程，包含国际认证备考和实验演示</p>
+                      </a>
+                    </div>
+
+                    {/* 通用视频平台入口 */}
+                    <div className="mt-4 p-4 rounded-lg bg-cyber-blue/5 border border-cyber-blue/15">
+                      <h4 className="text-sm font-medium text-cyber-blue mb-3 flex items-center gap-2">
+                        <ExternalLink size={14} />
+                        更多视频平台
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          { name: '腾讯课堂', url: `https://ke.qq.com/course/list/${encodeURIComponent(currentDay.title + ' 网络安全')}` },
+                          { name: '网易云课堂', url: `https://study.163.com/search.htm?p=${encodeURIComponent(currentDay.title + ' 网络安全')}` },
+                          { name: '慕课网', url: `https://www.imooc.com/search/?words=${encodeURIComponent(currentDay.title + ' 安全')}` },
+                          { name: 'FreeBuf', url: `https://www.freebuf.com/search?q=${encodeURIComponent(currentDay.title)}` },
+                        ].map(platform => (
+                          <a
+                            key={platform.name}
+                            href={platform.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-3 py-1.5 text-xs rounded-full bg-cyber-blue/10 text-cyber-blue hover:bg-cyber-blue/20 transition-colors border border-cyber-blue/20"
+                          >
+                            {platform.name}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

@@ -35,5 +35,11 @@
   "include": [
     "src",
     "api"
+  ],
+  "exclude": [
+    "src/data/learningData_min2.ts",
+    "src/data/learningData_orig.ts",
+    "src/data/learningData_min.ts",
+    "src/data/learningData_test.ts"
   ]
 }
