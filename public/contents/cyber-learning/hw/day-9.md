@@ -1,362 +1,286 @@
-# Day 9：Web安全攻防实战
-## 网站是护网最大的战场，也是失分最多的地方
+---
+day: 9
+title: Web访问日志分析
+phase: 第一阶段
+difficulty: ⭐ 入门
+---
+
+# Day 9：Web访问日志分析
+
+> **阶段**：第一阶段 · 蓝队极速上岗 | **难度**：⭐ 入门 | **课时**：2-3小时
 
 ---
 
-> 🎯 **今日目标**  
-> 掌握OWASP Top 10 · 理解Web漏洞原理 · 学习Web防护措施
+## 📋 今日学习目标
+
+1. 理解Nginx/Apache访问日志的每个字段含义
+2. 能够用Linux命令对日志进行统计分析
+3. 能从日志中识别SQL注入、目录扫描等攻击特征
+4. 掌握"找出异常"的核心思路：先看整体统计，再看异常个案
+5. 学会编写简单的日志分析脚本思路
 
 ---
 
-## 📖 一、为什么Web安全这么重要？
+## 📖 核心知识讲解
 
-在护网演习中，有一个公认的规律：
+### 一、Web访问日志长什么样？
 
-```
-🔴 70% 的攻击入口 → Web应用
-🔴 80% 的失分点   → Web安全
-🔴 90% 的互联网暴露资产 → Web服务
-```
-
-**换句话说：网站是护网的"正面战场"。** 你的Web应用守住了，护网就赢了一半。
-
----
-
-## 📖 二、OWASP Top 10——Web安全的"十大通缉犯"
-
-OWASP（开放Web应用安全项目）每隔几年发布一次最危险的Web安全风险榜单，这就是Web安全领域的"头号通缉令"：
-
-| 排名 | 漏洞类型 | 通俗解释 | 严重性 |
-|------|----------|----------|--------|
-| **A01** | 访问控制失效 | 普通用户能看到管理员的页面 | 🔴🔴🔴 |
-| **A02** | 加密失效 | 密码明文传输，谁都看得见 | 🔴🔴🔴 |
-| **A03** | 注入攻击 | SQL注入——操控数据库 | 🔴🔴🔴🔴🔴 |
-| **A04** | 不安全设计 | 网站设计就有安全缺陷 | 🔴🔴🔴 |
-| **A05** | 安全配置错误 | 默认密码没改、调试页开着 | 🔴🔴🔴 |
-| **A06** | 使用有漏洞的组件 | 用了老版本的框架/库 | 🔴🔴 |
-| **A07** | 身份认证失效 | 能绕过登录、能猜到密码 | 🔴🔴🔴🔴 |
-| **A08** | 软件和数据完整性失效 | 更新包被篡改、反序列化攻击 | 🔴🔴 |
-| **A09** | 日志和监控不足 | 被攻击了都不知道 | 🔴🔴 |
-| **A10** | SSRF服务端请求伪造 | 利用服务器访问内网 | 🔴🔴🔴 |
-
----
-
-## 📖 三、SQL注入——最经典的Web漏洞
-
-### 🎭 SQL注入到底是什么？
-
-想象你是一个餐厅的服务员，你记录顾客点菜：
-```
-正常顾客说：    "我要一份宫保鸡丁"
-恶意顾客说：    "我要一份宫保鸡丁；顺便把收银台的钱全给我"
-```
-
-在网站上，相当于：
-```
-正常请求：  /product?id=123
-恶意请求：  /product?id=123 OR 1=1   ← 这会返回所有商品！
-```
-
-### 🔧 SQL注入是怎么发生的？
-
-```sql
--- 网站后台代码可能是这样的：
-SELECT * FROM users WHERE username = '【用户输入】' AND password = '【用户输入】'
-
--- 正常用户输入：用户名=admin，密码=123456
-SELECT * FROM users WHERE username = 'admin' AND password = '123456'
--- 结果：密码匹配才返回 ✅
-
--- 攻击者输入：用户名=admin'--，密码=随便
-SELECT * FROM users WHERE username = 'admin'--' AND password = '随便'
--- 注意：-- 是SQL注释符！后面的密码检查被注释掉了！
--- 结果：直接以admin身份登录 🔴
-```
-
-### 🛡️ 怎么防SQL注入？
-
-**最佳方案：参数化查询（把你的输入和SQL代码彻底分开）**
-
-```python
-# ❌ 危险写法（拼接SQL）：
-sql = f"SELECT * FROM users WHERE name = '{input}'"
-
-# ✅ 正确写法（参数化查询）：
-sql = "SELECT * FROM users WHERE name = ?"
-cursor.execute(sql, (input,))  # 用户的输入永远是"数据"，不是"代码"
-```
-
----
-
-## 📖 四、XSS跨站脚本——让其他用户帮你"干活"
-
-### 🎭 XSS是什么？
-
-你去一个论坛发帖，正常情况下你发的内容会被显示出来。但如果你发的不是文字，而是一段JavaScript代码呢？
+Web服务器（Nginx/Apache）会把每一次访问都记录下来。一条典型的日志长这样：
 
 ```
-正常帖子： "今天天气真好！"
-恶意帖子： "<script>偷走你的Cookie发给我</script>"
+192.168.1.100 - - [10/Jun/2026:14:35:22 +0800] "GET /admin/login.php HTTP/1.1" 200 4521 "https://www.example.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
 ```
 
-当其他用户浏览这个帖子时，脚本就在他们的浏览器里执行了！
+看起来很乱？我们把它拆开来：
 
-### 🎯 三种XSS类型
+| 字段 | 示例值 | 含义 | 通俗解释 |
+|:---|:---|:---|:---|
+| `$remote_addr` | `192.168.1.100` | 客户端IP | 谁访问的 |
+| `-` | `-` | 远程用户（一般没有） | 不用管 |
+| `-` | `-` | 认证用户（一般没有） | 不用管 |
+| `$time_local` | `[10/Jun/2026:14:35:22]` | 访问时间 | 什么时候来的 |
+| `$request` | `"GET /admin/login.php HTTP/1.1"` | 请求行 | 要干什么 |
+| `$status` | `200` | HTTP状态码 | 结果如何 |
+| `$body_bytes_sent` | `4521` | 响应大小(字节) | 回了多少数据 |
+| `$http_referer` | `"https://www.example.com/"` | 从哪个页面跳过来的 | 上一站在哪 |
+| `$http_user_agent` | `"Mozilla/5.0..."` | 浏览器/爬虫标识 | 用什么浏览器 |
 
-| 类型 | 攻击过程 | 危害 |
-|------|----------|------|
-| **反射型** | 攻击链接发给受害者，点击即中招 | ⭐⭐ |
-| **存储型** | 恶意脚本存在服务器上，任何人访问都中招 | ⭐⭐⭐⭐⭐ |
-| **DOM型** | 纯前端漏洞，恶意数据在浏览器端被执行 | ⭐⭐ |
+> 🎯 **蓝队分析时最看重的3个字段**：客户端IP、请求内容、状态码。就这三个字段配合起来，能发现90%的攻击行为。
 
-### 🛡️ 怎么防XSS？
+### 二、日志分析的"黄金三步法"
 
-```
-1️⃣ 输出编码：
-   用户输入 <script>alert('xss')</script>
-   变成      &lt;script&gt;alert('xss')&lt;/script&gt;
-   → 浏览器看到的是文字，不是代码
-
-2️⃣ CSP（内容安全策略）：
-   在HTTP响应头里加：Content-Security-Policy: script-src 'self'
-   → 只允许执行自己网站的JS，外来的脚本一律拒绝！
-
-3️⃣ HttpOnly Cookie：
-   给Cookie加 HttpOnly 标记
-   → JavaScript代码无法读取Cookie，XSS偷不到！
-```
-
----
-
-## 📖 五、文件上传漏洞——给攻击者的快递通道
-
-### 🚪 文件上传是怎么被利用的？
+不管给你多大的日志文件，分析思路都一样：
 
 ```
-你的网站有个"头像上传"功能
-期望：用户上传 → photo.jpg
-实际：攻击者上传 → shell.php（一个Webshell）
+第一步：宏观统计（把握全局）
+  → 总共有多少条请求？
+  → 什么时间段最活跃？
+  → 哪些IP访问最多？
 
-然后攻击者访问：https://你的网站.com/uploads/shell.php
-→ 这个PHP文件在服务器端执行！
-→ 攻击者可以通过网页执行任意系统命令！
+第二步：异常发现（找可疑点）
+  → 谁在产生大量404？
+  → 谁的请求参数很奇怪？（引号、SQL关键字等）
+  → 谁在深夜大量访问？
+
+第三步：深度钻取（聚焦攻击）
+  → 可疑IP都干了什么？
+  → 攻击成功了吗（状态码200还是403）？
+  → 需要封禁和处理吗？
 ```
 
-### 🛡️ 防护策略
+### 三、用Linux命令分析日志的"标准工具箱"
 
-```
-❌ 黑名单："不能上传 .php .jsp .asp 文件"
-   → 攻击者试试 shell.php5、shell.pHp，绕过了！
+假设日志文件叫 `access.log`，以下是你最常用的分析命令：
 
-✅ 白名单："只能上传 .jpg .png .gif 文件"
-   → 只允许安全类型，其他一律拒绝
+#### 1. 宏观统计
 
-✅ 文件重命名：
-   → 用户上传 shell.php → 服务器存为 a3f2c91b8e.jpg
-   → 就算内容是PHP代码，扩展名是.jpg，服务器不执行
+```bash
+# 总共有多少条日志
+wc -l access.log
 
-✅ 内容检测：
-   → 不只是看文件名，还检查文件实际内容
-```
+# 访问最多的前10个IP
+cat access.log | awk '{print $1}' | sort | uniq -c | sort -rn | head -10
 
----
+# 状态码分布统计
+cat access.log | awk '{print $9}' | sort | uniq -c | sort -rn
 
-## 📖 六、SSRF——让服务器当"内鬼"
+# 访问最多的前10个页面
+cat access.log | awk '{print $7}' | sort | uniq -c | sort -rn | head -10
 
-### 🎭 什么是SSRF？
-
-你的网站有个功能：输入一个URL，网站帮你抓取这个URL的内容（比如网页截图功能）。
-
-```
-正常用法：输入 https://www.baidu.com → 服务器去访问百度 → 返回截图
-攻击用法：输入 http://127.0.0.1:8080/admin → 服务器去访问内网管理后台 → 返回管理员页面！
+# 每小时的访问量分布（发现异常时间窗口）
+cat access.log | awk '{print $4}' | cut -d: -f2 | sort | uniq -c
 ```
 
-**服务器成了"内鬼"！** 攻击者通过控制服务器，访问了正常情况下访问不到的内网资源。
+#### 2. 发现异常
 
-### 🛡️ 防护方法
+```bash
+# 产生最多404的IP（可能在扫目录）
+cat access.log | grep " 404 " | awk '{print $1}' | sort | uniq -c | sort -rn | head
+
+# 产生最多403的IP（可能在越权访问）
+cat access.log | grep " 403 " | awk '{print $1}' | sort | uniq -c | sort -rn | head
+
+# 产生最多500的请求（可能攻击导致服务器崩溃）
+cat access.log | grep " 500 " | awk '{print $7}' | sort | uniq -c | sort -rn | head
+
+# 使用非标准User-Agent的请求（可能是扫描器）
+cat access.log | grep -v "Mozilla" | awk '{print $1, $NF}'
+```
+
+#### 3. 聚焦单个可疑IP
+
+```bash
+# 看看这个IP都访问了什么（汇总）
+grep "192.168.1.100" access.log | awk '{print $7}' | sort | uniq -c
+
+# 看看这个IP的访问时间范围
+grep "192.168.1.100" access.log | head -1
+grep "192.168.1.100" access.log | tail -1
+
+# 看看这个IP产生了哪些状态码
+grep "192.168.1.100" access.log | awk '{print $9}' | sort | uniq -c
+
+# 导出这个IP的所有访问（方便进一步分析）
+grep "192.168.1.100" access.log > suspect_ip.txt
+```
+
+### 四、攻击特征的日志识别
+
+#### 1. SQL注入特征
+
+攻击者在URL参数里插入SQL语句，日志里能看到明显的SQL关键字：
 
 ```
-1. URL白名单：只允许访问特定域名
-2. 禁止内网地址：禁止访问127.0.0.1、10.x、192.168.x等
-3. 禁用危险协议：禁止file://、gopher://等
+# 可疑日志示例：
+192.168.1.100 - - [10/Jun/2026:15:00:00] "GET /product.php?id=1' OR '1'='1 HTTP/1.1" 200 1234
+192.168.1.100 - - [10/Jun/2026:15:00:05] "GET /product.php?id=1 UNION SELECT 1,2,3 HTTP/1.1" 200 2345
+192.168.1.100 - - [10/Jun/2026:15:00:10] "GET /product.php?id=1' AND 1=2 HTTP/1.1" 200 567
 ```
 
----
+**识别特征：**
+- URL中包含 `'`、`"`、`--` 
+- URL中包含 `UNION`、`SELECT`、`OR 1=1`、`AND 1=2`
+- 请求中带有 `' OR '1'='1`
 
-## 💻 七、动手试试：Web安全检测工具箱
+**用grep快速排查：**
+```bash
+grep -iE "(union.*select|or.*1=1|and.*1=2|select.*from)" access.log
+```
 
-```python
-# Web安全自动化检测小工具
-import re
+#### 2. 目录/文件扫描特征
 
-class WebSecScanner:
-    def __init__(self):
-        self.findings = []
-    
-    def check_sqli_risk(self, url):
-        """检查URL是否存在SQL注入风险"""
-        # 数字型参数可以直接测试注入
-        if re.search(r"[?&]\w+=\d+$", url):
-            self.findings.append((
-                '⚠️  SQL注入风险',
-                f'数字型参数可被测试注入: {url}',
-                '建议使用参数化查询'
-            ))
-    
-    def check_xss_risk(self, param_value):
-        """检查参数是否反射到页面"""
-        if '<script>' in param_value.lower():
-            self.findings.append((
-                '⚠️  XSS风险',
-                '参数反射到页面且未过滤HTML标签',
-                '建议对输出进行HTML编码'
-            ))
-    
-    def check_security_headers(self, headers):
-        """检查安全响应头是否缺失"""
-        required = {
-            'Content-Security-Policy': '防止XSS和数据注入攻击',
-            'X-Frame-Options': '防止点击劫持',
-            'X-Content-Type-Options': '防止MIME类型嗅探',
-            'Strict-Transport-Security': '强制使用HTTPS'
-        }
-        for header, desc in required.items():
-            if header not in headers:
-                self.findings.append((
-                    f'🔧 缺少安全头: {header}',
-                    desc,
-                    f'添加 {header} 响应头'
-                ))
-    
-    def check_file_upload(self, allowed_types):
-        """检查文件上传是否有白名单策略"""
-        dangerous = ['php', 'jsp', 'asp', 'aspx', 'exe', 'sh', 'py']
-        for ext in allowed_types:
-            if ext.lower() in dangerous:
-                self.findings.append((
-                    '🔴 危险！文件上传允许执行脚本',
-                    f'白名单中包含 {ext}，可上传可执行文件',
-                    '只允许jpg/png/gif/pdf等安全类型'
-                ))
-    
-    def report(self):
-        """输出扫描报告"""
-        if not self.findings:
-            print('✅ 未发现明显Web安全风险')
-            return
-        
-        print('=== 🛡️ Web安全扫描报告 ===\n')
-        for i, (risk, desc, fix) in enumerate(self.findings, 1):
-            print(f'{i}. {risk}')
-            print(f'   问题: {desc}')
-            print(f'   修复: {fix}\n')
+攻击者用工具暴破网站目录，特点是短时间内大量404：
 
-# === 跑一下试试 ===
-scanner = WebSecScanner()
+```
+192.168.1.100 - - [10/Jun/2026:15:00:01] "GET /admin HTTP/1.1" 404 -
+192.168.1.100 - - [10/Jun/2026:15:00:02] "GET /wp-admin HTTP/1.1" 404 -
+192.168.1.100 - - [10/Jun/2026:15:00:03] "GET /phpmyadmin HTTP/1.1" 404 -
+192.168.1.100 - - [10/Jun/2026:15:00:04] "GET /backup.zip HTTP/1.1" 404 -
+...（几百条类似的404连续出现）
+```
 
-# 模拟检测
-scanner.check_sqli_risk('/product?id=123')
-scanner.check_sqli_risk('/search?q=hello')
-scanner.check_xss_risk('<script>alert(1)</script>')
-scanner.check_security_headers({'Server': 'nginx'})  # 缺少所有安全头
-scanner.check_file_upload(['jpg', 'php', 'png'])  # 白名单里有php！
+**识别特征：**
+- 同一IP连续大量404
+- 请求路径包含常见敏感目录名（admin/backup/test/phpmyadmin等）
+- 请求间隔极短（零点几秒）
 
-scanner.report()
+**排查方法：**
+```bash
+# 找出404最多的IP
+grep " 404 " access.log | awk '{print $1}' | sort | uniq -c | sort -rn | head
+
+# 看这个IP都访问了什么目录
+grep "可疑IP" access.log | awk '{print $7}' | sort -u
+```
+
+#### 3. XSS（跨站脚本）特征
+
+```
+GET /search?q=<script>alert(1)</script> HTTP/1.1
+GET /comment?msg=<img src=x onerror=alert(1)> HTTP/1.1
+```
+
+**识别特征：**
+- URL中包含 `<script>`
+- URL中包含 `javascript:`
+- URL中包含 `onerror=`、`onload=` 等事件处理
+
+#### 4. 暴力破解特征
+
+```
+192.168.1.100 - - [10/Jun/2026:15:00:00] "POST /login HTTP/1.1" 401 -
+192.168.1.100 - - [10/Jun/2026:15:00:01] "POST /login HTTP/1.1" 401 -
+192.168.1.100 - - [10/Jun/2026:15:00:02] "POST /login HTTP/1.1" 401 -
+...（POST请求 + 连续401 + 同一IP）
 ```
 
 ---
 
-## 🧪 八、今日实验：DVWA靶场实战
+## 🔧 实操任务
 
-### 实验目标
-在DVWA（Damn Vulnerable Web Application）上亲自体验各种Web漏洞
+### 任务1：创建模拟日志并分析（30分钟）
 
-### 实验步骤
-
+```bash
+# 在Linux终端中创建模拟日志文件
+cat > ~/simulate_access.log << 'EOF'
+192.168.1.1 - - [10/Jun/2026:10:00:00] "GET /index.html HTTP/1.1" 200 1234
+192.168.1.1 - - [10/Jun/2026:10:00:05] "GET /style.css HTTP/1.1" 200 567
+192.168.1.1 - - [10/Jun/2026:10:00:10] "GET /logo.png HTTP/1.1" 200 8900
+10.0.0.55 - - [10/Jun/2026:10:01:00] "GET /admin HTTP/1.1" 404 123
+10.0.0.55 - - [10/Jun/2026:10:01:01] "GET /wp-admin HTTP/1.1" 404 123
+10.0.0.55 - - [10/Jun/2026:10:01:02] "GET /phpmyadmin HTTP/1.1" 404 123
+10.0.0.55 - - [10/Jun/2026:10:01:03] "GET /backup HTTP/1.1" 404 123
+10.0.0.55 - - [10/Jun/2026:10:01:04] "GET /.git/config HTTP/1.1" 404 123
+172.16.0.99 - - [10/Jun/2026:10:02:00] "GET /product.php?id=1' OR '1'='1 HTTP/1.1" 200 3456
+172.16.0.99 - - [10/Jun/2026:10:02:05] "GET /product.php?id=1 UNION SELECT 1,2,3 HTTP/1.1" 500 123
+192.168.1.200 - - [10/Jun/2026:10:03:00] "GET /index.html HTTP/1.1" 200 1234
+192.168.1.200 - - [10/Jun/2026:10:03:05] "GET /about.html HTTP/1.1" 200 2345
+192.168.1.200 - - [10/Jun/2026:10:03:10] "GET /contact.html HTTP/1.1" 200 3456
+10.0.0.55 - - [10/Jun/2026:10:04:00] "POST /login HTTP/1.1" 401 567
+10.0.0.55 - - [10/Jun/2026:10:04:01] "POST /login HTTP/1.1" 401 567
+10.0.0.55 - - [10/Jun/2026:10:04:02] "POST /login HTTP/1.1" 401 567
+172.16.0.99 - - [10/Jun/2026:10:05:00] "GET /search.php?q=<script>alert(1)</script> HTTP/1.1" 200 234
+EOF
 ```
-1️⃣ 部署DVWA
-   docker run -d -p 8080:80 vulnerables/web-dvwa
 
-2️⃣ 按难度逐级挑战
-   Low 难度 → 基础攻击手法
-   Medium 难度 → 简单的防护绕过
-   High 难度 → 高级绕过技巧
+### 任务2：用学过的命令分析这份日志（20分钟）
 
-3️⃣ 逐个体验OWASP Top 10
-   ☑ SQL注入——获取所有用户数据
-   ☑ XSS存储型——弹个窗给管理员
-   ☑ 文件上传——传一个Webshell
-   ☑ CSRF——用管理员身份做坏事
-   ☑ 命令注入——让服务器执行whoami
+依次执行以下命令并理解结果：
 
-4️⃣ 切换蓝队视角
-   ☑ 开启WAF规则看攻击是否被拦截
-   ☑ 修复代码漏洞
+```bash
+# 1. 总共有多少条记录？
+wc -l ~/simulate_access.log
+
+# 2. TOP5访问IP是哪些？
+cat ~/simulate_access.log | awk '{print $1}' | sort | uniq -c | sort -rn | head -5
+
+# 3. 状态码分布？
+cat ~/simulate_access.log | awk '{print $9}' | sort | uniq -c | sort -rn
+
+# 4. 找出产生404最多的IP
+cat ~/simulate_access.log | grep " 404 " | awk '{print $1}' | sort | uniq -c | sort -rn
+
+# 5. 找出SQL注入嫌疑的请求
+cat ~/simulate_access.log | grep -iE "union|select|or.*1=1|<script>"
+
+# 6. 查看可疑IP(10.0.0.55)的所有访问
+grep "10.0.0.55" ~/simulate_access.log | awk '{print $7, $9}'
 ```
 
----
+### 任务3：安全问题判断（10分钟）
 
-## 📝 九、今日测验
-
-**Q1：防SQL注入最有效的方法是什么？**
-- A. WAF规则
-- B. 参数化查询  ✅
-- C. 黑名单过滤
-- D. 输入长度限制
-
-> 参数化查询将数据和代码分离，从**根本上**防止SQL注入。WAF只是辅助。
-
-**Q2：以下哪种XSS类型影响范围最大？**
-- A. 反射型XSS
-- B. 存储型XSS  ✅
-- C. DOM型XSS
-- D. 盲XSS
-
-> 存储型XSS将恶意脚本保存在服务器上，**所有**访问页面的用户都会中招。
-
-**Q3：文件上传防护最推荐的方式是？**
-- A. 黑名单过滤
-- B. 白名单+随机重命名  ✅
-- C. 前端验证
-- D. 大小限制
-
-> 白名单只允许安全类型，随机重命名防止Webshell执行。前端验证**不能**作为安全手段！
-
-**Q4：CSP（内容安全策略）主要防护什么？**
-- A. SQL注入
-- B. XSS和数据注入  ✅
-- C. DDoS
-- D. 暴力破解
-
-> CSP通过HTTP头限制浏览器能加载哪些资源、执行哪些脚本，有效限制XSS危害。
-
-**Q5：SSRF攻击的核心原理是什么？**
-- A. 攻击客户端浏览器
-- B. 利用服务器端请求功能访问内网  ✅
-- C. 攻击数据库
-- D. DNS劫持
-
-> SSRF让服务器当"内鬼"，帮攻击者访问正常情况下无法触及的内部资源。
+根据分析结果，回答以下问题：
+1. 哪个IP可能在扫目录？
+2. 哪个IP可能在SQL注入？
+3. 哪个IP可能在暴力破解登录？
+4. 哪些IP是正常用户？
 
 ---
 
-## 📚 十、课后资源
+## ✅ 验收标准
 
-| 资源 | 链接 | 说明 |
-|------|------|------|
-| OWASP Top 10 | owasp.org/www-project-top-ten | Web安全圣经 |
-| PortSwigger Web Security | portswigger.net/web-security | 免费Web安全学院 |
-| DVWA靶场 | github.com/digininja/DVWA | Web漏洞练习平台 |
-
----
-
-## 🧠 十一、专家锦囊
-
-> **赵安全说：** 护网中Web漏洞频频失分不是因为没有WAF，而是因为：①应用代码层面漏洞没修 ②WAF规则不是为业务定制的 ③新型漏洞（0day）缺乏检测能力。建议WAF+代码修复+运行时防护（RASP）三层防护。
-
-> **钱运维说：** 护网Web安全的"一票否决项"——以下问题一旦存在直接判严重失分：①文件上传漏洞可上传Webshell ②SQL注入可脱库 ③命令注入可执行系统命令。这三个是护网评判最严厉的，务必提前修复！
+- [ ] 能解释Web访问日志每个字段的含义
+- [ ] 能写出统计TOP10访问IP、状态码分布的命令
+- [ ] 能从日志中识别出目录扫描行为（密集404）
+- [ ] 能从日志中识别出SQL注入特征
+- [ ] 能对单个可疑IP的访问行为进行聚焦分析
+- [ ] 理解"先看整体统计，再看异常个案"的分析思路
 
 ---
 
-📅 **Day 9 完成！** 今天你把OWASP Top 10吃透了——SQL注入、XSS、文件上传是护网失分三巨头！
+## 📝 今日小结
+
+Web日志分析是蓝队最基础的"手艺活"。今天你学会了怎么看日志、怎么从海量记录中找到蛛丝马迹。其实攻击者的行为在日志里都有痕迹——扫目录会产生密集404，SQL注入会在URL里留下SQL关键字，暴力破解会有连续401。
+
+**记住今天的核心口诀**：
+- `awk '{print $1}'|sort|uniq -c|sort -rn|head` → 统计排名
+- `grep " 404 "` → 找扫描者
+- `grep -iE "union|select"` → 找SQL注入
+- 先看整体 → 找异常 → 钻进去分析
+
+---
+
+## 📚 延伸阅读（可选）
+
+- 下载真实公开日志练习：搜索"public nginx access log samples"或"secrepo.com"
+- 了解ELK（Elasticsearch + Logstash + Kibana）是什么，这是企业级日志分析方案

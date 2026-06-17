@@ -25,6 +25,7 @@ interface SidebarProps {
 const navItems = [
   { path: '/', icon: Home, label: '首页仪表盘' },
   { path: '/cyber-learning', icon: Globe, label: '🛡️ 网络安全学习' },
+  { path: '/interview-learning', icon: Globe, label: '💼 面试突击学习' },
   { path: '/resources', icon: Library, label: '安全资源库' },
   { path: '/outline', icon: FileText, label: '考试大纲' },
   { path: '/question-bank', icon: Library, label: '🎯 习题库' },

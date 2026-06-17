@@ -1,340 +1,305 @@
-# Day 5：威胁情报与溯源分析
+---
+day: 5
+title: Linux系统基础（下）
+phase: 第一阶段
+difficulty: ⭐ 入门
+---
 
-> **📘 文档定位**：护网工程情报溯源 | 难度：入门 | 预计阅读：30 分钟
->
-> 威胁情报就是你对抗攻击者的"情报系统"，溯源分析就是你当一回"网络侦探"。今天学会怎么用IOC当通缉令、怎么沿着线索追踪攻击者。
+# Day 5：Linux系统基础（下）
+
+> **阶段**：第一阶段 · 蓝队极速上岗 | **难度**：⭐ 入门 | **课时**：2-3小时
 
 ---
 
-## 导航目录
+## 📋 今日学习目标
 
-- [一、威胁情报是什么？](#一威胁情报是什么)
-- [二、IOC vs IOA——两种威胁指标](#二ioc-vs-ioa两种威胁指标)
-- [三、威胁情报的四层分类](#三威胁情报的四层分类)
-- [四、从哪里获取威胁情报？](#四从哪里获取威胁情报)
-- [五、溯源分析——做一回网络侦探](#五溯源分析做一回网络侦探)
-- [六、溯源工具和技术](#六溯源工具和技术)
-- [七、威胁情报在护网中的应用](#七威胁情报在护网中的应用)
-- [八、实战演练与能力检验](#八实战演练与能力检验)
+1. 掌握grep命令，能从日志中筛选出目标信息
+2. 初步了解awk和sed的文本处理能力
+3. 学会查看进程（ps/top）和端口（netstat/ss）
+4. 理解管道符 `|` 的威力——把多个命令串联起来
+5. 实现"从海量日志中找到攻击IP"的完整操作
 
 ---
 
-## 一、威胁情报是什么？
+## 📖 核心知识讲解
 
-### 1.1 用大白话说
+### 一、grep —— 蓝队最重要的文本搜索工具
 
-**威胁情报** = 关于"谁会攻击你、用什么手段、什么时候可能动手"的**信息**。
+`grep` 是 Linux 中的"搜索神器"。你可以把它理解为高级版的Ctrl+F——它能从成千上万行日志中，瞬间找到你想要的东西。
 
-类比一下：
-- 🚔 普通安全设备 = 在你家门口装了一个摄像头
-- 📡 威胁情报 = 告诉你"最近有个小偷团伙在附近活动，他们喜欢从窗户进入，专偷珠宝"
+**基本用法：**
+```bash
+grep "关键词" 文件名
 
-有了威胁情报，你就不是被动地等攻击发生，而是**提前知道攻击者要做什么**，提前布防。
-
-### 1.2 威胁情报能帮你做什么
-
-| 能力 | 说人话 |
-|:---|:---|
-| **提前预警** | 知道攻击者正在用某个新漏洞，赶紧去补 |
-| **快速研判** | 一个可疑IP告警 → 查情报库 → 哦这是已知恶意IP，直接封 |
-| **攻击溯源** | 能追踪攻击者用的是哪个APT团伙的工具 |
-| **情报共享** | 兄弟单位被攻击的IOC，拿来用，免得自己也中招 |
-
----
-
-## 二、IOC vs IOA——两种威胁指标
-
-这是安全领域最重要的概念区分之一！
-
-### 2.1 IOC（入侵指标）—— "通缉令照片"
-
-IOC = Indicator of Compromise，就像警察发的"通缉令"——告诉你长什么样的就是坏蛋。
-
-| IOC类型 | 举例 | 像什么 |
-|:---|:---|:---|
-| IP地址 | `45.33.32.156` | "这个车牌号是在逃嫌犯的车" |
-| 域名 | `evil-c2.malware.xyz` | "这个地址是贼窝" |
-| 文件哈希 | `MD5: a1b2c3d4...` | "这个指纹是逃犯的" |
-| URL路径 | `/admin/uploadshell.php` | "这个门牌号有问题" |
-| 注册表键值 | `HKLM\...\Run\malware` | "这个标记代表有问题" |
-
-**IOC的特点**：
-- ✅ 精确：可以自动化匹配，漏报少
-- ❌ 易变：攻击者换个IP/域名就失效了
-
-### 2.2 IOA（攻击指标）—— "形迹可疑的行为"
-
-IOA = Indicator of Attack，描述的是**行为模式**，不是具体的数字。
-
-| IOA类型 | 举例 |
-|:---|:---|
-| 异常进程创建 | Word进程突然启动了cmd.exe |
-| 持久化注册 | 在Run键添加了不可信的程序 |
-| 计划任务注册 | 创建了一个奇怪名字的计划任务 |
-| 异常登录模式 | 凌晨3点从境外IP登录财务系统 |
-
-**IOA的特点**：
-- ✅ 持久：行为模式不变，换IP也没用
-- ❌ 复杂：需要行为分析能力，不易自动化
-
-### 2.3 IOC vs IOA 一张表总结
-
-| 对比维度 | IOC | IOA |
-|:---|:---|:---|
-| 是什么 | 具体的恶意指标 | 可疑的行为模式 |
-| 比喻 | 通缉犯照片 | "凌晨3点在银行门口徘徊" |
-| 准确度 | 高（匹配上基本就是） | 中（需要结合其他信息研判） |
-| 时效性 | 短（攻击者会换IP） | 长（行为模式难改变） |
-| 检测方式 | 特征匹配 | 行为分析 |
-| 举例 | 恶意IP: 1.2.3.4 | Word→cmd→powershell |
-
-> **💡 金句**：IOC告诉你"这是坏蛋"，IOA告诉你"这看起来像坏蛋"。两者结合才完整。
-
----
-
-## 三、威胁情报的四层分类
-
-### 3.1 从高到低的四个层次
-
-```
-       ┌──────────────┐
-       │  战略情报     │  ← CISO/高层看的
-       │  "谁要搞我？" │
-       ├──────────────┤
-       │  战术情报     │  ← 安全经理看的
-       │  "用什么手法？"│
-       ├──────────────┤
-       │  运营情报     │  ← 运营团队看的
-       │  "什么时候搞我？"│
-       ├──────────────┤
-       │  技术情报     │  ← 设备自动消费的
-       │  "IP/Domain/Hash"│
-       └──────────────┘
+# 例子：从日志中找所有包含"error"的行
+grep "error" /var/log/syslog
 ```
 
-### 3.2 各层情报的对比
+**蓝队最常用的grep选项：**
 
-| 层次 | 内容 | 消费者 | 时效性 |
-|:---|:---|:---|:---|
-| **战略** | 攻击趋势、行业威胁、地缘政治 | CISO/安全总监 | 月/季度 |
-| **战术** | ATT&CK TTPs、攻击工具 | 安全架构师 | 周/月 |
-| **运营** | 攻击活动预警、新兴漏洞 | SOC分析师 | 天/周 |
-| **技术** | IP、域名、Hash、URL | SIEM/防火墙 | 秒/分钟 |
-
----
-
-## 四、从哪里获取威胁情报？
-
-### 4.1 免费威胁情报源
-
-| 来源 | 类型 | 网址 |
+| 选项 | 含义 | 使用场景 |
 |:---|:---|:---|
-| MISP | 开源威胁情报平台 | misp-project.org |
-| AlienVault OTX | 社区威胁情报 | otx.alienvault.com |
-| Abuse.ch | 恶意软件IOC | abuse.ch |
-| VirusTotal | 文件/URL分析 | virustotal.com |
-| ThreatFox | IOC数据库 | threatfox.abuse.ch |
+| `-i` | 忽略大小写 | 搜索时不区分error/Error/ERROR |
+| `-v` | 反向匹配（排除） | 把正常的行过滤掉，只看异常的 |
+| `-n` | 显示行号 | 定位到具体行，方便上下文查看 |
+| `-c` | 统计匹配次数 | 快速统计某个IP访问了多少次 |
+| `-r` | 递归搜索目录 | 在多个日志文件中搜索 |
+| `-E` | 使用正则表达式 | 匹配IP地址、邮箱等复杂模式 |
+| `-A N` | 同时显示匹配行后N行 | 看到攻击请求后，再看响应是什么 |
+| `-B N` | 同时显示匹配行前N行 | 看到错误前发生了什么 |
 
-### 4.2 商业威胁情报
+**实战例子（重点掌握！）：**
 
-| 来源 | 特点 |
-|:---|:---|
-| 微步在线 | 国内领先，中文友好 |
-| 奇安信威胁情报中心 | 护网经验丰富 |
-| 360威胁情报中心 | 数据量大 |
-| Recorded Future | 国际顶级 |
+```bash
+# 1. 从日志中找特定IP的所有访问（大小写不敏感）
+grep -i "192.168.1.100" /var/log/nginx/access.log
 
-### 4.3 MISP 介绍
+# 2. 排除正常的200状态码，只看异常的
+grep -v " 200 " /var/log/nginx/access.log
 
-**MISP**（Malware Information Sharing Platform）是开源威胁情报共享平台：
-- 🔓 完全开源免费
-- 🔄 支持多家威胁情报源自动导入
-- 📤 支持情报共享和导出
-- 🏷️ 支持标签分类和关联分析
-- 🐳 可用Docker快速部署
+# 3. 统计某个IP访问了多少次
+grep -c "192.168.1.100" /var/log/nginx/access.log
 
----
+# 4. 递归搜索所有日志文件中的"failed"
+grep -r "failed" /var/log/
 
-## 五、溯源分析——做一回网络侦探
+# 5. 搜IP地址（正则表达式）
+grep -E "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" access.log
 
-### 5.1 溯源分析的完整流程
-
-```
-发现告警
-  ↓
-提取IOC（可疑IP、域名、文件哈希）
-  ↓
-威胁情报匹配（这个IP是已知恶意IP吗？是谁在用？）
-  ↓
-关联日志分析（这个IP还访问了什么？做了什么？）
-  ↓
-确定攻击路径（怎么进来的 → 做了什么 → 去了哪里）
-  ↓
-定位攻击源（攻击者是哪个组织/团伙？）
-  ↓
-输出溯源报告
+# 6. 找到"error"后显示前后各3行上下文
+grep -n -C 3 "error" /var/log/syslog
 ```
 
-### 5.2 IOC自动匹配引擎
+> 💡 **蓝队实战场景**：有人报告"服务器可能被攻击了"，你第一件事就是 `grep` 攻击IP、`grep` 异常状态码、`grep` 可疑关键词。
 
-```python
-# IOC威胁情报自动匹配引擎
-class IOCMatcher:
-    def __init__(self):
-        self.iocs = {
-            'ip': set(),
-            'domain': set(),
-            'hash': set()
-        }
-    
-    def add_ioc(self, ioc_type, value):
-        """添加一条威胁情报IOC"""
-        self.iocs[ioc_type].add(value.lower())
-    
-    def scan_log(self, log_entry):
-        """扫描一条日志是否命中IOC"""
-        matches = []
-        for ip in self.iocs['ip']:
-            if ip in log_entry:
-                matches.append(f'🔴 IP命中: {ip}')
-        for domain in self.iocs['domain']:
-            if domain in log_entry.lower():
-                matches.append(f'🔴 域名命中: {domain}')
-        return matches
-    
-    def batch_scan(self, logs):
-        """批量扫描多条日志"""
-        print('='*50)
-        print('        IOC威胁情报扫描')
-        print('='*50)
-        total_hits = 0
-        for log in logs:
-            hits = self.scan_log(log)
-            if hits:
-                print(f'📋 {log[:50]}...')
-                for hit in hits:
-                    print(f'   {hit}')
-                total_hits += len(hits)
-        print(f'\n✅ 扫描完成: {len(logs)}条日志, {total_hits}个命中')
+### 二、管道符 `|` —— Linux命令的精髓
 
-# 创建情报库
-matcher = IOCMatcher()
-# 添加已知恶意IOC
-matcher.add_ioc('ip', '45.33.32.156')
-matcher.add_ioc('ip', '103.224.182.250')
-matcher.add_ioc('domain', 'evil-c2.malware.xyz')
-matcher.add_ioc('domain', 'bad-apt.phish.cn')
+管道符 `|` 的作用是把**前一个命令的输出**当作**后一个命令的输入**。这就像流水线——每一步处理完自动传到下一步。
 
-# 扫描日志
-logs = [
-    'GET /login from 192.168.1.50 - normal user access',
-    'Connection from 45.33.32.156 to port 443 - suspicious!',
-    'DNS query: evil-c2.malware.xyz - C2 communication!',
-    'Connection from 10.0.0.1 to internal server',
-]
-matcher.batch_scan(logs)
+**这个功能被称为Linux哲学："小工具组合成大能力"**
+
+```bash
+# 没有管道：要分好几步
+grep "error" app.log > temp.txt    # 先存到临时文件
+wc -l temp.txt                      # 再统计行数
+
+# 有管道：一行搞定！
+grep "error" app.log | wc -l
+# grep找到所有含error的行 → 通过管道传给wc → wc统计行数
 ```
 
-### 5.3 溯源的五个维度
+**蓝队日常中的管道组合：**
 
-| 维度 | 查什么 | 用什么工具 |
-|:---|:---|:---|
-| IP溯源 | Whois信息、ASN归属、BGP路由 | whois命令、bgp.he.net |
-| 域名溯源 | DNS历史记录、注册信息 | PassiveDNS、VirusTotal |
-| 样本溯源 | 恶意软件的功能和来源 | IDA Pro、沙箱分析 |
-| 攻击链映射 | 攻击步骤→ATT&CK技术 | ATT&CK Navigator |
-| 组织归属 | 关联已知APT组织TTPs | 威胁情报平台 |
+```bash
+# 场景1：找出访问最多的前5个IP
+cat access.log | awk '{print $1}' | sort | uniq -c | sort -rn | head -5
+#     ↓              ↓               ↓       ↓          ↓         ↓
+#   读日志    提取IP字段    排序   去重并计数  按次数倒排   取前5名
 
----
+# 场景2：只看POST请求（因为攻击经常用POST）
+cat access.log | grep "POST" | less
 
-## 六、溯源工具和技术
+# 场景3：统计404错误的数量
+cat access.log | grep " 404 " | wc -l
 
-### 6.1 溯源工具箱
+# 场景4：找出所有被拒绝的IP，去重并保存
+grep "Failed password" /var/log/secure | awk '{print $(NF-3)}' | sort -u > bad_ip.txt
+```
 
-| 工具 | 做什么 | 平台 |
-|:---|:---|:---|
-| VirusTotal | 查文件/URL/IP是否已知恶意 | Web |
-| Shodan | 查IP关联的服务和漏洞 | Web |
-| Censys | 互联网资产搜索 | Web |
-| PassiveTotal | 被动DNS+Whois分析 | Web |
-| Maltego | 信息关联分析可视化 | 桌面 |
-| MISP | 威胁情报管理和共享 | 服务器 |
+### 三、awk 入门 —— 按列提取数据
 
-### 6.2 溯源分析报告框架
+日志文件通常是分列的，`awk` 就是专门用来"切列"的工具。
 
-```markdown
-# [事件名称] 溯源分析报告
+**基本概念：** `awk` 默认用空格/Tab把每行切成多个字段（列），`$1` 是第1列，`$2` 是第2列，`$0` 是整行。
 
-## 1. 事件概述
-- 发现时间、发现方式、事件级别
+```bash
+# 假设日志格式是：
+# 192.168.1.1 - - [10/Oct/2023:13:55:36] "GET /index.html HTTP/1.1" 200 2326
+#    $1          $2 $3        $4                  $5     $6      $7     $8  $9
 
-## 2. 攻击时间线
-- 按时间顺序还原攻击者行为
+# 只看IP（第1列）
+awk '{print $1}' access.log
 
-## 3. 攻击手法分析
-- 使用的漏洞、工具、ATT&CK映射
+# 只看第1列（IP）和第9列（状态码）
+awk '{print $1, $9}' access.log
 
-## 4. 攻击源分析
-- IP归属、组织归属、动机分析
+# 只看状态码不是200的请求
+awk '$9 != 200 {print $1, $9}' access.log
 
-## 5. 影响范围
-- 受影响系统、数据类型、业务影响
+# 统计每个IP的访问次数
+awk '{count[$1]++} END {for(ip in count) print ip, count[ip]}' access.log
+```
 
-## 6. 证据材料
-- 日志截图、样本哈希、数据包
+> 💡 别被语法吓到，先用 `awk '{print $1}'` 和 `awk '{print $NF}'`（$NF = 最后一列），这是90%的日常场景。
 
-## 7. 改进建议
-- 短期/中期/长期改进措施
+### 四、sed 入门 —— 批量替换和编辑
+
+`sed` 是"流编辑器"，可以在不打开文件的情况下批量修改内容：
+
+```bash
+# 把日志里的192.168.1.1全部替换成[内部IP]
+sed 's/192.168.1.1/[内部IP]/g' access.log
+
+# 删除所有空行
+sed '/^$/d' access.log
+
+# 只看第10到第20行
+sed -n '10,20p' access.log
+```
+
+> 蓝队用得最多的是 `s/旧/新/g` 替换功能。
+
+### 五、查看进程和端口
+
+#### ps —— "现在有哪些程序在跑？"
+
+```bash
+ps aux          # 显示所有进程（最常用）
+ps aux | grep nginx    # 找不到nginx？用grep筛选
+ps aux | grep root     # 看看root用户在跑什么
+ps aux --sort=-%mem    # 按内存使用量排序，找出吃内存的程序
+```
+
+> ⚠️ **蓝队关注点**：看到陌生的进程名？可能是攻击者的后门程序！
+
+#### top —— "哪个程序最耗资源？"（实时监控）
+
+```bash
+top             # 实时显示系统资源使用情况
+# 按 q 退出，按 1 看每个CPU核心，按 M 按内存排序
+```
+
+#### netstat —— "哪些端口在监听？"
+
+```bash
+netstat -tlnp          # 查看所有正在监听（listening）的TCP端口
+netstat -an            # 查看所有连接（包括已建立的）
+netstat -an | grep 22  # 只看SSH端口（22）的连接
+netstat -an | grep ESTABLISHED  # 只看活跃连接
+```
+
+> ⚠️ **蓝队关注点**：端口列表中出现了不认识的端口？某IP有大量ESTABLISHED连接？这可能是入侵迹象！
+
+#### ss —— netstat的"升级版"（更快）
+
+```bash
+ss -tlnp           # 等同于netstat -tlnp，但速度更快
+ss -an | grep 3389 # 看远程桌面端口
+```
+
+### 六、组合实战：从海量日志中找到攻击者
+
+这是一个真实的蓝队分析流程：
+
+```bash
+# 场景：怀疑Web服务器被扫描
+# 文件：/var/log/nginx/access.log（假设有10万行）
+
+# 步骤1：先看看404最多的IP是谁
+cat access.log | grep " 404 " | awk '{print $1}' | sort | uniq -c | sort -rn | head
+#                      ↓提取404    ↓提取IP     ↓排序  ↓去重计数  ↓倒排   ↓只显示前几个
+
+# 步骤2：看看这个可疑IP都访问了什么
+grep "可疑IP" access.log | awk '{print $7}' | sort -u
+#                                           ↓只看请求路径，去重
+
+# 步骤3：看看他在什么时候活动的
+grep "可疑IP" access.log | awk '{print $4}' | head -1
+grep "可疑IP" access.log | awk '{print $4}' | tail -1
+
+# 步骤4：统计这个IP产生了多少不同状态码
+grep "可疑IP" access.log | awk '{print $9}' | sort | uniq -c
 ```
 
 ---
 
-## 七、威胁情报在护网中的应用
+## 🔧 实操任务
 
-### 7.1 护网三个阶段的情报运用
+### 任务1：grep专项练习（20分钟）
 
-| 阶段 | 怎么用威胁情报 |
-|:---|:---|
-| **战前准备** | 获取最新的攻击趋势和TTPs，针对性加固 |
-| **战时防守** | 实时IOC匹配告警，威胁情报辅助研判 |
-| **战后复盘** | 情报共享，更新防御策略 |
+创建一个练习日志文件，然后用grep查找：
 
-### 7.2 威胁情报使用中的常见错误
+```bash
+# 创建模拟日志
+cat > ~/practice_log.txt << 'EOF'
+192.168.1.1 - - [01/Jun/2026:10:00:00] "GET /index.html HTTP/1.1" 200 1234
+10.0.0.55 - - [01/Jun/2026:10:01:00] "POST /login HTTP/1.1" 401 567
+192.168.1.100 - - [01/Jun/2026:10:02:00] "GET /admin HTTP/1.1" 403 890
+172.16.0.99 - - [01/Jun/2026:10:03:00] "GET /shell.php HTTP/1.1" 404 234
+10.0.0.55 - - [01/Jun/2026:10:04:00] "POST /login HTTP/1.1" 401 567
+10.0.0.55 - - [01/Jun/2026:10:05:00] "POST /login HTTP/1.1" 401 567
+10.0.0.55 - - [01/Jun/2026:10:06:00] "POST /login HTTP/1.1" 200 890
+EOF
 
-| 错误 | 后果 | 正确做法 |
-|:---|:---|:---|
-| 买了情报但没用 | 白花钱 | 把IOC接入SIEM做实时匹配 |
-| 只关注IOC不关注TTPs | 攻击者换个IP就失效 | 同时关注行为模式(IOA) |
-| 不做情报验证 | 误封正常IP影响业务 | 重要IOC先验证再应用 |
-| 不参与情报共享 | 孤军奋战 | 加入行业情报共享群 |
+# 练习题：
+# 1. 找出所有状态码不是200的行
+grep -v " 200 " ~/practice_log.txt
+
+# 2. 找出所有POST请求
+grep "POST" ~/practice_log.txt
+
+# 3. 统计10.0.0.55访问了多少次
+grep -c "10.0.0.55" ~/practice_log.txt
+
+# 4. 找出所有结果状态码是4xx的行（用正则）
+grep -E " [4][0-9]{2} " ~/practice_log.txt
+```
+
+### 任务2：管道+awk组合练习（20分钟）
+
+```bash
+# 1. 提取所有IP地址（第1列）
+cat ~/practice_log.txt | awk '{print $1}'
+
+# 2. 提取IP和状态码
+cat ~/practice_log.txt | awk '{print $1, $9}'
+
+# 3. 统计每个IP的访问次数
+cat ~/practice_log.txt | awk '{print $1}' | sort | uniq -c | sort -rn
+
+# 4. 找出所有请求的页面路径
+cat ~/practice_log.txt | awk '{print $7}' | sort -u
+```
+
+### 任务3：进程和端口检查（10分钟）
+
+```bash
+# 查看所有监听端口
+ss -tlnp
+
+# 看SSH相关进程
+ps aux | grep ssh
+
+# 看当前活跃的网络连接
+ss -an | head -20
+```
 
 ---
 
-## 八、实战演练与能力检验
+## ✅ 验收标准
 
-### 8.1 今日动手练习
-
-1. 去 [VirusTotal](https://www.virustotal.com) 查一个你遇到过的可疑IP
-2. 用上面的 `IOCMatcher` 代码，加入你自己的威胁情报库
-3. 如果你有SIEM系统，尝试把MISP的IOC导入SIEM
-
-### 8.2 今日自我检测
-
-1. IOC和IOA的区别是什么？（答案：IOC是具体指标如恶意IP，IOA是行为模式如异常进程链）
-2. MISP是什么？（答案：Malware Information Sharing Platform，开源威胁情报共享平台）
-3. 威胁情报分哪四个层次？（答案：战略、战术、运营、技术）
-4. 溯源分析的第一步是什么？（答案：提取IOC）
-5. 威胁情报在护网中最直接的应用是什么？（答案：IOC实时匹配告警，快速研判攻击）
+- [ ] 能用grep从日志中筛选指定IP、状态码、请求方法的记录
+- [ ] 理解管道符 `|` 的作用，能组合2个以上命令
+- [ ] 能用 `awk '{print $1}'` 提取日志的IP列
+- [ ] 能用 `ss -tlnp` 查看监听端口并识别常见服务
+- [ ] 能用 `ps aux | grep 关键字` 查找进程
+- [ ] 完成"从日志中统计访问TOP5 IP"的完整操作
 
 ---
 
-## 📚 扩展阅读
+## 📝 今日小结
 
-- [MISP威胁情报平台](https://www.misp-project.org/)
-- [VirusTotal](https://www.virustotal.com)
-- [AlienVault OTX](https://otx.alienvault.com)
-- [MITRE ATT&CK Groups](https://attack.mitre.org/groups/)
+今天学了Linux的"组合拳"——grep搜、awk切、管道连。这三个工具看起来简单，但组合起来威力惊人。在后面的日志分析学习中，你会反复使用这些技能。
+
+**记住今天的核心**：
+- `grep` = 搜索引擎，能在千万行日志中找到你要的东西
+- `awk` = 切列工具，`$1` 是第一列，`$NF` 是最后一列
+- `|` = 流水线，把多个小工具串成一条自动化生产线
+- `ss -tlnp` = 检查哪些端口开着（看看有没有后门）
 
 ---
 
-> **🛡️ 今日金句**：威胁情报不是买来的数据，而是用起来的能力。情报只有融入检测体系，才能发挥真正的价值。知己知彼，百战不殆。
+## 📚 延伸阅读（可选）
+
+- 练习正则表达式：搜索"RegexOne"在线交互式教程
+- 挑战题：用一行命令统计 `/var/log/secure` 中每种登录失败类型（如"Invalid user"、"Failed password"）的数量

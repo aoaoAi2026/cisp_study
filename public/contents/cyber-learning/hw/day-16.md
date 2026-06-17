@@ -1,410 +1,207 @@
-# Day 16：高阶攻击与APT攻击体系
-## 从小偷到特工——国家级网络攻击是什么样子的
+---
+day: 16
+title: IDS/IPS入侵检测
+phase: 第一阶段
+difficulty: ⭐⭐ 基础
+---
+
+# Day 16：IDS/IPS入侵检测
+
+> **阶段**：第一阶段 · 蓝队极速上岗 | **难度**：⭐⭐ 基础 | **课时**：2-3小时
 
 ---
 
-> 🎯 **今日目标**  
-> 理解APT攻击特征 · 掌握APT检测方法 · 学习APT组织TTPs
+## 📋 今日学习目标
+
+1. 理解IDS和IPS的工作原理和核心区别
+2. 了解Snort开源IDS的基本架构
+3. 能区分3种以上的IDS告警类型
+4. 理解检测规则的编写思路
+5. 知道IDS/IPS在护网防护体系中的位置
 
 ---
 
-## 📖 一、APT是什么？——从小毛贼到间谍组织
+## 📖 核心知识讲解
 
-### 🎭 三个层次看懂网络攻击
+### 一、IDS vs IPS —— 摄像头 vs 自动门禁
 
+这是很多新手容易搞混的概念，用一个比喻彻底讲清楚：
+
+| | IDS（入侵检测系统） | IPS（入侵防御系统） |
+|:---|:---|:---|
+| 通俗比喻 | 📹 监控摄像头 | 🚪 自动门禁 |
+| 发现攻击时 | 发出警报（滴滴滴！） | 自动阻止（门直接锁上） |
+| 部署方式 | 旁路（在旁边看着，不影响流量） | 串联（流量必须经过它） |
+| 对业务的影响 | 无影响（只看不碰） | 可能误拦正常流量 |
+| 响应方式 | 通知人去处理 | 自动拦截 |
+
+> 记忆口诀：**IDS只会叫，IPS可以拦。** IDS = Detection（检测），IPS = Prevention（阻止）。
+
+**实际工作中的部署组合：**
 ```
-普通黑客（Script Kiddie）：
-  特征：用现成工具扫一扫，打打小网站
-  目的：炫耀、练手、搞破坏
-  防护：防火墙+杀毒软件基本够用
-  比喻：街上随机撬锁的小偷 🦝
-
-有组织犯罪团伙（Cyber Crime）：
-  特征：勒索软件、盗取信用卡、诈骗
-  目的：赚钱
-  防护：需要专业安全团队
-  比喻：有组织、有分工的盗窃团伙 🦊
-
-APT（Advanced Persistent Threat）：
-  特征：国家/情报机构背景、使用0day、潜伏数年
-  目的：间谍活动、情报窃取、关键设施破坏
-  防护：需要顶级安全运营+情报共享
-  比喻：受过长期训练、有国家支持的特工 🐲
-```
-
-### 📊 APT的三大特征
-
-| 特征 | 含义 | 你能理解成这样 |
-|------|------|---------------|
-| **A - Advanced（高级）** | 使用0day漏洞、定制化恶意软件、多种攻击技术组合 | 用的武器都是自制的，市面上买不到也检测不到 |
-| **P - Persistent（持续）** | 潜伏数月甚至数年，长期窃取情报 | 不是抢一票就跑，而是长期卧底 |
-| **T - Threat（威胁）** | 针对特定国家/行业/企业，有明确政治/经济目标 | 攻击你不是随机的，你就是他们的目标 |
-
----
-
-## 📖 二、国内活跃的APT组织——你在和谁对抗？
-
-| APT组织 | 绰号 | 主要目标 | 特色手法 |
-|---------|------|----------|----------|
-| **海莲花** | OceanLotus | 东南亚政企、海事机构 | 鱼叉钓鱼+自研远控木马 |
-| **毒云藤** | APT-C-01 | 政府、科研、能源 | 钓鱼邮件+伪造网站 |
-| **蔓灵花** | Bitter | 政府、军工、能源 | 复杂的C2基础设施 |
-| **响尾蛇** | SideWinder | 政府、军事 | 大量使用PowerShell |
-| **蓝宝菇** | APT-C-12 | 核能、航空航天 | 长期潜伏窃取资料 |
-
----
-
-## 📖 三、APT攻击全生命周期——他们是怎么一步步进来的？
-
-```
-┌─────────────────────────────────────────────────┐
-│               APT 攻击全生命周期                      │
-├──────┬──────┬──────┬──────┬──────┬──────┬─────────┤
-│ 侦察  │ 武器化 │ 投递  │ 利用  │ 安装  │ C2   │ 目标达成 │
-│ 3个月  │ 1个月  │ 1天  │ 几分钟│ 几分钟│ 数月 │ 数月-年 │
-└──────┴──────┴──────┴──────┴──────┴──────┴─────────┘
+外网 → IPS（第一道自动拦截）→ 防火墙 → IDS（旁路监听+告警）→ 服务器
+                                            ↓
+                                        SOC平台展示告警
 ```
 
-### ① 侦察阶段（可能持续数月）
+### 二、IDS怎么发现攻击？（三种检测方法）
+
+#### 1. 基于特征（Signature-based）—— 最常用
+就像一个"通缉犯名单"，把已知攻击的特征写成规则，匹配到就告警。
 
 ```
-攻击者研究你的公司就像一个学生在做毕业课题：
-  ✅ 公司官网：组织结构、员工邮箱格式
-  ✅ 招聘网站：你们在用哪些技术？（Java? Python? Oracle?）
-  ✅ 领英：员工信息、职位、项目经验
-  ✅ GitHub：有没有员工不小心传了密码/配置文件？
-  ✅ 历史泄露数据：从Have I Been Pwned查员工泄露的密码
-  ✅ 社交媒体：员工的日常习惯、出国行程
-  
-→ 攻击者比你想象的更了解你的公司
+规则示例（通俗版）：
+如果 数据包中包含 "OR '1'='1" → 告警：SQL注入攻击
+如果 同一IP每秒发超过10个SYN包 → 告警：端口扫描
+如果 HTTP请求中包含 "/etc/passwd" → 告警：路径遍历攻击
 ```
 
-### ② 武器化阶段
+**优点：** 准确率高，误报低
+**缺点：** 新攻击（没在名单上）检测不到
+
+#### 2. 基于异常（Anomaly-based）
+先学习"正常情况"是什么样，发现偏离正常的行为就告警。
 
 ```
-根据侦察结果，定制攻击武器：
-  ✅ 制作针对你们公司域名的钓鱼页面
-  ✅ 编写针对你们用到的软件的漏洞利用代码
-  ✅ 在恶意文档中植入你的名字和项目信息
-  ✅ 准备C2服务器基础设施（多个域名、多台VPS）
+比喻：你室友每天作息是 7点起 → 12点吃饭 → 11点睡
+      突然有一天凌晨3点出门 → 异常！值得注意
 ```
 
-### ③ 投递阶段
+**优点：** 能发现未知攻击
+**缺点：** 误报率高（加班到凌晨也会报警）
+
+#### 3. 基于协议状态（Protocol State Analysis）
+检查协议交互是否符合标准流程。
 
 ```
-最常用的投递方式（按成功率排列）：
-  1. 鱼叉钓鱼邮件（含恶意附件或链接）—— 成功率80%+
-  2. 水坑攻击（黑掉你们行业常用的论坛/网站）
-  3. 物理接近（USB掉落攻击、假装访客）
-  4. 供应链攻击（黑掉你们的软件供应商）
+正常HTTP：请求 → 响应
+异常情况：在握手阶段就发数据 → 可疑
 ```
 
-### ④ 利用 → ⑤ 安装 → ⑥ C2
+### 三、Snort —— 最经典的开源IDS
 
-```
-利用漏洞获得初始权限后：
-  → 安装持久化后门（计划任务/注册表/WMI）
-  → 建立C2通信通道（HTTPS/DNS/ICMP隧道）
-  → 获取更高权限（提权）
-  → 横向移动到目标系统
-```
+Snort是IDS领域的"活化石"，免费开源，理解它就能理解所有IDS产品的核心逻辑。
 
-### ⑦ 目标达成阶段
-
+**Snort的工作模式：**
 ```
-根据任务目标执行：
-  ✅ 窃取机密文件（悄悄地打包上传）
-  ✅ 监控内部通信（偷看邮件、聊天记录）
-  ✅ 长期潜伏（等待关键时刻行动）
-  ✅ 销毁证据（攻击完成后清理痕迹）
+                     ┌──────────────┐
+网络流量 → 解码器 → 预处理器 → 检测引擎 → 告警输出
+           │          │          │
+        拆包还原    整理分析    规则匹配
 ```
 
----
-
-## 📖 四、APT的三大杀招
-
-### 🔪 杀招1：DCSync
+**一条Snort规则长什么样？**
 
 ```
-你是一个APT攻击者，已经控制了一台内网服务器。
-你的终极目标：域控上的所有用户密码哈希。
-
-如果直接攻击域控 → 可能被检测到
-聪明的做法（DCSync）：
-  → 伪装成一台"新加入的域控"
-  → 向真实域控发送同步请求："嗨，我刚来，把最新数据给我"
-  → 域控以为你是合法域控 → 把所有用户哈希发过来
-  → 你拿到了整个域的钥匙！
+alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS 80 (msg:"SQL Injection"; content:"' OR '1'='1"; sid:1000001;)
+│      │  │               │    │               │                          │                    │
+告警   协议 来源(外网)   端口  目标(Web服务器)  端口  告警信息                匹配内容            规则ID
 ```
 
-### 🎫 杀招2：Golden Ticket（黄金票据）
+> 蓝队不需要精通写规则，但需要能**读懂规则**，知道它在检测什么。
+
+### 四、常见IDS告警类型
+
+蓝队在SOC平台上看到的告警，按攻击类型分类：
+
+| 告警类型 | 典型示例 | 紧急程度 |
+|:---|:---|:---|
+| **扫描/探测** | 端口扫描、目录扫描、漏洞扫描 | 🟡 中（通常是攻击前奏） |
+| **漏洞利用** | SQL注入、命令注入、文件包含 | 🔴 高（正在攻击） |
+| **Webshell** | 中国菜刀、蚁剑通信流量 | 🔴 严重（已被控制） |
+| **恶意软件** | 木马回连C2、挖矿通信 | 🔴 严重（已被植入） |
+| **异常流量** | DDoS攻击、DNS隧道 | 🔴 高 |
+| **认证攻击** | 暴力破解、密码喷洒 | 🟡 中（需确认是否成功） |
+| **策略违规** | 访问敏感网站、使用禁止协议 | 🟢 低 |
+
+### 五、IDS告警的蓝队处理优先级
 
 ```
-Kerberos认证体系中有一个超级密钥：KRBTGT账户的哈希
-拿到它 = 能签发任何人的"临时身份证"
+收到IDS告警 → 第1步：看告警等级
+                 ├── Critical/High → 立即处理（5分钟内响应）
+                 ├── Medium        → 30分钟内处理
+                 └── Low/Info      → 记录在案，定期清理
 
-APT拿到KRBTGT哈希后：
-  → 自己签发一个"域管理员"的票据
-  → 有效期：10年
-  → 即使域管改了密码，这个票据依然有效！
-  → 随时可以以域管身份访问任何资源
-```
+             → 第2步：确认是否为真实攻击
+                 ├── 查源IP情报（VirusTotal/微步）
+                 ├── 查看关联日志
+                 └── 判断攻击是否成功
 
-### 🎯 杀招3：DLL侧加载（DLL Side-Loading）
-
-```
-APT不自己写exe文件（容易被杀毒软件发现），
-而是利用合法签名的程序加载恶意DLL：
-
-  C:\合法软件\legit.exe（有微软签名的）
-  + C:\合法软件\恶意.dll（APT放的）
-  → 杀毒软件：legit.exe是合法的 → 放行！
-  → 但legit.exe加载了恶意DLL → APT代码执行了！
-
-这就是"借用别人的通行证"进小区。
+             → 第3步：处置
+                 ├── 真实攻击 → 封IP、排查受害系统、记录工单
+                 └── 误报 → 标注原因、优化规则
 ```
 
 ---
 
-## 📖 五、怎么对抗APT？——"假设已被入侵"心态
+## 🔧 实操任务
 
-对抗APT不能用对抗普通黑客的思维：
+### 任务1：理解Snort规则（20分钟）
 
+在Kali中安装Snort（了解即可，配置较复杂）：
+
+```bash
+# Kali自带Snort，查看帮助
+snort --help
+
+# 查看Snort自带规则目录
+ls /etc/snort/rules/ 2>/dev/null || echo "Snort可能未安装"
+
+# 如果未安装
+# sudo apt install snort -y
 ```
-❌ 错误心态：  "我们有防火墙+WAF+EDR，很安全"
-✅ 正确心态：  "假设攻击者已经在内网了，我们要怎么发现他？"
 
-因为APT会用0day绕过你的防火墙
-会用定制木马躲过你的EDR
-会用合法工具隐藏自己
+### 任务2：用Wireshark模拟理解IDS规则（15分钟）
+
+Wireshark的显示过滤器本质上就是一种"手工IDS规则"：
+
+```bash
+# 在Wireshark中使用以下过滤器，模拟IDS检测特征：
+
+# 检测SQL注入（http.request.uri包含SQL关键字）
+http.request.uri contains "union" or http.request.uri contains "select"
+
+# 检测目录扫描（同一IP大量SYN包）
+tcp.flags.syn == 1 && tcp.flags.ack == 0
+
+# 检测明文密码传输（HTTP POST）
+http.request.method == POST
 ```
 
-### 🛡️ APT检测策略
+### 任务3：区分IDS和IPS场景（10分钟）
 
-```
-1️⃣ 不依赖特征检测
-   APT不用已知恶意软件，特征库没用
-   → 改用行为分析
+判断以下需求应该用IDS还是IPS：
 
-2️⃣ 关注"合法的异常"  
-   攻击者用 psexec（微软官方工具）横向移动
-   → 不是检测 psexec 本身
-   → 而是检测"为什么HR部门的人在运维服务器？"
-
-3️⃣ DNS流量是必看的
-   APT无论如何需要C2通信
-   DNS通常不加密、不监控
-   → 是APT最常用的隐蔽通道
-
-4️⃣ 常态化威胁狩猎
-   不等待告警，每天主动去日志里找异常
-   → 按照ATT&CK框架逐项排查
-
-5️⃣ 多维度关联分析
-   单独的syslog看起来没问题
-   单独的网络流量看起来没问题  
-   但放在一起：同一时间，同一台机器
-   → 一边有可疑进程，一边有异常外联 → 有问题！
-```
+1. 公司只想监控流量，不想影响业务 → ?
+2. 电商网站要在促销期间自动拦截攻击 → ?
+3. 安全团队需要分析攻击者手法 → ?
+4. 银行核心系统需要实时阻断入侵 → ?
 
 ---
 
-## 💻 六、动手试试：APT异常行为检测
+## ✅ 验收标准
 
-```python
-# APT攻击检测——隐蔽活动行为分析
-from collections import defaultdict
-
-class APTDetector:
-    def __init__(self):
-        # 基线阈值（正常行为的上限）
-        self.thresholds = {
-            'dns_queries_per_hour': 500,    # DNS查询频率
-            'new_processes_per_hour': 50,    # 新进程创建频率
-            'lateral_auths_per_hour': 10,    # 横向登录尝试频率
-            'domain_len_avg': 52,            # 平均DNS域名长度
-            'off_hours_login': 3,            # 非工作时间登录次数
-        }
-        self.baselines = defaultdict(lambda: defaultdict(float))
-        self.host_profiles = defaultdict(dict)
-    
-    def observe(self, host, event_type, value, hour=12):
-        """记录主机行为"""
-        self.baselines[host][event_type] += value
-        
-        # 记录行为时间分布
-        if 'hour_distribution' not in self.host_profiles[host]:
-            self.host_profiles[host]['hour_distribution'] = defaultdict(int)
-        self.host_profiles[host]['hour_distribution'][hour] += 1
-    
-    def detect_anomalies(self, host):
-        """检测异常行为"""
-        alerts = []
-        profile = self.baselines[host]
-        
-        # 检查1：DNS隧道（高频+超长域名）
-        if profile.get('dns_queries_per_hour', 0) > self.thresholds['dns_queries_per_hour']:
-            alerts.append({
-                'severity': '🔴 高',
-                'type': 'DNS隧道嫌疑',
-                'detail': f'{host} DNS查询 {profile["dns_queries_per_hour"]:.0f}次/小时 (阈值{self.thresholds["dns_queries_per_hour"]})',
-                'attck': 'T1071.004'
-            })
-        
-        if profile.get('domain_len_avg', 0) > self.thresholds['domain_len_avg']:
-            alerts.append({
-                'severity': '🟠 中',
-                'type': 'DNS隧道(超长域名)',
-                'detail': f'{host} 平均域名长度 {profile["domain_len_avg"]:.0f} (阈值{self.thresholds["domain_len_avg"]})',
-                'attck': 'T1071.004'
-            })
-        
-        # 检查2：横向移动
-        if profile.get('lateral_auths_per_hour', 0) > self.thresholds['lateral_auths_per_hour']:
-            alerts.append({
-                'severity': '🔴 高',
-                'type': '横向移动嫌疑',
-                'detail': f'{host} 横向认证 {profile["lateral_auths_per_hour"]:.0f}次/小时',
-                'attck': 'T1021'
-            })
-        
-        # 检查3：非工作时间异常活动
-        hour_dist = self.host_profiles[host].get('hour_distribution', {})
-        off_hours = sum(v for h, v in hour_dist.items() if h < 6 or h > 22)
-        if off_hours > self.thresholds['off_hours_login']:
-            alerts.append({
-                'severity': '🟠 中',
-                'type': '非工作时间活动',
-                'detail': f'{host} 凌晨/深夜活动 {off_hours}次',
-                'attck': 'T1036'
-            })
-        
-        return alerts
-    
-    def full_scan(self):
-        """全环境扫描"""
-        print('=== 🔍 APT异常行为检测 ===\n')
-        all_alerts = []
-        for host in self.baselines:
-            alerts = self.detect_anomalies(host)
-            all_alerts.extend(alerts)
-            for alert in alerts:
-                print(f'{alert["severity"]} [{alert["attck"]}] {alert["detail"]}')
-        
-        if not all_alerts:
-            print('✅ 未发现异常行为')
-        else:
-            print(f'\n📊 共发现 {len(all_alerts)} 条异常')
-
-# === 模拟APT隐蔽活动检测 ===
-detector = APTDetector()
-
-# 模拟APT使用DNS隧道（高频+超长域名）
-detector.observe('SRV-FINANCE', 'dns_queries_per_hour', 2000, 3)   # 凌晨3点
-detector.observe('SRV-FINANCE', 'domain_len_avg', 78)
-detector.observe('SRV-FINANCE', 'off_hours_login', 5, 3)
-
-# 模拟APT横向移动
-detector.observe('PC-HR-05', 'lateral_auths_per_hour', 45, 2)      # 凌晨2点
-detector.observe('PC-HR-05', 'off_hours_login', 8, 2)
-
-# 正常主机
-detector.observe('PC-ENG-01', 'dns_queries_per_hour', 30, 10)
-detector.observe('PC-ENG-01', 'lateral_auths_per_hour', 2, 10)
-
-detector.full_scan()
-```
+- [ ] 能用监控摄像头和自动门禁比喻说清楚IDS和IPS的区别
+- [ ] 能说出IDS的三种检测方法（特征/异常/协议状态）
+- [ ] 能说出3种常见的IDS告警类型
+- [ ] 能读懂一条Snort规则的基本结构
+- [ ] 理解IDS告警的优先处理级流程
 
 ---
 
-## 🧪 七、今日实验：APT攻击事件复盘
+## 📝 今日小结
 
-### 实验目标
-分析公开APT报告，提取TTPs并编写检测规则
+IDS和IPS是护网值守时看得最多的设备之一。今天你掌握了IDS（摄像头，只检测不干预）和IPS（门禁，自动拦截）的核心区别，知道了告警分级的逻辑。记住，IDS告警只是告诉你"可能有攻击"，到底是不是、严不严重，还需要你来研判。
 
-### 实验步骤
-
-```
-1️⃣ 选择一份公开APT分析报告
-   推荐：海莲花、APT29、Lazarus等组织的分析报告
-
-2️⃣ 提取APT的TTPs
-   ☑ 他们用什么初始入侵方式？
-   ☑ 他们用什么持久化方法？
-   ☑ 他们C2通信有什么特征？
-   ☑ 他们横向移动用什么工具？
-   ☑ 他们怎么窃取数据？
-
-3️⃣ 映射到ATT&CK框架
-   把每个技术标注对应的ATT&CK ID
-
-4️⃣ 编写检测规则
-   ☑ 用提取的TTPs编写SIEM规则
-   ☑ 用Suricata/Yara规则检测特定特征
-
-5️⃣ 用Atomic Red Team验证检测规则
-```
+**记住今天的核心**：
+- IDS = 摄像头，只检测不阻止
+- IPS = 自动门禁，检测+阻止
+- 特征检测 = 最常用，基于已知攻击规则
+- 告警优先级 = Critical/High先看，Medium/Low后看
 
 ---
 
-## 📝 八、今日测验
+## 📚 延伸阅读（可选）
 
-**Q1：APT攻击与普通网络攻击最大的区别是什么？**
-- A. 没区别
-- B. 长期性、定向性、组织化高级攻击  ✅
-- C. 技术更落后
-- D. 只针对个人
-
-> APT = Advanced（高级）+ Persistent（持续）+ Threat（威胁），是国家级的有组织定向攻击。
-
-**Q2：APT攻击中最常用的初始入侵手段是什么？**
-- A. 直接攻击防火墙
-- B. 鱼叉式钓鱼邮件  ✅
-- C. 广播攻击
-- D. 物理入侵
-
-> 80%+的APT入侵从一封针对特定目标的钓鱼邮件开始，成功率远高于技术攻击。
-
-**Q3：DCSync攻击的目标是什么？**
-- A. Web服务器
-- B. 从域控同步域用户密码哈希  ✅
-- C. 数据库
-- D. VPN设备
-
-> DCSync伪装成域控，请求"同步数据"，域控就会把所有用户凭据哈希发过去。
-
-**Q4：对抗APT最核心的心态是什么？**
-- A. 我们有最好的设备
-- B. 假设已被入侵，持续检测和狩猎  ✅
-- C. 等告警
-- D. 相信防火墙
-
-> 面对APT不能抱有侥幸心理，必须假设攻击者已经在环境中。
-
-**Q5：Golden Ticket（黄金票据）为什么危险？**
-- A. 能窃取数据
-- B. 拿到KRBTGT哈希后可以伪造任意用户身份，且改密码也无效  ✅
-- C. 很贵
-- D. 很稀有
-
-> KRBTGT是Kerberos的根密钥，拿到后可以自己签发任意票据，有效期可设10年。
-
----
-
-## 📚 九、课后资源
-
-| 资源 | 链接 | 说明 |
-|------|------|------|
-| MITRE ATT&CK Groups | attack.mitre.org/groups | 全球APT组织TTPs |
-| APT分析报告 | securelist.com | 卡巴斯基APT报告 |
-| 威胁情报平台 | otx.alienvault.com | 开源威胁情报 |
-
----
-
-## 🧠 十、专家锦囊
-
-> **赵安全说：** APT检测不能只靠设备。APT攻击者往往会研究你用的安全设备并针对性地绕过。对付APT需要：①假设已被入侵的心态 ②主动威胁狩猎 ③多维度关联分析 ④红蓝对抗验证。防御APT的核心不是买设备，而是持续的安全运营能力。
-
----
-
-📅 **Day 16 完成！** 今天你见识了国家级网络攻击——APT不是小偷而是特工，对抗方式必须升级！
+- 了解Suricata——Snort的现代替代品，支持多线程
+- 了解Zeek（原Bro）——更侧重协议分析和行为检测

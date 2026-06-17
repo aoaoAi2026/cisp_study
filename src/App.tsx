@@ -17,6 +17,8 @@ import {
   ToolSites,
   CyberLearningMain,
   CyberDailyLearning,
+  InterviewLearningMain,
+  InterviewDailyLearning,
   ResourceLibrary,
   ResourceDetail,
   QuestionBank,
@@ -86,6 +88,8 @@ function App() {
           <Route path="cyber-learning" element={<CyberLearningMain />} />
           <Route path="cyber-learning/cisp/:dayId" element={<DailyLearning />} />
           <Route path="cyber-learning/:planId" element={<CyberDailyLearning />} />
+          <Route path="interview-learning" element={<InterviewLearningMain />} />
+          <Route path="interview-learning/:planId" element={<InterviewDailyLearning />} />
           <Route path="question-bank" element={<QuestionBank />}>
             <Route index element={<QuestionBankTabs />} />
             <Route path="quiz" element={<QuizCenter />} />

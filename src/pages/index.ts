@@ -15,6 +15,8 @@ export { ToolSites } from './ToolSites';
 
 export { CyberLearningMain } from './CyberLearningMain';
 export { CyberDailyLearning } from './CyberDailyLearning';
+export { InterviewLearningMain } from './InterviewLearningMain';
+export { InterviewDailyLearning } from './InterviewDailyLearning';
 export { ResourceLibrary } from './ResourceLibrary';
 export { ResourceDetail } from './ResourceDetail';
 export { QuestionBank, QuestionBankTabs } from './QuestionBank';

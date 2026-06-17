@@ -1,364 +1,280 @@
-# Day 10：内网渗透与横向移动
-## 攻破了外围城墙之后——敌人在你肚子里到处乱窜
+---
+day: 10
+title: 系统日志综合分析
+phase: 第一阶段
+difficulty: ⭐⭐ 基础
+---
+
+# Day 10：系统日志综合分析
+
+> **阶段**：第一阶段 · 蓝队极速上岗 | **难度**：⭐⭐ 基础 | **课时**：2-3小时
 
 ---
 
-> 🎯 **今日目标**  
-> 理解内网攻击手法 · 掌握横向移动技术 · 学习内网防护策略
+## 📋 今日学习目标
+
+1. 掌握Linux系统核心日志文件的位置和作用
+2. 能分析secure日志中的登录行为，识别异常登录
+3. 会查看cron日志，发现攻击者添加的定时任务
+4. 学会从messages/syslog中排查系统异常
+5. 能够独立完成一份模拟攻击场景的日志排查
 
 ---
 
-## 📖 一、内网渗透是什么？——城堡被攻破之后
+## 📖 核心知识讲解
 
-想象一座城堡：
+### 一、Linux日志都在哪？
+
+Linux系统把所有运行日志存在 `/var/log/` 目录下：
 
 ```
-🏰 城堡外墙 = 防火墙、WAF（第一道防线）
-🏘️ 城堡内部 = 内网（各个房间、金库、武器库）
+/var/log/
+├── secure           ← ⭐ 安全认证日志（最最重要！）
+├── messages         ← 系统通用日志（CentOS/RHEL）
+├── syslog           ← 系统通用日志（Ubuntu/Debian/Kali）
+├── auth.log         ← 认证授权日志（Ubuntu/Debian）
+├── cron             ← 计划任务日志
+├── boot.log         ← 系统启动日志
+├── dmesg            ← 内核消息缓冲区日志
+├── nginx/           ← Nginx日志目录
+│   ├── access.log   ← Web访问日志
+│   └── error.log    ← Web错误日志
+├── mysql/           ← MySQL数据库日志
+│   └── error.log
+└── audit/           ← Linux审计日志（高级）
 ```
 
-攻击者攻破外墙（拿到一个Webshell）进入城堡内部后，他不会满足于待在一个小房间。他会：
+> 🔑 **蓝队日志排查优先级**：secure > messages/syslog > cron > Web日志 > 其他
 
-1. 🔍 **四处看看**（信息收集）：这城堡有哪些房间？金库在哪？
-2. 🗝️ **偷钥匙**（凭据获取）：在哪能找到更多房间的钥匙？
-3. 🚶 **到处溜达**（横向移动）：用偷来的钥匙去更多房间
-4. 👑 **夺取王座**（拿下域控）：最终控制整个城堡
+### 二、secure日志 —— 蓝队的安全"心电图"
 
-**这个过程就是"内网渗透"——护网中最危险的阶段！**
+`secure`（或`auth.log`）记录了所有与用户认证相关的事件，是蓝队排查入侵的第一站。
 
----
+**一条典型的secure日志：**
 
-## 📖 二、第一步：信息收集——摸清你的家底
+```
+Jun 10 14:35:22 server1 sshd[12345]: Failed password for root from 10.0.0.55 port 22 ssh2
+│              │                │                            │
+时间           主机名          进程                         事件详情：谁从哪登录失败了
+```
 
-攻击者进入内网后，第一件事就是"踩点"：
+**secure日志中的关键事件识别：**
 
-### 🔍 攻击者会做什么？
+| 日志关键词 | 含义 | 蓝队判断 |
+|:---|:---|:---|
+| `Accepted password for 用户 from IP` | 密码登录成功 | 记录：谁在什么时候从哪个IP登录了 |
+| `Failed password for 用户 from IP` | 密码登录失败 | ⚠️ 暴力破解痕迹 |
+| `Accepted publickey for 用户 from IP` | 密钥登录成功 | 记录（但攻击者可能偷了密钥） |
+| `Invalid user 用户名 from IP` | 登录用了不存在的用户名 | ⚠️ 可能在探测用户 |
+| `session opened for user` | 用户登录后的会话建立 | 确认登录成功的时间 |
+| `session closed for user` | 用户退出登录 | 确认活动时长 |
+| `pam_unix(sudo:auth)` | sudo认证（想用管理员权限） | ⚠️ 普通用户想提权 |
+| `authentication failure` | 认证失败（各种原因） | 汇总标志 |
+| `Connection closed by` | 连接被关闭 | 可能是自己被踢或者被发现了 |
+
+### 三、实战：如何在secure日志中找攻击迹象
+
+#### 步骤1：查看最近的所有登录失败
 
 ```bash
-# 1. 看看我在哪？（当前身份信息）
-whoami                    # 我是谁？
-ipconfig /all             # 我的IP是什么？DNS服务器在哪？→ 可能指向域控！
+# 查看所有失败的密码尝试
+sudo grep "Failed password" /var/log/secure
 
-# 2. 周围有哪些邻居？（内网主机发现）
-net view                  # Windows网络邻居
-arp -a                    # 看看最近和谁说过话
-
-# 3. 这是什么家庭？（域信息枚举）
-net user /domain          # 域里有哪些用户？
-net group "Domain Admins" /domain    # 谁是域管理员？👑
-net group "Domain Computers" /domain # 有几台机器？
-
-# 4. 高级侦查工具：BloodHound
-# "用图告诉你：从你现在的位置，到域管理员，最短的攻击路径是什么"
+# 或 Ubuntu/Kali：
+sudo grep "Failed password" /var/log/auth.log
 ```
 
-### 🗺️ BloodHound——内网攻击的"谷歌地图"
+#### 步骤2：统计哪些IP在暴破
 
-BloodHound会生成一张图，告诉你：
-```
-你(普通用户) → 登录过ServerA(本地管理员) → ServerA上有域管理员登录会话 
-→ 你可以偷域管理员的凭据 → 你就是域管理员了！
+```bash
+# 统计失败登录的来源IP排名
+sudo grep "Failed password" /var/log/secure | awk '{print $(NF-3)}' | sort | uniq -c | sort -rn | head
+
+# 解释：$(NF-3) 取倒数第3个字段（IP所在位置可能因格式而异，需要先看一条日志确认）
 ```
 
-**对蓝队来说：BloodHound也是最好的防御工具！** 用它的视角看自己的内网，就知道攻击者会怎么走。
+#### 步骤3：查看成功登录记录
+
+```bash
+# 查看所有成功的密码登录
+sudo grep "Accepted password" /var/log/secure
+
+# 关注：有没有异常时间（凌晨2-5点）、异常IP（非公司网段）、异常用户（root远程登录）的登录成功
+```
+
+#### 步骤4：查看用户创建和删除
+
+```bash
+# 查看新用户创建
+sudo grep "new user" /var/log/secure
+
+# 查看用户删除
+sudo grep "delete user" /var/log/secure
+# 或
+sudo grep "userdel" /var/log/secure
+```
+
+### 四、cron日志 —— 侦查攻击者的定时后门
+
+很多攻击者会在系统中添加定时任务，定时执行恶意程序（如反弹shell、挖矿程序）。
+
+```bash
+# 查看cron执行记录
+sudo cat /var/log/cron | tail -50
+
+# 查找最近的非root定时任务执行
+sudo grep -v "root" /var/log/cron | tail -50
+
+# 看看有哪些定时任务
+crontab -l          # 当前用户的
+sudo crontab -l     # root的
+ls /etc/cron.*      # 系统级定时任务
+```
+
+**可疑特征：**
+- CMD字段包含奇怪的路径（如 `/tmp/.hidden/update`）
+- 定时任务每1分钟执行一次（太频繁）
+- 执行的内容是反弹shell命令
+
+### 五、messages/syslog —— 系统全局日志
+
+这里记录了系统的各种事件，蓝队主要关注：
+
+```bash
+# 查看最近的服务启动/停止
+sudo grep "Started\|Stopped" /var/log/messages | tail -20
+
+# 查看是否有内核异常（可能被利用的漏洞）
+sudo grep -i "error\|fail\|segfault" /var/log/messages | tail -20
+
+# 查看网络相关事件
+sudo grep -i "network\|eth\|link" /var/log/messages | tail -20
+```
+
+### 六、综合排查实战场景
+
+**模拟场景：** 你是某公司安全运营人员，接到通知"服务器可能被入侵了"。请按以下步骤排查：
+
+```bash
+# ======== 排查脚本（可直接复制到终端执行）========
+
+echo "===== 1. 最近3天的成功登录 ====="
+sudo grep "Accepted" /var/log/auth.log | tail -20
+
+echo ""
+echo "===== 2. 最近3天的失败登录 ====="
+sudo grep "Failed password" /var/log/auth.log | tail -20
+
+echo ""
+echo "===== 3. 失败登录TOP10来源IP ====="
+sudo grep "Failed password" /var/log/auth.log | awk '{for(i=1;i<=NF;i++) if($i ~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/) print $i}' | sort | uniq -c | sort -rn | head -10
+
+echo ""
+echo "===== 4. 最近新增的用户 ====="
+sudo grep "new user" /var/log/auth.log | tail -10
+
+echo ""
+echo "===== 5. 当前监听的非标准端口 ====="
+ss -tlnp | grep -v "127.0.0.1" | grep -vE "(:22|:80|:443) "
+
+echo ""
+echo "===== 6. 最近修改的计划任务 ====="
+sudo grep "CMD" /var/log/cron | tail -20
+
+echo ""
+echo "===== 7. 最近1小时修改的文件（关键目录）====="
+sudo find /etc /tmp /var/tmp -type f -mmin -60 2>/dev/null
+
+echo ""
+echo "===== 8. 当前在线用户 ====="
+w
+```
+
+### 七、判断是否被入侵的关键指标
+
+| 指标 | 正常 | 可疑 | 确认入侵 |
+|:---|:---|:---|:---|
+| 登录时间 | 工作时间 | 深夜/凌晨 | 深夜+陌生IP |
+| 登录IP | 公司/家庭IP段 | 境外或未知IP | 境外IP+登录成功 |
+| 登录用户 | 已知用户 | root直接远程登录 | 突然冒出的新管理员 |
+| 进程列表 | 已知服务 | 陌生进程名 | 进程藏在/tmp下 |
+| 计划任务 | 系统维护 | 不认识的CMD | 反弹shell命令 |
+| 网络连接 | 已知服务端口 | 非标准端口 | 外连境外IP |
 
 ---
 
-## 📖 三、第二步：凭据获取——偷钥匙
+## 🔧 实操任务
 
-### 🗝️ Mimikatz——最著名的"钥匙小偷"
+### 任务1：查看你自己的系统日志（15分钟）
 
-Windows会把用户的密码（或密码的哈希值）存在内存里，Mimikatz就是从内存里掏钥匙的工具。
+```bash
+# 1. 查看你虚拟机的登录日志
+sudo tail -50 /var/log/auth.log    # Ubuntu/Kali
+# 或
+sudo tail -50 /var/log/secure      # CentOS
 
+# 2. 找找有没有失败登录
+sudo grep "Failed password" /var/log/auth.log
+
+# 3. 找找成功登录记录
+sudo grep "Accepted" /var/log/auth.log
+
+# 4. 看看cron的运行记录
+sudo tail -30 /var/log/cron 2>/dev/null || sudo tail -30 /var/log/syslog | grep CRON
 ```
-攻击者运行 mimikatz：
-  sekurlsa::logonpasswords
-  → 哗啦啦，屏幕上满是密码和哈希值！
 
-能偷到什么？
-  ✅ 明文密码（如果系统配置不当）
-  ✅ NTLM哈希（密码的"替代品"）
-  ✅ Kerberos票据（域环境的"临时通行证"）
-  ✅ 浏览器保存的密码
-  ✅ RDP连接凭证
+### 任务2：创建模拟攻击场景并排查（25分钟）
+
+```bash
+# 在Kali虚拟机中模拟：
+# 1. 故意输错几次SSH密码
+ssh localhost  # 输入错误密码3次
+
+# 2. 然后查看日志中的失败记录
+sudo grep "Failed password" /var/log/auth.log | tail -10
+
+# 3. 添加一个测试用的定时任务
+echo "* * * * * echo test > /tmp/test.txt" | crontab -
+
+# 4. 查看cron日志确认定时任务被执行
+sudo grep "test" /var/log/syslog
 ```
 
-> 💡 你以为自己密码很复杂就安全了？攻击者根本不关心你的密码——他直接用你的**NTLM哈希**做身份验证！
+### 任务3：编写你的日志排查清单（20分钟）
+
+根据今天学的内容，在你的笔记中整理一份《系统日志排查SOP（标准操作流程）》，至少包含：
+1. 接到"系统异常"通知后，先查哪个日志？
+2. 如何判断是否发生了暴力破解？
+3. 如何发现攻击者添加的后门账号？
+4. 如何发现可疑计划任务？
 
 ---
 
-## 📖 四、第三步：横向移动——到处溜达
+## ✅ 验收标准
 
-### 🔑 Pass-the-Hash（哈希传递）
-
-这是内网中最经典、最常用的横向移动技术：
-
-```
-正常登录：需要 "用户名 + 密码"
-Hash传递：只需要 "用户名 + NTLM哈希值"
-
-也就是说：攻击者不需要知道你的密码！
-只要从内存里偷到NTLM哈希，就能以你的身份登录其他机器。
-```
-
-### 🚗 横向移动的"交通工具"
-
-| 方法 | 做了什么 | 命令示例 |
-|------|----------|----------|
-| **WMI** | 远程执行命令 | `wmic /node:目标IP process call create "cmd.exe /c ..."` |
-| **PsExec** | 远程启动程序 | `PsExec.exe \\目标IP -u 用户 -p 哈希 cmd` |
-| **SMB共享** | 访问文件共享 | `\\目标IP\C$` |
-| **RDP** | 远程桌面 | `mstsc /v:目标IP` |
-| **WinRM** | 远程管理 | `Enter-PSSession 目标IP` |
-
-### 🎯 攻击链示例
-
-```
-第1步：攻破Web服务器 → 拿到低权限Webshell
-第2步：Web服务器上找到配置文件 → 数据库密码
-第3步：用数据库账号尝试登录其他服务器 → 成功登上App服务器
-第4步：App服务器上运行Mimikatz → 偷到域管理员哈希
-第5步：Pass-the-Hash → 登录域控！
-第6步：DCSync → 同步所有域用户的密码哈希 → 彻底控制整个域
-
-从一台Web服务器到控制整个域，可能只需几个小时！
-```
+- [ ] 能找到并打开 `/var/log/secure`（或`auth.log`）
+- [ ] 能从secure日志中区分"成功登录"和"失败登录"
+- [ ] 能统计暴力破解的来源IP
+- [ ] 能查看cron日志并识别可疑计划任务
+- [ ] 能完成5项以上系统排查命令操作
+- [ ] 有自己的《系统日志排查SOP》笔记
 
 ---
 
-## 📖 五、域控攻击——终极目标
+## 📝 今日小结
 
-### 👑 DCSync——"假装我是另一个域控"
+系统日志是服务器被入侵后留下的"脚印"。攻击者可以删文件、杀进程，但要想彻底清除日志记录却很难。secure日志是蓝队最亲密的战友——每次登录、每次提权、每次异常，它都记得清清楚楚。
 
-```
-域环境里，多台域控之间会互相同步数据（包括用户密码哈希）。
-
-DCSync攻击：攻击者伪装成"一台新的域控"
-  → 对真实域控说："嗨兄弟，我刚加入域，把最新的用户数据同步给我"
-  → 域控说："好的！" → 把所有用户密码哈希都发过去了
-  → 攻击者拿到所有用户的凭据 → 游戏结束
-```
-
-### 🎫 Golden Ticket（黄金票据）
-
-```
-Kerberos认证中有一个超级票据——KRBTGT哈希。
-拿到它 = 能伪造任意用户的身份，访问任何资源。
-
-就像拿到了铸币厂的模板——你可以自己印钱了！
-```
+**记住今天的核心**：
+- `/var/log/secure` = 安全认证日志，第一排查目标
+- `Failed password` 密集出现 + 非工作时间 + 境外IP = 暴破
+- `Accepted password` + 深夜 + 陌生IP = 高危
+- `new user` = 可能的后门账号
+- 定时任务放反弹shell = 经典持久化手法
 
 ---
 
-## 📖 六、内网防护——蓝队的反击
+## 📚 延伸阅读（可选）
 
-### 🛡️ 第一道内网防线：网络分段
-
-```
-❌ 糟糕设计：所有服务器在一个大平层
-   攻击者进入一台 = 可以看到所有机器
-
-✅ 好设计：按部门/安全等级分VLAN
-   办公网 | 生产网 | 测试网 | 运维网（之间用防火墙隔离）
-   攻击者在办公网 → 防火墙挡住 → 无法直接访问生产网
-```
-
-### 🛡️ 第二道内网防线：凭据保护
-
-```
-1. LAPS（本地管理员密码方案）
-   每台电脑的本地管理员密码都不一样且定期更换
-   → 攻击者拿到一台机器的密码，换一台就不能用
-
-2. Protected Users 组
-   把高权限用户加入此组
-   → 禁止NTLM认证（让Pass-the-Hash失效！）
-   → 禁止凭据缓存
-
-3. Credential Guard（凭据卫士）
-   Windows的虚拟化安全功能
-   → Mimikatz也偷不到凭据！
-```
-
-### 🛡️ 第三道内网防线：横向移动检测
-
-```
-SIEM规则检测：
-  ✅ 一个普通用户短时间内登录了5台以上不同机器
-  ✅ 出现了NTLM认证（正常应该用Kerberos）
-  ✅ WMI、PsExec等远程管理工具被非管理员使用
-  ✅ 同一源IP尝试连接多个目标IP的445端口（SMB扫描）
-```
-
----
-
-## 💻 七、动手试试：横向移动检测器
-
-```python
-# 内网横向移动行为检测——蓝队视角
-from collections import defaultdict
-
-class LateralMovementDetector:
-    def __init__(self):
-        self.sessions = defaultdict(list)  # 记录登录行为
-        self.alerts = []
-    
-    def record_login(self, src_ip, dst_ip, user, auth_type, time):
-        """记录一次登录/认证事件"""
-        self.sessions[src_ip].append({
-            'user': user,
-            'dst': dst_ip,
-            'auth': auth_type,
-            'time': time
-        })
-        # 每次记录后立即检查
-        self._detect_anomalies(src_ip, dst_ip, user, auth_type)
-    
-    def _detect_anomalies(self, src, dst, user, auth_type):
-        """检测可疑的横向移动行为"""
-        
-        # 规则1：NTLM认证 = Pass-the-Hash嫌疑
-        if auth_type == 'NTLM':
-            self.alerts.append(
-                f'🔴 [PtH嫌疑] {src} ➜ {dst} | 用户:{user} | NTLM认证'
-            )
-        
-        # 规则2：一个源IP短时间内登录多台机器
-        targets = [s['dst'] for s in self.sessions[src]]
-        unique_targets = set(targets)
-        if len(unique_targets) > 5:
-            self.alerts.append(
-                f'🟠 [横向移动] {src} 已登录 {len(unique_targets)} 台主机'
-            )
-        
-        # 规则3：高危远程管理工具使用
-        unusual_tools = ['wmic', 'psexec', 'schtasks']
-        # 正文中不检测具体工具，这里简化为检测登录目标数
-    
-    def report(self):
-        """输出横向移动检测报告"""
-        print('=== 🔍 内网横向移动检测报告 ===\n')
-        if not self.alerts:
-            print('✅ 未发现可疑横向移动行为')
-            return
-        
-        seen = set()
-        for alert in self.alerts:
-            if alert not in seen:
-                print(alert)
-                seen.add(alert)
-        
-        print(f'\n📊 总计: {len(seen)} 条可疑告警')
-
-# === 模拟一次内网入侵检测 ===
-detector = LateralMovementDetector()
-
-# 模拟：攻击者通过Pass-the-Hash横向移动
-detector.record_login('10.0.0.99', 'DC01', 'admin', 'NTLM', '02:15')
-detector.record_login('10.0.0.99', 'SRV-WEB01', 'admin', 'NTLM', '02:16')
-detector.record_login('10.0.0.99', 'SRV-DB01', 'admin', 'NTLM', '02:17')
-
-# 模拟：攻击者扫描登录多台机器
-for i in range(8):
-    detector.record_login('10.0.0.88', f'SERVER-{i:02d}', 'svc_backup', 
-                          'Kerberos', f'03:{i:02d}')
-
-detector.report()
-```
-
----
-
-## 🧪 八、今日实验：内网渗透攻防
-
-### 实验目标
-搭建AD域环境，体验内网攻击和防御
-
-### 实验步骤
-
-```
-1️⃣ 搭建AD域环境
-   - 1台域控(Windows Server)
-   - 2台域成员服务器
-   - 1台Win10客户机
-
-2️⃣ 红队演练
-   ☑ 从客户机获得初始权限
-   ☑ 运行BloodHound收集域信息
-   ☑ 分析到达域管的最短攻击路径
-   ☑ 尝试Pass-the-Hash横向移动
-
-3️⃣ 蓝队防御
-   ☑ 启用Windows事件日志审计
-   ☑ 部署Sysmon收集进程/网络日志
-   ☑ 编写SIEM检测规则
-   ☑ 配置LAPS + Protected Users组
-
-4️⃣ 红蓝对抗验证
-   ☑ 红队再次攻击 → 蓝队检测规则是否生效
-```
-
----
-
-## 📝 九、今日测验
-
-**Q1：Mimikatz主要用来做什么？**
-- A. 网络扫描
-- B. 提取Windows内存中的凭据  ✅
-- C. Web渗透
-- D. 代码审计
-
-> Mimikatz是凭据提取之王，能从LSASS内存中掏出密码、哈希、票据。
-
-**Q2：Pass-the-Hash攻击的可怕之处是什么？**
-- A. 需要知道密码
-- B. 不需要明文密码，用NTLM哈希就能认证  ✅
-- C. 很慢
-- D. 容易被发现
-
-> PtH绕过了"需要知道密码"这个前提，只要偷到哈希就能冒充你的身份。
-
-**Q3：以下哪个是防止Pass-the-Hash的有效措施？**
-- A. 关防火墙
-- B. 使用Protected Users组+LAPS  ✅
-- C. 加强密码复杂度
-- D. 定期重启
-
-> Protected Users组禁止NTLM认证（PtH直接失效），LAPS确保每台机器本地管理员密码唯一。
-
-**Q4：BloodHound的核心价值是什么？**
-- A. 杀毒
-- B. 可视化分析域内攻击路径  ✅
-- C. 防火墙
-- D. 入侵检测
-
-> BloodHound用"图"告诉你从A点到域管的最短攻击路径。蓝队也能用它自查弱点。
-
-**Q5：DCSync攻击本质上是利用了什么？**
-- A. Web漏洞
-- B. 域控之间的数据同步机制  ✅
-- C. 弱密码
-- D. 网络延迟
-
-> DCSync伪装成域控请求同步数据，域控"信任"了这个请求，就把密码哈希全发出去了。
-
----
-
-## 📚 十、课后资源
-
-| 资源 | 链接 | 说明 |
-|------|------|------|
-| BloodHound项目 | github.com/BloodHoundAD/BloodHound | AD攻击路径分析 |
-| MITRE ATT&CK横向移动 | attack.mitre.org/tactics/TA0008 | 横向移动技术大全 |
-| AD安全最佳实践 | docs.microsoft.com/AD-DS | 微软官方安全指南 |
-
----
-
-## 🧠 十一、专家锦囊
-
-> **赵安全说：** 护网中内网失守的典型路径：Web漏洞获取Webshell → 上传工具收集信息 → 找到域凭据（配置文件/内存）→ Pass-the-Hash横向移动 → 拿下域控。打破这个链条的关键是：Web层防护 + 凭据保护 + 横向移动检测。
-
-> **钱运维说：** 横向移动检测需多维度结合：①网络流量（异常内网连接/端口扫描）②主机日志（异常进程创建/WMI调用）③认证日志（NTLM认证/异常登录源）。三个数据源交叉验证，能大幅提高检测准确率。
-
----
-
-📅 **Day 10 完成！** 今天你了解了内网渗透的恐怖——从一台机器到控制整个域可能只需几小时。但你也学会了用网络分段+凭据保护+行为检测来防守！
+- 了解 `fail2ban` —— 能自动封禁暴力破解IP的防护工具
+- 搜索"Linux log analysis cheat sheet"获取更全面的日志分析速查表
