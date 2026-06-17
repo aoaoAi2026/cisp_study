@@ -45,7 +45,7 @@ import { CyberLearningPlan, CyberDay, QuizQuestion } from '../data/cyberBasic';
 import { Pomodoro } from '../components/Pomodoro';
 import { plans, planSupplements, planColor } from './CyberDailyLearning/constants';
 import { saveData, loadData } from '../data/persistData';
-import { useQuizPractice, useWrongQuestionBook, checkQuizAnswer } from '../hooks';
+import { useQuizPractice, useWrongQuestionBook, checkQuizAnswer, useGamification, useCodeExecutor } from '../hooks';
 
 // 通过 fetch 动态加载 public/ 下的 .md 文件（Vite 不支持 glob 读取 public/）
 
@@ -66,20 +66,14 @@ export const CyberDailyLearning: React.FC = () => {
   const [mdError, setMdError] = useState<string | null>(null);
   const saveTimer = React.useRef<number | null>(null);
 
-  // Gamification states
-  const [xp, setXp] = useState(0);
-  const [userLevel, setUserLevel] = useState(1);
-  const [streakHeatmap, setStreakHeatmap] = useState<number[]>(Array(7).fill(0));
-  const [quizAvg, setQuizAvg] = useState(0);
-  const [showLevelUp, setShowLevelUp] = useState(false);
-  const [newBadge, setNewBadge] = useState<string | null>(null);
-  const [showConfetti, setShowConfetti] = useState(false);
+  // Gamification (共享hook，按 planId 隔离数据)
+  const gamify = useGamification({ storageKey: 'cisp_cyber_gamify', subKey: planId });
+  const { xp, userLevel, streakHeatmap, quizAvg, showLevelUp, setShowLevelUp, showConfetti, setShowConfetti, newBadge, setNewBadge, addXp, bumpHeatmap, updateQuizAvg } = gamify;
 
   // Code editor states
   const [editorCode, setEditorCode] = useState('');
   const [editorLang, setEditorLang] = useState('python');
-  const [codeOutput, setCodeOutput] = useState('');
-  const [codeRunning, setCodeRunning] = useState(false);
+  const { codeOutput, setCodeOutput, codeRunning, execute: executeCode } = useCodeExecutor();
 
   // Coding exercise states
   const [exerciseAnswer, setExerciseAnswer] = useState('');
@@ -151,17 +145,7 @@ export const CyberDailyLearning: React.FC = () => {
     setExerciseHint(false);
   }, [resetQuiz]);
 
-  // Load gamification data
-  useEffect(() => {
-    if (!planId) return;
-    loadData<any>('cisp_cyber_gamify', {}).then(data => {
-      const pData = data[planId] || {};
-      setXp(pData.xp || 0);
-      setUserLevel(pData.level || 1);
-      setStreakHeatmap(pData.heatmap || Array(7).fill(0));
-      setQuizAvg(pData.quizAvg || 0);
-    });
-  }, [planId]);
+  // Gamification 加载 —— 已迁移到 useGamification hook
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -193,66 +177,13 @@ export const CyberDailyLearning: React.FC = () => {
       .finally(() => setVideoLoading(false));
   }, [activeTab, day?.title]);
 
-  // 真实代码执行 —— 调用后端 API
+  // 代码执行 —— 已迁移到 useCodeExecutor hook
   const handleRunCode = async (code: string, lang: string) => {
-    const supportedLangs = ['python', 'javascript', 'java'];
-    const mappedLang = lang === 'bash' || lang === 'shell' ? 'bash-not-supported' :
-                       lang === 'sql' ? 'sql-not-supported' :
-                       lang === 'typescript' ? 'javascript' : lang;
-    if (!supportedLangs.includes(mappedLang)) {
-      if (mappedLang === 'bash-not-supported') {
-        setCodeOutput('[错误] Bash/Shell 需要在终端环境中执行，请使用本地终端或 CodeLab。\n后端支持的语言: Python / JavaScript / Java');
-      } else if (mappedLang === 'sql-not-supported') {
-        setCodeOutput('[错误] SQL 需要连接数据库执行，后端暂不支持。请参考试题中的 SQL 样例。\n后端支持的语言: Python / JavaScript / Java');
-      } else {
-        setCodeOutput(`[错误] 不支持的语言: ${lang}\n支持的语言: Python / JavaScript / Java`);
-      }
-      return;
-    }
-    setCodeRunning(true);
-    setCodeOutput('');
-    try {
-      const resp = await fetch('/api/execute', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ language: mappedLang, code }),
-      });
-      const data = await resp.json();
-      if (resp.ok) {
-        const out = [
-          data.stdout ? data.stdout.trimEnd() : '',
-          data.stderr ? `\n[stderr]\n${data.stderr.trimEnd()}` : '',
-          `\n--- 退出码: ${data.exitCode} | 耗时: ${data.executionTime}ms ---`,
-        ].filter(Boolean).join('');
-        setCodeOutput(out || '(无输出)');
-        if (data.success) addXp(5);
-      } else {
-        setCodeOutput(`[请求失败] ${data.error || '未知错误'}\n${data.detail || ''}`);
-      }
-    } catch (e: any) {
-      setCodeOutput(`[网络错误] ${e.message}\n请确认后端服务已启动 (node backend/server.js)`);
-    } finally {
-      setCodeRunning(false);
-    }
+    await executeCode(code, lang);
+    addXp(5);
   };
 
-  const addXp = async (amount: number) => {
-    const newXp = xp + amount;
-    const newLevel = Math.floor(newXp / 500) + 1;
-    setXp(newXp);
-    if (newLevel > userLevel) {
-      setUserLevel(newLevel);
-      setShowLevelUp(true);
-      setShowConfetti(true);
-      setTimeout(() => setShowLevelUp(false), 3000);
-      setTimeout(() => setShowConfetti(false), 2000);
-    }
-    if (planId) {
-      const data = await loadData<any>('cisp_cyber_gamify', {});
-      data[planId] = { ...data[planId], xp: newXp, level: newLevel, heatmap: streakHeatmap, quizAvg };
-      await saveData('cisp_cyber_gamify', data);
-    }
-  };
+  // addXp —— 已迁移到 useGamification hook
 
   useEffect(() => {
     if (!planId) return;
@@ -358,18 +289,10 @@ export const CyberDailyLearning: React.FC = () => {
     const newSet = new Set(completedDays);
     if (newSet.has(currentDay)) { newSet.delete(currentDay); } else { newSet.add(currentDay); addXp(50); }
     setCompletedDays(newSet);
-    // Update heatmap
-    const today = new Date().getDay();
-    const newHeatmap = [...streakHeatmap];
-    newHeatmap[today === 0 ? 6 : today - 1] = (newHeatmap[today === 0 ? 6 : today - 1] || 0) + 1;
-    setStreakHeatmap(newHeatmap);
+    bumpHeatmap();
     const data = await loadData<any>('cisp_cyber_progress', {});
     data[planId] = { ...data[planId], completedDays: Array.from(newSet) };
     await saveData('cisp_cyber_progress', data);
-    // Save gamification
-    const gData = await loadData<any>('cisp_cyber_gamify', {});
-    gData[planId] = { ...gData[planId], xp, level: userLevel, heatmap: newHeatmap, quizAvg };
-    await saveData('cisp_cyber_gamify', gData);
   };
 
   const copyToClipboard = (text: string, id: string) => {

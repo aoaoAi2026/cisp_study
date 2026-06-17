@@ -4,8 +4,8 @@ import {
   Dashboard,
   DailyLearning,
   CodeLab,
-  LabEnvironment,
   CodeRunner,
+  LabEnvironment,
   QuizCenter,
   Achievements,
   Community,
@@ -15,11 +15,12 @@ import {
   MockExam,
   StudyTips,
   ToolSites,
-  Flashcards,
   CyberLearningMain,
   CyberDailyLearning,
   ResourceLibrary,
   ResourceDetail,
+  QuestionBank,
+  QuestionBankTabs,
 } from "./pages";
 import AuthPage from "./pages/AuthPage";
 import { useUserStore } from "./store/userStore";
@@ -77,16 +78,21 @@ function App() {
           <Route path="learning" element={<Navigate to="/cyber-learning" replace />} />
           <Route path="learning/:dayId" element={<CispDayRedirect />} />
           <Route path="lab" element={<CodeLab />} />
-          <Route path="lab-environment" element={<LabEnvironment />} />
-          <Route path="code-runner" element={<CodeRunner />} />
-          <Route path="flashcards" element={<Flashcards />} />
+          <Route path="lab/code-runner" element={<CodeRunner />} />
+          <Route path="lab/environment" element={<LabEnvironment />} />
+          <Route path="lab-environment" element={<Navigate to="/lab/environment" replace />} />
+          <Route path="code-runner" element={<Navigate to="/lab/code-runner" replace />} />
+          <Route path="flashcards" element={<Navigate to="/question-bank/past-papers" replace />} />
           <Route path="cyber-learning" element={<CyberLearningMain />} />
           <Route path="cyber-learning/cisp/:dayId" element={<DailyLearning />} />
           <Route path="cyber-learning/:planId" element={<CyberDailyLearning />} />
-          <Route path="quiz" element={<QuizCenter />} />
+          <Route path="question-bank" element={<QuestionBank />}>
+            <Route index element={<QuestionBankTabs />} />
+            <Route path="quiz" element={<QuizCenter />} />
+            <Route path="past-papers" element={<PastPapers />} />
+            <Route path="mock-exam" element={<MockExam />} />
+          </Route>
           <Route path="outline" element={<ExamOutline />} />
-          <Route path="past-papers" element={<PastPapers />} />
-          <Route path="mock-exam" element={<MockExam />} />
           <Route path="study-tips" element={<StudyTips />} />
           <Route path="tool-sites" element={<ToolSites />} />
           <Route path="achievements" element={<Achievements />} />

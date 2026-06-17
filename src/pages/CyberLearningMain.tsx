@@ -22,6 +22,7 @@ import { cyberBasicPlan, CyberLearningPlan } from '../data/cyberBasic';
 import { cyberPenetrationPlan } from '../data/cyberPenetration';
 import { cyberDefensePlan } from '../data/cyberDefense';
 import { cyberAiPlan } from '../data/cyberAi';
+import { cyberHwPlan } from '../data/cyberHw';
 import { learningData as cispLearningData } from '../data/learningData';
 import { loadData } from '../data/persistData';
 import { useLearningStore } from '../store';
@@ -32,7 +33,8 @@ const plans: CyberLearningPlan[] = [
   cyberBasicPlan,
   cyberPenetrationPlan,
   cyberDefensePlan,
-  cyberAiPlan
+  cyberAiPlan,
+  cyberHwPlan
 ];
 
 const difficultyIcon = (d: string) => {
@@ -45,6 +47,7 @@ const planIcon = (id: string) => {
   if (id === 'basic') return <Shield size={40} />;
   if (id === 'penetration') return <Target size={40} />;
   if (id === 'ai') return <Brain size={40} />;
+  if (id === 'hw') return <Globe size={40} />;
   return <Cpu size={40} />;
 };
 
@@ -52,6 +55,7 @@ const planBg = (id: string) => {
   if (id === 'basic') return 'from-cyber-green/5 to-transparent';
   if (id === 'penetration') return 'from-cyber-red/5 to-transparent';
   if (id === 'ai') return 'from-white/[0.03] to-transparent';
+  if (id === 'hw') return 'from-cyber-gold/5 to-transparent';
   return 'from-cyber-blue/5 to-transparent';
 };
 
@@ -59,6 +63,7 @@ const planBorder = (id: string) => {
   if (id === 'basic') return 'border-cyber-green/30';
   if (id === 'penetration') return 'border-cyber-red/30';
   if (id === 'ai') return 'border-white/15';
+  if (id === 'hw') return 'border-cyber-gold/30';
   return 'border-cyber-blue/30';
 };
 
@@ -66,6 +71,7 @@ const planHover = (id: string) => {
   if (id === 'basic') return 'hover:border-cyber-green/50';
   if (id === 'penetration') return 'hover:border-cyber-red/50';
   if (id === 'ai') return 'hover:border-white/30';
+  if (id === 'hw') return 'hover:border-cyber-gold/50';
   return 'hover:border-cyber-blue/50';
 };
 
@@ -120,7 +126,7 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
               网络安全学习中心
             </h1>
             <p className="text-gray-400 mt-1">
-              四个阶段 · 120天系统学习 · 从基础到高级
+              五个阶段 · 实战学习 · 从基础到高级
             </p>
           </div>
         </div>
@@ -135,7 +141,7 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
       >
         <motion.div variants={itemVariants}>
           <Card className="text-center py-4">
-            <div className="text-2xl font-bold text-cyber-green">120</div>
+            <div className="text-2xl font-bold text-cyber-green">{plans.reduce((s, p) => s + p.totalDays, 0)}</div>
             <div className="text-xs text-gray-400 mt-1">总学习天数</div>
           </Card>
         </motion.div>
@@ -148,16 +154,18 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
         </motion.div>
         <motion.div variants={itemVariants}>
           <Card className="text-center py-4">
-            <div className="text-2xl font-bold text-cyber-blue">4</div>
+            <div className="text-2xl font-bold text-cyber-blue">{plans.length}</div>
             <div className="text-xs text-gray-400 mt-1">学习阶段</div>
           </Card>
         </motion.div>
         <motion.div variants={itemVariants}>
           <Card className="text-center py-4">
             <div className="text-2xl font-bold text-cyber-gold">
-              {getProgress('basic') > 0 || getProgress('penetration') > 0 || getProgress('defense') > 0 || getProgress('ai') > 0
-                ? Math.round(((getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai')) / 120) * 100)
-                : 0}%
+              {(() => {
+                const totalDays = plans.reduce((s, p) => s + p.totalDays, 0);
+                const completed = getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw');
+                return completed > 0 ? Math.round((completed / totalDays) * 100) : 0;
+              })()}%
             </div>
             <div className="text-xs text-gray-400 mt-1">总进度</div>
           </Card>
@@ -192,6 +200,7 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                       ${plan.id === 'penetration' ? 'bg-cyber-red/20 text-cyber-red' : ''}
                       ${plan.id === 'defense' ? 'bg-cyber-blue/20 text-cyber-blue' : ''}
                       ${plan.id === 'ai' ? 'bg-white/[0.08] text-white' : ''}
+                      ${plan.id === 'hw' ? 'bg-cyber-gold/20 text-cyber-gold' : ''}
                     `}
                   >
                     {planIcon(plan.id)}
@@ -224,7 +233,8 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                           className={`h-full transition-all duration-500 ${
                             plan.id === 'basic' ? 'bg-cyber-green' :
                             plan.id === 'penetration' ? 'bg-cyber-red' :
-                            plan.id === 'ai' ? 'bg-[#7a8a9a]' : 'bg-cyber-blue'
+                            plan.id === 'ai' ? 'bg-[#7a8a9a]' :
+                            plan.id === 'hw' ? 'bg-cyber-gold' : 'bg-cyber-blue'
                           }`}
                           style={{ width: `${pct}%` }}
                         />
@@ -273,6 +283,8 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                           ? 'border-cyber-red/50 text-cyber-red hover:bg-cyber-red/20 hover:border-cyber-red/80'
                         : plan.id === 'ai'
                           ? 'border-gray-500/50 text-gray-300 hover:bg-white/10 hover:border-gray-400'
+                        : plan.id === 'hw'
+                          ? 'border-cyber-gold/50 text-cyber-gold hover:bg-cyber-gold/20 hover:border-cyber-gold/80'
                         : 'border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/20 hover:border-cyber-blue/80'
                       }`}
                     >
@@ -287,6 +299,8 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                           ? 'bg-[#e04444] text-white hover:bg-[#ff5555] shadow-[0_0_12px_rgba(255,68,68,0.3)] hover:shadow-[0_0_20px_rgba(255,68,68,0.5)]'
                         : plan.id === 'ai'
                           ? 'bg-[#5b7a8a] text-white hover:bg-[#789aa8] shadow-[0_0_10px_rgba(91,122,138,0.3)] hover:shadow-[0_0_16px_rgba(91,122,138,0.45)]'
+                        : plan.id === 'hw'
+                          ? 'bg-[#e8a020] text-black hover:bg-[#ffb830] shadow-[0_0_12px_rgba(232,160,32,0.35)] hover:shadow-[0_0_20px_rgba(232,160,32,0.5)]'
                         : 'bg-[#3388ee] text-white hover:bg-[#5599ff] shadow-[0_0_12px_rgba(51,136,238,0.3)] hover:shadow-[0_0_20px_rgba(51,136,238,0.5)]'
                       }`}
                     >

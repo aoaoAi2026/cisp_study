@@ -2,6 +2,7 @@ import { cyberBasicPlan } from '../../data/cyberBasic';
 import { cyberPenetrationPlan } from '../../data/cyberPenetration';
 import { cyberDefensePlan } from '../../data/cyberDefense';
 import { cyberAiPlan } from '../../data/cyberAi';
+import { cyberHwPlan } from '../../data/cyberHw';
 import basicSupplement from '../../data/cyberBasicSupplement';
 import penetrationSupplement from '../../data/cyberPenetrationSupplement';
 import defenseSupplement from '../../data/cyberDefenseSupplement';
@@ -12,7 +13,8 @@ export const plans: Record<string, CyberLearningPlan> = {
   basic: cyberBasicPlan,
   penetration: cyberPenetrationPlan,
   defense: cyberDefensePlan,
-  ai: cyberAiPlan
+  ai: cyberAiPlan,
+  hw: cyberHwPlan
 };
 
 export const planSupplements: Record<string, Record<number, any>> = {
@@ -20,6 +22,7 @@ export const planSupplements: Record<string, Record<number, any>> = {
   penetration: penetrationSupplement,
   defense: defenseSupplement,
   ai: supplement,
+  hw: {}
 };
 
 export interface PlanColor {
@@ -95,6 +98,24 @@ export const planColor = (planId: string): PlanColor => {
     optionDim: 'border-white/15 bg-transparent opacity-40',
     btnDefault: 'bg-[#7b6ba8] text-white font-semibold hover:bg-[#9588c0] shadow-[0_0_12px_rgba(123,107,168,0.35)] hover:shadow-[0_0_18px_rgba(123,107,168,0.5)]',
     tabActive: 'bg-cyber-purple/20 text-cyber-purple border border-cyber-purple/30',
+  };
+  if (planId === 'hw') return {
+    main: 'text-cyber-gold',
+    bg: 'bg-cyber-gold',
+    border: 'border-cyber-gold',
+    bgLight: 'bg-cyber-gold/20',
+    borderLight: 'border-cyber-gold/40',
+    borderFaint: 'border-cyber-gold/50',
+    borderSoft: 'border-cyber-gold/50',
+    borderStrong: 'border-cyber-gold/70',
+    cardBorder: 'border-cyber-gold/30',
+    textColor: 'text-cyber-gold',
+    optionDefault: 'border-cyber-gold/40 bg-white/5 hover:border-cyber-gold/70 hover:bg-cyber-gold/15',
+    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
+    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
+    optionDim: 'border-cyber-gold/20 bg-transparent opacity-40',
+    btnDefault: 'bg-[#e8a020] text-black font-semibold hover:bg-[#ffb830] shadow-[0_0_12px_rgba(232,160,32,0.35)] hover:shadow-[0_0_18px_rgba(232,160,32,0.5)]',
+    tabActive: 'bg-cyber-gold/20 text-cyber-gold border border-cyber-gold/30',
   };
   return {
     main: 'text-cyber-blue',

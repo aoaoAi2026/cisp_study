@@ -34,11 +34,10 @@ import {
 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import { useLearningStore, useAchievementStore } from '../store';
-import { useQuizExam, useWrongQuestionBook } from '../hooks';
+import { useQuizExam, useWrongQuestionBook, useGamification, useCodeExecutor } from '../hooks';
 import { learningData, weekThemes } from '../data/learningData';
 import { Card, Badge, Button } from '../components/UI';
 import { Pomodoro } from '../components/Pomodoro';
-import { saveData, loadData } from '../data/persistData';
 
 export const DailyLearning: React.FC = () => {
   const { dayId } = useParams<{ dayId: string }>();
@@ -55,8 +54,7 @@ export const DailyLearning: React.FC = () => {
   const [mdContent, setMdContent] = useState<string | null>(null);
   const [mdLoading, setMdLoading] = useState<boolean>(true);
   const [mdError, setMdError] = useState<string | null>(null);
-  const [codeOutput, setCodeOutput] = useState<string | null>(null);
-  const [codeRunning, setCodeRunning] = useState(false);
+  const { codeOutput, setCodeOutput, codeRunning, execute: executeCode } = useCodeExecutor();
   const [bilibiliBvid, setBilibiliBvid] = useState<string | null>(null);
   const [bilibiliVideoTitle, setBilibiliVideoTitle] = useState<string>('');
   const [videoLoading, setVideoLoading] = useState(false);
@@ -65,14 +63,9 @@ export const DailyLearning: React.FC = () => {
   const wrongQuestionBook = useWrongQuestionBook();
   const [quizResult, setQuizResult] = useState<{ correct: number; total: number; score: number } | null>(null);
 
-  // Gamification stats
-  const [xp, setXp] = useState(0);
-  const [userLevel, setUserLevel] = useState(1);
-  const [streakHeatmap, setStreakHeatmap] = useState<number[]>(Array(7).fill(0));
-  const [quizAvg, setQuizAvg] = useState(0);
-  const [showLevelUp, setShowLevelUp] = useState(false);
-  const [newBadge, setNewBadge] = useState<string | null>(null);
-  const [showConfetti, setShowConfetti] = useState(false);
+  // Gamification (共享hook)
+  const gamify = useGamification({ storageKey: 'cisp_gamify' });
+  const { xp, userLevel, streakHeatmap, quizAvg, showLevelUp, setShowLevelUp, showConfetti, setShowConfetti, newBadge, setNewBadge, addXp, bumpHeatmap, updateQuizAvg } = gamify;
   const [showStats, setShowStats] = useState(true);
 
   // Monaco editor
@@ -176,11 +169,7 @@ export const DailyLearning: React.FC = () => {
       if (dayIndex === 6) {
         checkAndUnlockBadge('complete_week_1');
       }
-      // Update heatmap & XP
-      const today = new Date().getDay();
-      const newHeatmap = [...streakHeatmap];
-      newHeatmap[today] = (newHeatmap[today] || 0) + 1;
-      setStreakHeatmap(newHeatmap);
+      bumpHeatmap();
       addXp(100);
     }
   };
@@ -201,30 +190,7 @@ export const DailyLearning: React.FC = () => {
     addXp(result.score >= 80 ? 50 : 20);
   };
 
-  // XP / Level system
-  const addXp = async (amount: number) => {
-    const newXp = xp + amount;
-    const newLevel = Math.floor(newXp / 500) + 1;
-    setXp(newXp);
-    if (newLevel > userLevel) {
-      setUserLevel(newLevel);
-      setShowLevelUp(true);
-      setShowConfetti(true);
-      setTimeout(() => setShowLevelUp(false), 3000);
-      setTimeout(() => setShowConfetti(false), 2000);
-    }
-    try { saveData('cisp_gamify', { xp: newXp, level: newLevel, heatmap: streakHeatmap, quizAvg }); } catch {}
-  };
-
-  // Load gamification data
-  useEffect(() => {
-    loadData<any>('cisp_gamify', {}).then(data => {
-      setXp(data.xp || 0);
-      setUserLevel(data.level || 1);
-      setStreakHeatmap(data.heatmap || Array(7).fill(0));
-      setQuizAvg(data.quizAvg || 0);
-    });
-  }, []);
+  // XP / Level system —— 已迁移到 useGamification hook
 
   // Editor code init
   useEffect(() => {
@@ -245,41 +211,10 @@ export const DailyLearning: React.FC = () => {
     return () => window.removeEventListener('keydown', handler);
   }, [prevDay, nextDay, navigate]);
 
-  // 代码执行
+  // 代码执行 —— 已迁移到 useCodeExecutor hook
   const handleRunCode = async (code: string, lang: string) => {
-    setCodeRunning(true);
-    setCodeOutput(null);
-    let language = lang.toLowerCase();
-    if (language === 'py') language = 'python';
-    if (language === 'js') language = 'javascript';
-    if (!['python', 'javascript', 'java'].includes(language)) {
-      setCodeOutput(`[提示] ${lang} 语言暂不支持后端执行，仅支持: Python / JavaScript / Java`);
-      setCodeRunning(false);
-      return;
-    }
-    try {
-      const resp = await fetch('/api/execute', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ language, code }),
-      });
-      const data = await resp.json();
-      if (resp.ok) {
-        const out = [
-          data.stdout ? data.stdout.trimEnd() : '',
-          data.stderr ? `\n[stderr]\n${data.stderr.trimEnd()}` : '',
-          `\n--- 退出码: ${data.exitCode} | 耗时: ${data.executionTime}ms ---`,
-        ].filter(Boolean).join('');
-        setCodeOutput(out || '(无输出)');
-      } else {
-        setCodeOutput(`[请求失败] ${data.error || '未知错误'}\n${data.detail || ''}`);
-      }
-    } catch (e: any) {
-      setCodeOutput(`[网络错误] ${e.message}\n请确认后端服务已启动 (node backend/server.js)`);
-    } finally {
-      setCodeRunning(false);
-      addXp(5);
-    }
+    await executeCode(code, lang);
+    addXp(5);
   };
 
   const containerVariants = {

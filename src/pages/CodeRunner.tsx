@@ -18,7 +18,7 @@ import { ExecutionHistoryPanel } from './CodeRunner/ExecutionHistory';
 import { CodeSnippetsPanel } from './CodeRunner/CodeSnippets';
 
 // ───── 主组件 ─────
-export const CodeRunner: React.FC = () => {
+export const CodeRunner: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
   // ── 运行时数据 ──
   const [runtimes, setRuntimes] = useState<Runtime[]>([]);
   const [runtimesLoading, setRuntimesLoading] = useState(true);
@@ -438,10 +438,10 @@ export const CodeRunner: React.FC = () => {
   const severityColor = (s: string) => s === 'critical' ? 'text-red-400 bg-red-500/10 border-red-500/30' : s === 'high' ? 'text-orange-400 bg-orange-500/10 border-orange-500/30' : s === 'medium' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30' : 'text-blue-400 bg-blue-500/10 border-blue-500/30';
 
   return (
-    <div className={`min-h-screen bg-[#0a0f18] text-gray-100 ${isFullscreen ? 'overflow-hidden' : ''}`}>
-      <div className={`${isFullscreen ? 'h-screen flex flex-col p-3' : 'max-w-7xl mx-auto px-4 py-6'}`}>
+    <div className={`${embedded && !isFullscreen ? 'h-full' : 'min-h-screen'} bg-[#0a0f18] text-gray-100 ${isFullscreen ? 'overflow-hidden' : ''}`}>
+      <div className={`${isFullscreen ? 'h-screen flex flex-col p-3' : embedded ? 'h-full' : 'max-w-7xl mx-auto px-4 py-6'}`}>
         {/* 头部 */}
-        {!isFullscreen && (
+        {!isFullscreen && !embedded && (
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-green to-emerald-500 flex items-center justify-center">
@@ -619,9 +619,9 @@ export const CodeRunner: React.FC = () => {
             <div className={`${viewMode === 'split' ? 'grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0' : 'space-y-3'}`}>
               {/* 代码编辑器 */}
               <motion.div layout className="rounded-xl overflow-hidden border border-white/10 bg-[#111827] flex flex-col"
-                style={{ minHeight: isFullscreen ? 0 : (viewMode === 'split' ? '500px' : '400px'), flex: isFullscreen ? 1 : undefined }}>
+                style={{ minHeight: isFullscreen ? 0 : embedded ? '300px' : (viewMode === 'split' ? '500px' : '400px'), flex: isFullscreen ? 1 : undefined }}>
                 <Editor
-                  height={isFullscreen ? '100%' : (viewMode === 'split' ? '500px' : '400px')}
+                  height={isFullscreen ? '100%' : embedded ? '300px' : (viewMode === 'split' ? '500px' : '400px')}
                   language={activeTab.language === 'javascript' ? 'javascript' : activeTab.language === 'java' ? 'java' : 'python'}
                   value={activeTab.code}
                   onChange={v => updateActiveTab({ code: v || '' })}

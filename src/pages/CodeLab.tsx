@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   BookOpen, AlertTriangle, Terminal as TerminalIcon, Package,
+  Play,
 } from 'lucide-react';
 import { securityScripts } from '../data/securityScripts';
 import { laws } from '../data/laws';
@@ -10,6 +11,7 @@ import { ExperimentTab } from './CodeLab/ExperimentTab';
 import { ScriptsTab } from './CodeLab/ScriptsTab';
 import { LawsTab } from './CodeLab/LawsTab';
 import { EmergencyTab } from './CodeLab/EmergencyTab';
+import { CodeRunner } from './CodeRunner';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -17,10 +19,11 @@ const containerVariants = {
 };
 
 export const CodeLab: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'experiments' | 'scripts' | 'laws' | 'emergency'>('experiments');
+  const [activeTab, setActiveTab] = useState<'experiments' | 'scripts' | 'laws' | 'emergency' | 'runner'>('experiments');
 
   const tabDefs = [
     { id: 'experiments' as const, Icon: TerminalIcon, label: '代码实验' },
+    { id: 'runner' as const, Icon: Play, label: '在线运行' },
     { id: 'scripts' as const, Icon: Package, label: `脚本仓库 (${securityScripts.length})` },
     { id: 'laws' as const, Icon: BookOpen, label: `法律法规 (${laws.length})` },
     { id: 'emergency' as const, Icon: AlertTriangle, label: `应急处理 (${emergencyScenarios.length})` },
@@ -28,6 +31,7 @@ export const CodeLab: React.FC = () => {
 
   const tabDescriptions: Record<string, string> = {
     experiments: '通过动手实验深入理解安全概念，所有实验都在安全模拟环境中进行',
+    runner: '多语言在线代码运行器，支持安全审计、性能基准测试、分屏模式，Ctrl+Enter 运行',
     scripts: '网络安全脚本仓库，提供详细的操作步骤和使用说明',
     laws: '网络安全相关法律法规与等级保护制度知识学习',
     emergency: '网络安全应急处理方案，包含勒索病毒、漏洞利用、系统崩溃等各类安全事件的详细处理流程',
@@ -62,6 +66,7 @@ export const CodeLab: React.FC = () => {
       {/* Tab Content */}
       <motion.div key={activeTab} variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
         {activeTab === 'experiments' && <ExperimentTab />}
+        {activeTab === 'runner' && <CodeRunner embedded />}
         {activeTab === 'scripts' && <ScriptsTab />}
         {activeTab === 'laws' && <LawsTab />}
         {activeTab === 'emergency' && <EmergencyTab />}

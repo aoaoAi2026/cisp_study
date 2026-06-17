@@ -13,8 +13,7 @@ import {
   Pause,
   PlayCircle
 } from 'lucide-react';
-import { Card, Badge } from '../components/UI';
-import { ParticleBackground } from '../components/UI/ParticleBackground';
+import { Card, Badge, Button } from '../components/UI';
 import { mockExamPool, type MockQuestion } from '../data/mockExamPool';
 
 interface ExamSession {
@@ -158,13 +157,10 @@ export const MockExam: React.FC = () => {
   // Welcome Screen
   if (!session.isStarted) {
     return (
-      <div className="relative min-h-screen">
-        <ParticleBackground />
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 flex items-center justify-center min-h-[70vh]"
-        >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
           <Card className="max-w-xl w-full p-8 text-center">
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-cyber-green/10 border border-cyber-green/30 flex items-center justify-center">
               <Target className="w-10 h-10 text-cyber-green" />
@@ -211,20 +207,17 @@ export const MockExam: React.FC = () => {
             </button>
           </Card>
         </motion.div>
-      </div>
     );
   }
 
   // Results Screen
   if (session.isFinished && results) {
     return (
-      <div className="relative min-h-screen">
-        <ParticleBackground />
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 space-y-6 py-8"
-        >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6"
+      >
           <Card className="bg-gradient-to-br from-cyber-purple/50 to-cyber-blue/20 border-cyber-blue/30 text-center p-8">
             <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-cyber-green/10 border border-cyber-green/30 flex items-center justify-center">
               {results.percentage >= 70 ? (
@@ -355,21 +348,18 @@ export const MockExam: React.FC = () => {
             </div>
           </Card>
         </motion.div>
-      </div>
     );
   }
 
   // Exam Screen
   return (
-    <div className="relative min-h-screen">
-      <ParticleBackground />
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="relative z-10"
-      >
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-6"
+    >
         {/* Header / Timer */}
-        <div className="sticky top-0 z-20 bg-cyber-black/90 backdrop-blur-xl border-b border-white/10 py-4">
+        <Card className="sticky top-0 z-10 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="text-sm text-gray-400">
@@ -392,7 +382,7 @@ export const MockExam: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Pause overlay */}
         <AnimatePresence>
@@ -570,6 +560,5 @@ export const MockExam: React.FC = () => {
           </div>
         </div>
       </motion.div>
-    </div>
   );
 };

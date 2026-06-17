@@ -1,5 +1,4 @@
 export { Dashboard } from './Dashboard';
-export { LearningPath } from './LearningPath';
 export { DailyLearning } from './DailyLearning';
 export { CodeLab } from './CodeLab';
 export { LabEnvironment } from './LabEnvironment';
@@ -13,8 +12,9 @@ export { PastPapers } from './PastPapers';
 export { MockExam } from './MockExam';
 export { StudyTips } from './StudyTips';
 export { ToolSites } from './ToolSites';
-export { Flashcards } from './Flashcards';
+
 export { CyberLearningMain } from './CyberLearningMain';
 export { CyberDailyLearning } from './CyberDailyLearning';
 export { ResourceLibrary } from './ResourceLibrary';
 export { ResourceDetail } from './ResourceDetail';
+export { QuestionBank, QuestionBankTabs } from './QuestionBank';

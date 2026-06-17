@@ -46,7 +46,7 @@ export const QuizCenter: React.FC = () => {
   const [reviewQuestionIndex, setReviewQuestionIndex] = useState(0);
 
   useEffect(() => {
-    loadData<WrongQuestion[]>('cisp_wrong_questions', []).then(setWrongQuestions);
+    loadData<WrongQuestion[]>('cisp_quiz_wrong_book', []).then(setWrongQuestions);
   }, []);
 
   // Get all available quizzes (from completed days)
@@ -121,11 +121,11 @@ export const QuizCenter: React.FC = () => {
       }));
 
     if (newWrongs.length > 0) {
-      const existing = await loadData<WrongQuestion[]>('cisp_wrong_questions', []);
+      const existing = await loadData<WrongQuestion[]>('cisp_quiz_wrong_book', []);
       // Deduplicate: replace questions with same dayId+question text
       const merged = existing.filter(w => !newWrongs.some(n => n.dayId === w.dayId && n.question === w.question));
       const updated = [...merged, ...newWrongs];
-      await saveData('cisp_wrong_questions', updated);
+      await saveData('cisp_quiz_wrong_book', updated);
       setWrongQuestions(updated);
     }
 
@@ -291,7 +291,7 @@ export const QuizCenter: React.FC = () => {
                       <Button size="sm" variant="outline" onClick={() => setShowMistakeBook(false)}>返回列表</Button>
                       <Button size="sm" variant="outline" className="text-red-400" onClick={async () => {
                         const updated = wrongQuestions.filter((_, i) => i !== reviewQuestionIndex);
-                        await saveData('cisp_wrong_questions', updated);
+                        await saveData('cisp_quiz_wrong_book', updated);
                         setWrongQuestions(updated);
                         if (updated.length === 0) setShowMistakeBook(false);
                         else setReviewQuestionIndex(Math.min(reviewQuestionIndex, updated.length - 1));
@@ -312,7 +312,7 @@ export const QuizCenter: React.FC = () => {
                       </div>
                       <Button size="sm" variant="outline" onClick={async (e) => {
                         e.stopPropagation();
-                        await removeData('cisp_wrong_questions');
+                        await removeData('cisp_quiz_wrong_book');
                         setWrongQuestions([]);
                       }}>清空</Button>
                     </div>
