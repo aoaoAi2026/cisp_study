@@ -1,0 +1,544 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e6]:
+      - generic [ref=e8]: C
+      - generic [ref=e9]:
+        - heading "CISP学习" [level=1] [ref=e10]
+        - paragraph [ref=e11]: 零基础入门
+    - generic [ref=e14]:
+      - img [ref=e15]
+      - textbox "搜索课程/题目/工具..." [ref=e18]
+    - navigation [ref=e19]:
+      - link "首页仪表盘" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - img [ref=e21]
+        - generic [ref=e24]: 首页仪表盘
+      - link "学习路径" [ref=e25] [cursor=pointer]:
+        - /url: /learning
+        - img [ref=e26]
+        - generic [ref=e28]: 学习路径
+      - link "🛡️ 网络安全学习" [ref=e29] [cursor=pointer]:
+        - /url: /cyber-learning
+        - img [ref=e30]
+        - generic [ref=e33]: 🛡️ 网络安全学习
+      - link "安全资源库" [ref=e34] [cursor=pointer]:
+        - /url: /resources
+        - img [ref=e35]
+        - generic [ref=e37]: 安全资源库
+      - link "闪卡复习" [ref=e38] [cursor=pointer]:
+        - /url: /flashcards
+        - img [ref=e39]
+        - generic [ref=e49]: 闪卡复习
+      - link "考试大纲" [ref=e50] [cursor=pointer]:
+        - /url: /outline
+        - img [ref=e51]
+        - generic [ref=e54]: 考试大纲
+      - link "历年真题" [ref=e55] [cursor=pointer]:
+        - /url: /past-papers
+        - img [ref=e56]
+        - generic [ref=e59]: 历年真题
+      - link "模拟考试" [ref=e60] [cursor=pointer]:
+        - /url: /mock-exam
+        - img [ref=e61]
+        - generic [ref=e63]: 模拟考试
+      - link "学习技巧" [ref=e64] [cursor=pointer]:
+        - /url: /study-tips
+        - img [ref=e65]
+        - generic [ref=e67]: 学习技巧
+      - link "代码实验室" [ref=e68] [cursor=pointer]:
+        - /url: /lab
+        - img [ref=e69]
+        - generic [ref=e72]: 代码实验室
+      - link "代码运行中心" [ref=e73] [cursor=pointer]:
+        - /url: /code-runner
+        - img [ref=e74]
+        - generic [ref=e76]: 代码运行中心
+      - link "实验环境" [ref=e77] [cursor=pointer]:
+        - /url: /lab-environment
+        - img [ref=e78]
+        - generic [ref=e81]: 实验环境
+      - link "工具网站" [ref=e82] [cursor=pointer]:
+        - /url: /tool-sites
+        - img [ref=e83]
+        - generic [ref=e86]: 工具网站
+      - link "测验中心" [ref=e87] [cursor=pointer]:
+        - /url: /quiz
+        - img [ref=e88]
+        - generic [ref=e92]: 测验中心
+      - link "成就系统" [ref=e93] [cursor=pointer]:
+        - /url: /achievements
+        - img [ref=e94]
+        - generic [ref=e97]: 成就系统
+      - link "社区交流" [ref=e98] [cursor=pointer]:
+        - /url: /community
+        - img [ref=e99]
+        - generic [ref=e104]: 社区交流
+      - link "个人中心" [ref=e105] [cursor=pointer]:
+        - /url: /profile
+        - img [ref=e106]
+        - generic [ref=e109]: 个人中心
+    - generic [ref=e111]:
+      - paragraph [ref=e112]: CISP学习平台 v1.0
+      - paragraph [ref=e113]: 90天成为安全专家
+  - button [ref=e114] [cursor=pointer]:
+    - img [ref=e115]
+  - generic [ref=e116]:
+    - banner [ref=e117]:
+      - generic [ref=e118]:
+        - generic [ref=e120]:
+          - img [ref=e121]
+          - textbox "搜索知识点、实验..." [ref=e124]
+        - generic [ref=e125]:
+          - button [ref=e126] [cursor=pointer]:
+            - img [ref=e127]
+          - generic [ref=e131]:
+            - generic [ref=e133]: V
+            - generic [ref=e134]:
+              - paragraph [ref=e135]: viewer
+              - paragraph [ref=e136]: 已学习 0 天
+            - generic [ref=e137]:
+              - button "设置" [ref=e138] [cursor=pointer]:
+                - img [ref=e139]
+              - button "退出" [ref=e142] [cursor=pointer]:
+                - img [ref=e143]
+    - main [ref=e146]:
+      - generic [ref=e147]:
+        - generic [ref=e148]:
+          - generic [ref=e149]:
+            - button [ref=e150] [cursor=pointer]:
+              - img [ref=e151]
+            - generic [ref=e153]:
+              - generic [ref=e154]:
+                - generic [ref=e155]: 🤖 AI网络安全
+                - generic [ref=e156]: 第1天
+              - paragraph [ref=e157]: 系统学习AI在安全领域的应用，覆盖ML/DL入侵检测、对抗攻防、LLM安全、AI安全工程等前沿方向。
+          - button "完成今日学习" [ref=e158] [cursor=pointer]:
+            - img [ref=e159]
+            - text: 完成今日学习
+        - generic [ref=e163]:
+          - button "1" [ref=e164] [cursor=pointer]
+          - button "2" [ref=e165] [cursor=pointer]
+          - button "3" [ref=e166] [cursor=pointer]
+          - button "4" [ref=e167] [cursor=pointer]
+          - button "5" [ref=e168] [cursor=pointer]
+          - button "6" [ref=e169] [cursor=pointer]
+          - button "7" [ref=e170] [cursor=pointer]
+          - button "8" [ref=e171] [cursor=pointer]
+          - button "9" [ref=e172] [cursor=pointer]
+          - button "10" [ref=e173] [cursor=pointer]
+          - button "11" [ref=e174] [cursor=pointer]
+          - button "12" [ref=e175] [cursor=pointer]
+          - button "13" [ref=e176] [cursor=pointer]
+          - button "14" [ref=e177] [cursor=pointer]
+          - button "15" [ref=e178] [cursor=pointer]
+          - button "16" [ref=e179] [cursor=pointer]
+          - button "17" [ref=e180] [cursor=pointer]
+          - button "18" [ref=e181] [cursor=pointer]
+          - button "19" [ref=e182] [cursor=pointer]
+          - button "20" [ref=e183] [cursor=pointer]
+          - button "21" [ref=e184] [cursor=pointer]
+          - button "22" [ref=e185] [cursor=pointer]
+          - button "23" [ref=e186] [cursor=pointer]
+          - button "24" [ref=e187] [cursor=pointer]
+          - button "25" [ref=e188] [cursor=pointer]
+          - button "26" [ref=e189] [cursor=pointer]
+          - button "27" [ref=e190] [cursor=pointer]
+          - button "28" [ref=e191] [cursor=pointer]
+          - button "29" [ref=e192] [cursor=pointer]
+          - button "30" [ref=e193] [cursor=pointer]
+          - button "31" [ref=e194] [cursor=pointer]
+          - button "32" [ref=e195] [cursor=pointer]
+          - button "33" [ref=e196] [cursor=pointer]
+          - button "34" [ref=e197] [cursor=pointer]
+          - button "35" [ref=e198] [cursor=pointer]
+          - button "36" [ref=e199] [cursor=pointer]
+          - button "37" [ref=e200] [cursor=pointer]
+          - button "38" [ref=e201] [cursor=pointer]
+          - button "39" [ref=e202] [cursor=pointer]
+          - button "40" [ref=e203] [cursor=pointer]
+          - button "41" [ref=e204] [cursor=pointer]
+          - button "42" [ref=e205] [cursor=pointer]
+          - button "43" [ref=e206] [cursor=pointer]
+          - button "44" [ref=e207] [cursor=pointer]
+          - button "45" [ref=e208] [cursor=pointer]
+          - button "46" [ref=e209] [cursor=pointer]
+          - button "47" [ref=e210] [cursor=pointer]
+          - button "48" [ref=e211] [cursor=pointer]
+          - button "49" [ref=e212] [cursor=pointer]
+          - button "50" [ref=e213] [cursor=pointer]
+          - button "51" [ref=e214] [cursor=pointer]
+          - button "52" [ref=e215] [cursor=pointer]
+          - button "53" [ref=e216] [cursor=pointer]
+          - button "54" [ref=e217] [cursor=pointer]
+          - button "55" [ref=e218] [cursor=pointer]
+          - button "56" [ref=e219] [cursor=pointer]
+          - button "57" [ref=e220] [cursor=pointer]
+          - button "58" [ref=e221] [cursor=pointer]
+          - button "59" [ref=e222] [cursor=pointer]
+          - button "60" [ref=e223] [cursor=pointer]
+          - button "61" [ref=e224] [cursor=pointer]
+          - button "62" [ref=e225] [cursor=pointer]
+          - button "63" [ref=e226] [cursor=pointer]
+          - button "64" [ref=e227] [cursor=pointer]
+          - button "65" [ref=e228] [cursor=pointer]
+          - button "66" [ref=e229] [cursor=pointer]
+          - button "67" [ref=e230] [cursor=pointer]
+          - button "68" [ref=e231] [cursor=pointer]
+          - button "69" [ref=e232] [cursor=pointer]
+          - button "70" [ref=e233] [cursor=pointer]
+          - button "71" [ref=e234] [cursor=pointer]
+          - button "72" [ref=e235] [cursor=pointer]
+          - button "73" [ref=e236] [cursor=pointer]
+          - button "74" [ref=e237] [cursor=pointer]
+          - button "75" [ref=e238] [cursor=pointer]
+          - button "76" [ref=e239] [cursor=pointer]
+          - button "77" [ref=e240] [cursor=pointer]
+          - button "78" [ref=e241] [cursor=pointer]
+          - button "79" [ref=e242] [cursor=pointer]
+          - button "80" [ref=e243] [cursor=pointer]
+          - button "81" [ref=e244] [cursor=pointer]
+          - button "82" [ref=e245] [cursor=pointer]
+          - button "83" [ref=e246] [cursor=pointer]
+          - button "84" [ref=e247] [cursor=pointer]
+          - button "85" [ref=e248] [cursor=pointer]
+          - button "86" [ref=e249] [cursor=pointer]
+          - button "87" [ref=e250] [cursor=pointer]
+          - button "88" [ref=e251] [cursor=pointer]
+          - button "89" [ref=e252] [cursor=pointer]
+          - button "90" [ref=e253] [cursor=pointer]
+          - button "91" [ref=e254] [cursor=pointer]
+          - button "92" [ref=e255] [cursor=pointer]
+          - button "93" [ref=e256] [cursor=pointer]
+          - button "94" [ref=e257] [cursor=pointer]
+          - button "95" [ref=e258] [cursor=pointer]
+          - button "96" [ref=e259] [cursor=pointer]
+          - button "97" [ref=e260] [cursor=pointer]
+          - button "98" [ref=e261] [cursor=pointer]
+          - button "99" [ref=e262] [cursor=pointer]
+          - button "100" [ref=e263] [cursor=pointer]
+          - button "101" [ref=e264] [cursor=pointer]
+          - button "102" [ref=e265] [cursor=pointer]
+          - button "103" [ref=e266] [cursor=pointer]
+          - button "104" [ref=e267] [cursor=pointer]
+          - button "105" [ref=e268] [cursor=pointer]
+          - button "106" [ref=e269] [cursor=pointer]
+          - button "107" [ref=e270] [cursor=pointer]
+          - button "108" [ref=e271] [cursor=pointer]
+          - button "109" [ref=e272] [cursor=pointer]
+          - button "110" [ref=e273] [cursor=pointer]
+          - button "111" [ref=e274] [cursor=pointer]
+          - button "112" [ref=e275] [cursor=pointer]
+          - button "113" [ref=e276] [cursor=pointer]
+          - button "114" [ref=e277] [cursor=pointer]
+          - button "115" [ref=e278] [cursor=pointer]
+          - button "116" [ref=e279] [cursor=pointer]
+          - button "117" [ref=e280] [cursor=pointer]
+          - button "118" [ref=e281] [cursor=pointer]
+          - button "119" [ref=e282] [cursor=pointer]
+          - button "120" [ref=e283] [cursor=pointer]
+          - button "121" [ref=e284] [cursor=pointer]
+          - button "122" [ref=e285] [cursor=pointer]
+          - button "123" [ref=e286] [cursor=pointer]
+          - button "124" [ref=e287] [cursor=pointer]
+          - button "125" [ref=e288] [cursor=pointer]
+          - button "126" [ref=e289] [cursor=pointer]
+          - button "127" [ref=e290] [cursor=pointer]
+          - button "128" [ref=e291] [cursor=pointer]
+          - button "129" [ref=e292] [cursor=pointer]
+          - button "130" [ref=e293] [cursor=pointer]
+          - button "131" [ref=e294] [cursor=pointer]
+          - button "132" [ref=e295] [cursor=pointer]
+          - button "133" [ref=e296] [cursor=pointer]
+          - button "134" [ref=e297] [cursor=pointer]
+          - button "135" [ref=e298] [cursor=pointer]
+          - button "136" [ref=e299] [cursor=pointer]
+          - button "137" [ref=e300] [cursor=pointer]
+          - button "138" [ref=e301] [cursor=pointer]
+          - button "139" [ref=e302] [cursor=pointer]
+          - button "140" [ref=e303] [cursor=pointer]
+          - button "141" [ref=e304] [cursor=pointer]
+          - button "142" [ref=e305] [cursor=pointer]
+          - button "143" [ref=e306] [cursor=pointer]
+          - button "144" [ref=e307] [cursor=pointer]
+          - button "145" [ref=e308] [cursor=pointer]
+          - button "146" [ref=e309] [cursor=pointer]
+          - button "147" [ref=e310] [cursor=pointer]
+          - button "148" [ref=e311] [cursor=pointer]
+          - button "149" [ref=e312] [cursor=pointer]
+          - button "150" [ref=e313] [cursor=pointer]
+          - button "151" [ref=e314] [cursor=pointer]
+          - button "152" [ref=e315] [cursor=pointer]
+          - button "153" [ref=e316] [cursor=pointer]
+          - button "154" [ref=e317] [cursor=pointer]
+          - button "155" [ref=e318] [cursor=pointer]
+          - button "156" [ref=e319] [cursor=pointer]
+          - button "157" [ref=e320] [cursor=pointer]
+          - button "158" [ref=e321] [cursor=pointer]
+          - button "159" [ref=e322] [cursor=pointer]
+          - button "160" [ref=e323] [cursor=pointer]
+          - button "161" [ref=e324] [cursor=pointer]
+          - button "162" [ref=e325] [cursor=pointer]
+          - button "163" [ref=e326] [cursor=pointer]
+          - button "164" [ref=e327] [cursor=pointer]
+          - button "165" [ref=e328] [cursor=pointer]
+          - button "166" [ref=e329] [cursor=pointer]
+          - button "167" [ref=e330] [cursor=pointer]
+          - button "168" [ref=e331] [cursor=pointer]
+        - generic [ref=e333]:
+          - button "今日课程大纲 · Day 1 14 项内容" [ref=e334] [cursor=pointer]:
+            - heading "今日课程大纲 · Day 1" [level=3] [ref=e335]:
+              - img [ref=e336]
+              - text: 今日课程大纲 · Day 1
+            - generic [ref=e339]:
+              - generic [ref=e340]: 14 项内容
+              - img [ref=e341]
+          - paragraph [ref=e343]: AI Security Overview
+          - generic [ref=e344]: 点击展开查看今日课程章节大纲
+        - generic [ref=e345]:
+          - generic [ref=e347]:
+            - heading "AI安全概述与学习路线" [level=2] [ref=e348]
+            - paragraph [ref=e349]: AI Security Overview
+            - generic [ref=e350]:
+              - heading "学习目标" [level=3] [ref=e351]:
+                - img [ref=e352]
+                - text: 学习目标
+              - generic [ref=e356]:
+                - generic [ref=e357]:
+                  - generic [ref=e358]: ▸
+                  - generic [ref=e359]: 理解AI安全定义
+                - generic [ref=e360]:
+                  - generic [ref=e361]: ▸
+                  - generic [ref=e362]: 了解AI在安全中的应用
+                - generic [ref=e363]:
+                  - generic [ref=e364]: ▸
+                  - generic [ref=e365]: 明确学习路线
+            - generic [ref=e366]:
+              - heading "核心知识点" [level=3] [ref=e367]:
+                - img [ref=e368]
+                - text: 核心知识点
+              - generic [ref=e370]:
+                - generic [ref=e371]:
+                  - generic [ref=e372]: ★
+                  - generic [ref=e373]: AI安全=AI+安全交叉领域
+                - generic [ref=e374]:
+                  - generic [ref=e375]: ★
+                  - generic [ref=e376]: AI赋能安全：用AI检测威胁
+                - generic [ref=e377]:
+                  - generic [ref=e378]: ★
+                  - generic [ref=e379]: AI自身安全：对抗攻击/数据投毒
+                - generic [ref=e380]:
+                  - generic [ref=e381]: ★
+                  - generic [ref=e382]: 30天系统学习
+                - generic [ref=e383]:
+                  - generic [ref=e384]: ★
+                  - generic [ref=e385]: 每天4小时
+          - generic [ref=e387]:
+            - button "课程内容" [ref=e388] [cursor=pointer]:
+              - heading "课程内容" [level=3] [ref=e389]:
+                - img [ref=e390]
+                - text: 课程内容
+              - img [ref=e392]
+            - generic [ref=e394]: 点击展开查看课程内容
+          - generic [ref=e396]:
+            - heading "代码示例 （点击\"运行\"将自动加载 Python 环境）" [level=3] [ref=e397]:
+              - img [ref=e398]
+              - text: 代码示例
+              - generic [ref=e400]: （点击"运行"将自动加载 Python 环境）
+            - generic [ref=e402]:
+              - generic [ref=e403]:
+                - generic [ref=e404]:
+                  - generic [ref=e405]: AI安全工具链
+                  - generic [ref=e406]: python
+                - generic [ref=e407]:
+                  - button "运行" [ref=e408] [cursor=pointer]:
+                    - img [ref=e409]
+                    - text: 运行
+                  - button "重置为原始代码" [ref=e411] [cursor=pointer]:
+                    - img [ref=e412]
+                  - button "复制代码" [ref=e415] [cursor=pointer]:
+                    - img [ref=e416]
+              - generic [ref=e422]: 加载编辑器...
+              - paragraph [ref=e424]: 💡AI安全领域核心Python库概览
+          - generic [ref=e426]:
+            - heading "推荐工具" [level=3] [ref=e427]:
+              - img [ref=e428]
+              - text: 推荐工具
+            - generic [ref=e430]:
+              - link "JupyterLab 交互式数据科学" [ref=e431] [cursor=pointer]:
+                - /url: https://jupyter.org/
+                - img [ref=e432]
+                - generic [ref=e434]:
+                  - generic [ref=e435]: JupyterLab
+                  - generic [ref=e436]: 交互式数据科学
+                - img [ref=e437]
+              - link "Anaconda Python数据科学发行版" [ref=e441] [cursor=pointer]:
+                - /url: https://www.anaconda.com/
+                - img [ref=e442]
+                - generic [ref=e444]:
+                  - generic [ref=e445]: Anaconda
+                  - generic [ref=e446]: Python数据科学发行版
+                - img [ref=e447]
+              - link "PyTorch 深度学习框架" [ref=e451] [cursor=pointer]:
+                - /url: https://pytorch.org/
+                - img [ref=e452]
+                - generic [ref=e454]:
+                  - generic [ref=e455]: PyTorch
+                  - generic [ref=e456]: 深度学习框架
+                - img [ref=e457]
+          - generic [ref=e462]:
+            - heading "实验靶场 1 个实验" [level=3] [ref=e463]:
+              - img [ref=e464]
+              - text: 实验靶场
+              - generic [ref=e467]: 1 个实验
+            - paragraph [ref=e468]: 动手实践，将理论知识落地为实战技能
+            - generic [ref=e470]:
+              - generic [ref=e471]:
+                - generic [ref=e472]:
+                  - generic [ref=e473]: 💻
+                  - generic [ref=e474]:
+                    - text: AI安全环境
+                    - paragraph [ref=e475]: 配置Python+PyTorch+数据集
+                - generic [ref=e476]:
+                  - generic [ref=e477]: 本地环境
+                  - link "打开" [ref=e478] [cursor=pointer]:
+                    - /url: https://www.kaggle.com/
+                    - img [ref=e479]
+                    - text: 打开
+              - generic [ref=e483]:
+                - generic [ref=e484]:
+                  - generic [ref=e485]: 📋 实验步骤
+                  - generic [ref=e486]: 共 5 步
+                - generic [ref=e487]:
+                  - generic [ref=e488]:
+                    - generic [ref=e489]: "1"
+                    - generic [ref=e490]: 安装Anaconda
+                  - generic [ref=e491]:
+                    - generic [ref=e492]: "2"
+                    - generic [ref=e493]: conda create -n aisec python=3.10
+                  - generic [ref=e494]:
+                    - generic [ref=e495]: "3"
+                    - generic [ref=e496]:
+                      - text: pip install torch sklearn pandas matplotlib jupyter
+                      - button [ref=e497] [cursor=pointer]:
+                        - img [ref=e498]
+                  - generic [ref=e501]:
+                    - generic [ref=e502]: "4"
+                    - generic [ref=e503]: 下载CIC-IDS2017
+                  - generic [ref=e504]:
+                    - generic [ref=e505]: "5"
+                    - generic [ref=e506]: 验证环境
+              - generic [ref=e507]:
+                - generic [ref=e509]: ✅ 预期结果
+                - paragraph [ref=e510]: 成功搭建AI安全实验环境
+              - generic [ref=e511]:
+                - generic [ref=e512]: 一键复制所有命令
+                - button "复制全部命令" [ref=e513] [cursor=pointer]:
+                  - img [ref=e514]
+                  - text: 复制全部命令
+          - generic [ref=e518]:
+            - heading "学习资源" [level=3] [ref=e519]:
+              - img [ref=e520]
+              - text: 学习资源
+            - generic [ref=e522]:
+              - link "MITRE ATLAS 文章" [ref=e523] [cursor=pointer]:
+                - /url: https://atlas.mitre.org/
+                - img [ref=e525]
+                - generic [ref=e527]:
+                  - generic [ref=e528]: MITRE ATLAS
+                  - generic [ref=e529]: 文章
+                - img [ref=e530]
+              - link "OWASP AI项目 文章" [ref=e534] [cursor=pointer]:
+                - /url: https://owasp.org/www-project-ai-security/
+                - img [ref=e536]
+                - generic [ref=e538]:
+                  - generic [ref=e539]: OWASP AI项目
+                  - generic [ref=e540]: 文章
+                - img [ref=e541]
+              - link "AI安全全景图 文章" [ref=e545] [cursor=pointer]:
+                - /url: https://www.freebuf.com/articles/es/356789.html
+                - img [ref=e547]
+                - generic [ref=e549]:
+                  - generic [ref=e550]: AI安全全景图
+                  - generic [ref=e551]: 文章
+                - img [ref=e552]
+          - generic [ref=e557]:
+            - generic [ref=e558]:
+              - heading "随堂测验" [level=3] [ref=e559]:
+                - img [ref=e560]
+                - text: 随堂测验
+              - generic [ref=e564]: 1 / 5
+            - generic [ref=e565]:
+              - generic [ref=e566]:
+                - generic [ref=e567]: 单选
+                - paragraph [ref=e568]: AI安全包含哪两个维度？
+              - generic [ref=e569]:
+                - button "A.A. AI赋能安全和AI自身安全" [ref=e570] [cursor=pointer]:
+                  - generic [ref=e571]: A.
+                  - text: A. AI赋能安全和AI自身安全
+                - button "B.B. 网络安全和系统安全" [ref=e572] [cursor=pointer]:
+                  - generic [ref=e573]: B.
+                  - text: B. 网络安全和系统安全
+                - button "C.C. 前端和后端" [ref=e574] [cursor=pointer]:
+                  - generic [ref=e575]: C.
+                  - text: C. 前端和后端
+                - button "D.D. 硬件和软件" [ref=e576] [cursor=pointer]:
+                  - generic [ref=e577]: D.
+                  - text: D. 硬件和软件
+          - generic [ref=e579]:
+            - heading "大神笔记" [level=3] [ref=e580]:
+              - img [ref=e581]
+              - text: 大神笔记
+            - generic [ref=e584]:
+              - generic [ref=e585]:
+                - generic [ref=e586]:
+                  - img [ref=e587]
+                  - generic [ref=e590]: 李智能
+                  - generic [ref=e591]: ·
+                  - generic [ref=e592]: AI安全学习建议
+                - paragraph [ref=e593]: AI安全最容易犯的错误是直接啃论文。建议从实战入手：先跑通IDS检测、恶意软件分类，理解数据流和模型流程，再回头看理论，事半功倍。
+              - generic [ref=e594]:
+                - generic [ref=e595]:
+                  - img [ref=e596]
+                  - generic [ref=e599]: 王算法
+                  - generic [ref=e600]: ·
+                  - generic [ref=e601]: 安全+ML的思维转变
+                - paragraph [ref=e602]: 安全人员转型AI安全最大挑战是思维转变。安全思维"找漏洞"，ML思维"找模式"。先接受ML的不确定性，理解误报/漏报的权衡。
+              - generic [ref=e603]:
+                - generic [ref=e604]:
+                  - img [ref=e605]
+                  - generic [ref=e608]: 张模型
+                  - generic [ref=e609]: ·
+                  - generic [ref=e610]: PyTorch还是TF
+                - paragraph [ref=e611]: 安全领域推荐PyTorch：1)学术界主流 2)动态图调试友好 3)对抗攻击库原生支持。安全研究选PyTorch。
+          - generic [ref=e612]:
+            - generic [ref=e614]:
+              - generic [ref=e615]:
+                - heading "📝 学习笔记" [level=3] [ref=e616]
+                - generic [ref=e617]: 自动保存
+              - textbox "记录学习心得、疑问、重点..." [ref=e618]
+              - generic [ref=e619]: 共 0 字 · 第1天笔记
+            - generic [ref=e621]:
+              - generic [ref=e622]:
+                - generic [ref=e623]:
+                  - img [ref=e624]
+                  - text: 番茄钟 · 专注学习
+                - button "切换" [ref=e634] [cursor=pointer]
+              - generic [ref=e636]: 25:00
+              - generic [ref=e638]:
+                - button "开始" [ref=e639] [cursor=pointer]:
+                  - img [ref=e640]
+                  - text: 开始
+                - button [ref=e642] [cursor=pointer]:
+                  - img [ref=e643]
+              - generic [ref=e646]:
+                - text: 今日已完成
+                - generic [ref=e648]: "0"
+                - text: 个番茄
+          - generic [ref=e649]:
+            - button "上一天" [disabled] [ref=e650]:
+              - img [ref=e651]
+              - text: 上一天
+            - generic [ref=e653]: 第 1 天 / 共 168 天
+            - button "下一天" [ref=e654] [cursor=pointer]:
+              - text: 下一天
+              - img [ref=e655]

@@ -1,0 +1,212 @@
+src/data/cyberSecurity/days/days1-5.ts(1,31): error TS2307: Cannot find module '../../types' or its corresponding type declarations.
+src/data/cyberSecurity/days/days11-15.ts(1,31): error TS2307: Cannot find module '../../types' or its corresponding type declarations.
+src/data/cyberSecurity/days/days16-20.ts(1,31): error TS2307: Cannot find module '../../types' or its corresponding type declarations.
+src/data/cyberSecurity/days/days21-25.ts(1,31): error TS2307: Cannot find module '../../types' or its corresponding type declarations.
+src/data/cyberSecurity/days/days26-30.ts(1,31): error TS2307: Cannot find module '../../types' or its corresponding type declarations.
+src/data/cyberSecurity/days/days6-10.ts(1,31): error TS2307: Cannot find module '../../types' or its corresponding type declarations.
+src/data/cyberSecurity/days/index.ts(1,31): error TS2307: Cannot find module '../../types' or its corresponding type declarations.
+src/data/cybersecurityData.ts(70,7): error TS2741: Property 'days' is missing in type '{ length: number; toString(): string; toLocaleString(): string; toLocaleString(locales: string | string[], options?: Intl.NumberFormatOptions & Intl.DateTimeFormatOptions): string; pop(): CyberDay; ... 39 more ...; skillsGained: string[]; }' but required in type 'CyberStage'.
+src/data/cybersecurityData/days/index.ts(1,31): error TS2307: Cannot find module '../../types' or its corresponding type declarations.
+src/data/emergencyScenarios/data-breach.ts(170,4): error TS1009: Trailing comma not allowed.
+src/data/emergencyScenarios/ddos-attack.ts(132,4): error TS1009: Trailing comma not allowed.
+src/data/emergencyScenarios/patching-failure.ts(171,4): error TS1009: Trailing comma not allowed.
+src/data/emergencyScenarios/ransomware-general.ts(271,4): error TS1009: Trailing comma not allowed.
+src/data/emergencyScenarios/ransomware-government.ts(143,4): error TS1009: Trailing comma not allowed.
+src/data/emergencyScenarios/ransomware-hospital.ts(164,4): error TS1009: Trailing comma not allowed.
+src/data/emergencyScenarios/supply-chain-attack.ts(145,4): error TS1009: Trailing comma not allowed.
+src/data/emergencyScenarios/zero-day-emergency.ts(173,4): error TS1009: Trailing comma not allowed.
+src/data/learningData/weeks/index.ts(13,31): error TS2304: Cannot find name 'LearningDay'.
+src/data/learningData/weeks/week1.ts(11,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week1.ts(53,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week1.ts(95,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week1.ts(137,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week1.ts(179,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week1.ts(221,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week1.ts(262,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week2.ts(11,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week2.ts(41,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week2.ts(71,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week2.ts(101,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week2.ts(131,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week2.ts(190,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week3.ts(11,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week3.ts(71,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week3.ts(101,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week3.ts(135,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week3.ts(169,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week3.ts(198,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week4.ts(15,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week4.ts(135,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week4.ts(175,18): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week5.ts(11,20): error TS2304: Cannot find name 'weekToolMap'.
+src/data/learningData/weeks/week5.ts(11,62): error TS2304: Cannot find name 'weekToolMap'.
+src/data/learningData/weeks/week5.ts(11,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week5.ts(18,20): error TS2304: Cannot find name 'weekToolMap'.
+src/data/learningData/weeks/week5.ts(18,62): error TS2304: Cannot find name 'weekToolMap'.
+src/data/learningData/weeks/week5.ts(18,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week5.ts(35,20): error TS2304: Cannot find name 'weekToolMap'.
+src/data/learningData/weeks/week5.ts(35,62): error TS2304: Cannot find name 'weekToolMap'.
+src/data/learningData/weeks/week5.ts(35,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week5.ts(42,20): error TS2304: Cannot find name 'weekToolMap'.
+src/data/learningData/weeks/week5.ts(42,62): error TS2304: Cannot find name 'weekToolMap'.
+src/data/learningData/weeks/week5.ts(42,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weeks/week5.ts(49,20): error TS2304: Cannot find name 'weekToolMap'.
+src/data/learningData/weeks/week5.ts(49,62): error TS2304: Cannot find name 'weekToolMap'.
+src/data/learningData/weeks/week5.ts(49,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(99,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(104,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(106,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(111,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(113,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(128,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(130,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(135,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(137,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(142,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(148,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(153,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(155,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(160,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(162,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(167,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(169,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(174,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(176,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(181,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(183,1): error TS2304: Cannot find name 'allDays'.
+src/data/learningData/weekTools.ts(188,99): error TS2304: Cannot find name 'dayExpertNotes'.
+src/data/learningData/weekTools.ts(190,1): error TS2304: Cannot find name 'allDays'.
+src/data/mockExamQuestions.ts(2,35): error TS2307: Cannot find module './types' or its corresponding type declarations.
+src/data/mockExamQuestions.ts(3,24): error TS2307: Cannot find module './信息安全保障' or its corresponding type declarations.
+src/data/mockExamQuestions.ts(4,24): error TS2307: Cannot find module './信息安全技术' or its corresponding type declarations.
+src/data/mockExamQuestions.ts(5,24): error TS2307: Cannot find module './信息安全管理' or its corresponding type declarations.
+src/data/mockExamQuestions.ts(6,27): error TS2307: Cannot find module './信息安全法规与标准' or its corresponding type declarations.
+src/data/mockExamQuestions.ts(7,25): error TS2307: Cannot find module './安全工程与运营' or its corresponding type declarations.
+src/data/pastPapers.ts(64,33): error TS2307: Cannot find module './domainQuestions' or its corresponding type declarations.
+src/data/pastPapers/domainQuestions.ts(1,40): error TS2307: Cannot find module './types' or its corresponding type declarations.
+src/data/pastPapers/domainQuestions.ts(633,3): error TS2304: Cannot find name 'pastPapers'.
+src/data/pastPapers/domainQuestions.ts(645,3): error TS2304: Cannot find name 'pastPapers'.
+src/data/pastPapers/papers2024/cisp-2024-hubei.ts(602,4): error TS1009: Trailing comma not allowed.
+src/data/plans/basic/days/basic-1.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-10.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-11.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-12.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-13.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-14.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-15.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-16.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-17.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-18.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-19.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-2.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-20.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-21.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-22.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-23.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-24.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-25.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-26.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-27.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-28.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-29.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-3.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-30.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-4.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-5.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-6.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-7.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-8.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/basic/days/basic-9.ts(2,31): error TS2307: Cannot find module '../types' or its corresponding type declarations.
+src/data/plans/defense/part2.ts(2,19): error TS2307: Cannot find module './days/def15' or its corresponding type declarations.
+src/data/plans/defense/part2.ts(3,19): error TS2307: Cannot find module './days/def16' or its corresponding type declarations.
+src/data/plans/defense/part2.ts(4,19): error TS2307: Cannot find module './days/def17' or its corresponding type declarations.
+src/data/plans/defense/part2.ts(5,19): error TS2307: Cannot find module './days/def18' or its corresponding type declarations.
+src/data/plans/defense/part2.ts(6,19): error TS2307: Cannot find module './days/def19' or its corresponding type declarations.
+src/data/plans/defense/part2.ts(7,19): error TS2307: Cannot find module './days/def20' or its corresponding type declarations.
+src/data/plans/defense/part2.ts(8,19): error TS2307: Cannot find module './days/def21' or its corresponding type declarations.
+src/data/plans/defense/part3.ts(2,19): error TS2307: Cannot find module './days/def22' or its corresponding type declarations.
+src/data/plans/defense/part3.ts(3,19): error TS2307: Cannot find module './days/def23' or its corresponding type declarations.
+src/data/plans/defense/part3.ts(4,19): error TS2307: Cannot find module './days/def24' or its corresponding type declarations.
+src/data/plans/defense/part3.ts(5,19): error TS2307: Cannot find module './days/def25' or its corresponding type declarations.
+src/data/plans/defense/part3.ts(6,19): error TS2307: Cannot find module './days/def26' or its corresponding type declarations.
+src/data/plans/defense/part3.ts(7,19): error TS2307: Cannot find module './days/def27' or its corresponding type declarations.
+src/data/plans/defense/part3.ts(8,19): error TS2307: Cannot find module './days/def28' or its corresponding type declarations.
+src/data/plans/defense/part3.ts(9,19): error TS2307: Cannot find module './days/def29' or its corresponding type declarations.
+src/data/plans/defense/part3.ts(10,19): error TS2307: Cannot find module './days/def30' or its corresponding type declarations.
+src/data/plans/defense/weeks/week3.ts(1,31): error TS2307: Cannot find module '../../../types' or its corresponding type declarations.
+src/data/plans/defense/weeks/week4.ts(1,31): error TS2307: Cannot find module '../../../types' or its corresponding type declarations.
+src/data/plans/defense/weeks/week5.ts(1,31): error TS2307: Cannot find module '../../../types' or its corresponding type declarations.
+src/data/resourceData/entries.ts(1,26): error TS2307: Cannot find module '../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/ai-security.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/cloud.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/codeaudit.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/crypto-compliance.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/ctf.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/data-security.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/djbh.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/hw.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/ics-iot.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/incident.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/intel.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/knowledge.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/mobile.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/penetration.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/reverse.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/soc.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/supply-chain.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/tools.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/v2x.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/vuln.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/web3.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/resourceData/entries/zero-trust.ts(1,26): error TS2307: Cannot find module '../../types/resource' or its corresponding type declarations.
+src/data/securityScripts/anti_tracking_tools.ts(245,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/api_security_testing.ts(129,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/browser_fingerprint_defense.ts(225,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/data_wipe_trace_clean.ts(245,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/digital_forensics_guide.ts(129,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/incident_response_guide.ts(139,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/malware_analysis_basic.ts(149,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/mobile_phone_privacy.ts(245,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/network_scanning_tools.ts(139,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/prevent_remote_control.ts(245,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/shadow_socks_config.ts(241,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/smart_home_security.ts(225,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/social_engineering_attacks.ts(139,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/vpn_config_guide.ts(241,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/wifi_security_guide.ts(245,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/windows_privacy_settings.ts(245,4): error TS1009: Trailing comma not allowed.
+src/data/securityScripts/wireless_attacks_defensive.ts(139,4): error TS1009: Trailing comma not allowed.
+src/data/toolSites.ts(30,25): error TS2304: Cannot find name 'ToolSite'.
+src/data/toolSitesData/AI安全项目.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/GitHub安全项目.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/云安全资源.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/代码审计与开发安全.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/免费靶场.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/在线沙箱与分析.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/威胁情报平台.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/学习网址.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/安全会议活动.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/安全博客资源.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/安全工具下载.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/安全开发指南.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/安全认证培训.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/密码学资源.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/常用工具网站.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/情报搜索引擎.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/渗透靶场.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/漏洞复现环境.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/漏洞情报平台.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/社工库资源.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/移动安全资源.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/等保测评.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/网络安全论坛.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/data/toolSitesData/逆向工程资源.ts(1,26): error TS2307: Cannot find module '../../types/toolSitesTypes' or its corresponding type declarations.
+src/pages/CodeRunner.tsx(13,10): error TS2724: '"../data/codeSnippets"' has no exported member named 'SNIPPETS'. Did you mean 'Snippet'?
+src/pages/CodeRunner/CodeSnippets.tsx(29,18): error TS2304: Cannot find name 'Code'.
+src/pages/CodeRunner/ExecutionHistory.tsx(30,14): error TS2304: Cannot find name 'Columns2'.
+src/pages/LabEnvironment.tsx(4,10): error TS2459: Module '"./LabEnvironment/modules"' declares 'LAB_MODULES' locally, but it is not exported.
+src/pages/LabEnvironment.tsx(7,10): error TS2724: '"./LabEnvironment/CTFChallenges"' has no exported member named 'CTFChallenges'. Did you mean 'CTFChallenge'?
+src/pages/PastPapers.tsx(28,3): error TS2724: '"../data/pastPapers"' has no exported member named 'getAllPastPaperQuestions'. Did you mean 'PastPaperQuestion'?
+src/pages/PastPapers.tsx(29,3): error TS2305: Module '"../data/pastPapers"' has no exported member 'getRandomQuestions'.
+src/pages/PastPapers.tsx(30,3): error TS2305: Module '"../data/pastPapers"' has no exported member 'getQuestionsByDomain'.
+src/pages/PastPapers.tsx(31,3): error TS2305: Module '"../data/pastPapers"' has no exported member 'getPastPaperStats'.

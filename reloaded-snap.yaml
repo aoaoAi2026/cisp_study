@@ -1,0 +1,242 @@
+- generic [ref=e5]:
+  - complementary [ref=e6]:
+    - generic [ref=e8]:
+      - generic [ref=e10]: C
+      - generic [ref=e11]:
+        - heading "CISP学习" [level=1] [ref=e12]
+        - paragraph [ref=e13]: 零基础入门
+    - generic [ref=e16]:
+      - img [ref=e17]
+      - textbox "搜索课程/题目/工具..." [ref=e20]
+    - navigation [ref=e21]:
+      - link "首页仪表盘" [ref=e22] [cursor=pointer]:
+        - /url: /
+        - img [ref=e23]
+        - generic [ref=e26]: 首页仪表盘
+      - link "学习路径" [ref=e27] [cursor=pointer]:
+        - /url: /learning
+        - img [ref=e28]
+        - generic [ref=e30]: 学习路径
+      - link "🛡️ 网络安全学习" [ref=e31] [cursor=pointer]:
+        - /url: /cyber-learning
+        - img [ref=e32]
+        - generic [ref=e35]: 🛡️ 网络安全学习
+      - link "安全资源库" [ref=e36] [cursor=pointer]:
+        - /url: /resources
+        - img [ref=e37]
+        - generic [ref=e39]: 安全资源库
+      - link "闪卡复习" [ref=e40] [cursor=pointer]:
+        - /url: /flashcards
+        - img [ref=e41]
+        - generic [ref=e51]: 闪卡复习
+      - link "考试大纲" [ref=e52] [cursor=pointer]:
+        - /url: /outline
+        - img [ref=e53]
+        - generic [ref=e56]: 考试大纲
+      - link "历年真题" [ref=e57] [cursor=pointer]:
+        - /url: /past-papers
+        - img [ref=e58]
+        - generic [ref=e61]: 历年真题
+      - link "模拟考试" [ref=e62] [cursor=pointer]:
+        - /url: /mock-exam
+        - img [ref=e63]
+        - generic [ref=e65]: 模拟考试
+      - link "学习技巧" [ref=e66] [cursor=pointer]:
+        - /url: /study-tips
+        - img [ref=e67]
+        - generic [ref=e69]: 学习技巧
+      - link "代码实验室" [ref=e70] [cursor=pointer]:
+        - /url: /lab
+        - img [ref=e71]
+        - generic [ref=e74]: 代码实验室
+      - link "实验环境" [ref=e75] [cursor=pointer]:
+        - /url: /lab-environment
+        - img [ref=e76]
+        - generic [ref=e79]: 实验环境
+      - link "工具网站" [ref=e80] [cursor=pointer]:
+        - /url: /tool-sites
+        - img [ref=e81]
+        - generic [ref=e84]: 工具网站
+      - link "测验中心" [ref=e85] [cursor=pointer]:
+        - /url: /quiz
+        - img [ref=e86]
+        - generic [ref=e90]: 测验中心
+      - link "成就系统" [ref=e91] [cursor=pointer]:
+        - /url: /achievements
+        - img [ref=e92]
+        - generic [ref=e95]: 成就系统
+      - link "社区交流" [ref=e96] [cursor=pointer]:
+        - /url: /community
+        - img [ref=e97]
+        - generic [ref=e102]: 社区交流
+      - link "个人中心" [ref=e103] [cursor=pointer]:
+        - /url: /profile
+        - img [ref=e104]
+        - generic [ref=e107]: 个人中心
+    - generic [ref=e109]:
+      - paragraph [ref=e110]: CISP学习平台 v1.0
+      - paragraph [ref=e111]: 90天成为安全专家
+  - button [ref=e112] [cursor=pointer]:
+    - img [ref=e113]
+  - generic [ref=e114]:
+    - banner [ref=e115]:
+      - generic [ref=e116]:
+        - generic [ref=e118]:
+          - img [ref=e119]
+          - textbox "搜索知识点、实验..." [ref=e122]
+        - generic [ref=e123]:
+          - button [ref=e124] [cursor=pointer]:
+            - img [ref=e125]
+          - generic [ref=e129]:
+            - generic [ref=e131]: T
+            - generic [ref=e132]:
+              - paragraph [ref=e133]: test
+              - paragraph [ref=e134]: 已学习 0 天
+            - generic [ref=e135]:
+              - button "设置" [ref=e136] [cursor=pointer]:
+                - img [ref=e137]
+              - button "退出" [ref=e140] [cursor=pointer]:
+                - img [ref=e141]
+    - main [ref=e144]:
+      - generic [ref=e145]:
+        - generic [ref=e146]:
+          - heading "安全实验环境" [level=1] [ref=e147]:
+            - img [ref=e148]
+            - generic [ref=e150]: 安全实验环境
+          - paragraph [ref=e151]: 一站式安全学习实验室 — 10个交互式模块覆盖攻击、防御与分析全链路
+        - generic [ref=e152]:
+          - button "XSS沙箱" [ref=e153] [cursor=pointer]:
+            - img [ref=e154]
+            - generic [ref=e163]: XSS沙箱
+          - button "SQL注入" [ref=e164] [cursor=pointer]:
+            - img [ref=e165]
+            - generic [ref=e169]: SQL注入
+          - button "CTF挑战" [ref=e170] [cursor=pointer]:
+            - img [ref=e171]
+            - generic [ref=e177]: CTF挑战
+          - button "密码破解" [ref=e178] [cursor=pointer]:
+            - img [ref=e179]
+            - generic [ref=e183]: 密码破解
+          - button "密码学工具" [ref=e184] [cursor=pointer]:
+            - img [ref=e185]
+            - generic [ref=e187]: 密码学工具
+          - button "网络攻击可视化" [ref=e188] [cursor=pointer]:
+            - img [ref=e189]
+            - generic [ref=e191]: 网络攻击可视化
+          - button "漏洞代码对比" [ref=e192] [cursor=pointer]:
+            - img [ref=e193]
+            - generic [ref=e198]: 漏洞代码对比
+          - button "Burp模拟器" [ref=e199] [cursor=pointer]:
+            - img [ref=e200]
+            - generic [ref=e203]: Burp模拟器
+          - button "WAF规则构建" [ref=e204] [cursor=pointer]:
+            - img [ref=e205]
+            - generic [ref=e207]: WAF规则构建
+          - button "日志分析" [ref=e208] [cursor=pointer]:
+            - img [ref=e209]
+            - generic [ref=e214]: 日志分析
+        - generic [ref=e215]:
+          - img [ref=e216]
+          - generic [ref=e225]:
+            - heading "XSS沙箱" [level=3] [ref=e226]
+            - paragraph [ref=e227]: 交互式XSS攻击实验室，3级难度、DOM注入和反射型攻击
+        - generic [ref=e229]:
+          - generic [ref=e231]:
+            - heading "XSS 攻击沙箱" [level=2] [ref=e232]:
+              - img [ref=e233]
+              - text: XSS 攻击沙箱
+            - generic [ref=e242]:
+              - button "初级" [ref=e243] [cursor=pointer]:
+                - img [ref=e244]
+                - text: 初级
+              - button "中级" [ref=e247] [cursor=pointer]:
+                - img [ref=e248]
+                - text: 中级
+              - button "高级" [ref=e250] [cursor=pointer]:
+                - img [ref=e251]
+                - text: 高级
+          - generic [ref=e253]:
+            - generic [ref=e254]:
+              - img [ref=e255]
+              - generic [ref=e259]: "0"
+              - generic [ref=e260]: 尝试次数
+            - generic [ref=e261]:
+              - img [ref=e262]
+              - generic [ref=e265]: "0"
+              - generic [ref=e266]: 成功绕过
+            - generic [ref=e267]:
+              - img [ref=e268]
+              - generic [ref=e270]: "-"
+              - generic [ref=e271]: 成功率
+          - generic [ref=e272]:
+            - button "DOM注入" [ref=e273] [cursor=pointer]:
+              - img [ref=e274]
+              - text: DOM注入
+            - button "反射型XSS" [ref=e278] [cursor=pointer]:
+              - img [ref=e279]
+              - text: 反射型XSS
+          - generic [ref=e282]:
+            - generic [ref=e283]:
+              - generic [ref=e284]:
+                - generic [ref=e285]: Payload 输入
+                - textbox "输入 XSS payload..." [ref=e286]: <script>alert('XSS')</script>
+              - button "注入执行" [ref=e287] [cursor=pointer]:
+                - img [ref=e288]
+                - text: 注入执行
+              - generic [ref=e293]:
+                - heading "Payload 库" [level=4] [ref=e294]:
+                  - img [ref=e295]
+                  - text: Payload 库
+                - generic [ref=e297]:
+                  - button "全部" [ref=e298] [cursor=pointer]
+                  - button "基础" [ref=e299] [cursor=pointer]
+                  - button "中级" [ref=e300] [cursor=pointer]
+                  - button "高级" [ref=e301] [cursor=pointer]
+                  - button "绕过" [ref=e302] [cursor=pointer]
+                - generic [ref=e303]:
+                  - button "基础 Script标签" [ref=e304] [cursor=pointer]:
+                    - generic [ref=e305]: 基础
+                    - text: Script标签
+                  - button "基础 IMG Onerror" [ref=e306] [cursor=pointer]:
+                    - generic [ref=e307]: 基础
+                    - text: IMG Onerror
+                  - button "基础 SVG Onload" [ref=e308] [cursor=pointer]:
+                    - generic [ref=e309]: 基础
+                    - text: SVG Onload
+                  - button "基础 Body Onload" [ref=e310] [cursor=pointer]:
+                    - generic [ref=e311]: 基础
+                    - text: Body Onload
+                  - button "中级 Iframe JS" [ref=e312] [cursor=pointer]:
+                    - generic [ref=e313]: 中级
+                    - text: Iframe JS
+                  - button "中级 Input Autofocus" [ref=e314] [cursor=pointer]:
+                    - generic [ref=e315]: 中级
+                    - text: Input Autofocus
+                  - button "中级 Details Toggle" [ref=e316] [cursor=pointer]:
+                    - generic [ref=e317]: 中级
+                    - text: Details Toggle
+                  - button "高级 Cookie窃取" [ref=e318] [cursor=pointer]:
+                    - generic [ref=e319]: 高级
+                    - text: Cookie窃取
+                  - button "绕过 IMG大小写" [ref=e320] [cursor=pointer]:
+                    - generic [ref=e321]: 绕过
+                    - text: IMG大小写
+                  - button "绕过 HTML实体" [ref=e322] [cursor=pointer]:
+                    - generic [ref=e323]: 绕过
+                    - text: HTML实体
+                  - button "绕过 SVG Anim" [ref=e324] [cursor=pointer]:
+                    - generic [ref=e325]: 绕过
+                    - text: SVG Anim
+                  - button "绕过 Marquee" [ref=e326] [cursor=pointer]:
+                    - generic [ref=e327]: 绕过
+                    - text: Marquee
+            - generic [ref=e328]:
+              - heading "输出区域" [level=4] [ref=e330]:
+                - img [ref=e331]
+                - text: 输出区域
+              - generic [ref=e334]: 选择一个 payload 并点击「注入执行」查看效果
+              - button "当前过滤规则" [ref=e336] [cursor=pointer]:
+                - generic [ref=e337]:
+                  - img [ref=e338]
+                  - text: 当前过滤规则
+                - img [ref=e340]

@@ -1,0 +1,293 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e6]:
+      - generic [ref=e8]: C
+      - generic [ref=e9]:
+        - heading "CISP学习" [level=1] [ref=e10]
+        - paragraph [ref=e11]: 零基础入门
+    - generic [ref=e14]:
+      - img [ref=e15]
+      - textbox "搜索课程/题目/工具..." [ref=e18]
+    - navigation [ref=e19]:
+      - link "首页仪表盘" [ref=e20] [cursor=pointer]:
+        - /url: /
+        - img [ref=e21]
+        - generic [ref=e24]: 首页仪表盘
+      - link "学习路径" [ref=e25] [cursor=pointer]:
+        - /url: /learning
+        - img [ref=e26]
+        - generic [ref=e28]: 学习路径
+      - link "🛡️ 网络安全学习" [ref=e29] [cursor=pointer]:
+        - /url: /cyber-learning
+        - img [ref=e30]
+        - generic [ref=e33]: 🛡️ 网络安全学习
+      - link "安全资源库" [ref=e34] [cursor=pointer]:
+        - /url: /resources
+        - img [ref=e35]
+        - generic [ref=e37]: 安全资源库
+      - link "闪卡复习" [ref=e38] [cursor=pointer]:
+        - /url: /flashcards
+        - img [ref=e39]
+        - generic [ref=e49]: 闪卡复习
+      - link "考试大纲" [ref=e50] [cursor=pointer]:
+        - /url: /outline
+        - img [ref=e51]
+        - generic [ref=e54]: 考试大纲
+      - link "历年真题" [ref=e55] [cursor=pointer]:
+        - /url: /past-papers
+        - img [ref=e56]
+        - generic [ref=e59]: 历年真题
+      - link "模拟考试" [ref=e60] [cursor=pointer]:
+        - /url: /mock-exam
+        - img [ref=e61]
+        - generic [ref=e63]: 模拟考试
+      - link "学习技巧" [ref=e64] [cursor=pointer]:
+        - /url: /study-tips
+        - img [ref=e65]
+        - generic [ref=e67]: 学习技巧
+      - link "代码实验室" [ref=e68] [cursor=pointer]:
+        - /url: /lab
+        - img [ref=e69]
+        - generic [ref=e72]: 代码实验室
+      - link "实验环境" [ref=e73] [cursor=pointer]:
+        - /url: /lab-environment
+        - img [ref=e74]
+        - generic [ref=e77]: 实验环境
+      - link "工具网站" [ref=e78] [cursor=pointer]:
+        - /url: /tool-sites
+        - img [ref=e79]
+        - generic [ref=e82]: 工具网站
+      - link "测验中心" [ref=e83] [cursor=pointer]:
+        - /url: /quiz
+        - img [ref=e84]
+        - generic [ref=e88]: 测验中心
+      - link "成就系统" [ref=e89] [cursor=pointer]:
+        - /url: /achievements
+        - img [ref=e90]
+        - generic [ref=e93]: 成就系统
+      - link "社区交流" [ref=e94] [cursor=pointer]:
+        - /url: /community
+        - img [ref=e95]
+        - generic [ref=e100]: 社区交流
+      - link "个人中心" [ref=e101] [cursor=pointer]:
+        - /url: /profile
+        - img [ref=e102]
+        - generic [ref=e105]: 个人中心
+    - generic [ref=e107]:
+      - paragraph [ref=e108]: CISP学习平台 v1.0
+      - paragraph [ref=e109]: 90天成为安全专家
+  - button [ref=e110] [cursor=pointer]:
+    - img [ref=e111]
+  - generic [ref=e112]:
+    - banner [ref=e113]:
+      - generic [ref=e114]:
+        - generic [ref=e116]:
+          - img [ref=e117]
+          - textbox "搜索知识点、实验..." [ref=e120]
+        - generic [ref=e121]:
+          - button [ref=e122] [cursor=pointer]:
+            - img [ref=e123]
+          - generic [ref=e127]:
+            - generic [ref=e129]: T
+            - generic [ref=e130]:
+              - paragraph [ref=e131]: test
+              - paragraph [ref=e132]: 已学习 0 天
+            - generic [ref=e133]:
+              - button "设置" [ref=e134] [cursor=pointer]:
+                - img [ref=e135]
+              - button "退出" [ref=e138] [cursor=pointer]:
+                - img [ref=e139]
+    - main [ref=e142]:
+      - generic [ref=e143]:
+        - generic [ref=e144]:
+          - heading "安全实验环境" [level=1] [ref=e145]:
+            - img [ref=e146]
+            - generic [ref=e148]: 安全实验环境
+          - paragraph [ref=e149]: 一站式安全学习实验室 — 10个交互式模块覆盖攻击、防御与分析全链路
+        - generic [ref=e150]:
+          - button "XSS沙箱" [ref=e151] [cursor=pointer]:
+            - img [ref=e152]
+            - generic [ref=e161]: XSS沙箱
+          - button "SQL注入" [ref=e162] [cursor=pointer]:
+            - img [ref=e163]
+            - generic [ref=e167]: SQL注入
+          - button "CTF挑战" [active] [ref=e168] [cursor=pointer]:
+            - img [ref=e169]
+            - generic [ref=e175]: CTF挑战
+          - button "密码破解" [ref=e176] [cursor=pointer]:
+            - img [ref=e177]
+            - generic [ref=e181]: 密码破解
+          - button "密码学工具" [ref=e182] [cursor=pointer]:
+            - img [ref=e183]
+            - generic [ref=e185]: 密码学工具
+          - button "网络攻击可视化" [ref=e186] [cursor=pointer]:
+            - img [ref=e187]
+            - generic [ref=e189]: 网络攻击可视化
+          - button "漏洞代码对比" [ref=e190] [cursor=pointer]:
+            - img [ref=e191]
+            - generic [ref=e196]: 漏洞代码对比
+          - button "Burp模拟器" [ref=e197] [cursor=pointer]:
+            - img [ref=e198]
+            - generic [ref=e201]: Burp模拟器
+          - button "WAF规则构建" [ref=e202] [cursor=pointer]:
+            - img [ref=e203]
+            - generic [ref=e205]: WAF规则构建
+          - button "日志分析" [ref=e206] [cursor=pointer]:
+            - img [ref=e207]
+            - generic [ref=e212]: 日志分析
+        - generic [ref=e213]:
+          - img [ref=e444]
+          - generic [ref=e223]:
+            - heading "CTF挑战" [level=3] [ref=e450]
+            - paragraph [ref=e225]: 10关夺旗挑战，Web/密码学/杂项/逆向四大分类
+        - generic [ref=e452]:
+          - heading "CTF 夺旗挑战" [level=2] [ref=e454]:
+            - img [ref=e455]
+            - text: CTF 夺旗挑战
+          - generic [ref=e461]:
+            - generic [ref=e462]:
+              - img [ref=e463]
+              - generic [ref=e466]: 0/1800
+              - generic [ref=e467]: 总分
+            - generic [ref=e468]:
+              - img [ref=e469]
+              - generic [ref=e471]: 0/10
+              - generic [ref=e472]: 已解
+            - generic [ref=e473]:
+              - img [ref=e474]
+              - generic [ref=e477]: 0%
+              - generic [ref=e478]: 进度
+            - generic [ref=e479]:
+              - img [ref=e480]
+              - generic [ref=e482]: "#1"
+              - generic [ref=e483]: 排名
+          - generic [ref=e484]:
+            - generic [ref=e486]:
+              - generic [ref=e487]: Web安全
+              - generic [ref=e488]: 0/3
+            - generic [ref=e491]:
+              - generic [ref=e492]: 密码学
+              - generic [ref=e493]: 0/3
+            - generic [ref=e496]:
+              - generic [ref=e497]: 杂项
+              - generic [ref=e498]: 0/2
+            - generic [ref=e501]:
+              - generic [ref=e502]: 逆向工程
+              - generic [ref=e503]: 0/2
+          - generic [ref=e505]:
+            - button "全部" [ref=e506] [cursor=pointer]
+            - button "Web安全" [ref=e507] [cursor=pointer]:
+              - img [ref=e508]
+              - text: Web安全
+            - button "密码学" [ref=e511] [cursor=pointer]:
+              - img [ref=e512]
+              - text: 密码学
+            - button "杂项" [ref=e515] [cursor=pointer]:
+              - img [ref=e516]
+              - text: 杂项
+            - button "逆向工程" [ref=e521] [cursor=pointer]:
+              - img [ref=e522]
+              - text: 逆向工程
+          - generic [ref=e527]:
+            - button "查看源代码 容易 100pts 有时候答案就藏在最显眼的地方。你能找到隐藏在页面中的flag吗？" [ref=e528] [cursor=pointer]:
+              - generic [ref=e529]:
+                - generic [ref=e530]:
+                  - img [ref=e532]
+                  - generic [ref=e535]:
+                    - heading "查看源代码" [level=4] [ref=e536]
+                    - generic [ref=e537]: 容易
+                - generic [ref=e539]: 100pts
+              - paragraph [ref=e540]: 有时候答案就藏在最显眼的地方。你能找到隐藏在页面中的flag吗？
+            - button "Cookie Monster 中等 200pts 开发者把一些敏感信息存放在了不太安全的地方。检查一下浏览器存储了什么。" [ref=e541]:
+              - generic [ref=e542]:
+                - generic [ref=e543]:
+                  - img [ref=e545]
+                  - generic [ref=e548]:
+                    - heading "Cookie Monster" [level=4] [ref=e549]
+                    - generic [ref=e550]: 中等
+                - generic [ref=e551]:
+                  - img [ref=e552]
+                  - generic [ref=e555]: 200pts
+              - paragraph [ref=e556]: 开发者把一些敏感信息存放在了不太安全的地方。检查一下浏览器存储了什么。
+            - button "Forbidden Access 困难 300pts 页面返回403 Forbidden，但管理员告诉你在某些条件下可以访问。" [ref=e557]:
+              - generic [ref=e558]:
+                - generic [ref=e559]:
+                  - img [ref=e561]
+                  - generic [ref=e564]:
+                    - heading "Forbidden Access" [level=4] [ref=e565]
+                    - generic [ref=e566]: 困难
+                - generic [ref=e567]:
+                  - img [ref=e568]
+                  - generic [ref=e571]: 300pts
+              - paragraph [ref=e572]: 页面返回403 Forbidden，但管理员告诉你在某些条件下可以访问。
+            - button "Base64不是加密 容易 100pts 有人把一段机密信息用\"加密\"方式处理了。解开它找到flag。" [ref=e573] [cursor=pointer]:
+              - generic [ref=e574]:
+                - generic [ref=e575]:
+                  - img [ref=e577]
+                  - generic [ref=e580]:
+                    - heading "Base64不是加密" [level=4] [ref=e581]
+                    - generic [ref=e582]: 容易
+                - generic [ref=e584]: 100pts
+              - paragraph [ref=e585]: 有人把一段机密信息用"加密"方式处理了。解开它找到flag。
+            - button "凯撒的密信 中等 200pts 恺撒大帝用这种密码传递军事情报。每个字母被替换为字母表中固定位置后的字母。" [ref=e586]:
+              - generic [ref=e587]:
+                - generic [ref=e588]:
+                  - img [ref=e590]
+                  - generic [ref=e593]:
+                    - heading "凯撒的密信" [level=4] [ref=e594]
+                    - generic [ref=e595]: 中等
+                - generic [ref=e596]:
+                  - img [ref=e597]
+                  - generic [ref=e600]: 200pts
+              - paragraph [ref=e601]: 恺撒大帝用这种密码传递军事情报。每个字母被替换为字母表中固定位置后的字母。
+            - button "XOR is ART 困难 300pts 一段数据被XOR加密了。已知密钥是单字节 0x55，你能解密吗？" [ref=e602]:
+              - generic [ref=e603]:
+                - generic [ref=e604]:
+                  - img [ref=e606]
+                  - generic [ref=e609]:
+                    - heading "XOR is ART" [level=4] [ref=e610]
+                    - generic [ref=e611]: 困难
+                - generic [ref=e612]:
+                  - img [ref=e613]
+                  - generic [ref=e616]: 300pts
+              - paragraph [ref=e617]: 一段数据被XOR加密了。已知密钥是单字节 0x55，你能解密吗？
+            - button "图片里的秘密 容易 100pts 一张看似普通的图片，但里面藏了不为人知的信息。" [ref=e618] [cursor=pointer]:
+              - generic [ref=e619]:
+                - generic [ref=e620]:
+                  - img [ref=e622]
+                  - generic [ref=e627]:
+                    - heading "图片里的秘密" [level=4] [ref=e628]
+                    - generic [ref=e629]: 容易
+                - generic [ref=e631]: 100pts
+              - paragraph [ref=e632]: 一张看似普通的图片，但里面藏了不为人知的信息。
+            - button "Git泄露 中等 200pts 某个项目的.git目录被公开到了网站上。翻一翻提交历史，说不定能找到敏感信息。" [ref=e633]:
+              - generic [ref=e634]:
+                - generic [ref=e635]:
+                  - img [ref=e637]
+                  - generic [ref=e642]:
+                    - heading "Git泄露" [level=4] [ref=e643]
+                    - generic [ref=e644]: 中等
+                - generic [ref=e645]:
+                  - img [ref=e646]
+                  - generic [ref=e649]: 200pts
+              - paragraph [ref=e650]: 某个项目的.git目录被公开到了网站上。翻一翻提交历史，说不定能找到敏感信息。
+            - button "字符串搜索 容易 100pts 一个编译好的程序，运行起来似乎没什么特别的。但用文本工具看一下，也许有惊喜。" [ref=e651] [cursor=pointer]:
+              - generic [ref=e652]:
+                - generic [ref=e653]:
+                  - img [ref=e655]
+                  - generic [ref=e660]:
+                    - heading "字符串搜索" [level=4] [ref=e661]
+                    - generic [ref=e662]: 容易
+                - generic [ref=e664]: 100pts
+              - paragraph [ref=e665]: 一个编译好的程序，运行起来似乎没什么特别的。但用文本工具看一下，也许有惊喜。
+            - button "简单加密函数 中等 200pts 程序里有一个加密函数，当你输入正确的flag时它会返回\"Correct!\"。分析加密逻辑找到flag。" [ref=e666]:
+              - generic [ref=e667]:
+                - generic [ref=e668]:
+                  - img [ref=e670]
+                  - generic [ref=e675]:
+                    - heading "简单加密函数" [level=4] [ref=e676]
+                    - generic [ref=e677]: 中等
+                - generic [ref=e678]:
+                  - img [ref=e679]
+                  - generic [ref=e682]: 200pts
+              - paragraph [ref=e683]: 程序里有一个加密函数，当你输入正确的flag时它会返回"Correct!"。分析加密逻辑找到flag。
