@@ -3,11 +3,12 @@ import { useNavigate, NavLink, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Library, Search, ChevronRight,
-  CheckCircle, XCircle, Trash2, Target,
+  CheckCircle, Trash2, Target,
   Zap, BarChart3, AlertCircle,
   Lightbulb
 } from 'lucide-react';
-import { Card, Button } from '../components/UI';
+import { Card, Button, QuizQuestion } from '../components/UI';
+import type { QuizQuestionData } from '../components/UI';
 import { ProgressRing } from '../components/UI/ProgressRing';
 import {
   filterBank, getRandomBankQuestions, getBankStats,
@@ -619,7 +620,15 @@ const PracticeView: React.FC<{
   score: { correct: number; total: number };
   label?: string;
 }> = ({ question, idx, total, answer, showHint, onAnswer, onNext, onToggleHint, score, label }) => {
-  const isCorrect = answer === question.correctIndex;
+  // 将 BankQuestion 映射为 QuizQuestionData
+  const qData: QuizQuestionData = {
+    id: question.id,
+    question: question.question,
+    options: question.options,
+    correctIndex: question.correctIndex,
+    explanation: question.explanation,
+  };
+
   return (
     <Card>
       {/* Header */}
@@ -638,54 +647,15 @@ const PracticeView: React.FC<{
         </div>
       </div>
 
-      {/* Question */}
-      <h3 className="text-base font-medium text-white mb-4">{question.question}</h3>
-
-      {/* Options */}
-      <div className="space-y-2">
-        {question.options.map((opt, i) => {
-          const selected = answer === i;
-          let cls = 'quiz-option';
-          if (answer !== null) {
-            if (i === question.correctIndex) cls += ' correct';
-            else if (selected && i !== question.correctIndex) cls += ' incorrect';
-          } else if (selected) {
-            cls += ' selected';
-          }
-          return (
-            <div key={i} className={cls} onClick={() => onAnswer(i)}>
-              <span className="font-medium mr-2">{optionLabel(i)}.</span>
-              {opt}
-              {answer !== null && i === question.correctIndex && (
-                <CheckCircle size={14} className="inline ml-2 text-green-400" />
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Result & Explanation */}
-      {answer !== null && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 p-3 rounded-lg"
-          style={{ backgroundColor: isCorrect ? 'rgba(0,255,136,0.08)' : 'rgba(255,51,102,0.08)' }}>
-          <p className={`text-sm font-medium mb-1 ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
-            {isCorrect ? '✓ 回答正确！' : '✗ 回答错误'}
-          </p>
-          {!isCorrect && (
-            <>
-              <p className="text-xs text-gray-400 mb-1">
-                正确答案: {optionLabel(question.correctIndex)}. {question.options[question.correctIndex]}
-              </p>
-              <button onClick={onToggleHint} className="text-xs text-cyber-gold hover:underline">
-                {showHint ? '收起解析' : '查看解析'}
-              </button>
-              {showHint && (
-                <p className="text-xs text-gray-400 mt-1 leading-relaxed">{question.explanation}</p>
-              )}
-            </>
-          )}
-        </motion.div>
-      )}
+      {/* 使用共享 QuizQuestion 组件 */}
+      <QuizQuestion
+        question={qData}
+        selectedIndex={answer}
+        showResult={answer !== null}
+        onSelect={onAnswer}
+        expanded={showHint}
+        onToggleExpand={onToggleHint}
+      />
 
       {/* Next */}
       {answer !== null && (
@@ -722,25 +692,20 @@ const WrongReviewView: React.FC<{
       </div>
     </div>
 
-    <p className="text-white font-medium mb-3">{item.question}</p>
-    <div className="space-y-2 mb-3">
-      {item.options.map((opt, i) => (
-        <div key={i} className={`p-2.5 rounded-lg text-sm ${
-          i === item.correctIndex
-            ? 'bg-green-500/20 border border-green-500/30 text-green-300'
-            : i === item.yourAnswer
-            ? 'bg-red-500/20 border border-red-500/30 text-red-300'
-            : 'bg-cyber-purple/20 text-gray-400'
-        }`}>
-          {optionLabel(i)}. {opt}
-          {i === item.correctIndex && ' ✓'} {i === item.yourAnswer && i !== item.correctIndex && ' ✗'}
-        </div>
-      ))}
-    </div>
-    <div className="p-3 rounded-lg bg-cyber-purple/20 text-sm text-gray-400">
-      <Lightbulb size={14} className="inline mr-1 text-cyber-gold" />
-      {item.explanation}
-    </div>
+    <QuizQuestion
+      question={{
+        id: item.questionId,
+        question: item.question,
+        options: item.options,
+        correctIndex: item.correctIndex,
+        explanation: item.explanation,
+      }}
+      selectedIndex={item.yourAnswer}
+      showResult={true}
+      onSelect={() => {}}
+      readOnly
+      variant="compact"
+    />
 
     <div className="flex justify-between mt-4">
       <Button size="sm" variant="outline" disabled={index === 0} onClick={onPrev}>上一题</Button>

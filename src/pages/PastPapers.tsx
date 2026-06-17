@@ -4,9 +4,6 @@ import {
   FileText,
   CheckCircle,
   XCircle,
-  ChevronDown,
-  ChevronUp,
-  Lightbulb,
   Calendar,
   Shuffle,
   Filter,
@@ -19,7 +16,7 @@ import {
   Eye,
   RotateCcw,
 } from 'lucide-react';
-import { Card, Badge, Button } from '../components/UI';
+import { Card, Badge, Button, QuizQuestion } from '../components/UI';
 import {
   pastPapers,
   cispDomains,
@@ -541,9 +538,9 @@ export const PastPapers: React.FC = () => {
         <div className="space-y-4">
           {currentQuestions.map((q, index) => {
             const userAnswer = answers[q.uniqueId];
-            const correctAnswer = q.options[q.correctIndex];
-            const isCorrect = userAnswer === correctAnswer;
             const hasAnswered = !!userAnswer;
+            const userIdx = hasAnswered ? q.options.indexOf(userAnswer) : null;
+            const isCorrect = userIdx === q.correctIndex;
 
             return (
               <motion.div
@@ -596,80 +593,23 @@ export const PastPapers: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Options */}
-                  <div className="space-y-2 mb-4">
-                    {q.options.map((option, optIdx) => {
-                      const label = String.fromCharCode(65 + optIdx);
-                      const isSelected = userAnswer === option;
-                      const isCorrectOption = option === correctAnswer;
-
-                      return (
-                        <div
-                          key={optIdx}
-                          onClick={() => !showResults && handleAnswer(q.uniqueId, option)}
-                          className={`quiz-option text-sm ${
-                            isSelected
-                              ? showResults
-                                ? isCorrectOption ? 'correct' : 'incorrect'
-                                : 'selected'
-                              : showResults && isCorrectOption
-                              ? 'correct'
-                              : ''
-                          } ${showResults ? 'pointer-events-none' : ''}`}
-                        >
-                          <span className="font-medium mr-1.5">{label}.</span>
-                          {option.startsWith(label + '.') ? option.slice(2).trim() : option}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Explanation */}
-                  {showResults && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="mt-4"
-                    >
-                      <button
-                        onClick={() => setExpandedQuestion(
-                          expandedQuestion === q.uniqueId ? null : q.uniqueId
-                        )}
-                        className="flex items-center gap-2 text-cyber-gold text-sm hover:underline"
-                      >
-                        {expandedQuestion === q.uniqueId ? (
-                          <ChevronUp size={14} />
-                        ) : (
-                          <ChevronDown size={14} />
-                        )}
-                        {expandedQuestion === q.uniqueId ? '收起解析' : '查看解析'}
-                      </button>
-                      
-                      {expandedQuestion === q.uniqueId && (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="mt-3 p-4 rounded-lg bg-cyber-purple/20 border border-cyber-purple/30"
-                        >
-                          <div className="mb-3">
-                            <span className="text-gray-400 text-sm">正确答案: </span>
-                            <span className="font-bold text-green-400">{correctAnswer}</span>
-                          </div>
-                          <div className="mb-3">
-                            <span className="text-gray-400 text-sm">解析: </span>
-                            <span className="text-gray-300 text-sm leading-relaxed">{q.explanation}</span>
-                          </div>
-                          <div className="flex items-start gap-2 bg-cyber-gold/10 p-3 rounded-lg">
-                            <Lightbulb size={14} className="text-cyber-gold mt-0.5 flex-shrink-0" />
-                            <div>
-                              <span className="text-gray-400 text-sm">核心考点: </span>
-                              <span className="text-gray-300 text-sm">{q.explanation.split('。')[0]}</span>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </motion.div>
-                  )}
+                  {/* 使用共享 QuizQuestion 组件 */}
+                  <QuizQuestion
+                    question={{
+                      id: q.uniqueId,
+                      question: q.question,
+                      options: q.options,
+                      correctIndex: q.correctIndex,
+                      explanation: q.explanation,
+                    }}
+                    selectedIndex={userIdx}
+                    showResult={showResults}
+                    onSelect={(i) => handleAnswer(q.uniqueId, q.options[i])}
+                    expanded={expandedQuestion === q.uniqueId}
+                    onToggleExpand={() => setExpandedQuestion(
+                      expandedQuestion === q.uniqueId ? null : q.uniqueId
+                    )}
+                  />
                 </Card>
               </motion.div>
             );

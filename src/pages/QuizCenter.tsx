@@ -17,7 +17,7 @@ import {
 import { useLearningStore, useAchievementStore } from '../store';
 import { learningData } from '../data/learningData';
 import { checkQuizAnswer } from '../hooks/useQuiz';
-import { Card, Badge, Button } from '../components/UI';
+import { Card, Badge, Button, QuizQuestion } from '../components/UI';
 import { ProgressRing } from '../components/UI/ProgressRing';
 import { saveData, loadData, removeData } from '../data/persistData';
 
@@ -370,29 +370,25 @@ export const QuizCenter: React.FC = () => {
                       {currentQuizQuestion.question}
                     </h3>
                     {currentQuizQuestion.options && currentQuizQuestion.options.length > 0 ? (
-                      <div className="space-y-2">
-                        {currentQuizQuestion.options.map((option, i) => (
-                          <div
-                            key={i}
-                            className={`
-                              quiz-option
-                              ${answers[currentQuizQuestion.id] === i ? 'selected' : ''}
-                            `}
-                            onClick={() => handleAnswerSelect(currentQuizQuestion.id, i)}
-                          >
-                            <span className="font-medium mr-2">
-                              {String.fromCharCode(65 + i)}.
-                            </span>
-                            {option}
-                          </div>
-                        ))}
-                      </div>
+                      <QuizQuestion
+                        question={{
+                          id: currentQuizQuestion.id || String(currentQuestion),
+                          question: currentQuizQuestion.question,
+                          options: currentQuizQuestion.options,
+                          correctIndex: currentQuizQuestion.correctIndex ?? 0,
+                          explanation: currentQuizQuestion.explanation,
+                        }}
+                        selectedIndex={answers[currentQuizQuestion.id!] as number ?? null}
+                        showResult={false}
+                        onSelect={(i) => handleAnswerSelect(currentQuizQuestion.id!, i)}
+                        variant="compact"
+                      />
                     ) : (
                       <div>
                         <input
                           type="text"
-                          value={answers[currentQuizQuestion.id] !== undefined ? String(answers[currentQuizQuestion.id]) : ''}
-                          onChange={(e) => setAnswers({ ...answers, [currentQuizQuestion.id]: e.target.value as any })}
+                          value={answers[currentQuizQuestion.id!] !== undefined ? String(answers[currentQuizQuestion.id!]) : ''}
+                          onChange={(e) => setAnswers({ ...answers, [currentQuizQuestion.id!]: e.target.value as any })}
                           placeholder="请输入答案"
                           className="w-full px-4 py-3 bg-cyber-purple/20 border border-cyber-purple/40 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyber-green"
                         />
