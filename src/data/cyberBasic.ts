@@ -74,6 +74,10 @@ export interface CyberLearningPlan {
   prerequisites: string[];
   certification: string;
   days: CyberDay[];
+  category?: string;
+  learningPath?: string[];
+  skills?: string[];
+  tags?: string[];
 }
 
 export const cyberBasicPlan: CyberLearningPlan = {

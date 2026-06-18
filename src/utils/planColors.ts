@@ -83,6 +83,19 @@ export const planColor = (planId: string): PlanColor => {
     btnDefault: 'bg-[#e8a020] text-black font-semibold hover:bg-[#ffb830] shadow-[0_0_12px_rgba(232,160,32,0.35)] hover:shadow-[0_0_18px_rgba(232,160,32,0.5)]',
     tabActive: 'bg-cyber-gold/20 text-cyber-gold border border-cyber-gold/30',
   };
+  if (planId === 'ctf') return {
+    main: 'text-purple-400', bg: 'bg-purple-500', border: 'border-purple-500',
+    bgLight: 'bg-purple-500/20', borderLight: 'border-purple-500/40',
+    borderFaint: 'border-purple-500/50', borderSoft: 'border-purple-500/50',
+    borderStrong: 'border-purple-400/70', cardBorder: 'border-purple-500/30',
+    textColor: 'text-purple-400',
+    optionDefault: 'border-purple-500/40 bg-white/5 hover:border-purple-400/70 hover:bg-purple-500/15',
+    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
+    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
+    optionDim: 'border-purple-500/20 bg-transparent opacity-40',
+    btnDefault: 'bg-purple-600 text-white font-semibold hover:bg-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.3)] hover:shadow-[0_0_20px_rgba(168,85,247,0.5)]',
+    tabActive: 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+  };
   if (planId === 'vendor') return {
     main: 'text-cyber-teal', bg: 'bg-cyber-teal', border: 'border-cyber-teal',
     bgLight: 'bg-cyber-teal/20', borderLight: 'border-cyber-teal/40',

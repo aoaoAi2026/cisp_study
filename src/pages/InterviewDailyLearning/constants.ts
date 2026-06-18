@@ -4,6 +4,7 @@ import { interviewDefensePlan } from '../../data/interviewDefense';
 import { interviewAiPlan } from '../../data/interviewAi';
 import { interviewHwPlan } from '../../data/interviewHw';
 import { interviewCispPlan } from '../../data/interviewCisp';
+import { interviewCtfPlan } from '../../data/interviewCtf';
 import type { CyberLearningPlan } from '../../data/cyberBasic';
 
 export const plans: Record<string, CyberLearningPlan> = {
@@ -13,6 +14,7 @@ export const plans: Record<string, CyberLearningPlan> = {
   defense: interviewDefensePlan,
   ai: interviewAiPlan,
   hw: interviewHwPlan,
+  ctf: interviewCtfPlan,
 };
 
 export const planSupplements: Record<string, Record<number, any>> = {
@@ -22,6 +24,7 @@ export const planSupplements: Record<string, Record<number, any>> = {
   defense: {},
   ai: {},
   hw: {},
+  ctf: {},
 };
 
 export { planColor } from '../../utils/planColors';

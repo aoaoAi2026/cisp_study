@@ -23,6 +23,7 @@ import { interviewDefensePlan } from '../data/interviewDefense';
 import { interviewAiPlan } from '../data/interviewAi';
 import { interviewHwPlan } from '../data/interviewHw';
 import { interviewCispPlan } from '../data/interviewCisp';
+import { interviewCtfPlan } from '../data/interviewCtf';
 import { loadData } from '../data/persistData';
 
 interface InterviewLearningMainProps {}
@@ -33,7 +34,8 @@ const plans: CyberLearningPlan[] = [
   interviewPenetrationPlan,
   interviewDefensePlan,
   interviewAiPlan,
-  interviewHwPlan
+  interviewHwPlan,
+  interviewCtfPlan
 ];
 
 const difficultyIcon = (d: string) => {
@@ -48,6 +50,7 @@ const planIcon = (id: string) => {
   if (id === 'penetration') return <Target size={40} />;
   if (id === 'ai') return <Brain size={40} />;
   if (id === 'hw') return <Globe size={40} />;
+  if (id === 'ctf') return <Lock size={40} />;
   return <Cpu size={40} />;
 };
 
@@ -57,6 +60,7 @@ const planBg = (id: string) => {
   if (id === 'penetration') return 'from-cyber-red/5 to-transparent';
   if (id === 'ai') return 'from-white/[0.03] to-transparent';
   if (id === 'hw') return 'from-cyber-gold/5 to-transparent';
+  if (id === 'ctf') return 'from-purple-500/5 to-transparent';
   return 'from-cyber-blue/5 to-transparent';
 };
 
@@ -66,6 +70,7 @@ const planBorder = (id: string) => {
   if (id === 'penetration') return 'border-cyber-red/30';
   if (id === 'ai') return 'border-white/15';
   if (id === 'hw') return 'border-cyber-gold/30';
+  if (id === 'ctf') return 'border-purple-500/30';
   return 'border-cyber-blue/30';
 };
 
@@ -75,6 +80,7 @@ const planHover = (id: string) => {
   if (id === 'penetration') return 'hover:border-cyber-red/50';
   if (id === 'ai') return 'hover:border-white/30';
   if (id === 'hw') return 'hover:border-cyber-gold/50';
+  if (id === 'ctf') return 'hover:border-purple-500/50';
   return 'hover:border-cyber-blue/50';
 };
 
@@ -96,7 +102,7 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
   const getProgress = (planId: string) => progressMap[planId] || 0;
 
   const totalDays = plans.reduce((s, p) => s + p.totalDays, 0);
-  const totalCompleted = getProgress('cisp') + getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw');
+  const totalCompleted = getProgress('cisp') + getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw') + getProgress('ctf');
   const totalPct = totalCompleted > 0 ? Math.round((totalCompleted / totalDays) * 100) : 0;
 
   const itemVariants = {
@@ -192,6 +198,7 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
                       ${plan.id === 'defense' ? 'bg-cyber-blue/20 text-cyber-blue' : ''}
                       ${plan.id === 'ai' ? 'bg-white/[0.08] text-white' : ''}
                       ${plan.id === 'hw' ? 'bg-cyber-gold/20 text-cyber-gold' : ''}
+                      ${plan.id === 'ctf' ? 'bg-purple-500/20 text-purple-400' : ''}
                     `}
                   >
                     {planIcon(plan.id)}
@@ -226,7 +233,8 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
                             plan.id === 'basic' ? 'bg-cyber-green' :
                             plan.id === 'penetration' ? 'bg-cyber-red' :
                             plan.id === 'ai' ? 'bg-[#7a8a9a]' :
-                            plan.id === 'hw' ? 'bg-cyber-gold' : 'bg-cyber-blue'
+                            plan.id === 'hw' ? 'bg-cyber-gold' :
+                            plan.id === 'ctf' ? 'bg-purple-500' : 'bg-cyber-blue'
                           }`}
                           style={{ width: `${pct}%` }}
                         />
@@ -269,15 +277,17 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
                       className={`text-xs px-4 py-2 rounded-lg border bg-white/5 backdrop-blur-sm transition-all duration-200 ${
                         plan.id === 'cisp'
                           ? 'border-cyber-green/50 text-cyber-green hover:bg-cyber-green/20 hover:border-cyber-green/80'
-                        : plan.id === 'basic'
-                          ? 'border-cyber-green/50 text-cyber-green hover:bg-cyber-green/20 hover:border-cyber-green/80'
-                        : plan.id === 'penetration'
-                          ? 'border-cyber-red/50 text-cyber-red hover:bg-cyber-red/20 hover:border-cyber-red/80'
-                        : plan.id === 'ai'
-                          ? 'border-gray-500/50 text-gray-300 hover:bg-white/10 hover:border-gray-400'
-                        : plan.id === 'hw'
-                          ? 'border-cyber-gold/50 text-cyber-gold hover:bg-cyber-gold/20 hover:border-cyber-gold/80'
-                        : 'border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/20 hover:border-cyber-blue/80'
+                          : plan.id === 'basic'
+                            ? 'border-cyber-green/50 text-cyber-green hover:bg-cyber-green/20 hover:border-cyber-green/80'
+                            : plan.id === 'penetration'
+                              ? 'border-cyber-red/50 text-cyber-red hover:bg-cyber-red/20 hover:border-cyber-red/80'
+                              : plan.id === 'ai'
+                                ? 'border-gray-500/50 text-gray-300 hover:bg-white/10 hover:border-gray-400'
+                                : plan.id === 'hw'
+                                  ? 'border-cyber-gold/50 text-cyber-gold hover:bg-cyber-gold/20 hover:border-cyber-gold/80'
+                                  : plan.id === 'ctf'
+                                    ? 'border-purple-500/50 text-purple-400 hover:bg-purple-500/20 hover:border-purple-400/80'
+                                    : 'border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/20 hover:border-cyber-blue/80'
                       }`}
                     >
                       {expanded === plan.id ? '收起 ▲' : '详情 ▼'}
@@ -287,15 +297,17 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
                       className={`flex items-center gap-1 text-xs px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
                         plan.id === 'cisp'
                           ? 'bg-[#00cc66] text-black hover:bg-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.3)] hover:shadow-[0_0_20px_rgba(0,255,136,0.5)]'
-                        : plan.id === 'basic'
-                          ? 'bg-[#00cc66] text-black hover:bg-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.3)] hover:shadow-[0_0_20px_rgba(0,255,136,0.5)]'
-                        : plan.id === 'penetration'
-                          ? 'bg-[#e04444] text-white hover:bg-[#ff5555] shadow-[0_0_12px_rgba(255,68,68,0.3)] hover:shadow-[0_0_20px_rgba(255,68,68,0.5)]'
-                        : plan.id === 'ai'
-                          ? 'bg-[#5b7a8a] text-white hover:bg-[#789aa8] shadow-[0_0_10px_rgba(91,122,138,0.3)] hover:shadow-[0_0_16px_rgba(91,122,138,0.45)]'
-                        : plan.id === 'hw'
-                          ? 'bg-[#e8a020] text-black hover:bg-[#ffb830] shadow-[0_0_12px_rgba(232,160,32,0.35)] hover:shadow-[0_0_18px_rgba(232,160,32,0.5)]'
-                        : 'bg-[#3388ee] text-white hover:bg-[#5599ff] shadow-[0_0_12px_rgba(51,136,238,0.3)] hover:shadow-[0_0_20px_rgba(51,136,238,0.5)]'
+                          : plan.id === 'basic'
+                            ? 'bg-[#00cc66] text-black hover:bg-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.3)] hover:shadow-[0_0_20px_rgba(0,255,136,0.5)]'
+                            : plan.id === 'penetration'
+                              ? 'bg-[#e04444] text-white hover:bg-[#ff5555] shadow-[0_0_12px_rgba(255,68,68,0.3)] hover:shadow-[0_0_20px_rgba(255,68,68,0.5)]'
+                              : plan.id === 'ai'
+                                ? 'bg-[#5b7a8a] text-white hover:bg-[#789aa8] shadow-[0_0_10px_rgba(91,122,138,0.3)] hover:shadow-[0_0_16px_rgba(91,122,138,0.45)]'
+                                : plan.id === 'hw'
+                                  ? 'bg-[#e8a020] text-black hover:bg-[#ffb830] shadow-[0_0_12px_rgba(232,160,32,0.35)] hover:shadow-[0_0_18px_rgba(232,160,32,0.5)]'
+                                  : plan.id === 'ctf'
+                                    ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.3)] hover:shadow-[0_0_20px_rgba(168,85,247,0.5)]'
+                                    : 'bg-[#3388ee] text-white hover:bg-[#5599ff] shadow-[0_0_12px_rgba(51,136,238,0.3)] hover:shadow-[0_0_20px_rgba(51,136,238,0.5)]'
                       }`}
                     >
                       {completed > 0 ? '继续学习' : '开始突击'}
