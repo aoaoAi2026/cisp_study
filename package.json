@@ -11,6 +11,8 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
     "@capacitor/preferences": "^8.0.1",
     "@milkdown/crepe": "^7.21.2",
     "@milkdown/kit": "^7.21.2",

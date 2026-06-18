@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import {

@@ -529,7 +529,7 @@ export const OnlineTools: React.FC = () => {
           return text.split('').map(c => tradMap[c] || c).join('');
         }
         case 'pinyin': {
-          const pyMap: Record<string, string> = { '你': 'N', '好': 'H', '世': 'S', '界': 'J', '中': 'Z', '国': 'G', '人': 'R', '民': 'M', '共': 'G', '和': 'H', '水': 'S', '电': 'D', '脑': 'N', '学': 'X', '习': 'X', '时': 'S', '间': 'J', '来': 'L', '个': 'G', '这': 'Z', '样': 'Y', '没': 'M', '有': 'Y', '说': 'S', '话': 'H', '码': 'M', '语': 'Y', '资': 'Z', '讯': 'X', '发': 'F', '现': 'X', '网': 'W', '络': 'L', '开': 'K', '发': 'F', '测': 'C', '试': 'S' };
+          const pyMap: Record<string, string> = { '你': 'N', '好': 'H', '世': 'S', '界': 'J', '中': 'Z', '国': 'G', '人': 'R', '民': 'M', '共': 'G', '和': 'H', '水': 'S', '电': 'D', '脑': 'N', '学': 'X', '习': 'X', '时': 'S', '间': 'J', '来': 'L', '个': 'G', '这': 'Z', '样': 'Y', '没': 'M', '有': 'Y', '说': 'S', '话': 'H', '码': 'M', '语': 'Y', '资': 'Z', '讯': 'X', '发': 'F', '现': 'X', '网': 'W', '络': 'L', '开': 'K', '测': 'C', '试': 'S' };
           return text.split('').map(c => pyMap[c] || c).join('');
         }
         case 'textAlign': {
@@ -578,7 +578,6 @@ export const OnlineTools: React.FC = () => {
           if (code === 12288) return ' ';
           return c;
         }).join('');
-        case 'pinyin': return text;
         default: return text;
       }
     } catch { return '处理错误'; }
@@ -1105,7 +1104,7 @@ export const OnlineTools: React.FC = () => {
           const match = input.match(/(\d+\.?\d*)\s*(\w+)\s+(to|in)\s+(\w+)/i);
           if (!match) return '格式: 数值 单位 to 目标单位\n例如: 100kg to lbs';
           const [, val, from, , to] = match;
-          const conversions: Record<string, Record<string, number>> = {
+          const conversions: Record<string, Record<string, number | ((v: number) => number)>> = {
             kg: { lbs: 2.20462, g: 1000, oz: 35.274 },
             lbs: { kg: 0.453592, g: 453.592, oz: 16 },
             g: { kg: 0.001, lbs: 0.00220462, oz: 0.035274 },
@@ -1240,7 +1239,12 @@ export const OnlineTools: React.FC = () => {
           return groups;
         }
         case 'randomPort': return Math.floor(Math.random() * 65535).toString();
-        case 'randomCoords': return `纬度: ${(Math.random() * 180 - 90).toFixed(4)}\n经度: ${(Math.random() * 360 - 180).toFixed(4)}`;
+        // 经纬度
+        case 'randomCoords': {
+          const lat = (Math.random() * 180 - 90).toFixed(6);
+          const lng = (Math.random() * 360 - 180).toFixed(6);
+          return `纬度(Lat): ${lat}\n经度(Lng): ${lng}\n\n地图查询: https://maps.google.com/?q=${lat},${lng}`;
+        }
         // 颜色工具
         case 'colorCode': {
           const hex = input.replace('#', '');
@@ -1791,12 +1795,6 @@ export const OnlineTools: React.FC = () => {
           const phi = (p - 1) * (q - 1);
           const e = 17;
           return `RSA演示 (简化版):\n\n素数 p = ${p}, q = ${q}\nn = p × q = ${n}\nφ(n) = (p-1)(q-1) = ${phi}\n公钥 e = ${e}\n\n公钥: (e=${e}, n=${n})\n私钥: 需计算 d = e⁻¹ mod φ(n)\n\n输入: ${input}\n\n注意: 此为演示说明，浏览器中无法安全计算大整数RSA`;
-        }
-        // 经纬度
-        case 'randomCoords': {
-          const lat = (Math.random() * 180 - 90).toFixed(6);
-          const lng = (Math.random() * 360 - 180).toFixed(6);
-          return `纬度(Lat): ${lat}\n经度(Lng): ${lng}\n\n地图查询: https://maps.google.com/?q=${lat},${lng}`;
         }
         default: return input;
       }

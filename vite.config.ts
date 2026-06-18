@@ -12,6 +12,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: './',
   server: {
     port: 6776,
     strictPort: true,
