@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -20,6 +20,7 @@ import { loadAllResources, getCategories, getStats } from '../data/resourceData'
 
 export const ResourceLibrary: React.FC = () => {
   const navigate = useNavigate();
+  const listRef = useRef<HTMLDivElement>(null);
   const [resources, setResources] = useState<Resource[]>([]);
   const [categories, setCategories] = useState<{ key: string; name: string; count: number }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +29,8 @@ export const ResourceLibrary: React.FC = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [isDark, setIsDark] = useState(true);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [toast, setToast] = useState<string>('');
+  const [filterVersion, setFilterVersion] = useState(0);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -46,28 +49,44 @@ export const ResourceLibrary: React.FC = () => {
   };
 
   useEffect(() => {
+    let mounted = true;
     async function fetchData() {
       setLoading(true);
       const [allResources, allCategories] = await Promise.all([
         loadAllResources(),
         getCategories(),
       ]);
-      setResources(allResources);
-      setCategories(allCategories);
-      setLoading(false);
+      if (mounted) {
+        setResources([...allResources]);
+        setCategories([...allCategories]);
+        setLoading(false);
+      }
     }
     fetchData();
-    // Load favorites
     try {
       const saved = localStorage.getItem('cisp_favorites');
-      if (saved) setFavorites(new Set(JSON.parse(saved)));
+      if (saved && mounted) setFavorites(new Set(JSON.parse(saved)));
     } catch {}
+    return () => {
+      mounted = false;
+    };
   }, []);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 2000);
+  };
 
   const toggleFavorite = (id: string) => {
     setFavorites(prev => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+        showToast('已取消收藏');
+      } else {
+        next.add(id);
+        showToast('已加入收藏');
+      }
       localStorage.setItem('cisp_favorites', JSON.stringify([...next]));
       return next;
     });
@@ -75,20 +94,45 @@ export const ResourceLibrary: React.FC = () => {
 
   const stats = getStats();
 
-  const filteredResources = resources.filter(resource => {
-    const matchesSearch = (resource.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (resource.summary?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (resource.tags || []).some(tag => (tag?.toLowerCase() || '').includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === 'all' || resource.category === selectedCategory;
-    const matchesDifficulty = selectedDifficulty === 'all' || resource.difficulty === selectedDifficulty;
-    return matchesSearch && matchesCategory && matchesDifficulty;
-  });
+  const filteredResources = useMemo(() => {
+    return resources.filter(resource => {
+      const matchesSearch = (resource.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (resource.summary?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (resource.tags || []).some(tag => (tag?.toLowerCase() || '').includes(searchTerm.toLowerCase()));
+      const matchesCategory = selectedCategory === 'all' || resource.category === selectedCategory;
+      const matchesDifficulty = selectedDifficulty === 'all' || resource.difficulty === selectedDifficulty;
+      return matchesSearch && matchesCategory && matchesDifficulty;
+    });
+  }, [resources, selectedCategory, selectedDifficulty, searchTerm]);
+
+  const handleCategoryChange = (key: string) => {
+    setSelectedCategory(key);
+    setFilterVersion(v => v + 1);
+    const cat = categories.find(c => c.key === key);
+    showToast(`已切换到：${cat?.name || key}`);
+    if (listRef.current) {
+      listRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleDifficultyChange = (key: string) => {
+    setSelectedDifficulty(key);
+    setFilterVersion(v => v + 1);
+  };
+
+  const handleResetFilter = () => {
+    setSelectedCategory('all');
+    setSelectedDifficulty('all');
+    setSearchTerm('');
+    setFilterVersion(v => v + 1);
+    showToast('已重置筛选条件');
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.05 }
+      transition: { staggerChildren: 0.03 }
     }
   };
 
@@ -105,6 +149,14 @@ export const ResourceLibrary: React.FC = () => {
   const inputText = isDark ? 'text-white' : 'text-gray-900';
   const inputPlaceholder = isDark ? 'placeholder-gray-500' : 'placeholder-gray-400';
   const inputBorder = isDark ? 'border-cyber-green/20' : 'border-gray-300';
+  const btnSelectedCat = isDark ? 'bg-cyber-green text-cyber-black' : 'bg-green-500 text-white';
+  const btnNormalCat = isDark
+    ? 'bg-cyber-purple/40 text-gray-300 hover:bg-cyber-green/10 hover:text-cyber-green'
+    : 'bg-gray-200 text-gray-700 hover:bg-gray-300';
+  const btnSelectedDiff = isDark ? 'border-2 border-cyber-green text-cyber-green' : 'border-2 border-green-500 text-green-600';
+  const btnNormalDiff = isDark ? 'bg-cyber-purple/40 text-gray-300' : 'bg-gray-200 text-gray-600';
+  const btnSelectedDiffBlue = isDark ? 'border-2 border-cyber-blue text-cyber-blue' : 'border-2 border-blue-500 text-blue-600';
+  const btnSelectedDiffGold = isDark ? 'border-2 border-cyber-gold text-cyber-gold' : 'border-2 border-yellow-500 text-yellow-600';
 
   if (loading) {
     return (
@@ -115,7 +167,12 @@ export const ResourceLibrary: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {toast && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-lg bg-cyber-green text-cyber-black font-medium shadow-lg shadow-cyber-green/30 animate-pulse">
+          {toast}
+        </div>
+      )}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className={`font-orbitron text-2xl font-bold ${isDark ? 'text-cyber-green' : 'text-green-600'}`}>
@@ -127,11 +184,7 @@ export const ResourceLibrary: React.FC = () => {
         </div>
         <button
           onClick={toggleTheme}
-          className={`p-3 rounded-lg transition-all ${
-            isDark
-              ? 'bg-cyber-purple/40 text-cyber-green hover:bg-cyber-purple/60'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
+          className={`p-3 rounded-lg transition-all ${isDark ? 'bg-cyber-purple/40 text-cyber-green hover:bg-cyber-purple/60' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
         >
           {isDark ? <Sun size={20} /> : <Moon size={20} />}
         </button>
@@ -176,11 +229,7 @@ export const ResourceLibrary: React.FC = () => {
             className={`w-full pl-12 pr-4 py-3 ${inputBg} ${inputBorder} rounded-lg ${inputText} ${inputPlaceholder} focus:outline-none focus:border-green-500 transition-colors`}
           />
           <button
-            onClick={() => {
-              setSelectedCategory('all');
-              setSelectedDifficulty('all');
-              setSearchTerm('');
-            }}
+            onClick={handleResetFilter}
             className={`absolute right-3 top-1/2 -translate-y-1/2 p-2 ${isDark ? 'text-gray-400 hover:text-cyber-green' : 'text-gray-500 hover:text-green-600'} transition-colors`}
           >
             <RefreshCw size={18} />
@@ -191,75 +240,52 @@ export const ResourceLibrary: React.FC = () => {
       <div className="space-y-4">
         <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => setSelectedCategory('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              selectedCategory === 'all'
-                ? (isDark ? 'bg-cyber-green text-cyber-black' : 'bg-green-500 text-white')
-                : (isDark ? 'bg-cyber-purple/40 text-gray-300 hover:bg-cyber-green/10' : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
-            }`}
+            onClick={() => handleCategoryChange('all')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedCategory === 'all' ? btnSelectedCat : btnNormalCat}`}
           >
             全部分类
           </button>
           {categories.map(cat => (
             <button
               key={cat.key}
-              onClick={() => setSelectedCategory(cat.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                selectedCategory === cat.key
-                  ? (isDark ? 'bg-cyber-green text-cyber-black' : 'bg-green-500 text-white')
-                  : (isDark ? 'bg-cyber-purple/40 text-gray-300 hover:bg-cyber-green/10' : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
-              }`}
+              onClick={() => handleCategoryChange(cat.key)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedCategory === cat.key ? btnSelectedCat : btnNormalCat}`}
             >
               {cat.name}
+              <span className="ml-1 opacity-70">({cat.count})</span>
             </button>
           ))}
         </div>
 
         <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => setSelectedDifficulty('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              selectedDifficulty === 'all'
-                ? (isDark ? 'border-2 border-cyber-green text-cyber-green' : 'border-2 border-green-500 text-green-600')
-                : (isDark ? 'bg-cyber-purple/40 text-gray-300' : 'bg-gray-200 text-gray-600')
-            }`}
+            onClick={() => handleDifficultyChange('all')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedDifficulty === 'all' ? btnSelectedDiff : btnNormalDiff}`}
           >
             全部难度
           </button>
           <button
-            onClick={() => setSelectedDifficulty('入门')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              selectedDifficulty === '入门'
-                ? (isDark ? 'border-2 border-cyber-green text-cyber-green' : 'border-2 border-green-500 text-green-600')
-                : (isDark ? 'bg-cyber-purple/40 text-gray-300' : 'bg-gray-200 text-gray-600')
-            }`}
+            onClick={() => handleDifficultyChange('入门')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedDifficulty === '入门' ? btnSelectedDiff : btnNormalDiff}`}
           >
             入门
           </button>
           <button
-            onClick={() => setSelectedDifficulty('进阶')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              selectedDifficulty === '进阶'
-                ? (isDark ? 'border-2 border-cyber-blue text-cyber-blue' : 'border-2 border-blue-500 text-blue-600')
-                : (isDark ? 'bg-cyber-purple/40 text-gray-300' : 'bg-gray-200 text-gray-600')
-            }`}
+            onClick={() => handleDifficultyChange('进阶')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedDifficulty === '进阶' ? btnSelectedDiffBlue : btnNormalDiff}`}
           >
             进阶
           </button>
           <button
-            onClick={() => setSelectedDifficulty('精通')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              selectedDifficulty === '精通'
-                ? (isDark ? 'border-2 border-cyber-gold text-cyber-gold' : 'border-2 border-yellow-500 text-yellow-600')
-                : (isDark ? 'bg-cyber-purple/40 text-gray-300' : 'bg-gray-200 text-gray-600')
-            }`}
+            onClick={() => handleDifficultyChange('精通')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedDifficulty === '精通' ? btnSelectedDiffGold : btnNormalDiff}`}
           >
             精通
           </button>
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div ref={listRef} className="flex items-center justify-between">
         <h2 className={`text-lg font-medium ${textColor}`}>
           {categoryNames[selectedCategory] || '全部资源'}
         </h2>
@@ -267,14 +293,15 @@ export const ResourceLibrary: React.FC = () => {
       </div>
 
       <motion.div
+        key={`list-${filterVersion}`}
         className="space-y-4"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {filteredResources.map((resource) => (
-          <motion.div key={resource.id} variants={itemVariants}>
-            <Card className={`hover:${isDark ? 'border-cyber-green/30' : 'border-green-400'} transition-all ${bgCard} ${borderColor}`}>
+          <motion.div key={`${resource.id}-${filterVersion}`} variants={itemVariants}>
+            <Card className={`hover:border-cyber-green/30 transition-all ${bgCard} ${borderColor}`}>
               <div className="flex flex-col md:flex-row md:items-start gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
@@ -284,7 +311,7 @@ export const ResourceLibrary: React.FC = () => {
                     <span className={`text-sm ${textColorMuted}`}>{categoryNames[resource.category]}</span>
                   </div>
 
-                  <h3 className={`text-lg font-medium mb-2 hover:${isDark ? 'text-cyber-green' : 'text-green-600'} transition-colors cursor-pointer ${textColor}`}
+                  <h3 className={`text-lg font-medium mb-2 hover:text-cyber-green transition-colors cursor-pointer ${textColor}`}
                       onClick={() => navigate(`/resources/${resource.id}`)}>
                     {resource.title}
                   </h3>
@@ -335,6 +362,10 @@ export const ResourceLibrary: React.FC = () => {
         <div className={`text-center py-12 ${textColorMuted}`}>
           <BookOpen size={48} className="mx-auto mb-4 opacity-30" />
           <p>暂无匹配的资源</p>
+          <Button onClick={handleResetFilter} variant="outline" className="mt-4">
+            <RefreshCw size={16} />
+            重置筛选
+          </Button>
         </div>
       )}
     </div>

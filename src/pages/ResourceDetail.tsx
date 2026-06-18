@@ -33,11 +33,22 @@ export const ResourceDetail: React.FC = () => {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(true);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [toast, setToast] = useState<string>('');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     setIsDark(savedTheme !== 'light');
+    try {
+      const saved = localStorage.getItem('cisp_favorites');
+      if (saved) setFavorites(new Set(JSON.parse(saved)));
+    } catch {}
   }, []);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 2000);
+  };
 
   const toggleTheme = () => {
     const newIsDark = !isDark;
@@ -50,16 +61,49 @@ export const ResourceDetail: React.FC = () => {
     }
   };
 
+  const toggleFavorite = (id: string) => {
+    setFavorites(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        showToast('已取消收藏');
+      } else {
+        next.add(id);
+        showToast('已加入收藏');
+      }
+      localStorage.setItem('cisp_favorites', JSON.stringify([...next]));
+      return next;
+    });
+  };
+
+  const handleShare = () => {
+    if (!resource) return;
+    const shareUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => showToast('链接已复制到剪贴板'))
+      .catch(() => showToast('复制失败'));
+  };
+
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       if (!resourceId) return;
 
-      const foundResource = await getResourceById(resourceId);
-      if (foundResource) {
-        setResource(foundResource);
-        const markdownContent = await loadMarkdownContent(foundResource.contentPath);
-        setContent(markdownContent);
+      try {
+        const foundResource = await getResourceById(resourceId);
+        if (foundResource) {
+          setResource(foundResource);
+          try {
+            const markdownContent = await loadMarkdownContent(foundResource.contentPath);
+            setContent(markdownContent);
+          } catch {
+            setContent(`# 文件不存在\n\n> 资源内容文件 **${foundResource.contentPath}** 未找到。\n\n可能原因：\n- 内容文件尚未上传\n- 文件路径配置错误\n\n请联系管理员补充内容。`);
+          }
+        } else {
+          setResource(null);
+        }
+      } catch {
+        setResource(null);
       }
       setLoading(false);
     }
@@ -90,7 +134,12 @@ export const ResourceDetail: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {toast && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-lg bg-cyber-green text-cyber-black font-medium shadow-lg shadow-cyber-green/30 animate-pulse">
+          {toast}
+        </div>
+      )}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -166,11 +215,15 @@ export const ResourceDetail: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Button variant="outline" className="gap-2">
+              <Button
+                variant={favorites.has(resource.id) ? 'primary' : 'outline'}
+                className="gap-2"
+                onClick={() => toggleFavorite(resource.id)}
+              >
                 <Bookmark size={16} />
-                收藏
+                {favorites.has(resource.id) ? '❤️ 已收藏' : '收藏'}
               </Button>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2" onClick={handleShare}>
                 <Share2 size={16} />
                 分享
               </Button>

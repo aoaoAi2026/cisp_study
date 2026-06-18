@@ -1,4 +1,4 @@
-import { Resource } from '../types/resource';
+import { Resource, categoryNames } from '../types/resource';
 
 export const allResources: Resource[] = [
   {
@@ -4907,7 +4907,7 @@ export function getCategories(): { key: string; name: string; count: number }[] 
   });
   return Array.from(countMap.entries()).map(([key, count]) => ({
     key,
-    name: key,
+    name: categoryNames[key] || key,
     count,
   }));
 }
@@ -4925,7 +4925,8 @@ export function getStats(): { total: number; categories: number; difficulty: Rec
 
 /** 根据 contentPath 加载 Markdown 内容 */
 export async function loadMarkdownContent(contentPath: string): Promise<string> {
-  const response = await fetch(`/contents/${contentPath}`);
+  // contentPath 已包含完整路径如 "contents/penetration/001-web-pentest-flow.md"
+  const response = await fetch(`/${contentPath}`);
   if (!response.ok) {
     throw new Error(`Failed to load content: ${contentPath}`);
   }
