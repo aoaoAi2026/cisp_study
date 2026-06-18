@@ -6,6 +6,7 @@ import {
   Minimize2, AlertTriangle, Info, PanelLeftClose, PanelLeftOpen,
   BookOpen, X, Keyboard, FileDown, Eraser, Brush,
   Shield, Gauge, GitCompare, Save, FolderOpen, Plus, Columns2,
+  Wifi, WifiOff
 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 
@@ -16,6 +17,7 @@ import { SecurityAudit } from './CodeRunner/SecurityAudit';
 import { PerfBenchmark } from './CodeRunner/PerfBenchmark';
 import { ExecutionHistoryPanel } from './CodeRunner/ExecutionHistory';
 import { CodeSnippetsPanel } from './CodeRunner/CodeSnippets';
+import { useFrontendExecutor } from '../hooks/useFrontendExecutor';
 
 // ───── 主组件 ─────
 export const CodeRunner: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
@@ -131,7 +133,11 @@ export const CodeRunner: React.FC<{ embedded?: boolean }> = ({ embedded = false 
   const pendingSnippetRef = useRef<Snippet | null>(null);
 
   // ── 加载运行时 ──
+  // 使用前端执行器（Pyodide）支持离线/打包后运行
+  const frontendExecutor = useFrontendExecutor();
+
   useEffect(() => {
+    // 优先尝试从后端加载运行时
     fetch(`${API_BASE}/runtimes`)
       .then(r => r.json())
       .then(data => {
@@ -150,9 +156,21 @@ export const CodeRunner: React.FC<{ embedded?: boolean }> = ({ embedded = false 
           });
         }
       })
-      .catch(err => setRuntimesError('无法获取运行环境: ' + err.message))
+      .catch(() => {
+        // 后端不可用时使用前端运行时
+        console.log('后端运行时不可用，使用前端执行器（Pyodide）');
+      })
       .finally(() => setRuntimesLoading(false));
-  }, [persistTabs]);
+
+    // 如果后端没有运行时，使用前端的
+    const timer = setTimeout(() => {
+      if (runtimes.length === 0 && frontendExecutor.runtimes.length > 0) {
+        setRuntimes(frontendExecutor.runtimes as any);
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [persistTabs, frontendExecutor.runtimes]);
 
   // ── 快捷键 ──
   const runCodeRef = useRef<() => void>(() => {});
@@ -180,6 +198,53 @@ export const CodeRunner: React.FC<{ embedded?: boolean }> = ({ embedded = false 
     updateActiveTab({ result: null });
 
     const start = Date.now();
+    
+    // 检查是否使用前端执行（python/javascript 且后端不可用时）
+    const useFrontend = frontendExecutor.isSupported(currentLang) && runtimesError;
+    
+    if (useFrontend) {
+      // 使用前端执行器（Pyodide）
+      try {
+        const result = await frontendExecutor.execute(currentLang, currentCode, currentStdin || undefined);
+        updateActiveTab({ result });
+        setHistory(prev => {
+          const entry: HistoryEntry = {
+            id: Date.now().toString(36), language: currentLang, code: currentCode,
+            stdin: currentStdin || undefined, args: currentArgs || undefined,
+            result, timestamp: Date.now(),
+          };
+          const trimmed = [entry, ...prev].slice(0, 50);
+          try { localStorage.setItem('coderunner_history', JSON.stringify(trimmed)); } catch (_) {}
+          return trimmed;
+        });
+
+        // 错误行标注
+        if (!result.success && result.stderr) {
+          const errLines = parseErrorLines(result.stderr);
+          if (errLines.length && editorRef.current) {
+            const d = errLines.map(lineNum => ({
+              range: new (window as any).monaco.Range(lineNum, 1, lineNum, 1),
+              options: {
+                isWholeLine: true,
+                glyphMarginClassName: 'error-glyph',
+                glyphMarginHoverMessage: { value: `第 ${lineNum} 行编译/运行错误` },
+                className: 'error-line-highlight',
+              },
+            }));
+            decorationsRef.current = editorRef.current.deltaDecorations(decorationsRef.current, d);
+          }
+        }
+      } catch (err: any) {
+        updateActiveTab({
+          result: { success: false, language: currentLang, stdout: '', stderr: `前端执行错误: ${err.message}`, exitCode: 1, executionTime: Date.now() - start },
+        });
+      } finally {
+        setIsRunning(false);
+      }
+      return;
+    }
+
+    // 使用后端 API 执行
     try {
       const res = await fetch(`${API_BASE}`, {
         method: 'POST',
@@ -220,14 +285,51 @@ export const CodeRunner: React.FC<{ embedded?: boolean }> = ({ embedded = false 
 
       setTimeout(() => outputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     } catch (err: any) {
-      updateActiveTab({
-        result: { success: false, language: currentLang, stdout: '', stderr: `网络错误: ${err.message}`, exitCode: 1, executionTime: Date.now() - start },
-      });
+      // 后端API失败时，尝试使用前端执行器
+      if (frontendExecutor.isSupported(currentLang)) {
+        try {
+          const result = await frontendExecutor.execute(currentLang, currentCode, currentStdin || undefined);
+          updateActiveTab({ result });
+          setHistory(prev => {
+            const entry: HistoryEntry = {
+              id: Date.now().toString(36), language: currentLang, code: currentCode,
+              stdin: currentStdin || undefined, args: currentArgs || undefined,
+              result, timestamp: Date.now(),
+            };
+            const trimmed = [entry, ...prev].slice(0, 50);
+            try { localStorage.setItem('coderunner_history', JSON.stringify(trimmed)); } catch (_) {}
+            return trimmed;
+          });
+          if (!result.success && result.stderr) {
+            const errLines = parseErrorLines(result.stderr);
+            if (errLines.length && editorRef.current) {
+              const d = errLines.map(lineNum => ({
+                range: new (window as any).monaco.Range(lineNum, 1, lineNum, 1),
+                options: {
+                  isWholeLine: true,
+                  glyphMarginClassName: 'error-glyph',
+                  glyphMarginHoverMessage: { value: `第 ${lineNum} 行编译/运行错误` },
+                  className: 'error-line-highlight',
+                },
+              }));
+              decorationsRef.current = editorRef.current.deltaDecorations(decorationsRef.current, d);
+            }
+          }
+        } catch (frontendErr: any) {
+          updateActiveTab({
+            result: { success: false, language: currentLang, stdout: '', stderr: `前端执行也失败了: ${frontendErr.message}`, exitCode: 1, executionTime: Date.now() - start },
+          });
+        }
+      } else {
+        updateActiveTab({
+          result: { success: false, language: currentLang, stdout: '', stderr: `网络错误: ${err.message}`, exitCode: 1, executionTime: Date.now() - start },
+        });
+      }
     } finally {
       setIsRunning(false);
       execIdRef.current = null;
     }
-  }, [isRunning, updateActiveTab]);
+  }, [isRunning, updateActiveTab, frontendExecutor]);
   runCodeRef.current = runCode;
 
   // ── 停止执行 ──
