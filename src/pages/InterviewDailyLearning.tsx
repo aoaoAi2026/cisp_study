@@ -444,7 +444,7 @@ export const InterviewDailyLearning: React.FC = () => {
             </button>
           </div>
           {showStats && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {/* XP Bar */}
               <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
                 <Zap size={20} className="mx-auto mb-1 text-cyber-gold" />

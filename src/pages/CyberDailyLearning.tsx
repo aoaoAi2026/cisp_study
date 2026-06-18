@@ -781,9 +781,9 @@ export const CyberDailyLearning: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       {/* Header */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between">
+      <motion.div variants={itemVariants} className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/cyber-learning')}
@@ -792,7 +792,7 @@ export const CyberDailyLearning: React.FC = () => {
             <ArrowLeft size={20} className="text-gray-400" />
           </button>
           <div>
-            <div className="flex items-center gap-3 mb-1">
+            <div className="flex items-center gap-3 mb-1 flex-wrap">
               <span className={`font-orbitron text-xl font-bold ${color.main}`}>
                 {plan.icon} {plan.name}
               </span>
@@ -886,7 +886,7 @@ export const CyberDailyLearning: React.FC = () => {
             </button>
           </div>
           {showStats && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {/* XP Bar */}
               <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
                 <Zap size={20} className="mx-auto mb-1 text-cyber-gold" />
