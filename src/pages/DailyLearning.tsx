@@ -328,7 +328,7 @@ export const DailyLearning: React.FC = () => {
             </div>
             {showStats && (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                   <div className="bg-cyber-blue/10 rounded-lg p-3 text-center">
                     <div className="text-xs text-gray-400 mb-1">经验值</div>
                     <div className="text-lg font-bold text-cyber-blue">{xp}</div>
