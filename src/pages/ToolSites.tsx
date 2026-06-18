@@ -13,7 +13,11 @@ import {
   ChevronDown,
   ChevronRight,
   Star,
-  Lightbulb
+  Lightbulb,
+  CheckCircle,
+  XCircle,
+  Download,
+  Terminal
 } from 'lucide-react';
 import { Card } from '../components/UI';
 import { toolSites } from '../data/toolSites';
@@ -40,7 +44,27 @@ export const ToolSites: React.FC = () => {
       '等保测评': <Shield size={18} />,
       '渗透靶场': <Target size={18} />,
       '常用工具网站': <Wrench size={18} />,
-      '情报搜索引擎': <Search size={18} />
+      '情报搜索引擎': <Search size={18} />,
+      '本地安全工具': <Wrench size={18} />,
+      '代码审计与开发安全': <BookOpen size={18} />,
+      '威胁情报平台': <Shield size={18} />,
+      '在线沙箱与分析': <Target size={18} />,
+      '安全工具下载': <Wrench size={18} />,
+      'AI安全项目': <BookOpen size={18} />,
+      'GitHub安全项目': <Folder size={18} />,
+      '漏洞情报平台': <Shield size={18} />,
+      '安全认证培训': <BookOpen size={18} />,
+      '安全会议活动': <Folder size={18} />,
+      '安全博客资源': <BookOpen size={18} />,
+      '逆向工程资源': <Folder size={18} />,
+      '移动安全资源': <Folder size={18} />,
+      '云安全资源': <Folder size={18} />,
+      '漏洞复现环境': <Target size={18} />,
+      '安全开发指南': <BookOpen size={18} />,
+      '密码学资源': <Folder size={18} />,
+      '社工库资源': <Search size={18} />,
+      '网络安全论坛': <Folder size={18} />,
+      '安全公众号': <Folder size={18} />,
     };
     return iconMap[category] || <Folder size={18} />;
   };
@@ -168,8 +192,19 @@ export const ToolSites: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <span className="text-3xl">{site.icon}</span>
                         <div>
-                          <h3 className="font-semibold text-white">
+                          <h3 className="font-semibold text-white flex items-center gap-2">
                             {site.name}
+                            {site.installed !== undefined && (
+                              site.installed ? (
+                                <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-cyber-green/20 text-cyber-green">
+                                  <CheckCircle size={12} /> 已安装
+                                </span>
+                              ) : (
+                                <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-cyber-red/20 text-cyber-red">
+                                  <XCircle size={12} /> 未安装
+                                </span>
+                              )
+                            )}
                           </h3>
                         </div>
                       </div>
@@ -247,6 +282,30 @@ export const ToolSites: React.FC = () => {
                               {site.tips}
                             </p>
                           </div>
+
+                          {site.installCmd && (
+                            <div className="pt-3 border-t border-cyber-green/10">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Download size={14} className="text-cyber-blue" />
+                                <span className="text-sm font-medium text-cyber-blue">安装方式</span>
+                              </div>
+                              <div className="pl-6 p-2 rounded bg-cyber-black/50 border border-cyber-blue/20 text-xs text-gray-300 font-mono">
+                                {site.installCmd}
+                              </div>
+                            </div>
+                          )}
+
+                          {site.checkCmd && (
+                            <div className="pt-2">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Terminal size={14} className="text-cyber-gold" />
+                                <span className="text-sm font-medium text-cyber-gold">检测命令</span>
+                              </div>
+                              <div className="pl-6 p-2 rounded bg-cyber-black/50 border border-cyber-gold/20 text-xs text-gray-300 font-mono">
+                                {site.checkCmd}
+                              </div>
+                            </div>
+                          )}
 
                           <div className="pt-3 border-t border-cyber-green/10">
                             <a

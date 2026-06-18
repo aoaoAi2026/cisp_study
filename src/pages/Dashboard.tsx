@@ -19,6 +19,15 @@ import {
   Award,
   MessageSquare,
   Library,
+  Terminal,
+  FileText,
+  ClipboardList,
+  Bug,
+  Wrench,
+  GraduationCap,
+  Network,
+  Lock,
+  Cpu,
 } from 'lucide-react';
 import { useUserStore, useLearningStore, useAchievementStore, getLevel } from '../store';
 import { learningData, weekThemes } from '../data/learningData';
@@ -375,22 +384,22 @@ export const Dashboard: React.FC = () => {
         {/* Quick Actions */}
         <motion.div variants={itemVariants}>
           <h2 className="font-orbitron text-lg text-cyber-green mb-4">快捷入口</h2>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+          <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
             <Card
               className="text-center cursor-pointer group"
               onClick={() => navigate('/cyber-learning')}
               glow
             >
-              <BookOpen size={28} className="mx-auto mb-2 text-cyber-green group-hover:scale-110 transition-transform" />
+              <BookOpen size={24} className="mx-auto mb-1 text-cyber-green group-hover:scale-110 transition-transform" />
               <p className="text-xs font-medium text-white">学习路径</p>
-              <p className="text-[10px] text-gray-500">5大专项</p>
+              <p className="text-[10px] text-gray-500">6大专项</p>
             </Card>
             <Card
               className="text-center cursor-pointer group"
               onClick={() => navigate('/interview-learning')}
               glow
             >
-              <MessageSquare size={28} className="mx-auto mb-2 text-cyber-gold group-hover:scale-110 transition-transform" />
+              <MessageSquare size={24} className="mx-auto mb-1 text-cyber-gold group-hover:scale-110 transition-transform" />
               <p className="text-xs font-medium text-white">面试突击</p>
               <p className="text-[10px] text-gray-500">5大方向</p>
             </Card>
@@ -399,16 +408,43 @@ export const Dashboard: React.FC = () => {
               onClick={() => navigate('/lab')}
               glow
             >
-              <Code size={28} className="mx-auto mb-2 text-cyber-blue group-hover:scale-110 transition-transform" />
+              <Code size={24} className="mx-auto mb-1 text-cyber-blue group-hover:scale-110 transition-transform" />
               <p className="text-xs font-medium text-white">代码实验室</p>
               <p className="text-[10px] text-gray-500">安全实验</p>
+            </Card>
+            <Card
+              className="text-center cursor-pointer group"
+              onClick={() => navigate('/lab/code-runner')}
+              glow
+            >
+              <Terminal size={24} className="mx-auto mb-1 text-cyber-purple group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">代码运行</p>
+              <p className="text-[10px] text-gray-500">在线执行</p>
+            </Card>
+            <Card
+              className="text-center cursor-pointer group"
+              onClick={() => navigate('/online-tools')}
+              glow
+            >
+              <Wrench size={24} className="mx-auto mb-1 text-orange-400 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">在线工具</p>
+              <p className="text-[10px] text-gray-500">编码解码</p>
+            </Card>
+            <Card
+              className="text-center cursor-pointer group"
+              onClick={() => navigate('/question-bank')}
+              glow
+            >
+              <FileText size={24} className="mx-auto mb-1 text-cyber-cyan group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">题库中心</p>
+              <p className="text-[10px] text-gray-500">真题+错题</p>
             </Card>
             <Card
               className="text-center cursor-pointer group"
               onClick={() => navigate('/question-bank/quiz')}
               glow
             >
-              <FileQuestion size={28} className="mx-auto mb-2 text-cyber-gold group-hover:scale-110 transition-transform" />
+              <FileQuestion size={24} className="mx-auto mb-1 text-cyber-gold group-hover:scale-110 transition-transform" />
               <p className="text-xs font-medium text-white">测验中心</p>
               <p className="text-[10px] text-gray-500">章节测验</p>
             </Card>
@@ -417,18 +453,95 @@ export const Dashboard: React.FC = () => {
               onClick={() => navigate('/resources')}
               glow
             >
-              <Library size={28} className="mx-auto mb-2 text-purple-400 group-hover:scale-110 transition-transform" />
+              <Library size={24} className="mx-auto mb-1 text-purple-400 group-hover:scale-110 transition-transform" />
               <p className="text-xs font-medium text-white">资源库</p>
               <p className="text-[10px] text-gray-500">文档工具</p>
             </Card>
-            <Card
-              className="text-center cursor-pointer group"
-              onClick={() => navigate('/community')}
-              glow
-            >
-              <Users size={28} className="mx-auto mb-2 text-cyber-red group-hover:scale-110 transition-transform" />
-              <p className="text-xs font-medium text-white">社区交流</p>
-              <p className="text-[10px] text-gray-500">学习笔记</p>
+          </div>
+        </motion.div>
+
+        {/* 功能模块概览 */}
+        <motion.div variants={itemVariants}>
+          <h2 className="font-orbitron text-lg text-cyber-green mb-4">功能模块</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="p-4 bg-gradient-to-br from-cyber-green/10 to-transparent border-cyber-green/20">
+              <div className="flex items-center gap-3 mb-3">
+                <GraduationCap size={28} className="text-cyber-green" />
+                <div>
+                  <h3 className="font-medium text-white">学习系统</h3>
+                  <p className="text-xs text-gray-400">6大专项学习路径</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">CISP备考</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">基础入门</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">渗透测试</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">防御运营</span>
+                <span className="text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-400">AI安全</span>
+                <span className="text-xs px-2 py-1 rounded bg-orange-500/20 text-orange-400">护网行动</span>
+              </div>
+              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => navigate('/cyber-learning')}>
+                开始学习
+              </Button>
+            </Card>
+
+            <Card className="p-4 bg-gradient-to-br from-cyber-blue/10 to-transparent border-cyber-blue/20">
+              <div className="flex items-center gap-3 mb-3">
+                <Terminal size={28} className="text-cyber-blue" />
+                <div>
+                  <h3 className="font-medium text-white">实验平台</h3>
+                  <p className="text-xs text-gray-400">在线安全实验环境</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">XSS沙箱</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">SQL注入</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">CTF挑战</span>
+                <span className="text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-400">密码破解</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">代码审计</span>
+              </div>
+              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => navigate('/lab')}>
+                进入实验室
+              </Button>
+            </Card>
+
+            <Card className="p-4 bg-gradient-to-br from-cyber-gold/10 to-transparent border-cyber-gold/20">
+              <div className="flex items-center gap-3 mb-3">
+                <FileText size={28} className="text-cyber-gold" />
+                <div>
+                  <h3 className="font-medium text-white">题库系统</h3>
+                  <p className="text-xs text-gray-400">真题+错题+测验</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">历年真题</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">错题本</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">章节测验</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">模拟考试</span>
+              </div>
+              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => navigate('/question-bank')}>
+                进入题库
+              </Button>
+            </Card>
+
+            <Card className="p-4 bg-gradient-to-br from-purple-500/10 to-transparent border-purple-500/20">
+              <div className="flex items-center gap-3 mb-3">
+                <Wrench size={28} className="text-purple-400" />
+                <div>
+                  <h3 className="font-medium text-white">工具资源</h3>
+                  <p className="text-xs text-gray-400">安全工具+文档资料</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">Nmap</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">Burp</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">MSF</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">Wireshark</span>
+                <span className="text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-400">IDA</span>
+              </div>
+              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => navigate('/resources')}>
+                查看资源
+              </Button>
             </Card>
           </div>
         </motion.div>
@@ -472,19 +585,43 @@ export const Dashboard: React.FC = () => {
         {/* 专项学习计划 */}
         <motion.div variants={itemVariants}>
           <h2 className="font-orbitron text-lg text-cyber-green mb-4">专项学习计划</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             {[
-              { id: 'cisp', name: 'CISP备考', desc: '90天', color: '#00ff88', icon: '📚' },
-              { id: 'basic', name: '基础入门', desc: '30天', color: '#00d4ff', icon: '🔰' },
-              { id: 'penetration', name: '渗透测试', desc: '30天', color: '#ff6b6b', icon: '🎯' },
-              { id: 'defense', name: '防御运营', desc: '30天', color: '#ffd700', icon: '🛡️' },
-              { id: 'ai', name: 'AI安全', desc: '168天', color: '#a855f7', icon: '🤖' },
-              { id: 'hw', name: '护网行动', desc: '120天', color: '#f97316', icon: '🔴' },
+              { id: 'cisp', name: 'CISP备考', desc: '90天', color: '#00ff88', icon: '📚', path: '/cyber-learning' },
+              { id: 'basic', name: '基础入门', desc: '30天', color: '#00d4ff', icon: '🔰', path: '/cyber-learning/basic' },
+              { id: 'penetration', name: '渗透测试', desc: '30天', color: '#ff6b6b', icon: '🎯', path: '/cyber-learning/penetration' },
+              { id: 'defense', name: '防御运营', desc: '30天', color: '#ffd700', icon: '🛡️', path: '/cyber-learning/defense' },
+              { id: 'ai', name: 'AI安全', desc: '168天', color: '#a855f7', icon: '🤖', path: '/cyber-learning/ai' },
+              { id: 'hw', name: '护网行动', desc: '120天', color: '#f97316', icon: '🔴', path: '/cyber-learning/hw' },
             ].map((plan) => (
               <Card
                 key={plan.id}
                 className="text-center cursor-pointer group transition-all hover:scale-[1.02]"
-                onClick={() => navigate(plan.id === 'cisp' ? '/cyber-learning' : `/cyber-learning/${plan.id}`)}
+                onClick={() => navigate(plan.path)}
+              >
+                <span className="text-2xl block mb-1">{plan.icon}</span>
+                <p className="text-xs font-medium text-white">{plan.name}</p>
+                <p className="text-[10px] text-gray-500">{plan.desc}</p>
+              </Card>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 面试突击计划 */}
+        <motion.div variants={itemVariants}>
+          <h2 className="font-orbitron text-lg text-cyber-gold mb-4">面试突击计划</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[
+              { id: 'interview-cisp', name: 'CISP面试', desc: '45天', color: '#00ff88', icon: '💼', path: '/interview-learning/cisp' },
+              { id: 'interview-basic', name: '基础面试', desc: '45天', color: '#00d4ff', icon: '📝', path: '/interview-learning/basic' },
+              { id: 'interview-pen', name: '渗透面试', desc: '45天', color: '#ff6b6b', icon: '🔍', path: '/interview-learning/penetration' },
+              { id: 'interview-def', name: '防御面试', desc: '45天', color: '#ffd700', icon: '🔒', path: '/interview-learning/defense' },
+              { id: 'interview-hw', name: '护网面试', desc: '45天', color: '#f97316', icon: '🚨', path: '/interview-learning/hw' },
+            ].map((plan) => (
+              <Card
+                key={plan.id}
+                className="text-center cursor-pointer group transition-all hover:scale-[1.02] bg-gradient-to-br from-cyber-gold/5 to-transparent border-cyber-gold/20"
+                onClick={() => navigate(plan.path)}
               >
                 <span className="text-2xl block mb-1">{plan.icon}</span>
                 <p className="text-xs font-medium text-white">{plan.name}</p>

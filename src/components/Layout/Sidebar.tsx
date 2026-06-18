@@ -13,6 +13,7 @@ import {
   Server,
   Globe,
   Library,
+  Wrench,
 } from 'lucide-react';
 import { SearchBox } from './SearchBox';
 
@@ -32,7 +33,8 @@ const navItems = [
   { path: '/study-tips', icon: Lightbulb, label: '学习技巧' },
   { path: '/lab', icon: Code, label: '代码实验室' },
   { path: '/lab/environment', icon: Server, label: '实验环境' },
-  { path: '/tool-sites', icon: Globe, label: '工具网站' },
+  { path: '/tool-sites', icon: Globe, label: '🔗 工具网站' },
+  { path: '/online-tools', icon: Wrench, label: '🔧 在线工具' },
   { path: '/achievements', icon: Award, label: '成就系统' },
   { path: '/community', icon: Users, label: '社区交流' },
   { path: '/profile', icon: User, label: '个人中心' },

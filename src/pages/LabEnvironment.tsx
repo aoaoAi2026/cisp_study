@@ -4,7 +4,7 @@ import {
   Bug, Database, Flag, Key, Wrench, Globe, FileCode,
   Globe2, Shield, FileSearch, Brain,
   Zap, Target, TrendingUp, BookOpen, ArrowRight, Star,
-  AlertTriangle, Cpu
+  AlertTriangle, Cpu, Info, Lightbulb, Code2, ExternalLink, Bookmark
 } from 'lucide-react';
 import { XSSSandbox } from './LabEnvironment/XSSSandbox';
 import { SQLInjectionLab } from './LabEnvironment/SQLInjectionLab';
@@ -18,7 +18,10 @@ import { WAFRulesBuilder } from './LabEnvironment/WAFRulesBuilder';
 import { LogAnalysis } from './LabEnvironment/LogAnalysis';
 import { LogicVulnerabilities } from './LabEnvironment/LogicVulnerabilities';
 import { LAB_MODULES } from './LabEnvironment/modules';
+import { MODULE_KNOWLEDGE } from './LabEnvironment/moduleKnowledge';
+import type { ModuleKnowledge } from './LabEnvironment/types';
 
+// ===== Helpers =====
 const CATEGORY_MAP: Record<string, { name: string; icon: React.ReactNode; desc: string }> = {
   web:    { name: 'Web安全',   icon: React.createElement(Globe, { size: 16 }),   desc: 'XSS、SQL注入、逻辑漏洞等Web应用安全实验' },
   crypto: { name: '密码学',    icon: React.createElement(Key, { size: 16 }),     desc: '加解密算法、编码转换、Hash计算与破解' },
@@ -49,9 +52,142 @@ const LEARNING_PATH = [
   { step: 5, title: '综合挑战', modules: ['ctf'], desc: '通过CTF竞赛检验综合实战能力' },
 ];
 
+// ===== Knowledge Sidebar =====
+const KnowledgePanel: React.FC<{ knowledge: ModuleKnowledge; moduleColor: string }> = ({ knowledge, moduleColor }) => (
+  <aside className="space-y-4 lg:sticky lg:top-4">
+    {/* 攻击原理 */}
+    <div className="rounded-xl border border-cyber-purple/20 bg-cyber-purple/5 p-4">
+      <h3 className="flex items-center gap-2 text-sm font-semibold mb-3" style={{ color: moduleColor }}>
+        <Info size={16} /> 攻击原理
+      </h3>
+      <p className="text-xs text-gray-400 leading-relaxed">{knowledge.theory}</p>
+    </div>
+
+    {/* 常见攻击向量 */}
+    <div className="rounded-xl border border-cyber-purple/20 bg-cyber-purple/5 p-4">
+      <h3 className="flex items-center gap-2 text-sm font-semibold mb-3" style={{ color: moduleColor }}>
+        <Bug size={16} /> 常见攻击向量
+      </h3>
+      <div className="space-y-2">
+        {knowledge.vectors.map((v, i) => (
+          <div key={i} className="text-xs text-gray-400 bg-cyber-black/30 rounded-lg p-2 border border-gray-700/50 font-mono leading-relaxed">
+            {v}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* 防御策略 */}
+    <div className="rounded-xl border border-cyber-purple/20 bg-cyber-purple/5 p-4">
+      <h3 className="flex items-center gap-2 text-sm font-semibold mb-3" style={{ color: moduleColor }}>
+        <Shield size={16} /> 防御策略
+      </h3>
+      <ul className="space-y-1.5">
+        {knowledge.defenses.map((d, i) => (
+          <li key={i} className="text-xs text-gray-400 flex items-start gap-2">
+            <span className="text-green-400 mt-0.5 flex-shrink-0">✓</span>
+            <span>{d}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {/* CISP考点 */}
+    {knowledge.cispPoints.length > 0 && (
+      <div className="rounded-xl border border-cyber-purple/20 bg-cyber-purple/5 p-4">
+        <h3 className="flex items-center gap-2 text-sm font-semibold mb-3" style={{ color: moduleColor }}>
+          <Bookmark size={16} /> CISP 考点
+        </h3>
+        <ul className="space-y-1.5">
+          {knowledge.cispPoints.map((p, i) => (
+            <li key={i} className="text-xs text-gray-400 flex items-start gap-2">
+              <span className="text-cyber-green mt-0.5 flex-shrink-0">●</span>
+              <span>{p}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {/* 相关CVE */}
+    {knowledge.cves.length > 0 && (
+      <div className="rounded-xl border border-cyber-purple/20 bg-cyber-purple/5 p-4">
+        <h3 className="flex items-center gap-2 text-sm font-semibold mb-3" style={{ color: moduleColor }}>
+          <AlertTriangle size={16} /> 相关 CVE
+        </h3>
+        <div className="space-y-1.5">
+          {knowledge.cves.map((cve, i) => (
+            <div key={i} className="text-xs text-gray-400 bg-cyber-black/30 rounded-lg p-2 border border-gray-700/50 font-mono">
+              {cve}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* 推荐工具 */}
+    {knowledge.tools.length > 0 && (
+      <div className="rounded-xl border border-cyber-purple/20 bg-cyber-purple/5 p-4">
+        <h3 className="flex items-center gap-2 text-sm font-semibold mb-3" style={{ color: moduleColor }}>
+          <Wrench size={16} /> 推荐工具
+        </h3>
+        <div className="flex flex-wrap gap-1.5">
+          {knowledge.tools.map((t, i) => (
+            <span key={i} className="text-xs px-2 py-1 rounded-md bg-cyber-black/30 border border-gray-700/50 text-gray-400 font-mono">
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    )}
+  </aside>
+);
+
+// ===== Module Knowledge Banners (compact inline version) =====
+const ModuleKnowledgeBar: React.FC<{ knowledge: ModuleKnowledge; moduleColor: string }> = ({ knowledge, moduleColor }) => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="bg-cyber-purple/5 border border-cyber-purple/10 rounded-xl p-3">
+      <div className="flex items-center gap-2 mb-2">
+        <Lightbulb size={14} style={{ color: moduleColor }} />
+        <span className="text-xs font-medium text-gray-300">核心原理</span>
+      </div>
+      <p className="text-[11px] text-gray-500 line-clamp-3 leading-relaxed">{knowledge.theory.substring(0, 120)}...</p>
+    </div>
+    <div className="bg-cyber-purple/5 border border-cyber-purple/10 rounded-xl p-3">
+      <div className="flex items-center gap-2 mb-2">
+        <Bug size={14} style={{ color: moduleColor }} />
+        <span className="text-xs font-medium text-gray-300">攻击向量</span>
+      </div>
+      <p className="text-[11px] text-gray-500">{knowledge.vectors.length} 种攻击方式</p>
+      <p className="text-[11px] text-gray-600 mt-1 truncate">{knowledge.vectors[0]}</p>
+    </div>
+    <div className="bg-cyber-purple/5 border border-cyber-purple/10 rounded-xl p-3">
+      <div className="flex items-center gap-2 mb-2">
+        <Shield size={14} style={{ color: moduleColor }} />
+        <span className="text-xs font-medium text-gray-300">防御策略</span>
+      </div>
+      <p className="text-[11px] text-gray-500">{knowledge.defenses.length} 条防御建议</p>
+      <p className="text-[11px] text-gray-600 mt-1 truncate">{knowledge.defenses[0]}</p>
+    </div>
+    <div className="bg-cyber-purple/5 border border-cyber-purple/10 rounded-xl p-3">
+      <div className="flex items-center gap-2 mb-2">
+        <Code2 size={14} style={{ color: moduleColor }} />
+        <span className="text-xs font-medium text-gray-300">推荐工具</span>
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {knowledge.tools.slice(0, 4).map((t, i) => (
+          <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-cyber-black/30 text-gray-500 font-mono">{t}</span>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+// ===== Main Component =====
 export const LabEnvironment: React.FC = () => {
   const [activeModule, setActiveModule] = useState<string>('xss');
   const [activeTab, setActiveTab] = useState<'modules' | 'path'>('modules');
+  const [showKnowledge, setShowKnowledge] = useState(false);
 
   const stats = useMemo(() => {
     const diffCount: Record<string, number> = {};
@@ -65,6 +201,7 @@ export const LabEnvironment: React.FC = () => {
   }, []);
 
   const currentModule = LAB_MODULES.find(m => m.id === activeModule);
+  const currentKnowledge = MODULE_KNOWLEDGE[activeModule];
 
   const renderModule = () => {
     switch (activeModule) {
@@ -101,7 +238,7 @@ export const LabEnvironment: React.FC = () => {
           <p className="text-gray-300 text-sm max-w-3xl leading-relaxed">
             本实验环境提供 <span className="text-cyber-green font-semibold">{stats.total}</span> 个交互式安全实验模块，
             覆盖 <span className="text-cyber-green font-semibold">Web安全、密码学、网络攻防、安全工具</span> 四大领域。
-            每个模块都可以直接上手操作，无需搭建额外环境，在浏览器中即可体验真实攻击与防御场景。
+            每个模块包含完整的攻击→防御知识体系，在浏览器中即可体验真实安全场景。
           </p>
         </div>
       </div>
@@ -146,28 +283,43 @@ export const LabEnvironment: React.FC = () => {
         ))}
       </div>
 
-      {/* ===== Tab Switcher: Modules | Learning Path ===== */}
-      <div className="flex items-center gap-4 border-b border-cyber-purple/20 pb-3">
-        <button
-          onClick={() => setActiveTab('modules')}
-          className={`flex items-center gap-2 text-sm font-medium pb-2 -mb-3 border-b-2 transition ${
-            activeTab === 'modules'
-              ? 'text-cyber-green border-cyber-green'
-              : 'text-gray-500 border-transparent hover:text-gray-300'
-          }`}
-        >
-          <Cpu size={16} /> 全部模块
-        </button>
-        <button
-          onClick={() => setActiveTab('path')}
-          className={`flex items-center gap-2 text-sm font-medium pb-2 -mb-3 border-b-2 transition ${
-            activeTab === 'path'
-              ? 'text-cyber-green border-cyber-green'
-              : 'text-gray-500 border-transparent hover:text-gray-300'
-          }`}
-        >
-          <BookOpen size={16} /> 推荐学习路径
-        </button>
+      {/* ===== Tab Switcher ===== */}
+      <div className="flex items-center justify-between border-b border-cyber-purple/20 pb-3">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setActiveTab('modules')}
+            className={`flex items-center gap-2 text-sm font-medium pb-2 -mb-3 border-b-2 transition ${
+              activeTab === 'modules'
+                ? 'text-cyber-green border-cyber-green'
+                : 'text-gray-500 border-transparent hover:text-gray-300'
+            }`}
+          >
+            <Cpu size={16} /> 全部模块
+          </button>
+          <button
+            onClick={() => setActiveTab('path')}
+            className={`flex items-center gap-2 text-sm font-medium pb-2 -mb-3 border-b-2 transition ${
+              activeTab === 'path'
+                ? 'text-cyber-green border-cyber-green'
+                : 'text-gray-500 border-transparent hover:text-gray-300'
+            }`}
+          >
+            <BookOpen size={16} /> 推荐学习路径
+          </button>
+        </div>
+        {currentModule && (
+          <button
+            onClick={() => setShowKnowledge(!showKnowledge)}
+            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition ${
+              showKnowledge
+                ? 'border-cyber-green/30 bg-cyber-green/10 text-cyber-green'
+                : 'border-cyber-purple/20 text-gray-500 hover:text-gray-300'
+            }`}
+          >
+            <Bookmark size={14} />
+            {showKnowledge ? '隐藏知识面板' : '显示知识面板'}
+          </button>
+        )}
       </div>
 
       {/* ===== Module Grid (Tab 1) ===== */}
@@ -189,7 +341,6 @@ export const LabEnvironment: React.FC = () => {
                   }
                 `}
               >
-                {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"
                   style={{ background: `radial-gradient(circle at center, ${mod.color}10, transparent 70%)` }} />
                 <div className="relative z-10">
@@ -239,7 +390,6 @@ export const LabEnvironment: React.FC = () => {
                 transition={{ delay: idx * 0.1 }}
                 className="flex gap-4"
               >
-                {/* Step number */}
                 <div className="flex flex-col items-center">
                   <div className="w-10 h-10 rounded-full bg-cyber-green/10 border-2 border-cyber-green/30 flex items-center justify-center flex-shrink-0">
                     <span className="font-orbitron text-sm text-cyber-green">{stage.step}</span>
@@ -248,7 +398,6 @@ export const LabEnvironment: React.FC = () => {
                     <div className="w-0.5 flex-1 bg-cyber-green/20 mt-1 mb-1" />
                   )}
                 </div>
-                {/* Content */}
                 <div className="flex-1 pb-4">
                   <h3 className="text-base font-semibold text-white mb-1">{stage.title}</h3>
                   <p className="text-xs text-gray-500 mb-3">{stage.desc}</p>
@@ -282,38 +431,56 @@ export const LabEnvironment: React.FC = () => {
       )}
 
       {/* ===== Active Module Content ===== */}
-      {activeTab === 'modules' && (
+      {activeTab === 'modules' && currentModule && (
         <>
           {/* Current Module Header */}
-          {currentModule && (
-            <div className="flex items-center gap-3 p-4 rounded-xl border"
-              style={{
-                borderColor: currentModule.color + '30',
-                backgroundColor: currentModule.color + '08',
-              }}
-            >
-              <div style={{ color: currentModule.color }}>{currentModule.icon}</div>
-              <div>
-                <h2 className="text-lg font-bold text-white">{currentModule.name}</h2>
-                <p className="text-xs text-gray-400">{currentModule.description}</p>
-              </div>
-              <span className={`ml-auto text-xs px-2 py-1 rounded-full border ${DIFFICULTY_COLORS[currentModule.difficulty] ?? ''}`}>
-                {currentModule.difficulty}
-              </span>
+          <div className="flex items-center gap-3 p-4 rounded-xl border"
+            style={{
+              borderColor: currentModule.color + '30',
+              backgroundColor: currentModule.color + '08',
+            }}
+          >
+            <div style={{ color: currentModule.color }}>{currentModule.icon}</div>
+            <div>
+              <h2 className="text-lg font-bold text-white">{currentModule.name}</h2>
+              <p className="text-xs text-gray-400">{currentModule.description}</p>
             </div>
-          )}
+            <span className={`ml-auto text-xs px-2 py-1 rounded-full border ${DIFFICULTY_COLORS[currentModule.difficulty] ?? ''}`}>
+              {currentModule.difficulty}
+            </span>
+          </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeModule}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
-            >
-              {renderModule()}
-            </motion.div>
-          </AnimatePresence>
+          {/* Knowledge Bar (compact, always visible) */}
+          {currentKnowledge && <ModuleKnowledgeBar knowledge={currentKnowledge} moduleColor={currentModule.color} />}
+
+          {/* Main experiment + Knowledge sidebar */}
+          <div className={`grid gap-6 ${showKnowledge && currentKnowledge ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1'}`}>
+            {/* Experiment area */}
+            <div className={showKnowledge && currentKnowledge ? 'lg:col-span-2' : ''}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeModule}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {renderModule()}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Knowledge sidebar (toggleable) */}
+            {showKnowledge && currentKnowledge && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="lg:col-span-1"
+              >
+                <KnowledgePanel knowledge={currentKnowledge} moduleColor={currentModule.color} />
+              </motion.div>
+            )}
+          </div>
         </>
       )}
 
@@ -323,11 +490,12 @@ export const LabEnvironment: React.FC = () => {
           <BookOpen size={16} className="text-cyber-green" />
           使用指南
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
             { icon: React.createElement(Target, { size: 18 }), title: '选择实验模块', desc: '在上方模块列表或推荐路径中选择感兴趣的实验，点击即可进入交互界面' },
             { icon: React.createElement(Zap, { size: 18 }), title: '动手实操', desc: '每个模块都是可交互的安全实验，输入payload、观察结果，在实操中理解攻击原理' },
             { icon: React.createElement(Shield, { size: 18 }), title: '学习防御', desc: '每个实验都附带防御建议和安全编码最佳实践，攻击与防御并重' },
+            { icon: React.createElement(Bookmark, { size: 18 }), title: '知识面板', desc: '点击「显示知识面板」查看攻击原理、常见向量、防御策略和CISP考点' },
           ].map((item, i) => (
             <div key={i} className="flex gap-3">
               <div className="w-8 h-8 rounded-lg bg-cyber-green/10 border border-cyber-green/20 flex items-center justify-center flex-shrink-0 mt-0.5">

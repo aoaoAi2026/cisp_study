@@ -12,6 +12,7 @@ export { PastPapers } from './PastPapers';
 export { MockExam } from './MockExam';
 export { StudyTips } from './StudyTips';
 export { ToolSites } from './ToolSites';
+export { OnlineTools } from './OnlineTools';
 
 export { CyberLearningMain } from './CyberLearningMain';
 export { CyberDailyLearning } from './CyberDailyLearning';

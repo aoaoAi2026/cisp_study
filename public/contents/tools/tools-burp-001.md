@@ -745,6 +745,264 @@ HTTP 方法切换：   右键 → Change request method
 
 ---
 
+---
+
+## 十五、Collaborator 带外数据（OAST）详解
+
+Collaborator 是 Burp Pro 的独门利器，通过带外（Out-of-Band）通道检测盲漏洞。
+
+### 15.1 工作原理
+
+```
+1. Burp 生成唯一子域名（如 abc123.burpcollaborator.net）
+2. 将 payload 注入目标（如 HTTP Header、DNS 查询）
+3. 如果目标解析/访问了该子域，Burp Collaborator 服务器收到请求
+4. Burp 轮询 Collaborator 服务器，显示交互记录
+5. 根据交互类型判断漏洞（DNS→SSTI、HTTP→SSRF、SMTP→邮件注入）
+```
+
+### 15.2 实战：检测盲 SSRF
+
+```http
+# 原始请求
+POST /api/webhook HTTP/1.1
+Host: target.com
+Content-Type: application/json
+
+{"url": "http://abc123.burpcollaborator.net/test"}
+
+# 如果 Collaborator 收到 HTTP 请求 → 确认 SSRF
+```
+
+```bash
+# 检测盲 XXE
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "http://abc123.burpcollaborator.net/xxe">
+]>
+<root>&xxe;</root>
+```
+
+### 15.3 Collaborator 高级配置
+
+```
+Project Options → Misc → Burp Collaborator Server：
+  - 使用公共服务器（默认）
+  - 或自建私有 Collaborator 服务器（企业内网场景）
+
+# 自建 Collaborator 服务器
+java -jar burpsuite_pro.jar --collaborator-server
+# 配置 DNS：将 *.your-domain.com NS 指向 Collaborator 服务器
+# 在 Burp 中设置：Project Options → Misc → Collaborator → Use private server
+```
+
+---
+
+## 十六、BApp Store 精选扩展
+
+| 插件 | 功能 | 适用场景 |
+|:---|:---|:---|
+| **Turbo Intruder** | HTTP 竞速引擎，百万级并发 | 竞态条件、Token爆破 |
+| **Autorize** | 自动化越权检测 | 水平/垂直越权批量验证 |
+| **ActiveScan++** | 增强主动扫描 | 补充原生扫描规则 |
+| **JWT Editor** | JWT 生成/修改/重放 | API Token 测试 |
+| **Param Miner** | 猜测隐藏参数 | 参数污染、CRLF |
+| **HTTP Request Smuggler** | 请求走私检测 | CL.TE / TE.CL 攻击 |
+| **.NET Beautifier** | VIEWSTATE 解码 | ASP.NET 应用测试 |
+| **Hackvertor** | 编码/反编码标签 | 绕过 WAF |
+| **Reflector** | XSS 反射点扫描 | XSS 发现 |
+| **Logger++** | 增强日志记录 | 流量分析 |
+
+### 16.1 Turbo Intruder 实战
+
+```python
+# Turbo Intruder 脚本示例：并发用户名枚举
+def queueRequests(target, wordlists):
+    engine = RequestEngine(
+        endpoint=target.endpoint,
+        concurrentConnections=20,
+        requestsPerConnection=100,
+        pipeline=True
+    )
+    for word in open('/usr/share/wordlists/usernames.txt'):
+        engine.queue(target.req, word.rstrip())
+
+def handleResponse(req, interesting):
+    if 'incorrect' not in req.response:
+        table.add(req)
+```
+
+---
+
+## 十七、Session Handling 高级规则
+
+### 17.1 自动登录宏
+
+```
+步骤：
+1. Project options → Sessions → Session Handling Rules → Add
+2. Rule Actions → Add → Run a macro
+3. 录制宏：
+   a. 打开 Session Handling Rules → Macros → Add
+   b. 录制登录流程（POST /login → 获取 Cookie/Token → 验证）
+4. 设置触发条件：Session is invalid / 特定 HTTP 响应码
+5. 配置作用域（Scope）
+```
+
+### 17.2 Token 自动刷新
+
+```http
+# 场景：API 使用短期 JWT + Refresh Token
+# 规则配置：
+# 触发条件：HTTP/1.1 401 Unauthorized
+# 执行宏：
+#   1. POST /refresh {refresh_token: xxx}
+#   2. 提取新 access_token
+#   3. 更新当前请求的 Authorization Header
+# 然后重试原请求
+```
+
+---
+
+## 十八、扩展开发入门
+
+### 18.1 Java 扩展基础
+
+```java
+package burp;
+
+public class BurpExtender implements IBurpExtender {
+    @Override
+    public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
+        callbacks.setExtensionName("My First Extension");
+        callbacks.registerHttpListener(new IHttpListener() {
+            @Override
+            public void processHttpMessage(int toolFlag, 
+                    boolean messageIsRequest,
+                    IHttpRequestResponse messageInfo) {
+                // 处理每个 HTTP 消息
+                if (messageIsRequest) {
+                    byte[] request = messageInfo.getRequest();
+                    // 修改请求逻辑
+                }
+            }
+        });
+    }
+}
+```
+
+### 18.2 Python 扩展（Jython）
+
+```python
+from burp import IBurpExtender, IHttpListener
+
+class BurpExtender(IBurpExtender, IHttpListener):
+    def registerExtenderCallbacks(self, callbacks):
+        self._callbacks = callbacks
+        callbacks.setExtensionName("Python Demo Extension")
+        callbacks.registerHttpListener(self)
+    
+    def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
+        if messageIsRequest:
+            request = messageInfo.getRequest()
+            analyzedRequest = self._callbacks.getHelpers().analyzeRequest(request)
+            headers = analyzedRequest.getHeaders()
+            # 自定义逻辑
+```
+
+---
+
+## 十九、性能优化与大规模测试
+
+### 19.1 JVM 调优
+
+```bash
+# 大项目推荐配置
+java -jar -Xmx8g -Xms2g \
+  -XX:+UseG1GC \
+  -XX:MaxGCPauseMillis=200 \
+  -Djava.awt.headless=true \
+  burpsuite_pro.jar
+
+# 参数说明
+# -Xmx8g: 最大堆内存 8GB
+# -Xms2g: 初始堆内存 2GB
+# UseG1GC: G1 垃圾回收器（低延迟）
+# headless=true: 无头模式（服务器部署用）
+```
+
+### 19.2 项目文件管理
+
+```
+1. 定期清理：Project options → Temp files → Clean up
+2. 分项目保存：每个测试对象单独 .burp 项目文件
+3. 导出配置：Project options → Save configuration（复用配置）
+4. 磁盘空间：长期项目文件可能达数 GB，注意存储
+```
+
+---
+
+## 二十、集成其他工具
+
+```bash
+# Burp + sqlmap
+1. Burp 拦截请求 → 右键 Save item → 保存为 request.txt
+2. sqlmap -r request.txt --batch --dbs
+
+# Burp + nuclei
+1. Burp 找到端点 → 导出 URL 列表
+2. nuclei -l burp_urls.txt -t ~/nuclei-templates/
+
+# Burp + ffuf/custom script
+# 从 Burp 复制请求为 curl 命令
+curl -X POST https://target.com/api \
+  -H "Cookie: $(burp_cookie)" \
+  -H "Content-Type: application/json" \
+  -d '{"user":"admin"}'
+```
+
+---
+
+## 二十一、常见高危漏洞的 Burp 测试流程
+
+### SQL 注入
+```
+1. 拦截请求 → Send to Repeater
+2. 在参数后加 ' " ` 等测试字符，观察响应差异
+3. 加入注释符 -- # /**/ 观察
+4. 验证 Boolean-based: ' OR 1=1-- vs ' AND 1=2--
+5. 确认注入后 → Save to file → 交给 sqlmap
+```
+
+### XSS
+```
+1. 在每个输入参数中插入 <xss> 标记
+2. 在响应中用 Ctrl+F 搜索 <xss>
+3. 如果出现在 HTML 正文/属性/JS 上下文中 → 构造对应 PoC
+4. 测试 WAF 绕过：大小写混淆、编码、标签变形
+```
+
+### IDOR
+```
+1. 拦截请求 → Send to Repeater
+2. 修改资源 ID（如 user_id=100 → 101, 102）
+3. 对比两个用户的响应内容（用 Comparer）
+4. 如果看到其他用户数据 = 确认 IDOR
+```
+
+---
+
+## 二十二、安全合规与实战建议
+
+1. **永远先确认授权范围**：Scope 设置是法律边界线
+2. **敏感数据处理**：项目文件中可能含目标凭据，妥善保管
+3. **日志留存**：保留测试流量记录用于报告和复核
+4. **限速控制**：Intruder/Scanner 要控制并发，避免影响目标
+5. **企业版使用**：CI/CD 集成时配置自动扫描阈值
+6. **插件审核**：BApp 第三方插件需审核代码安全性
+
+---
+
 > 📖 本文为"网安百宝箱"课程配套读物。
 > 参考：PortSwigger 官方文档 https://portswigger.net/burp/documentation | Web Security Academy https://portswigger.net/web-security
 > 更新于 2026-06-18

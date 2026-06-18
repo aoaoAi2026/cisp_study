@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { Layout } from "./components/Layout";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import {
   Dashboard,
   DailyLearning,
   CodeLab,
-  CodeRunner,
   LabEnvironment,
+  CodeRunner,
   QuizCenter,
   Achievements,
   Community,
@@ -15,6 +16,7 @@ import {
   MockExam,
   StudyTips,
   ToolSites,
+  OnlineTools,
   CyberLearningMain,
   CyberDailyLearning,
   InterviewLearningMain,
@@ -73,7 +75,9 @@ function App() {
         {/* 受保护的页面（需要登录） */}
         <Route path="/" element={
           <ProtectedRoute>
-            <Layout />
+            <ErrorBoundary>
+              <Layout />
+            </ErrorBoundary>
           </ProtectedRoute>
         }>
           <Route index element={<Dashboard />} />
@@ -99,6 +103,7 @@ function App() {
           <Route path="outline" element={<ExamOutline />} />
           <Route path="study-tips" element={<StudyTips />} />
           <Route path="tool-sites" element={<ToolSites />} />
+          <Route path="online-tools" element={<OnlineTools />} />
           <Route path="achievements" element={<Achievements />} />
           <Route path="community" element={<Community />} />
           <Route path="profile" element={<Profile />} />

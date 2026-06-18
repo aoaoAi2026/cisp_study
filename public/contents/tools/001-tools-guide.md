@@ -559,4 +559,264 @@ docker run -it --rm kalilinux/kali-rolling /bin/bash
 
 ---
 
+---
+
+## 十一、移动安全测试工具
+
+| 工具 | 类型 | 功能 | 平台 |
+|:---|:---|:---|:---|
+| **Frida** | 动态插桩 | Hook 函数、内存读写、绕过检测 | Android/iOS |
+| **MobSF** | 静态+动态 | APK/IPA 安全扫描框架 | Android/iOS |
+| **APKTool** | 反编译 | APK 逆向与重打包 | Android |
+| **jadx** | 反编译 | DEX→Java 反编译 | Android |
+| **Objection** | 动态分析 | 基于 Frida 的 Runtime 探索 | Android/iOS |
+| **Drozer** | 安全测试 | Android 组件安全分析 | Android |
+| **Needle** | 安全测试 | iOS 安全评估 | iOS |
+| **r0capture** | 抓包 | Android 应用层抓包（无需 root）| Android |
+| **Magisk** | Root 管理 | Android 系统级 Hook 框架 | Android |
+| **Xposed/LSPosed** | Hook 框架 | Android 运行时 Hook | Android |
+
+### Android 测试工具链
+
+```
+APK 获取 → jadx 反编译 → MobSF 扫描 → Frida Hook → Burp 抓包
+    ↓            ↓              ↓            ↓            ↓
+ 抓包/提取    分析源码      识别漏洞    动态验证    流量分析
+```
+
+---
+
+## 十二、无线安全测试工具
+
+| 工具 | 功能 | 适用场景 |
+|:---|:---|:---|
+| **Aircrack-ng** | WiFi 抓包与破解 | WPA/WPA2-PSK |
+| **Kismet** | 无线网络探测器 | AP+客户端发现 |
+| **Reaver** | WPS PIN 暴力破解 | 开启 WPS 的路由器 |
+| **hcxdumptool** | WPA3/PMKID 抓取 | 新型 WPA 攻击 |
+| **Wifite** | 全自动 WiFi 破解 | 一键式攻击 |
+| **Bettercap** | WiFi MITM + HTTP/HTTPS 代理 | 中间人攻击 |
+| **Fluxion** | 社会工程学 Wi-Fi 攻击 | Evil Twin 钓鱼 |
+| **PixieWPS** | WPS 离线 PIN 破解 | 特定芯片漏洞 |
+| **mdk4** | WiFi 拒绝服务测试 | 压力测试 |
+| **BlueZ** | 蓝牙协议栈工具 | 蓝牙安全测试 |
+
+---
+
+## 十三、云安全与容器工具
+
+| 工具 | 类型 | 功能 |
+|:---|:---|:---|
+| **Trivy** | 镜像扫描 | 容器镜像漏洞+配置审计 |
+| **Prowler** | 云审计 | AWS/Azure/GCP 配置检查 |
+| **ScoutSuite** | 多云审计 | 多平台安全态势评估 |
+| **kube-bench** | K8s 合规 | CIS Kubernetes 基准测试 |
+| **kube-hunter** | K8s 渗透 | Kubernetes 漏洞发现 |
+| **Falco** | 运行时安全 | 容器异常行为检测 |
+| **Docker Bench** | 合规 | CIS Docker 基准测试 |
+| **CloudSploit** | 云审计 | 多云安全错误配置扫描 |
+| **SkyArk** | 云安全 | AWS/Azure 权限分析 |
+| **cloudflair** | 溯源 | CloudFlare 真实 IP 寻找 |
+
+---
+
+## 十四、CTF 竞赛工具速览
+
+| 类别 | 工具 | 用途 |
+|:---|:---|:---|
+| **Web** | Burp Suite / sqlmap / nuclei | Web 渗透全流程 |
+| **Reverse** | IDA Pro / Ghidra / x64dbg / Radare2 | 逆向工程 |
+| **Pwn** | pwntools / GDB + pwndbg / ROPgadget | 漏洞利用开发 |
+| **Crypto** | CyberChef / RsaCtfTool / hashcat / John | 加解密与破解 |
+| **Forensics** | Volatility / Autopsy / Wireshark / Binwalk | 电子取证 |
+| **Misc** | Stegsolve / zsteg / Binwalk / ExifTool | 隐写与杂项分析 |
+| **OSINT** | theHarvester / Sherlock / Maltego | 开源情报收集 |
+
+### CTF Web 题标准流程
+
+```
+信息收集 → 目录扫描 → 源码/注释分析 → 漏洞发现 → 漏洞利用 → 提权
+  curl       gobuster   F12 开发者工具     SQL注入      sqlmap    sudo -l
+  nmap       dirsearch    robots.txt       文件包含      一句话木马  内核exp
+  whatweb     nuclei      .git泄露          SSRF          Gopher
+```
+
+---
+
+## 十五、工具集成与自动化工作流
+
+### 15.1 红队全流程工具链
+
+```
+侦察阶段:
+  被动: theHarvester → Amass → Subfinder → Shodan/FOFA
+  主动: Nmap → Masscan → Aquatone(截图)
+
+初始访问:
+  Web: Burp Suite → sqlmap → nuclei → Metasploit
+  钓鱼: GoPhish → Evilginx2 → Metasploit
+
+权限维持与横向:
+  C2: Cobalt Strike / Sliver → Impacket → CrackMapExec
+  隧道: Chisel / frp / ngrok
+
+数据窃取:
+  打包: 7z / tar → HTTP POST / DNS 隧道
+
+清理痕迹:
+  Sysinternals / wevtutil → 删除日志
+```
+
+### 15.2 蓝队全流程工具链
+
+```
+监控:
+  SIEM: Splunk / ELK / Wazuh
+  IDS: Snort / Suricata / Zeek
+  EDR: Sysmon + Winlogbeat
+
+检测:
+  YARA 规则匹配 → 文件扫描
+  Sigma 规则 → 日志检测
+
+响应:
+  内存取证: Volatility
+  磁盘取证: Autopsy / FTK Imager
+  日志分析: jq / grep / awk
+  流量分析: Wireshark / tcpdump / NetworkMiner
+
+恢复:
+  rsync / Robocopy → 数据恢复
+  IP 封禁 / 账户禁用 / 重置密码
+```
+
+---
+
+## 十六、学习资源与练习平台
+
+### 16.1 在线靶场
+
+| 平台 | 类型 | 难度 | 费用 |
+|:---|:---|:---:|:---:|
+| **Hack The Box** | 综合渗透 | 入门→魔鬼 | 免费+付费 |
+| **TryHackMe** | 引导式学习 | 入门→进阶 | 免费+付费 |
+| **PentesterLab** | Web 专项 | 入门→高级 | 付费 |
+| **PortSwigger Web Academy** | Web 安全 | 入门→专家 | 免费 |
+| **VulnHub** | VM 靶机下载 | 入门→进阶 | 免费 |
+| **OverTheWire** | 命令行+系统 | 入门→中级 | 免费 |
+| **Root-Me** | 综合挑战 | 入门→高级 | 免费 |
+| **SANS NetWars** | 竞赛型 | 高级 | 付费 |
+| **Bugcrowd University** | SRC 培训 | 入门→中级 | 免费 |
+| **HackerOne CTF** | 竞赛 | 中级 | 按活动 |
+
+### 16.2 自建靶场
+
+```bash
+# Docker 快速部署
+docker run -d -p 80:80 vulnerables/web-dvwa
+docker run -d -p 8080:80 bkimminich/juice-shop
+docker run -d -p 3000:3000 appsecco/dsvw
+
+# 综合靶场环境
+# Vulhub: https://github.com/vulhub/vulhub
+git clone https://github.com/vulhub/vulhub.git
+cd vulhub/nginx/CVE-2017-7529
+docker-compose up -d
+```
+
+---
+
+## 十七、CISP 考试工具板块重点总结
+
+### 高频考点速记
+
+```
+1. Nmap端口扫描技术类型(全连接/Half-open/FIN/Xmas/UDP)
+2. Wireshark 过滤器语法(bpf vs display filter)
+3. Burp Suite 模块功能(Proxy/Repeater/Intruder/Scanner)
+4. sqlmap 注入技术分类(Boolean/Time/Error/Union/Stacked/OOB)
+5. hashcat vs John 的适用场景
+6. 漏洞扫描器的原理(黑盒+基线检查)
+7. 工具使用的合规要点(授权+许可证+数据保护)
+```
+
+### 考试答题技巧
+
+1. **工具选型题**：先确认目标类型(Web/系统/网络/无线)，再选对应工具
+2. **工具用途题**：记住每个工具的"一句话核心功能"
+3. **合规题**："无授权不使用"永远是第一原则
+4. **对比题**：开源vs商业、主动vs被动、GPU vs CPU 是常见对比维度
+
+---
+
 > **工具是手段而非目的——目标清晰（知道要什么）+ 原理透彻（知道为什么）+ 实战打磨（知道怎么做），才是安全从业者真正的护城河。**
+
+---
+
+## 十八、安全基线核查工具
+
+| 工具 | 平台 | 功能 |
+|:---|:---|:---|
+| **CIS-CAT** | 跨平台 | CIS Benchmark 自动化评估 |
+| **Lynis** | Linux | 系统安全审计 |
+| **OpenSCAP** | Linux | SCAP 合规扫描 |
+| **Microsoft Baseline Security Analyzer** | Windows | 微软安全基线 |
+| **PingCastle** | Windows | AD 安全评估 |
+| **PurpleKnight** | Windows | AD 安全评估（社区版）|
+| **Gitleaks** | 跨平台 | Git 仓库密钥泄露扫描 |
+| **truffleHog** | 跨平台 | 代码仓库密钥检测 |
+| **semgrep** | 跨平台 | 代码安全规则扫描 |
+
+---
+
+## 十九、社工与钓鱼测试工具
+
+| 工具 | 功能 |
+|:---|:---|
+| **GoPhish** | 开源钓鱼模拟框架 |
+| **Evilginx2** | 中间人钓鱼（绕过 MFA）|
+| **SET (Social-Engineer Toolkit)** | 社工攻击综合套件 |
+| **King Phisher** | 钓鱼测试管理 |
+| **Modlishka** | 反向代理钓鱼 |
+| **Mailsniper** | Exchange/OWA 密码喷洒 |
+
+---
+
+## 二十、学习路径建议
+
+### 初学者（0-6个月）
+```
+阶段1：基础工具熟练
+  Nmap → Burp Suite → Wireshark → sqlmap
+
+阶段2：Web 安全深入
+  nuclei → ffuf/gobuster → OWASP ZAP → Metasploit（基础）
+
+阶段3：综合演练
+  DVWA/bWAPP 靶场 → TryHackMe → VulnHub
+```
+
+### 进阶者（6-18个月）
+```
+阶段4：逆向与二进制
+  IDA Pro / Ghidra → x64dbg → Frida → pwntools
+
+阶段5：域渗透
+  BloodHound → Impacket → CrackMapExec → Mimikatz
+
+阶段6：红队
+  Cobalt Strike / Sliver → C2 开发 → 免杀技术
+```
+
+### 专家级（18个月+）
+```
+阶段7：工具开发
+  自定义 Burp 插件 → Metasploit 模块编写 → Nuclei 模板开发
+
+阶段8：安全架构
+  威胁建模 → Zero Trust → 安全自动化
+```
+
+---
+
+> **工欲善其事，必先利其器。但利器之后，更重要的是匠心。**

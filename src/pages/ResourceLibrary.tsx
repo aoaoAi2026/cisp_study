@@ -21,7 +21,7 @@ import { loadAllResources, getCategories, getStats } from '../data/resourceData'
 export const ResourceLibrary: React.FC = () => {
   const navigate = useNavigate();
   const [resources, setResources] = useState<Resource[]>([]);
-  const [categories, setCategories] = useState<{ id: string; name: string; count: number }[]>([]);
+  const [categories, setCategories] = useState<{ key: string; name: string; count: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -73,7 +73,7 @@ export const ResourceLibrary: React.FC = () => {
     });
   };
 
-  const stats = getStats(resources);
+  const stats = getStats();
 
   const filteredResources = resources.filter(resource => {
     const matchesSearch = (resource.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
@@ -150,17 +150,17 @@ export const ResourceLibrary: React.FC = () => {
         </Card>
         <Card className={`text-center ${bgCard}`}>
           <Star size={24} className={`mx-auto mb-2 ${isDark ? 'text-cyber-green' : 'text-green-600'}`} />
-          <p className={`text-2xl font-bold ${textColor}`}>{stats.beginner}</p>
+          <p className={`text-2xl font-bold ${textColor}`}>{stats.difficulty['入门'] || 0}</p>
           <p className={`text-sm ${textColorMuted}`}>入门级</p>
         </Card>
         <Card className={`text-center ${bgCard}`}>
           <TrendingUp size={24} className={`mx-auto mb-2 ${isDark ? 'text-cyber-blue' : 'text-blue-600'}`} />
-          <p className={`text-2xl font-bold ${textColor}`}>{stats.intermediate}</p>
+          <p className={`text-2xl font-bold ${textColor}`}>{stats.difficulty['进阶'] || 0}</p>
           <p className={`text-sm ${textColorMuted}`}>进阶级</p>
         </Card>
         <Card className={`text-center ${bgCard}`}>
           <Award size={24} className={`mx-auto mb-2 ${isDark ? 'text-cyber-gold' : 'text-yellow-600'}`} />
-          <p className={`text-2xl font-bold ${textColor}`}>{stats.advanced}</p>
+          <p className={`text-2xl font-bold ${textColor}`}>{stats.difficulty['精通'] || 0}</p>
           <p className={`text-sm ${textColorMuted}`}>精通级</p>
         </Card>
       </div>
@@ -202,10 +202,10 @@ export const ResourceLibrary: React.FC = () => {
           </button>
           {categories.map(cat => (
             <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
+              key={cat.key}
+              onClick={() => setSelectedCategory(cat.key)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                selectedCategory === cat.id
+                selectedCategory === cat.key
                   ? (isDark ? 'bg-cyber-green text-cyber-black' : 'bg-green-500 text-white')
                   : (isDark ? 'bg-cyber-purple/40 text-gray-300 hover:bg-cyber-green/10' : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
               }`}

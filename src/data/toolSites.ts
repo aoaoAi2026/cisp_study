@@ -8,10 +8,25 @@ export interface ToolSite {
     features?: string[];
     usage?: string;
     tips?: string;
+    installed?: boolean;  // 本地是否已安装
+    installCmd?: string;  // 安装命令
+    checkCmd?: string;    // 检测命令
   }[];
 }
 
-export const toolSites: ToolSite[] = [
+export const toolSitesData: ToolSite[] = [
+  {
+    category: '在线工具',
+    sites: [
+      {
+        name: '🔧 在线工具箱（网页版）',
+        url: '/online-tools',
+        description: '在浏览器中直接使用的编码解码工具集，无需安装',
+        icon: '🔧',
+        features: ['Base64编解码', 'URL编解码', 'MD5/SHA哈希计算', '十六进制转换', 'Unicode转换', 'HTML实体编码'],
+      },
+    ]
+  },
   {
     category: '学习网址',
     sites: [
@@ -540,6 +555,191 @@ export const toolSites: ToolSite[] = [
         url: 'https://www.browserling.com/',
         description: '在线跨浏览器测试，安全分析常用',
         icon: '🌐'
+      }
+    ]
+  },
+  {
+    category: '本地安全工具',
+    sites: [
+      {
+        name: 'Nmap - 网络扫描神器',
+        url: 'https://nmap.org/download.html',
+        description: '最强大的网络发现和安全审计工具，支持端口扫描、服务识别、漏洞检测',
+        icon: '🗺️',
+        features: ['端口扫描', '服务识别', '操作系统检测', '脚本扩展'],
+        usage: 'nmap -sV -sC target_ip 进行服务和脚本扫描，nmap -A 全面扫描',
+        tips: '配合Nmap脚本引擎(NSE)可以检测大量漏洞，建议学习常用脚本用法',
+        installed: false,
+        installCmd: '下载地址: https://nmap.org/download.html#windows',
+        checkCmd: 'nmap --version'
+      },
+      {
+        name: 'Burp Suite - Web渗透利器',
+        url: 'https://portswigger.net/burp/communitydownload',
+        description: 'Web应用安全测试行业标准工具，支持代理、扫描、渗透测试',
+        icon: '🧰',
+        features: ['代理拦截', '漏洞扫描', '渗透测试', '插件扩展'],
+        usage: '配置浏览器代理，拦截HTTP请求，使用Scanner模块自动扫描漏洞',
+        tips: '专业版功能更强大，社区版足够入门学习，建议掌握核心模块使用',
+        installed: false,
+        installCmd: '下载地址: https://portswigger.net/burp/communitydownload',
+        checkCmd: '检查桌面是否有Burp Suite图标'
+      },
+      {
+        name: 'Wireshark - 网络协议分析',
+        url: 'https://www.wireshark.org/download.html',
+        description: '世界最流行的网络协议分析器，深入分析网络流量',
+        icon: '🦈',
+        features: ['流量捕获', '协议分析', '数据包过滤', '流量统计'],
+        usage: '捕获网络流量，使用显示过滤器(filter)分析特定协议',
+        tips: '掌握常用过滤表达式：tcp.port==80, http, dns等，是网络分析必备技能',
+        installed: false,
+        installCmd: '下载地址: https://www.wireshark.org/download.html',
+        checkCmd: 'wireshark --version'
+      },
+      {
+        name: 'Metasploit - 渗透测试框架',
+        url: 'https://www.metasploit.com/',
+        description: '最强大的渗透测试框架，包含大量漏洞利用模块',
+        icon: '💣',
+        features: ['漏洞利用', 'Payload生成', '后渗透模块', '模块开发'],
+        usage: 'msfconsole启动，search搜索漏洞，use选择模块，set配置参数，exploit执行',
+        tips: 'MSF是渗透测试核心工具，建议系统学习模块使用和Payload定制',
+        installed: false,
+        installCmd: 'Windows版下载: https://github.com/rapid7/metasploit-framework/releases',
+        checkCmd: 'msfconsole --version'
+      },
+      {
+        name: 'IDA Pro - 逆向工程神器',
+        url: 'https://hex-rays.com/ida-free/',
+        description: '最专业的反汇编和逆向分析工具，支持多平台多架构',
+        icon: '🔧',
+        features: ['反汇编', '调试分析', '插件扩展', '脚本支持'],
+        usage: '加载目标文件，F5反编译查看伪代码，分析程序逻辑',
+        tips: 'IDA是逆向神器，免费版IDA Free功能有限但足够入门',
+        installed: false,
+        installCmd: 'IDA Free下载: https://hex-rays.com/ida-free/',
+        checkCmd: '检查桌面是否有IDA图标'
+      },
+      {
+        name: 'Ghidra - NSA逆向工具',
+        url: 'https://ghidra-sre.org/',
+        description: 'NSA开源的逆向工程工具套件，免费且功能强大',
+        icon: '🐲',
+        features: ['反汇编', '反编译', '脚本开发', '团队协作'],
+        usage: '创建项目导入目标文件，使用CodeBrowser分析代码',
+        tips: 'Ghidra免费开源，功能媲美IDA，是逆向学习首选',
+        installed: false,
+        installCmd: '下载地址: https://ghidra-sre.org/',
+        checkCmd: '检查是否安装了Ghidra'
+      },
+      {
+        name: 'Hashcat - 密码破解',
+        url: 'https://hashcat.net/hashcat/',
+        description: 'GPU加速的密码破解工具，支持数百种哈希算法',
+        icon: '🔓',
+        features: ['GPU加速', '多算法支持', '字典攻击', '规则引擎'],
+        usage: 'hashcat -m 0 -a 0 hash.txt wordlist.txt 破解MD5哈希',
+        tips: '配合高质量字典和规则可以大幅提高破解效率',
+        installed: false,
+        installCmd: '下载地址: https://hashcat.net/hashcat/',
+        checkCmd: 'hashcat --version'
+      },
+      {
+        name: 'John the Ripper',
+        url: 'https://www.openwall.com/john/',
+        description: '经典密码破解工具，支持多种哈希和加密格式',
+        icon: '🗡️',
+        features: ['密码破解', '多格式支持', '自动识别', '规则攻击'],
+        usage: 'john --wordlist=password.txt hashes.txt 破解密码哈希',
+        tips: 'JtR自动识别哈希类型，适合快速破解测试',
+        installed: false,
+        installCmd: 'Windows版: https://www.openwall.com/john/',
+        checkCmd: 'john --version'
+      },
+      {
+        name: 'Sqlmap - SQL注入自动化',
+        url: 'https://github.com/sqlmapproject/sqlmap',
+        description: '自动化SQL注入检测和利用工具，支持多种数据库',
+        icon: '💉',
+        features: ['自动检测', '数据库枚举', '数据提取', '提权利用'],
+        usage: 'sqlmap -u "url?id=1" --dbs 自动检测并枚举数据库',
+        tips: 'sqlmap功能强大，建议掌握常用参数和利用技巧',
+        installed: false,
+        installCmd: 'pip install sqlmap 或 git clone https://github.com/sqlmapproject/sqlmap',
+        checkCmd: 'python -m sqlmap --version'
+      },
+      {
+        name: 'Hydra - 暴力破解工具',
+        url: 'https://github.com/vanhauser-thc/thc-hydra',
+        description: '快速网络登录暴力破解工具，支持多种协议',
+        icon: '🐍',
+        features: ['多协议支持', '并行破解', '字典攻击', '灵活配置'],
+        usage: 'hydra -l user -P pass.txt ssh://target 暴力破解SSH',
+        tips: '配合高质量字典，可以快速测试弱密码',
+        installed: false,
+        installCmd: 'Windows版: https://github.com/vanhauser-thc/thc-hydra',
+        checkCmd: 'hydra --version'
+      },
+      {
+        name: 'Aircrack-ng - WiFi安全测试',
+        url: 'https://www.aircrack-ng.org/',
+        description: 'WiFi网络安全评估和密码破解工具套件',
+        icon: '📡',
+        features: ['流量捕获', '密码破解', 'WiFi攻击', '安全评估'],
+        usage: 'airmon-ng启用监听模式，airodump-ng捕获流量，aircrack-ng破解密码',
+        tips: 'WiFi安全测试必备工具，注意合法使用',
+        installed: false,
+        installCmd: '下载地址: https://www.aircrack-ng.org/',
+        checkCmd: 'aircrack-ng --version'
+      },
+      {
+        name: 'Nuclei - 模板化漏洞扫描',
+        url: 'https://github.com/projectdiscovery/nuclei',
+        description: '基于模板的快速漏洞扫描器，社区模板丰富',
+        icon: '⚡',
+        features: ['模板扫描', '快速检测', '自定义规则', '批量扫描'],
+        usage: 'nuclei -u target.com -t templates/ 使用模板扫描目标',
+        tips: '模板社区活跃，新漏洞模板更新快，适合批量资产扫描',
+        installed: false,
+        installCmd: 'go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest',
+        checkCmd: 'nuclei --version'
+      },
+      {
+        name: 'Frida - 动态插桩工具',
+        url: 'https://frida.re/',
+        description: '动态插桩框架，支持多平台Hook和分析',
+        icon: '💉',
+        features: ['动态Hook', '实时分析', '脚本编写', '多平台支持'],
+        usage: 'frida -U -f com.app -l script.js Hook移动应用',
+        tips: 'Frida是移动安全和逆向的神器，建议深入学习',
+        installed: false,
+        installCmd: 'pip install frida-tools',
+        checkCmd: 'frida --version'
+      },
+      {
+        name: 'Gobuster - 目录爆破',
+        url: 'https://github.com/OJ/gobuster',
+        description: '快速目录和子域名暴力破解工具',
+        icon: '📂',
+        features: ['目录扫描', '子域名发现', '快速高效', '多模式支持'],
+        usage: 'gobuster dir -u url -w wordlist.txt 扫描目录',
+        tips: '配合高质量字典可以快速发现隐藏路径',
+        installed: false,
+        installCmd: 'go install github.com/OJ/gobuster/v3@latest',
+        checkCmd: 'gobuster --version'
+      },
+      {
+        name: 'Subfinder - 子域名发现',
+        url: 'https://github.com/projectdiscovery/subfinder',
+        description: '快速被动子域名发现工具，多源聚合',
+        icon: '🌐',
+        features: ['被动发现', '多源聚合', '快速扫描', 'API集成'],
+        usage: 'subfinder -d domain.com -o results.txt 发现子域名',
+        tips: 'ProjectDiscovery系列工具质量都很高',
+        installed: false,
+        installCmd: 'go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest',
+        checkCmd: 'subfinder --version'
       }
     ]
   },
@@ -1492,4 +1692,5 @@ export const toolSites: ToolSite[] = [
   }
 ];
 
+export const toolSites = toolSitesData;
 export default toolSites;
