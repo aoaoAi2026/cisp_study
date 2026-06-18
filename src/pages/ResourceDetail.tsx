@@ -10,67 +10,19 @@ import {
   Sun,
   Moon,
 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Card, Badge, Button } from '../components/UI';
 import { Resource, categoryNames } from '../types/resource';
 import { getResourceById, loadMarkdownContent } from '../data/resourceData';
 
 function MarkdownRenderer({ content, isDark }: { content: string; isDark: boolean }) {
-  const textColor = isDark ? 'text-gray-300' : 'text-gray-700';
-  const headingColor = isDark ? 'text-cyber-green' : 'text-green-600';
-  const linkColor = isDark ? 'text-cyber-blue' : 'text-blue-600';
-  const codeBlockBg = isDark ? 'bg-cyber-black/80' : 'bg-gray-100';
-  const codeTextColor = isDark ? 'text-cyber-green' : 'text-green-600';
-
-  const renderMarkdown = () => {
-    let html = content;
-
-    html = html.replace(/^### (.*$)/gim, `<h3 class="text-lg font-semibold ${headingColor} mt-6 mb-3">$1</h3>`);
-    html = html.replace(/^## (.*$)/gim, `<h2 class="text-xl font-semibold ${headingColor} mt-8 mb-4">$1</h2>`);
-    html = html.replace(/^# (.*$)/gim, `<h1 class="text-2xl font-bold ${headingColor} mt-10 mb-6">$1</h1>`);
-
-    html = html.replace(/\*\*(.*?)\*\*/g, `<strong class="text-white font-semibold">$1</strong>`);
-    html = html.replace(/\*(.*?)\*/g, `<em class="text-gray-300 italic">$1</em>`);
-
-    html = html.replace(/^> (.*$)/gim, `<blockquote class="border-l-4 ${isDark ? 'border-cyber-green' : 'border-green-500'} pl-4 my-4 text-gray-400 italic">$1</blockquote>`);
-
-    html = html.replace(/^- (.*$)/gim, `<li class="ml-4 ${textColor} list-disc mb-1">$1</li>`);
-    html = html.replace(/^\d+\. (.*$)/gim, `<li class="ml-4 ${textColor} list-decimal mb-1">$1</li>`);
-
-    html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, `<pre class="code-block ${codeBlockBg}"><code class="${codeTextColor}">$2</code></pre>`);
-    html = html.replace(/`([^`]+)`/g, `<code class="px-2 py-1 ${codeBlockBg} rounded ${codeTextColor} text-sm font-mono">$1</code>`);
-
-    html = html.replace(/\|(.+)\|\n\|[-|]+\|\n((?:\|.+\|\n?)+)/g, (match, header, body) => {
-      const headerCells = header.split('|').filter(cell => cell.trim());
-      const bodyRows = body.trim().split('\n');
-      let table = `<table class="w-full border-collapse my-4"><thead><tr>`;
-      headerCells.forEach(cell => {
-        table += `<th class="border ${isDark ? 'border-cyber-green/30' : 'border-gray-300'} px-4 py-2 text-left ${headingColor}">${cell.trim()}</th>`;
-      });
-      table += '</tr></thead><tbody>';
-      bodyRows.forEach(row => {
-        const cells = row.split('|').filter(cell => cell.trim());
-        table += '<tr>';
-        cells.forEach(cell => {
-          table += `<td class="border ${isDark ? 'border-cyber-green/30' : 'border-gray-300'} px-4 py-2 ${textColor}">${cell.trim()}</td>`;
-        });
-        table += '</tr>';
-      });
-      table += '</tbody></table>';
-      return table;
-    });
-
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, `<a href="$2" target="_blank" rel="noopener noreferrer" class="${linkColor} hover:${isDark ? 'text-cyber-green' : 'text-green-600'} underline">$1</a>`);
-
-    html = html.replace(/\n/g, '<br>');
-
-    return html;
-  };
-
   return (
-    <div
-      className="prose prose-invert max-w-none"
-      dangerouslySetInnerHTML={{ __html: renderMarkdown() }}
-    />
+    <div className={isDark ? 'prose prose-invert max-w-none' : 'prose max-w-none'}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 }
 

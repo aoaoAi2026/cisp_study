@@ -19,7 +19,7 @@ export const Confetti: React.FC<{ active: boolean; onComplete?: () => void }> = 
     const canvas = canvasRef.current;
     if (!canvas) return;
     const w = canvas.width = canvas.offsetWidth;
-    const h = canvas.height = canvas.offsetHeight;
+    canvas.height = canvas.offsetHeight;
     const particles: Particle[] = [];
     const count = 80;
     for (let i = 0; i < count; i++) {

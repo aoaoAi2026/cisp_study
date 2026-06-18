@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Users,
-  Heart,
   MessageCircle,
   Pin,
   Plus,
-  Search,
   BookOpen,
   HelpCircle,
   Share2,

@@ -1,5 +1,5 @@
 // 渗透测试实战学习计划（30天）
-import { CyberLearningPlan, CyberDay, QuizQuestion } from './cyberBasic';
+import { CyberLearningPlan, CyberDay } from './cyberBasic';
 
 const week1: CyberDay[] = [
   { 

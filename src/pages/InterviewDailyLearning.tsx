@@ -29,23 +29,26 @@ import {
   Flame,
   Trophy,
   Medal,
-  Eye,
   RefreshCw,
   Keyboard,
-  X,
   RotateCcw,
   Video,
-  FileQuestion
+  FileQuestion,
+  Library
 } from 'lucide-react';
 import { Card, Badge, Button } from '../components/UI';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Editor from '@monaco-editor/react';
-import { CyberLearningPlan, CyberDay, QuizQuestion } from '../data/cyberBasic';
+import { QuizQuestion } from '../data/cyberBasic';
 import { Pomodoro } from '../components/Pomodoro';
 import { plans, planSupplements, planColor } from './InterviewDailyLearning/constants';
 import { saveData, loadData } from '../data/persistData';
-import { useQuizPractice, useWrongQuestionBook, checkQuizAnswer, useGamification, useCodeExecutor } from '../hooks';
+import { loadAllResources } from '../data/resourceData';
+import type { Resource } from '../types/resource';
+import { getReadingsForDay } from '../data/dayResourceMap';
+import { useQuizPractice, useQuizExam, useWrongQuestionBook, checkQuizAnswer, useGamification, useCodeExecutor } from '../hooks';
+import type { QuizAnswer } from '../hooks';
 
 // 通过 fetch 动态加载 public/ 下的 .md 文件（Vite 不支持 glob 读取 public/）
 
@@ -63,12 +66,12 @@ export const InterviewDailyLearning: React.FC = () => {
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
   const [mdContent, setMdContent] = useState<string | null>(null);
   const [mdLoading, setMdLoading] = useState(false);
-  const [mdError, setMdError] = useState<string | null>(null);
+  const [, setMdError] = useState<string | null>(null);
   const saveTimer = React.useRef<number | null>(null);
 
   // Gamification (共享hook，按 planId 隔离数据)
   const gamify = useGamification({ storageKey: 'cisp_interview_gamify', subKey: planId });
-  const { xp, userLevel, streakHeatmap, quizAvg, showLevelUp, setShowLevelUp, showConfetti, setShowConfetti, newBadge, setNewBadge, addXp, bumpHeatmap, updateQuizAvg } = gamify;
+  const { xp, userLevel, streakHeatmap, quizAvg, showLevelUp, setShowLevelUp, showConfetti, addXp, bumpHeatmap } = gamify;
 
   // Code editor states
   const [editorCode, setEditorCode] = useState('');
@@ -84,7 +87,11 @@ export const InterviewDailyLearning: React.FC = () => {
   const [showStats, setShowStats] = useState(true);
 
   // Tab navigation
-  const [activeTab, setActiveTab] = useState<'content' | 'video' | 'code' | 'quiz' | 'expert'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'video' | 'code' | 'readings' | 'quiz' | 'expert'>('content');
+
+  // 课内读物
+  const [readings, setReadings] = useState<Resource[]>([]);
+  const [readingsLoading, setReadingsLoading] = useState(false);
 
   // Bilibili video
   const [bilibiliBvid, setBilibiliBvid] = useState<string | null>(null);
@@ -127,15 +134,25 @@ export const InterviewDailyLearning: React.FC = () => {
     };
   }, [plan, currentDay, planId]);
   const quiz = useQuizPractice(day?.quiz || []);
+  const quizExam = useQuizExam(day?.quiz || []);
+  const [quizMode, setQuizMode] = useState<'single' | 'all'>('single');
+  // 一览模式下的逐题作答状态
+  const [allAnswers, setAllAnswers] = useState<Record<number, QuizAnswer>>({});
+  const [allSubmitted, setAllSubmitted] = useState<Record<number, boolean>>({});
+  const [allMultiSelect, setAllMultiSelect] = useState<Record<number, number[]>>({});
   const wrongQuestionBook = useWrongQuestionBook();
 
   // 切换天时重置测验和定时器
   const resetQuiz = useCallback(() => {
     quiz.reset();
+    quizExam.reset();
+    setAllAnswers({});
+    setAllSubmitted({});
+    setAllMultiSelect({});
     setQuizTimer(30);
     setQuizTimerRunning(false);
     if (quizTimerRef.current) { clearInterval(quizTimerRef.current); quizTimerRef.current = null; }
-  }, [quiz.reset]);
+  }, [quiz.reset, quizExam.reset]);
   useEffect(() => {
     resetQuiz();
     setEditorCode('');
@@ -228,6 +245,24 @@ export const InterviewDailyLearning: React.FC = () => {
       .finally(() => setMdLoading(false));
   }, [planId, currentDay]);
 
+  // 课内读物：按当天课程精确匹配
+  useEffect(() => {
+    if (!planId || !currentDay) return;
+    setReadingsLoading(true);
+    const ids = getReadingsForDay('interview', planId, currentDay);
+    if (ids.length === 0) {
+      setReadings([]);
+      setReadingsLoading(false);
+      return;
+    }
+    loadAllResources().then(all => {
+      const resourceMap = new Map(all.map(r => [r.id, r]));
+      const matched = ids.map(id => resourceMap.get(id)).filter(Boolean) as Resource[];
+      setReadings(matched);
+      setReadingsLoading(false);
+    });
+  }, [planId, currentDay]);
+
   const handleNoteChange = (val: string) => {
     setNote(val);
     if (saveTimer.current) window.clearTimeout(saveTimer.current);
@@ -269,7 +304,11 @@ export const InterviewDailyLearning: React.FC = () => {
     if (quiz.showAnswer) return;
     setQuizTimerRunning(false);
     const isCorrect = quiz.answerOne(answer);
-    wrongQuestionBook.recordAnswer(planId!, currentDay, quiz.currentIndex, isCorrect);
+    const q = day?.quiz?.[quiz.currentIndex];
+    if (q) {
+      const qKey = `${planId}_${currentDay}_${quiz.currentIndex}`;
+      wrongQuestionBook.recordAnswer(qKey, q, planId!, currentDay, quiz.currentIndex, isCorrect);
+    }
   };
 
   const handleMultipleSelect = (index: number) => {
@@ -551,6 +590,7 @@ export const InterviewDailyLearning: React.FC = () => {
               { id: 'content', label: '课程内容', icon: BookOpen },
               { id: 'video', label: '视频教程', icon: Video },
               { id: 'code', label: '代码实战', icon: Code },
+              { id: 'readings', label: '课内读物', icon: Library },
               { id: 'quiz', label: '随堂测验', icon: FileQuestion },
               ...(day.expertNotes && day.expertNotes.length > 0
                 ? [{ id: 'expert', label: '大神笔记', icon: Award }]
@@ -1061,190 +1101,469 @@ export const InterviewDailyLearning: React.FC = () => {
             </motion.div>
           )}
 
+          {/* ===== Tab: 课内读物 ===== */}
+          {activeTab === 'readings' && (
+            <>
+              <motion.div variants={itemVariants}>
+                <Card>
+                  <h3 className={`text-sm font-medium ${color.main} mb-4 flex items-center gap-2`}>
+                    <Library size={16} />
+                    课内读物
+                    <span className="text-xs text-gray-500 font-normal ml-1">
+                      精选{readings.length}篇
+                    </span>
+                  </h3>
+                  {readingsLoading ? (
+                    <div className="text-center py-8 text-gray-400">
+                      <RefreshCw size={20} className="mx-auto mb-2 animate-spin" />
+                      <p className="text-sm">加载课内读物中...</p>
+                    </div>
+                  ) : readings.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <BookOpen size={28} className="mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">暂无该课程的课内读物</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {readings.map(r => (
+                        <div
+                          key={r.id}
+                          className="bg-cyber-purple/10 border border-cyber-purple/20 rounded-lg p-4 hover:border-cyber-purple/40 transition-colors group"
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="text-sm font-medium text-white group-hover:text-cyber-green transition-colors line-clamp-2 flex-1 mr-2">
+                              {r.title}
+                            </h4>
+                            <Badge
+                              className={`text-[10px] px-1.5 py-0.5 whitespace-nowrap ${
+                                r.difficulty === '入门' ? 'bg-cyber-green/20 text-cyber-green border-cyber-green/30' :
+                                r.difficulty === '进阶' ? 'bg-cyber-blue/20 text-cyber-blue border-cyber-blue/30' :
+                                'bg-cyber-gold/20 text-cyber-gold border-cyber-gold/30'
+                              }`}
+                            >
+                              {r.difficulty}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-gray-400 mb-3 line-clamp-2">
+                            {r.summary}
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 mb-3">
+                            {r.tags.slice(0, 3).map((tag, i) => (
+                              <span
+                                key={i}
+                                className="text-[10px] px-1.5 py-0.5 rounded bg-cyber-purple/20 text-gray-400"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <div className="flex items-center gap-3">
+                              <span className="flex items-center gap-1">
+                                <Clock size={12} />
+                                {r.readMinutes}分钟
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <User size={12} />
+                                {r.author}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => navigate(`/resources/${r.id}`)}
+                              className="flex items-center gap-1 text-cyber-green hover:text-cyber-green/80 font-medium transition-colors"
+                            >
+                              阅读全文
+                              <ExternalLink size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              </motion.div>
+            </>
+          )}
+
           {/* ===== Tab: 随堂测验 ===== */}
           {activeTab === 'quiz' && day.quiz && day.quiz.length > 0 && (
             <>
-
-          {/* 随堂测验 */}
-          {day.quiz && day.quiz.length > 0 && (
-            <motion.div variants={itemVariants}>
-              <Card>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className={`text-sm font-medium ${color.main} flex items-center gap-2`}>
-                    <Target size={16} />
-                    随堂测验
-                  </h3>
-                  <div className="flex items-center gap-3">
-                    {/* 30秒计时器 */}
-                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-bold ${
-                      quizTimer <= 10 ? 'bg-red-500/20 text-red-400 animate-pulse' :
-                      quizTimer <= 20 ? 'bg-yellow-500/20 text-yellow-400' :
-                      'bg-cyber-green/20 text-cyber-green'
-                    }`}>
-                      <Clock size={13} />
-                      {quizTimer}s
-                    </div>
-                    <span className="text-xs text-gray-400">
-                      {quiz.currentIndex + 1} / {day.quiz.length}
-                    </span>
-                  </div>
-                </div>
-                
-                {day.quiz[quiz.currentIndex] && (() => {
-                  const rawQ = day.quiz[quiz.currentIndex] as QuizQuestion;
-                  const question: QuizQuestion = {
-                    ...rawQ,
-                    type: rawQ.type || (rawQ.options && rawQ.options.length > 0 ? 'single' : 'fill'),
-                  };
-                  const userAnswer = quiz.answers[quiz.currentIndex];
-                  
-                  const isCorrect = quiz.showAnswer
-                    ? checkQuizAnswer(question, userAnswer)
-                    : null;
-                  
-                  return (
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-2">
-                        <span className={`text-xs px-2 py-1 rounded mr-2 ${
-                          question.type === 'single' ? 'bg-cyber-blue/20 text-cyber-blue' :
-                          question.type === 'multiple' ? 'bg-cyber-green/20 text-cyber-green' :
-                          question.type === 'boolean' ? 'bg-cyber-gold/20 text-cyber-gold' :
-                          'bg-[#6b5b95]/20 text-gray-300'
-                        }`}>
-                          {question.type === 'single' ? '单选' :
-                           question.type === 'multiple' ? '多选' :
-                           question.type === 'boolean' ? '判断' : '填空'}
-                        </span>
-                        <p className="text-sm text-white font-medium leading-relaxed flex-1">
-                          {question.question}
-                        </p>
+              <motion.div variants={itemVariants}>
+                <Card>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className={`text-sm font-medium ${color.main} flex items-center gap-2`}>
+                      <Target size={16} />
+                      随堂测验
+                    </h3>
+                    {/* 模式切换 + 逐题模式的计时器/计数 */}
+                    <div className="flex items-center gap-3">
+                      {/* 逐题/一览切换 */}
+                      <div className="flex items-center bg-cyber-purple/20 rounded-lg p-0.5">
+                        <button
+                          onClick={() => setQuizMode('single')}
+                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                            quizMode === 'single' ? 'bg-cyber-green/30 text-cyber-green' : 'text-gray-400 hover:text-white'
+                          }`}
+                        >
+                          逐题
+                        </button>
+                        <button
+                          onClick={() => setQuizMode('all')}
+                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                            quizMode === 'all' ? 'bg-cyber-green/30 text-cyber-green' : 'text-gray-400 hover:text-white'
+                          }`}
+                        >
+                          一览
+                        </button>
                       </div>
-                      
-                      {/* 选择题选项 */}
-                      {question.options && (question.type === 'single' || question.type === 'boolean' || question.type === 'multiple') && (
-                        <div className="space-y-2">
-                          {question.options.map((opt, i) => {
-                            const isSelected = question.type === 'multiple' 
-                              ? (Array.isArray(userAnswer) && userAnswer.includes(i))
-                              : userAnswer === i;
-                            
-                            let cls = color.optionDefault;
-                            if (quiz.showAnswer) {
-                              const isCorrectOption = question.type === 'multiple' 
-                                ? (question.correctIndices || []).includes(i)
-                                : i === question.correctIndex;
-                              
-                              if (isCorrectOption) cls = color.optionCorrect;
-                              else if (isSelected) cls = color.optionWrong;
-                              else cls = color.optionDim;
-                            }
-                            
-                            return (
-                              <button
-                                key={i}
-                                onClick={() => {
-                                  if (!quiz.showAnswer) {
-                                    if (question.type === 'multiple') {
-                                      handleMultipleSelect(i);
-                                    } else {
-                                      handleQuizAnswer(i);
-                                    }
-                                  }
-                                }}
-                                disabled={quiz.showAnswer}
-                                className={`w-full text-left px-4 py-3 rounded-lg border transition-all ${cls}`}
-                              >
-                                <span className="text-sm font-mono mr-2 text-gray-400">
-                                  {String.fromCharCode(65 + i)}.
-                                </span>
-                                <span className="text-sm text-gray-200">{opt}</span>
-                                {question.type === 'multiple' && !quiz.showAnswer && (
-                                  <span className={`ml-auto text-xs ${isSelected ? 'text-cyber-green' : 'text-gray-500'}`}>
-                                    {isSelected ? '✓' : '○'}
-                                  </span>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      )}
-                      
-                      {/* 填空题输入框 */}
-                      {question.type === 'fill' && (
-                        <div className="space-y-3">
-                          <input
-                            type="text"
-                            value={String(userAnswer || '')}
-                            onChange={(e) => {
-                              quiz.setCurrentAnswer(e.target.value);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' && !quiz.showAnswer) {
-                                handleQuizAnswer((userAnswer as string) || '');
-                              }
-                            }}
-                            disabled={quiz.showAnswer}
-                            className="w-full px-4 py-3 bg-cyber-purple/10 border border-cyber-purple/30 rounded-lg text-white text-sm outline-none focus:border-cyber-green"
-                            placeholder="请输入答案..."
-                          />
-                          {!quiz.showAnswer && (
-                            <button
-                              onClick={() => handleQuizAnswer((userAnswer as string) || '')}
-                              className={`w-full py-2 rounded-lg ${color.btnDefault} transition-colors`}
-                            >
-                              提交答案
-                            </button>
-                          )}
-                        </div>
-                      )}
-                      
-                      {/* 提交按钮（多选） */}
-                      {question.type === 'multiple' && !quiz.showAnswer && (
-                        <button
-                          onClick={() => handleQuizAnswer(userAnswer as number[] || [])}
-                          className={`w-full py-2 rounded-lg ${color.btnDefault} transition-colors`}
-                        >
-                          提交答案
-                        </button>
-                      )}
-                      
-                      {/* 答案解析 */}
-                      {quiz.showAnswer && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="p-4 rounded-lg bg-cyber-purple/10 border border-cyber-purple/20"
-                        >
-                          <div className={`flex items-center gap-2 mb-2 ${isCorrect ? 'text-cyber-green' : 'text-cyber-red'}`}>
-                            {isCorrect ? <CheckCircle size={18} /> : <AlertTriangle size={18} />}
-                            <span className="font-medium text-sm">
-                              {isCorrect ? '回答正确！' : '回答错误'}
-                            </span>
+                      {quizMode === 'single' && (
+                        <>
+                          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-bold ${
+                            quizTimer <= 10 ? 'bg-red-500/20 text-red-400 animate-pulse' :
+                            quizTimer <= 20 ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-cyber-green/20 text-cyber-green'
+                          }`}>
+                            <Clock size={13} />
+                            {quizTimer}s
                           </div>
-                          {question.type === 'fill' && question.correctAnswer && (
-                            <div className="text-sm text-cyber-green mb-2">
-                              <span className="text-gray-400">正确答案：</span>{question.correctAnswer}
-                            </div>
-                          )}
-                          <p className="text-sm text-gray-300 leading-relaxed">{question.explanation}</p>
-                        </motion.div>
+                          <span className="text-xs text-gray-400">
+                            {quiz.currentIndex + 1} / {day.quiz.length}
+                          </span>
+                        </>
                       )}
-                      
-                      {/* 下一题按钮 */}
-                      {quiz.showAnswer && (
-                        <button
-                          onClick={nextQuestion}
-                          className={`w-full py-2 rounded-lg ${color.btnDefault} transition-colors`}
-                        >
-                          {quiz.isLastQuestion ? '完成测验' : '下一题'}
-                        </button>
+                      {quizMode === 'all' && (
+                        <span className="text-xs text-gray-400">
+                          共 {day.quiz.length} 题
+                        </span>
                       )}
                     </div>
-                  );
-                })()}
-              </Card>
-            </motion.div>
-          )}
+                  </div>
+
+                  {/* ====== 逐题模式 ====== */}
+                  {quizMode === 'single' && day.quiz[quiz.currentIndex] && (() => {
+                    const rawQ = day.quiz[quiz.currentIndex] as QuizQuestion;
+                    const question: QuizQuestion = {
+                      ...rawQ,
+                      type: rawQ.type || (rawQ.options && rawQ.options.length > 0 ? 'single' : 'fill'),
+                    };
+                    const userAnswer = quiz.answers[quiz.currentIndex];
+
+                    const isCorrect = quiz.showAnswer
+                      ? checkQuizAnswer(question, userAnswer)
+                      : null;
+
+                    return (
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-2">
+                          <span className={`text-xs px-2 py-1 rounded mr-2 ${
+                            question.type === 'single' ? 'bg-cyber-blue/20 text-cyber-blue' :
+                            question.type === 'multiple' ? 'bg-cyber-green/20 text-cyber-green' :
+                            question.type === 'boolean' ? 'bg-cyber-gold/20 text-cyber-gold' :
+                            'bg-[#6b5b95]/20 text-gray-300'
+                          }`}>
+                            {question.type === 'single' ? '单选' :
+                             question.type === 'multiple' ? '多选' :
+                             question.type === 'boolean' ? '判断' : '填空'}
+                          </span>
+                          <p className="text-sm text-white font-medium leading-relaxed flex-1">
+                            {question.question}
+                          </p>
+                        </div>
+
+                        {/* 选择题选项 */}
+                        {question.options && (question.type === 'single' || question.type === 'boolean' || question.type === 'multiple') && (
+                          <div className="space-y-2">
+                            {question.options.map((opt, i) => {
+                              const isSelected = question.type === 'multiple'
+                                ? (Array.isArray(userAnswer) && userAnswer.includes(i))
+                                : userAnswer === i;
+
+                              let cls = color.optionDefault;
+                              if (quiz.showAnswer) {
+                                const isCorrectOption = question.type === 'multiple'
+                                  ? (question.correctIndices || []).includes(i)
+                                  : i === question.correctIndex;
+
+                                if (isCorrectOption) cls = color.optionCorrect;
+                                else if (isSelected) cls = color.optionWrong;
+                                else cls = color.optionDim;
+                              }
+
+                              return (
+                                <button
+                                  key={i}
+                                  onClick={() => {
+                                    if (!quiz.showAnswer) {
+                                      if (question.type === 'multiple') {
+                                        handleMultipleSelect(i);
+                                      } else {
+                                        handleQuizAnswer(i);
+                                      }
+                                    }
+                                  }}
+                                  disabled={quiz.showAnswer}
+                                  className={`w-full text-left px-4 py-3 rounded-lg border transition-all ${cls}`}
+                                >
+                                  <span className="text-sm font-mono mr-2 text-gray-400">
+                                    {String.fromCharCode(65 + i)}.
+                                  </span>
+                                  <span className="text-sm text-gray-200">{opt}</span>
+                                  {question.type === 'multiple' && !quiz.showAnswer && (
+                                    <span className={`ml-auto text-xs ${isSelected ? 'text-cyber-green' : 'text-gray-500'}`}>
+                                      {isSelected ? '✓' : '○'}
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 填空题输入框 */}
+                        {question.type === 'fill' && (
+                          <div className="space-y-3">
+                            <input
+                              type="text"
+                              value={String(userAnswer || '')}
+                              onChange={(e) => {
+                                quiz.setCurrentAnswer(e.target.value);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !quiz.showAnswer) {
+                                  handleQuizAnswer((userAnswer as string) || '');
+                                }
+                              }}
+                              disabled={quiz.showAnswer}
+                              className="w-full px-4 py-3 bg-cyber-purple/10 border border-cyber-purple/30 rounded-lg text-white text-sm outline-none focus:border-cyber-green"
+                              placeholder="请输入答案..."
+                            />
+                            {!quiz.showAnswer && (
+                              <button
+                                onClick={() => handleQuizAnswer((userAnswer as string) || '')}
+                                className={`w-full py-2 rounded-lg ${color.btnDefault} transition-colors`}
+                              >
+                                提交答案
+                              </button>
+                            )}
+                          </div>
+                        )}
+
+                        {/* 提交按钮（多选） */}
+                        {question.type === 'multiple' && !quiz.showAnswer && (
+                          <button
+                            onClick={() => handleQuizAnswer(userAnswer as number[] || [])}
+                            className={`w-full py-2 rounded-lg ${color.btnDefault} transition-colors`}
+                          >
+                            提交答案
+                          </button>
+                        )}
+
+                        {/* 答案解析 */}
+                        {quiz.showAnswer && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="p-4 rounded-lg bg-cyber-purple/10 border border-cyber-purple/20"
+                          >
+                            <div className={`flex items-center gap-2 mb-2 ${isCorrect ? 'text-cyber-green' : 'text-cyber-red'}`}>
+                              {isCorrect ? <CheckCircle size={18} /> : <AlertTriangle size={18} />}
+                              <span className="font-medium text-sm">
+                                {isCorrect ? '回答正确！' : '回答错误'}
+                              </span>
+                            </div>
+                            {question.type === 'fill' && question.correctAnswer && (
+                              <div className="text-sm text-cyber-green mb-2">
+                                <span className="text-gray-400">正确答案：</span>{question.correctAnswer}
+                              </div>
+                            )}
+                            <p className="text-sm text-gray-300 leading-relaxed">{question.explanation}</p>
+                          </motion.div>
+                        )}
+
+                        {/* 下一题按钮 */}
+                        {quiz.showAnswer && (
+                          <button
+                            onClick={nextQuestion}
+                            className={`w-full py-2 rounded-lg ${color.btnDefault} transition-colors`}
+                          >
+                            {quiz.isLastQuestion ? '完成测验' : '下一题'}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })()}
+
+                  {/* ====== 一览模式 ====== */}
+                  {quizMode === 'all' && (
+                    <div className="space-y-6">
+                      {day.quiz.map((rawQ, qi) => {
+                        const q: QuizQuestion = {
+                          ...rawQ,
+                          type: rawQ.type || (rawQ.options && rawQ.options.length > 0 ? 'single' : 'fill'),
+                        };
+                        const userAnswer = allAnswers[qi] ?? null;
+                        const submitted = allSubmitted[qi] ?? false;
+
+                        const isCorrect = submitted
+                          ? checkQuizAnswer(q, userAnswer)
+                          : null;
+
+                        const handleAllAnswer = (answer: QuizAnswer) => {
+                          if (submitted) return;
+                          setAllAnswers(prev => ({ ...prev, [qi]: answer }));
+                          setAllSubmitted(prev => ({ ...prev, [qi]: true }));
+                          const qKey = `${planId}_${currentDay}_${qi}`;
+                          wrongQuestionBook.recordAnswer(qKey, q, planId!, currentDay, qi, checkQuizAnswer(q, answer));
+                          if (checkQuizAnswer(q, answer)) addXp(5);
+                        };
+
+                        const handleAllMultiToggle = (optIdx: number) => {
+                          if (submitted) return;
+                          setAllMultiSelect(prev => {
+                            const cur = prev[qi] || [];
+                            const next = cur.includes(optIdx)
+                              ? cur.filter(i => i !== optIdx)
+                              : [...cur, optIdx].sort((a, b) => a - b);
+                            return { ...prev, [qi]: next };
+                          });
+                        };
+
+                        const multiSelected = allMultiSelect[qi] || [];
+                        const isOptionSelected = (optIdx: number) => {
+                          if (q.type === 'multiple') return multiSelected.includes(optIdx);
+                          return (userAnswer as number) === optIdx;
+                        };
+
+                        return (
+                          <div key={qi} className="border border-cyber-purple/20 rounded-lg p-4 bg-cyber-purple/5">
+                            {/* 题号 + 类型 + 问题 */}
+                            <div className="flex items-start gap-2 mb-3">
+                              <span className="text-xs font-bold text-cyber-gold min-w-[28px] mt-0.5">Q{qi + 1}</span>
+                              <span className={`text-xs px-2 py-0.5 rounded flex-shrink-0 ${
+                                q.type === 'single' ? 'bg-cyber-blue/20 text-cyber-blue' :
+                                q.type === 'multiple' ? 'bg-cyber-green/20 text-cyber-green' :
+                                q.type === 'boolean' ? 'bg-cyber-gold/20 text-cyber-gold' :
+                                'bg-[#6b5b95]/20 text-gray-300'
+                              }`}>
+                                {q.type === 'single' ? '单选' :
+                                 q.type === 'multiple' ? '多选' :
+                                 q.type === 'boolean' ? '判断' : '填空'}
+                              </span>
+                              <p className="text-sm text-white font-medium leading-relaxed flex-1">
+                                {q.question}
+                              </p>
+                            </div>
+
+                            {/* 选择题选项 */}
+                            {q.options && (q.type === 'single' || q.type === 'boolean' || q.type === 'multiple') && (
+                              <div className="space-y-1.5 pl-7">
+                                {q.options.map((opt, oi) => {
+                                  let cls = color.optionDefault + ' text-sm';
+                                  if (submitted) {
+                                    const isCorrectOption = q.type === 'multiple'
+                                      ? (q.correctIndices || []).includes(oi)
+                                      : oi === q.correctIndex;
+                                    if (isCorrectOption) cls = color.optionCorrect + ' text-sm';
+                                    else if (isOptionSelected(oi)) cls = color.optionWrong + ' text-sm';
+                                    else cls = color.optionDim + ' text-sm';
+                                  } else if (isOptionSelected(oi)) {
+                                    cls = color.optionCorrect + ' text-sm';
+                                  }
+
+                                  return (
+                                    <button
+                                      key={oi}
+                                      onClick={() => {
+                                        if (submitted) return;
+                                        if (q.type === 'multiple') {
+                                          handleAllMultiToggle(oi);
+                                        } else {
+                                          handleAllAnswer(oi);
+                                        }
+                                      }}
+                                      disabled={submitted}
+                                      className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all flex items-center ${cls}`}
+                                    >
+                                      <span className="text-xs font-mono mr-2 text-gray-400">
+                                        {String.fromCharCode(65 + oi)}.
+                                      </span>
+                                      <span className="text-xs text-gray-200 flex-1">{opt}</span>
+                                      {q.type === 'multiple' && !submitted && (
+                                        <span className={`text-xs ${multiSelected.includes(oi) ? 'text-cyber-green' : 'text-gray-500'}`}>
+                                          {multiSelected.includes(oi) ? '✓' : '○'}
+                                        </span>
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                                {/* 多选提交按钮 */}
+                                {q.type === 'multiple' && !submitted && multiSelected.length > 0 && (
+                                  <button
+                                    onClick={() => handleAllAnswer(multiSelected)}
+                                    className={`w-full py-2 rounded-lg mt-1 ${color.btnDefault} transition-colors text-sm`}
+                                  >
+                                    提交本答案
+                                  </button>
+                                )}
+                              </div>
+                            )}
+
+                            {/* 填空 */}
+                            {q.type === 'fill' && (
+                              <div className="pl-7 space-y-2">
+                                {!submitted ? (
+                                  <div className="flex gap-2">
+                                    <input
+                                      type="text"
+                                      value={String(userAnswer ?? '')}
+                                      onChange={e => setAllAnswers(prev => ({ ...prev, [qi]: e.target.value }))}
+                                      onKeyDown={e => { if (e.key === 'Enter') handleAllAnswer(e.currentTarget.value); }}
+                                      className="flex-1 px-3 py-2 bg-cyber-purple/10 border border-cyber-purple/30 rounded-lg text-white text-sm outline-none focus:border-cyber-green"
+                                      placeholder="请输入答案..."
+                                    />
+                                    <button
+                                      onClick={() => handleAllAnswer(userAnswer ?? '')}
+                                      className={`px-4 py-2 rounded-lg ${color.btnDefault} transition-colors text-sm`}
+                                    >
+                                      提交
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="text-sm text-gray-400">
+                                    <span className="text-cyber-green">你的答案：</span>{String(userAnswer)}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {/* 答案解析 */}
+                            {submitted && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 6 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="mt-3 ml-7 p-3 rounded-lg bg-cyber-purple/10 border border-cyber-purple/20"
+                              >
+                                <div className={`flex items-center gap-2 mb-1.5 ${isCorrect ? 'text-cyber-green' : 'text-cyber-red'}`}>
+                                  {isCorrect ? <CheckCircle size={14} /> : <AlertTriangle size={14} />}
+                                  <span className="font-medium text-xs">
+                                    {isCorrect ? '回答正确！' : '回答错误'}
+                                  </span>
+                                </div>
+                                {q.type === 'fill' && q.correctAnswer && (
+                                  <div className="text-xs text-cyber-green mb-1">
+                                    <span className="text-gray-400">正确答案：</span>{q.correctAnswer}
+                                  </div>
+                                )}
+                                <p className="text-xs text-gray-300 leading-relaxed">{q.explanation}</p>
+                              </motion.div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </Card>
+              </motion.div>
             </>
           )}
 

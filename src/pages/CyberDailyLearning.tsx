@@ -29,46 +29,371 @@ import {
   Flame,
   Trophy,
   Medal,
-  Eye,
   RefreshCw,
   Keyboard,
-  X,
   RotateCcw,
   Video,
-  FileQuestion
+  FileQuestion,
+  Eye,
+  Library,
+  Shield
 } from 'lucide-react';
+import MilkdownEditor from '../components/MilkdownEditor';
 import { Card, Badge, Button } from '../components/UI';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Editor from '@monaco-editor/react';
-import { CyberLearningPlan, CyberDay, QuizQuestion } from '../data/cyberBasic';
+import type { QuizQuestion } from '../data/cyberBasic';
 import { Pomodoro } from '../components/Pomodoro';
 import { plans, planSupplements, planColor } from './CyberDailyLearning/constants';
 import { saveData, loadData } from '../data/persistData';
+import { loadAllResources } from '../data/resourceData';
+import type { Resource } from '../types/resource';
+import { getReadingsForDay } from '../data/dayResourceMap';
 import { useQuizPractice, useWrongQuestionBook, checkQuizAnswer, useGamification, useCodeExecutor } from '../hooks';
+import type { QuizAnswer } from '../hooks';
 
 // 通过 fetch 动态加载 public/ 下的 .md 文件（Vite 不支持 glob 读取 public/）
+
+// 提取"## ✅ 验收标准" 下的 checkbox 列表
+const extractAcceptanceChecklist = (md: string): string[] => {
+  const m = md.match(/##\s*✅\s*验收标准\s*\n([\s\S]*?)(?:\n##|\n---|\n*$)/);
+  if (!m) return [];
+  return (m[1].match(/- \[.\] (.+)/g) || []).map(s => s.replace(/- \[.\] /, '').trim()).filter(Boolean);
+};
+
+// 提取"## 🎯 蓝队面试高频题" 下的 Q&A
+const extractInterviewQA = (md: string): { q: string; a: string }[] => {
+  const m = md.match(/##\s*🎯\s*.*面试高频.*\n([\s\S]*?)(?:\n##\s(?!##)|\n---\n\n|\n*$)/);
+  if (!m) return [];
+  const qas: { q: string; a: string }[] = [];
+  const qaRegex = /\*\*Q\d+[：:]\s*(.+?)\*\*\s*\n>\s*(.+?)(?=\n\n\*\*Q|\n*$)/gs;
+  let qm;
+  while ((qm = qaRegex.exec(m[1])) !== null) {
+    qas.push({ q: qm[1].trim(), a: qm[2].replace(/\n>/g, '\n').trim() });
+  }
+  return qas;
+};
+
+// 提取"## 📈 学习效果自检" 下的自检问题
+const extractSelfCheckQuestions = (md: string): string[] => {
+  const m = md.match(/##\s*📈\s*学习效果自检\s*\n([\s\S]*?)(?:\n##|\n---|\n*$)/);
+  if (!m) return [];
+  return m[1].split('\n')
+    .filter(l => /^\d+[\.\、]/.test(l.trim()))
+    .map(l => l.replace(/^\d+[\.\、]\s*/, '').trim())
+    .filter(Boolean);
+};
+
+// 提取"## 📚 延伸阅读" 中的链接
+const extractExtraLinks = (md: string): { name: string; url: string; type: 'article' | 'video' | 'book' }[] => {
+  const m = md.match(/##\s*📚\s*延伸阅读\s*\n([\s\S]*?)(?:\n##|\n---|\n*$)/);
+  if (!m) return [];
+  const links: { name: string; url: string; type: 'article' | 'video' | 'book' }[] = [];
+  const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g;
+  let lm;
+  while ((lm = linkRegex.exec(m[1])) !== null) {
+    const name = lm[1].replace(/^[-*]\s*/, '').trim();
+    const url = lm[2];
+    if (!links.some(l => l.url === url)) {
+      links.push({ name, url, type: 'article' });
+    }
+  }
+  return links;
+};
+
+// 提取"## 🎯 实战思维训练"场景作为实战题目
+const extractScenarioTraining = (md: string): { scenario: string; layers: string[] }[] => {
+  const m = md.match(/##\s*🎯\s*实战思维训练\s*\n([\s\S]*?)(?:\n##\s(?!##)|\n---\n\n|\n*$)/);
+  if (!m) return [];
+  const scenarios: { scenario: string; layers: string[] }[] = [];
+  // 匹配"**场景：...**"段落
+  const sceneRegex = /\*\*场景[：:]\s*(.+?)\*\*/g;
+  let sm;
+  while ((sm = sceneRegex.exec(m[1])) !== null) {
+    const scenario = sm[1].trim();
+    // 提取该场景后的分层思考（🛡️ 🔍 🚨 📊 开头的行）
+    const rest = m[1].slice(sm.index + sm[0].length);
+    const layerRegex = /[🛡️🔍🚨📊]\s*\*\*([^*]+)\*\*[：:]\s*(.+?)(?=\n\||\n\n|$)/g;
+    const layers: string[] = [];
+    let lm;
+    while ((lm = layerRegex.exec(rest)) !== null) {
+      layers.push(`${lm[1].trim()}：${lm[2].trim()}`);
+    }
+    if (layers.length > 0) {
+      scenarios.push({ scenario, layers });
+    }
+  }
+  return scenarios;
+};
+
+// 提取"## 🎯 实战思维训练"中的条件反射表格行
+const extractConditionedResponse = (md: string): { phenomenon: string; association: string; action: string }[] => {
+  const m = md.match(/##\s*🎯\s*实战思维训练\s*\n([\s\S]*?)(?:\n##\s(?!##)|\n---\n\n|\n*$)/);
+  if (!m) return [];
+  const rows: { phenomenon: string; association: string; action: string }[] = [];
+  // 匹配表格行：| 现象 | 联想到 | 动作 |
+  const rowRegex = /\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|/g;
+  let rm;
+  while ((rm = rowRegex.exec(m[1])) !== null) {
+    const p = rm[1].trim();
+    if (p === '现象' || p.startsWith(':-')) continue; // 跳过表头
+    rows.push({ phenomenon: p, association: rm[2].trim(), action: rm[3].trim() });
+  }
+  return rows;
+};
+
+// 从 markdown 内容中提取代码块（包括无语言标记的块），供"代码实战"tab 使用
+const extractCodeBlocksFromMd = (md: string): { title: string; language: string; code: string; explanation: string }[] => {
+  const blocks: { title: string; language: string; code: string; explanation: string }[] = [];
+  // 匹配代码块：```language（可选）\n...``` ，\w* 支持无语言标记
+  const regex = /```(\w*)\s*\n([\s\S]*?)```/g;
+  let match;
+  while ((match = regex.exec(md)) !== null) {
+    const lang = match[1] || 'plain';
+    const code = match[2].trim();
+    if (!code || code.length < 12) continue;
+    // 判断是否像"可执行/可练习"的内容
+    const codeLines = code.split('\n').length;
+    const hasCodeTokens = /[=;{}()#!\/]|import |def |function |grep |curl |nmap |sudo |docker |python\d? |SELECT |INSERT |WHERE |echo |cat |ls |cd |mkdir/i.test(code);
+    // 跳过纯 ASCII 图（大量 │├└ 字符）、纯文字叙述
+    const isAsciiArt = (code.match(/[│├└─┌┐┘└◀▶]/g) || []).length > 3;
+    const isPureNarrative = codeLines <= 3 && /^[^=;{}():#]+$/.test(code.replace(/\n/g, '')) && !hasCodeTokens;
+    if (isAsciiArt || isPureNarrative) continue;
+    // 确定显示语言
+    const displayLang = lang === 'plain' ? (hasCodeTokens ? 'bash' : 'text') : lang;
+    // 给过长代码块截断
+    const displayCode = code.length > 3000 ? code.slice(0, 3000) + '\n...(已截断，完整内容见课程内容)' : code;
+    // 提取该代码块前的最近一个标题作为名称
+    const before = md.slice(0, match.index);
+    const hMatch = before.match(/^#{2,4}\s+(.+)/gm);
+    const title = hMatch ? hMatch[hMatch.length - 1].replace(/^#+\s*/, '').trim() : `${displayLang} 代码示例`;
+    // 提取代码块后的说明文字
+    const after = md.slice(match.index + match[0].length);
+    const explMatch = after.match(/^(.{4,150}?)[。\.\n]/m);
+    const explanation = explMatch ? explMatch[1].trim().replace(/^[>\s*]+\s*/, '') : `${displayLang} 代码示例`;
+    blocks.push({ title, language: displayLang, code: displayCode, explanation });
+    if (blocks.length >= 20) break;
+  }
+  return blocks;
+};
+
+// 从 .md 内容自动生成随堂测验题目，高质量、紧扣知识点
+const generateMdQuizQuestions = (md: string, targetCount: number): QuizQuestion[] => {
+  const questions: QuizQuestion[] = [];
+  const usedQuestions = new Set<string>();
+
+  const addQuestion = (q: QuizQuestion) => {
+    // 去重
+    const key = q.question.slice(0, 50);
+    if (usedQuestions.has(key)) return;
+    usedQuestions.add(key);
+    questions.push(q);
+  };
+
+  // ===== 策略1：从「蓝队面试高频题」提取 Q&A → 单选题（最高质量）=====
+  const qaRegex = /\*\*Q\d+[：:]\s*(.+?)\*\*\s*\n>\s*(.+?)(?=\n\n\*\*Q|\n*$)/gs;
+  let qaMatch;
+  while ((qaMatch = qaRegex.exec(md)) !== null && questions.length < targetCount) {
+    const qText = qaMatch[1].trim().replace(/\*\*/g, '');
+    const aText = qaMatch[2].trim().replace(/\*\*/g, '').replace(/\n>/g, '\n');
+    if (qText.length < 10 || aText.length < 30) continue;
+
+    // 从答案中提取关键句作为正确选项
+    const keySentence = aText.split(/[。；\n]/).filter(s => s.trim().length > 10 && s.trim().length < 100)[0];
+    if (!keySentence) continue;
+
+    // 找干扰项：从其他 Q&A 的答案中取
+    const otherAnswers: string[] = [];
+    const qaRegex2 = /\*\*Q\d+[：:]\s*(.+?)\*\*\s*\n>\s*(.+?)(?=\n\n\*\*Q|\n*$)/gs;
+    let qa2;
+    while ((qa2 = qaRegex2.exec(md)) !== null && otherAnswers.length < 4) {
+      if (qa2[1].trim() === qaMatch[1].trim()) continue;
+      const otherSent = qa2[2].trim().replace(/\*\*/g, '').replace(/\n>/g, '\n').split(/[。；\n]/).filter(s => s.trim().length > 10 && s.trim().length < 100)[0];
+      if (otherSent && !otherAnswers.includes(otherSent)) otherAnswers.push(otherSent);
+    }
+
+    // 如果干扰项不够，从正文提取句子
+    if (otherAnswers.length < 2) {
+      const bodySentences = md.replace(/#{1,4}\s+.+/g, '').replace(/\*\*/g, '').split(/[。\n]/).filter(s => {
+        const t = s.trim();
+        return t.length > 15 && t.length < 80 && !t.includes('|') && !t.includes('```') && !t.startsWith('#') && !t.startsWith('>') && t !== keySentence.trim();
+      });
+      for (const s of bodySentences) {
+        if (otherAnswers.length >= 3) break;
+        const t = s.trim();
+        if (t && !otherAnswers.includes(t)) otherAnswers.push(t);
+      }
+    }
+
+    if (otherAnswers.length < 2) continue;
+
+    // 打乱选项顺序
+    const allOptions = [keySentence.trim(), ...otherAnswers.slice(0, 3)];
+    const shuffled = allOptions.map((opt, i) => ({ opt, origIdx: i })).sort(() => Math.random() - 0.5);
+    const correctIdx = shuffled.findIndex(s => s.origIdx === 0);
+
+    addQuestion({
+      id: `mdgen_qa_${questions.length}`,
+      type: 'single',
+      question: qText,
+      options: shuffled.map(s => s.opt),
+      correctIndex: correctIdx,
+      explanation: aText.slice(0, 200).trim(),
+    });
+  }
+
+  // ===== 策略2：从「新手常见误区纠正」提取 → 判断题（高质量）=====
+  const misconceptionRegex = /\d+\.\s*\*\*误区\*\*[：:]\s*["""]?(.+?)["""]?\s*\n\s*-\s*\*\*真相\*\*[：:]\s*(.+?)(?=\n\n|\n*$)/g;
+  let misMatch;
+  while ((misMatch = misconceptionRegex.exec(md)) !== null && questions.length < targetCount) {
+    const myth = misMatch[1].trim().replace(/\*\*/g, '');
+    const truth = misMatch[2].trim().replace(/\*\*/g, '').split(/\n/)[0].trim();
+    if (myth.length < 10 || truth.length < 20) continue;
+
+    addQuestion({
+      id: `mdgen_mis_${questions.length}`,
+      type: 'boolean',
+      question: myth,
+      options: ['正确', '错误'],
+      correctIndex: 1, // 误区是错误说法
+      explanation: truth,
+    });
+  }
+
+  // ===== 策略3：从表格提取关键事实 → 单选题/填空题 =====
+  const tableRegex = /\|(.+)\|\n\|[-| :]+\|\n((?:\|.+\|\n?)+)/g;
+  let tableMatch;
+  while ((tableMatch = tableRegex.exec(md)) !== null && questions.length < targetCount) {
+    const headerRow = tableMatch[1];
+    const bodyRows = tableMatch[2];
+    const headers = headerRow.split('|').map(h => h.trim()).filter(Boolean);
+    const rows = bodyRows.split('\n').filter(r => r.trim().startsWith('|'))
+      .map(r => r.split('|').map(c => c.trim()).filter(Boolean));
+
+    if (headers.length < 2 || rows.length < 2) continue;
+
+    // 找到适合出题的列（避免代码/链接列）
+    const goodCols = headers.map((h, i) => ({ h, i })).filter(c =>
+      !c.h.includes('--') && !c.h.includes('```') && c.h.length > 0 &&
+      rows.every(r => r[c.i] && r[c.i].length > 1 && !r[c.i].includes('```') && !r[c.i].includes('http'))
+    );
+    if (goodCols.length < 2) continue;
+
+    // 单选题：给一个值，问对应的另一个属性
+    const qCol = goodCols[0];
+    const aCol = goodCols[goodCols.length > 1 ? 1 : 0];
+    if (qCol.i === aCol.i) continue;
+
+    const pickedRow = rows[Math.floor(Math.random() * Math.min(rows.length, 6))];
+    const qVal = pickedRow[qCol.i].replace(/\*\*/g, '');
+    const aVal = pickedRow[aCol.i].replace(/\*\*/g, '');
+
+    if (qVal.length < 2 || aVal.length < 3) continue;
+
+    // 干扰项：同一列的其他值
+    const distractors = rows.filter(r => r !== pickedRow).map(r => r[aCol.i].replace(/\*\*/g, '')).filter(v => v && v !== aVal).slice(0, 3);
+    if (distractors.length < 2) continue;
+
+    const opts = [aVal, ...distractors].sort(() => Math.random() - 0.5);
+    const correctI = opts.indexOf(aVal);
+
+    addQuestion({
+      id: `mdgen_tbl_${questions.length}`,
+      type: 'single',
+      question: `关于「${headers[qCol.i]}」，${qVal} 对应的${headers[aCol.i]}是什么？`,
+      options: opts,
+      correctIndex: correctI,
+      explanation: `${qVal} 的${headers[aCol.i]}是：${aVal}。`,
+    });
+  }
+
+  // ===== 策略4：从关键概念段提取 → 精炼填空题 =====
+  if (questions.length < targetCount) {
+    // 找「核心术语词典」类表格或列表中的定义
+    const defPatterns = [
+      /\|\s*\d+\s*\|\s*\*\*(.+?)\*\*\s*\|(.+?)\|/g, // 术语表格
+      /\*\*(SOC|SIEM|IOC|WAF|IDS|IPS|C2|ATT&CK|MTTD|MTTR|PDCERF|Webshell|EDR|DLP|SOAR)\*\*[：:]*\s*(.+?)(?=[\n\*])/g,
+    ];
+
+    let defMatch;
+    const defRegex = defPatterns[0];
+    const usedDefs = new Set<string>();
+    while ((defMatch = defRegex.exec(md)) !== null && questions.length < targetCount) {
+      const term = defMatch[1].trim();
+      const def = defMatch[2].trim().replace(/\*\*/g, '').slice(0, 80);
+      if (term.length < 2 || def.length < 8 || usedDefs.has(term)) continue;
+      usedDefs.add(term);
+
+      addQuestion({
+        id: `mdgen_def_${questions.length}`,
+        type: 'fill',
+        question: `____ 是${def}`,
+        correctAnswer: term,
+        explanation: `${term} 是${def}`,
+      });
+    }
+  }
+
+  // ===== 策略5：从验收标准/自检问题生成题目 =====
+  if (questions.length < targetCount) {
+    const checkItems = md.match(/-\s*\[.\]\s*(.+)/g);
+    if (checkItems) {
+      const items = checkItems.map(c => c.replace(/-\s*\[.\]\s*/, '').trim()).filter(c => c.length > 10);
+      for (let i = 0; i < Math.min(items.length, targetCount - questions.length); i++) {
+        const item = items[i];
+        // 根据本节验收标准生成判断题
+        addQuestion({
+          id: `mdgen_chk_${questions.length}`,
+          type: 'boolean',
+          question: `根据本节学习内容，"${item.slice(0, 50)}${item.length > 50 ? '...' : ''}" 是该节要求掌握的知识点。`,
+          options: ['正确', '错误'],
+          correctIndex: 0,
+          explanation: `这是本节明确列出的验收标准/自检项，应当掌握。`,
+        });
+      }
+    }
+  }
+
+  return questions;
+};
 
 export const CyberDailyLearning: React.FC = () => {
   const { planId } = useParams<{ planId: string }>();
   const navigate = useNavigate();
 
-  const plan = planId ? plans[planId] : null;
+  // 护网轨道切换：120天完整 vs 28天速成
+  const [hwTrack, setHwTrack] = useState<'full' | 'express'>('full');
 
+  const plan = useMemo(() => {
+    if (!planId) return null;
+    if (planId === 'hw' && hwTrack === 'express') {
+      return plans['hw-express'] || null;
+    }
+    return plans[planId] || null;
+  }, [planId, hwTrack]);
+
+  const effectiveTotalDays = plan?.totalDays ?? 120;
   const [currentDay, setCurrentDay] = useState(1);
+
+  // 切换轨道时 clamp 当前天数到有效范围
+  useEffect(() => {
+    setCurrentDay(d => Math.max(1, Math.min(d, effectiveTotalDays)));
+  }, [effectiveTotalDays]);
   const [completedDays, setCompletedDays] = useState<Set<number>>(new Set());
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>('content');
   const [note, setNote] = useState('');
   const [noteSavedAt, setNoteSavedAt] = useState<number | null>(null);
+  const [noteReady, setNoteReady] = useState(false);
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
   const [mdContent, setMdContent] = useState<string | null>(null);
   const [mdLoading, setMdLoading] = useState(false);
-  const [mdError, setMdError] = useState<string | null>(null);
+  const [, setMdError] = useState<string | null>(null);
   const saveTimer = React.useRef<number | null>(null);
 
   // Gamification (共享hook，按 planId 隔离数据)
   const gamify = useGamification({ storageKey: 'cisp_cyber_gamify', subKey: planId });
-  const { xp, userLevel, streakHeatmap, quizAvg, showLevelUp, setShowLevelUp, showConfetti, setShowConfetti, newBadge, setNewBadge, addXp, bumpHeatmap, updateQuizAvg } = gamify;
+  const { xp, userLevel, streakHeatmap, quizAvg, showLevelUp, setShowLevelUp, showConfetti, addXp, bumpHeatmap } = gamify;
 
   // Code editor states
   const [editorCode, setEditorCode] = useState('');
@@ -78,13 +403,19 @@ export const CyberDailyLearning: React.FC = () => {
   // Coding exercise states
   const [exerciseAnswer, setExerciseAnswer] = useState('');
   const [exerciseResult, setExerciseResult] = useState<'correct'|'wrong'|null>(null);
-  const [exerciseHint, setExerciseHint] = useState(false);
+
+  // Interview Q&A expand state (随堂测验tab中的面试高频题展开)
+  const [expandedQA, setExpandedQA] = useState<Set<number>>(new Set());
 
   // Stats panel visibility
   const [showStats, setShowStats] = useState(true);
 
   // Tab navigation
-  const [activeTab, setActiveTab] = useState<'content' | 'video' | 'code' | 'quiz' | 'expert'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'video' | 'code' | 'readings' | 'quiz' | 'expert'>('content');
+
+  // 课内读物
+  const [readings, setReadings] = useState<Resource[]>([]);
+  const [readingsLoading, setReadingsLoading] = useState(false);
 
   // Bilibili video
   const [bilibiliBvid, setBilibiliBvid] = useState<string | null>(null);
@@ -95,6 +426,12 @@ export const CyberDailyLearning: React.FC = () => {
   const [quizTimer, setQuizTimer] = useState(30);
   const [quizTimerRunning, setQuizTimerRunning] = useState(false);
   const quizTimerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // 随堂测验：全部展开模式
+  const [quizFullyExpanded, setQuizFullyExpanded] = useState(false);
+  // 展开模式下每道题的独立状态
+  const [expandedAnswers, setExpandedAnswers] = useState<Record<number, QuizAnswer>>({});
+  const [expandedShowAnswer, setExpandedShowAnswer] = useState<Record<number, boolean>>({});
 
   // 测验和错题本 hooks —— 合并 supplement 中提取的结构化数据
   const day = useMemo(() => {
@@ -126,8 +463,93 @@ export const CyberDailyLearning: React.FC = () => {
       recommendedTools: (d.recommendedTools && d.recommendedTools.length > 0) ? d.recommendedTools : (s.recommendedTools as any),
     };
   }, [plan, currentDay, planId]);
-  const quiz = useQuizPractice(day?.quiz || []);
+
+  // 从加载的 .md 内容中提取代码块，当结构化 codeExamples 为空时作为 fallback
+  const effectiveCodeExamples = useMemo(() => {
+    if (day?.codeExamples && day.codeExamples.length > 0) return day.codeExamples;
+    if (!mdContent) return [];
+    return extractCodeBlocksFromMd(mdContent);
+  }, [day?.codeExamples, mdContent]);
+
+  // 从 .md 文件提取结构化内容，填充到随堂测验和学习资源区域
+  const extractedFromMd = useMemo(() => {
+    if (!mdContent) return { acceptanceChecklist: [] as string[], interviewQA: [] as { q: string; a: string }[], selfCheckQuestions: [] as string[], extraLinks: [] as { name: string; url: string; type: 'article' | 'video' | 'book' }[], scenarioTraining: [] as { scenario: string; layers: string[] }[], conditionedResponse: [] as { phenomenon: string; association: string; action: string }[] };
+    return {
+      acceptanceChecklist: extractAcceptanceChecklist(mdContent),
+      interviewQA: extractInterviewQA(mdContent),
+      selfCheckQuestions: extractSelfCheckQuestions(mdContent),
+      extraLinks: extractExtraLinks(mdContent),
+      scenarioTraining: extractScenarioTraining(mdContent),
+      conditionedResponse: extractConditionedResponse(mdContent),
+    };
+  }, [mdContent]);
+
+  // 合并 day.resources 与从 md 中提取的延伸阅读链接
+  const effectiveResources = useMemo(() => {
+    const base = day?.resources || [];
+    const extras = extractedFromMd.extraLinks.filter(el => !base.some(b => b.url === el.url));
+    return [...base, ...extras];
+  }, [day?.resources, extractedFromMd.extraLinks]);
+
   const wrongQuestionBook = useWrongQuestionBook();
+
+  // 天切换标识：用于快照错题本，避免 session 中动态变化
+  const dayKey = useMemo(() => `${planId}_${currentDay}`, [planId, currentDay]);
+  const prevDayKey = React.useRef(dayKey);
+  const wrongBookSnapshot = React.useRef<typeof wrongQuestionBook.entries>([]);
+  if (prevDayKey.current !== dayKey) {
+    prevDayKey.current = dayKey;
+    wrongBookSnapshot.current = [...wrongQuestionBook.entries];
+  }
+
+  // 构建合并题库：当天题 + 错题本待复习 + 自动生成题（保证≥20题）
+  const { allQuizQuestions, quizKeyMap, wrongBookCount, mdGenCount } = useMemo(() => {
+    const baseQuiz: QuizQuestion[] = [];
+    const keyMap: string[] = []; // quizKeyMap[i] = 题目来源 key
+
+    // 1. 当天原始题目
+    const dayQuiz = day?.quiz || [];
+    dayQuiz.forEach((q, i) => {
+      const id = `${planId}_${currentDay}_q${i}`;
+      baseQuiz.push({ ...q, id: id || q.id });
+      keyMap.push(id);
+    });
+
+    // 2. 错题本中尚未释放的题（使用快照避免 session 中动态变化），最多10道错题
+    const MAX_WRONG_INLINE = 10;
+    let wbCount = 0;
+    wrongBookSnapshot.current.forEach(entry => {
+      if (entry.consecutiveCorrect < 3 && wbCount < MAX_WRONG_INLINE) {
+        const entryKey = entry.key;
+        if (!keyMap.includes(entryKey)) {
+          baseQuiz.push({ ...entry.question, id: entryKey });
+          keyMap.push(entryKey);
+          wbCount++;
+        }
+      }
+    });
+
+    // 3. 自动生成题 补齐到最少 20 题，总上限 30 题
+    const MIN_QUIZ = 20;
+    const MAX_QUIZ = 30;
+    const needed = Math.max(0, MIN_QUIZ - baseQuiz.length);
+    const maxGen = Math.max(0, MAX_QUIZ - baseQuiz.length);
+    let genCount = 0;
+    const genTarget = Math.min(needed, maxGen);
+    if (genTarget > 0 && mdContent) {
+      const generated = generateMdQuizQuestions(mdContent, genTarget);
+      generated.forEach(q => {
+        const gid = `mdgen_${planId}_${currentDay}_g${genCount}`;
+        baseQuiz.push({ ...q, id: gid });
+        keyMap.push(gid);
+        genCount++;
+      });
+    }
+
+    return { allQuizQuestions: baseQuiz, quizKeyMap: keyMap, wrongBookCount: wbCount, mdGenCount: genCount };
+  }, [day?.quiz, planId, currentDay, mdContent]);
+
+  const quiz = useQuizPractice(allQuizQuestions);
 
   // 切换天时重置测验和定时器
   const resetQuiz = useCallback(() => {
@@ -135,6 +557,8 @@ export const CyberDailyLearning: React.FC = () => {
     setQuizTimer(30);
     setQuizTimerRunning(false);
     if (quizTimerRef.current) { clearInterval(quizTimerRef.current); quizTimerRef.current = null; }
+    setExpandedAnswers({});
+    setExpandedShowAnswer({});
   }, [quiz.reset]);
   useEffect(() => {
     resetQuiz();
@@ -142,7 +566,6 @@ export const CyberDailyLearning: React.FC = () => {
     setCodeOutput('');
     setExerciseAnswer('');
     setExerciseResult(null);
-    setExerciseHint(false);
   }, [resetQuiz]);
 
   // Gamification 加载 —— 已迁移到 useGamification hook
@@ -198,20 +621,30 @@ export const CyberDailyLearning: React.FC = () => {
 
   useEffect(() => {
     if (!planId) return;
+    setNote('');
+    setNoteReady(false);
+    setNoteSavedAt(null);
     async function load() {
       const noteKey = `cyber_${planId}_${currentDay}`;
       const raw = await loadData<string>(noteKey, '');
       if (raw) { setNote(raw); setNoteSavedAt(Date.now()); } else { setNote(''); setNoteSavedAt(null); }
+      setNoteReady(true);
     }
     load();
   }, [planId, currentDay]);
 
   // 通过 fetch 动态加载 public/contents/cyber-learning/ 下的 .md 文件
+  // 速成轨道使用 hw-express 目录，完整轨道使用 hw 目录
+  const fetchPlanId = React.useMemo(() => {
+    if (planId === 'hw' && hwTrack === 'express') return 'hw-express';
+    return planId;
+  }, [planId, hwTrack]);
+
   useEffect(() => {
-    if (!planId) return;
+    if (!planId || !fetchPlanId) return;
     setMdLoading(true);
     setMdError(null);
-    fetch(`/contents/cyber-learning/${planId}/day-${currentDay}.md`)
+    fetch(`/contents/cyber-learning/${fetchPlanId}/day-${currentDay}.md`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.text();
@@ -226,6 +659,24 @@ export const CyberDailyLearning: React.FC = () => {
         setMdError(null);
       })
       .finally(() => setMdLoading(false));
+  }, [fetchPlanId, currentDay]);
+
+  // 课内读物：按当天课程精确匹配
+  useEffect(() => {
+    if (!planId || !currentDay) return;
+    setReadingsLoading(true);
+    const ids = getReadingsForDay('cyber', planId, currentDay);
+    if (ids.length === 0) {
+      setReadings([]);
+      setReadingsLoading(false);
+      return;
+    }
+    loadAllResources().then(all => {
+      const resourceMap = new Map(all.map(r => [r.id, r]));
+      const matched = ids.map(id => resourceMap.get(id)).filter(Boolean) as Resource[];
+      setReadings(matched);
+      setReadingsLoading(false);
+    });
   }, [planId, currentDay]);
 
   const handleNoteChange = (val: string) => {
@@ -257,19 +708,24 @@ export const CyberDailyLearning: React.FC = () => {
 
   // Start timer when quiz question appears and answer not yet shown
   useEffect(() => {
-    if (!quiz.showAnswer && day?.quiz && day.quiz.length > 0) {
+    if (!quiz.showAnswer && allQuizQuestions.length > 0) {
       setQuizTimer(30);
       setQuizTimerRunning(true);
     } else if (quiz.showAnswer) {
       setQuizTimerRunning(false);
     }
-  }, [quiz.currentIndex, quiz.showAnswer, day?.quiz]);
+  }, [quiz.currentIndex, quiz.showAnswer, allQuizQuestions.length]);
 
   const handleQuizAnswer = (answer: number | number[] | string) => {
     if (quiz.showAnswer) return;
     setQuizTimerRunning(false);
     const isCorrect = quiz.answerOne(answer);
-    wrongQuestionBook.recordAnswer(planId!, currentDay, quiz.currentIndex, isCorrect);
+    const idx = quiz.currentIndex;
+    const qKey = quizKeyMap[idx] || `${planId}_${currentDay}_q${idx}`;
+    const question = allQuizQuestions[idx];
+    if (question) {
+      wrongQuestionBook.recordAnswer(qKey, question, planId!, currentDay, idx, isCorrect);
+    }
   };
 
   const handleMultipleSelect = (index: number) => {
@@ -348,6 +804,31 @@ export const CyberDailyLearning: React.FC = () => {
               >
                 第{currentDay}天
               </Badge>
+              {/* 护网轨道切换：120天完整 / 28天速成 */}
+              {planId === 'hw' && (
+                <div className="flex rounded-lg border border-cyber-gold/30 overflow-hidden">
+                  <button
+                    onClick={() => setHwTrack('full')}
+                    className={`px-3 py-1 text-xs font-medium transition-colors ${
+                      hwTrack === 'full'
+                        ? 'bg-cyber-gold text-black'
+                        : 'bg-transparent text-gray-400 hover:text-cyber-gold'
+                    }`}
+                  >
+                    🛡️ 120天完整
+                  </button>
+                  <button
+                    onClick={() => setHwTrack('express')}
+                    className={`px-3 py-1 text-xs font-medium transition-colors ${
+                      hwTrack === 'express'
+                        ? 'bg-cyber-gold text-black'
+                        : 'bg-transparent text-gray-400 hover:text-cyber-gold'
+                    }`}
+                  >
+                    ⚡ 28天速成
+                  </button>
+                </div>
+              )}
             </div>
             <p className="text-sm text-gray-400">{plan.description}</p>
           </div>
@@ -551,10 +1032,9 @@ export const CyberDailyLearning: React.FC = () => {
               { id: 'content', label: '课程内容', icon: BookOpen },
               { id: 'video', label: '视频教程', icon: Video },
               { id: 'code', label: '代码实战', icon: Code },
+              { id: 'readings', label: '课内读物', icon: Library },
               { id: 'quiz', label: '随堂测验', icon: FileQuestion },
-              ...(day.expertNotes && day.expertNotes.length > 0
-                ? [{ id: 'expert', label: '大神笔记', icon: Award }]
-                : []),
+              { id: 'expert', label: '大神笔记', icon: Award },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -748,15 +1228,20 @@ export const CyberDailyLearning: React.FC = () => {
             <>
 
           {/* 代码示例 */}
-          {day.codeExamples && day.codeExamples.length > 0 && (
-            <motion.div variants={itemVariants}>
-              <Card>
-                <h3 className={`text-sm font-medium ${color.main} mb-3 flex items-center gap-2`}>
-                  <Terminal size={16} />
-                  代码示例
-                </h3>
+          <motion.div variants={itemVariants}>
+            <Card>
+              <h3 className={`text-sm font-medium ${color.main} mb-3 flex items-center gap-2`}>
+                <Terminal size={16} />
+                代码示例
+                {effectiveCodeExamples.length > 0 && (
+                  <span className="text-xs text-gray-500 font-normal ml-1">
+                    (共{effectiveCodeExamples.length}个)
+                  </span>
+                )}
+              </h3>
+              {effectiveCodeExamples.length > 0 ? (
                 <div className="space-y-4">
-                  {day.codeExamples.map((example, i) => (
+                  {effectiveCodeExamples.map((example, i) => (
                     <div key={i} className="border border-cyber-purple/20 rounded-lg overflow-hidden">
                       <div className="flex items-center justify-between px-3 py-2 bg-cyber-purple/10 border-b border-cyber-purple/20">
                         <div className="flex items-center gap-2">
@@ -785,9 +1270,15 @@ export const CyberDailyLearning: React.FC = () => {
                     </div>
                   ))}
                 </div>
-              </Card>
-            </motion.div>
-          )}
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Terminal size={32} className="mx-auto mb-3 opacity-30" />
+                  <p className="text-sm">本日暂无代码示例</p>
+                  <p className="text-xs mt-1">可使用下方代码编辑器自行练习</p>
+                </div>
+              )}
+            </Card>
+          </motion.div>
 
           {/* Monaco 代码编辑器 */}
           <motion.div variants={itemVariants}>
@@ -853,67 +1344,178 @@ export const CyberDailyLearning: React.FC = () => {
             </Card>
           </motion.div>
 
-          {/* 编程练习 */}
-          {day.codeExamples && day.codeExamples.length > 0 && (
+          {/* 实战思维训练 —— 场景模拟 */}
+          {extractedFromMd.scenarioTraining.length > 0 && (
+            <motion.div variants={itemVariants}>
+              <Card className="bg-gradient-to-br from-cyber-red/5 to-cyber-gold/5 border-cyber-gold/20">
+                <h3 className="text-sm font-medium text-cyber-gold mb-3 flex items-center gap-2">
+                  <Shield size={16} />
+                  🎯 实战思维训练 —— "如果是你，你怎么防？"
+                </h3>
+                <div className="space-y-4">
+                  {extractedFromMd.scenarioTraining.map((sc, si) => (
+                    <div key={si} className="p-3 rounded-lg bg-cyber-black/30 border border-cyber-gold/10">
+                      <p className="text-sm text-white mb-3">
+                        <span className="text-cyber-red font-bold">⚠ 场景：</span>
+                        {sc.scenario}
+                      </p>
+                      <div className="space-y-2">
+                        {sc.layers.map((layer, li) => {
+                          const icons = ['🛡️', '🔍', '🚨', '📊'];
+                          const colors = ['border-cyber-blue/30 bg-cyber-blue/5', 'border-cyber-gold/30 bg-cyber-gold/5', 'border-cyber-red/30 bg-cyber-red/5', 'border-cyber-purple/30 bg-cyber-purple/5'];
+                          return (
+                            <div key={li} className={`p-2 rounded border ${colors[li % 4]}`}>
+                              <span className="text-xs text-gray-300">{icons[li % 4]} {layer}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* 蓝队条件反射训练 */}
+          {extractedFromMd.conditionedResponse.length > 0 && (
+            <motion.div variants={itemVariants}>
+              <Card className="bg-gradient-to-br from-cyber-green/5 to-cyber-blue/5 border-cyber-green/20">
+                <h3 className="text-sm font-medium text-cyber-green mb-3 flex items-center gap-2">
+                  <Eye size={16} />
+                  ⚡ 蓝队条件反射训练 —— "看到现象 → 瞬间反应"
+                </h3>
+                <div className="space-y-2">
+                  {extractedFromMd.conditionedResponse.map((row, ri) => (
+                    <div key={ri} className="p-3 rounded-lg bg-cyber-black/30 border border-cyber-green/10">
+                      <div className="flex items-start gap-3 flex-wrap text-xs">
+                        <div className="flex-1 min-w-[120px]">
+                          <span className="text-cyber-red font-medium">🔴 现象:</span>
+                          <span className="text-gray-300 ml-1">{row.phenomenon}</span>
+                        </div>
+                        <span className="text-gray-500 self-center">→</span>
+                        <div className="flex-1 min-w-[100px]">
+                          <span className="text-cyber-gold font-medium">💡 联想:</span>
+                          <span className="text-gray-300 ml-1">{row.association}</span>
+                        </div>
+                        <span className="text-gray-500 self-center">→</span>
+                        <div className="flex-1 min-w-[150px]">
+                          <span className="text-cyber-green font-medium">✅ 动作:</span>
+                          <span className="text-gray-300 ml-1">{row.action}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* 编程练习 —— 从代码块生成多道实战题目 */}
+          {effectiveCodeExamples.length > 0 && (() => {
+            // 从代码块生成多道实战练习题
+            const exercises = effectiveCodeExamples.slice(0, 8).map((ex, i) => {
+              const tasks = [
+                `阅读上述「${ex.title}」中的 ${ex.language} 代码，用自己的话解释每一行/每一步在做什么`,
+                `将上述 ${ex.language} 代码修改为支持${i % 2 === 0 ? '错误处理' : '日志记录'}的版本`,
+                `基于上述示例，写出一个类似功能的代码片段，但将${i % 3 === 0 ? '输入参数' : i % 3 === 1 ? '输出格式' : '目标地址'}改为你自己的`,
+                `找出上述代码中可能存在的${i % 2 === 0 ? '安全风险' : '性能瓶颈'}，并提出改进方案`,
+              ];
+              const difficulty = i < 3 ? '⭐' : i < 6 ? '⭐⭐' : '⭐⭐⭐';
+              return {
+                id: i,
+                title: `练习 ${i + 1}：${ex.title}`,
+                task: tasks[i % tasks.length],
+                hint: ex.code.length > 200 ? ex.code.slice(0, 200) + '\n...' : ex.code,
+                difficulty,
+                xp: [5, 8, 10, 12, 15, 15, 18, 20][i] || 10,
+                language: ex.language,
+              };
+            });
+            return (
             <motion.div variants={itemVariants}>
               <Card className="bg-gradient-to-br from-cyber-blue/5 to-cyber-purple/5 border-cyber-blue/20">
                 <h3 className={`text-sm font-medium text-cyber-blue mb-3 flex items-center gap-2`}>
                   <Target size={16} />
                   编程练习
+                  <span className="text-xs text-gray-500 font-normal ml-1">(共{exercises.length}道)</span>
                 </h3>
-                <div className="space-y-3">
-                  <div className="p-3 rounded-lg bg-cyber-black/30">
-                    <p className="text-sm text-white mb-2">✏️ 根据以下需求编写代码:</p>
-                    <p className="text-xs text-gray-400">{day.codeExamples[0].explanation}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-xs px-2 py-0.5 rounded bg-cyber-blue/20 text-cyber-blue">难度: ⭐⭐</span>
-                      <span className="text-xs px-2 py-0.5 rounded bg-cyber-green/20 text-cyber-green">奖励: +15 XP</span>
-                    </div>
-                  </div>
-                  <textarea
-                    value={exerciseAnswer}
-                    onChange={e => setExerciseAnswer(e.target.value)}
-                    placeholder="在这里编写你的代码..."
-                    className="w-full h-24 bg-cyber-black/50 border border-gray-700 rounded-lg p-3 text-sm text-green-400 font-mono outline-none focus:border-cyber-blue resize-y"
-                  />
-                  <div className="flex gap-2">
-                    <Button onClick={() => {
-                      if (exerciseAnswer.trim().length > 10) {
-                        setExerciseResult('correct');
-                        addXp(15);
-                      } else {
-                        setExerciseResult('wrong');
-                      }
-                    }}>
-                      提交答案
-                    </Button>
-                    <Button variant="outline" onClick={() => setExerciseHint(!exerciseHint)}>
-                      {exerciseHint ? '隐藏提示' : '💡 查看提示'}
-                    </Button>
-                  </div>
-                  {exerciseHint && (
-                    <div className="p-3 rounded-lg bg-cyber-gold/5 border border-cyber-gold/20 text-xs text-gray-400">
-                      💡 参考上方代码示例中的实现方式，注意变量命名和函数结构
-                    </div>
-                  )}
-                  {exerciseResult === 'correct' && (
-                    <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}
-                      className="p-3 rounded-lg bg-green-500/10 border border-green-500/30 flex items-center gap-2">
-                      <CheckCircle size={16} className="text-green-400"/>
-                      <span className="text-sm text-green-400">✅ 太棒了！答案通过测试！+15 XP</span>
-                    </motion.div>
-                  )}
-                  {exerciseResult === 'wrong' && (
-                    <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}
-                      className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center gap-2">
-                      <AlertCircle size={16} className="text-red-400"/>
-                      <span className="text-sm text-red-400">❌ 还需要改进，请再试一次</span>
-                    </motion.div>
-                  )}
+                <div className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
+                  {exercises.map((task, idx) => {
+                    const key = `ex-${idx}`;
+                    const done = exerciseResult === 'correct' && Number(exerciseAnswer) === idx;
+                    const doneClass = done ? 'border-cyber-green/40 bg-cyber-green/5' : '';
+                    return (
+                      <div key={key} className={`p-3 rounded-lg bg-cyber-black/50 border border-cyber-blue/10 ${doneClass}`}>
+                        <div className="flex items-start justify-between mb-2">
+                          <p className="text-sm text-white flex-1 mr-3">
+                            <span className="text-cyber-blue font-bold mr-2">#{idx + 1}</span>
+                            {task.task}
+                          </p>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-xs px-2 py-0.5 rounded bg-cyber-blue/20 text-cyber-blue">{task.difficulty}</span>
+                            <span className="text-xs px-2 py-0.5 rounded bg-cyber-green/20 text-cyber-green">+{task.xp} XP</span>
+                          </div>
+                        </div>
+                        <details className="group">
+                          <summary className="text-xs text-gray-500 cursor-pointer hover:text-cyber-gold transition-colors select-none">
+                            💡 查看参考代码
+                          </summary>
+                          <pre className="mt-2 p-2 bg-cyber-black/70 rounded text-xs text-green-400 font-mono overflow-x-auto max-h-32 overflow-y-auto whitespace-pre-wrap">
+                            {task.hint}
+                          </pre>
+                        </details>
+                        <textarea
+                          placeholder={`在此编写你的 ${task.language} 答案...`}
+                          className="w-full h-16 mt-2 bg-cyber-black/70 border border-gray-700 rounded p-2 text-xs text-green-400 font-mono outline-none focus:border-cyber-blue resize-y"
+                          onFocus={() => {
+                            setExerciseAnswer(String(idx));
+                            setExerciseResult(null);
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
+                <div className="flex gap-2 mt-4 pt-3 border-t border-cyber-blue/10">
+                  <Button onClick={() => {
+                    if (exerciseAnswer && exerciseAnswer.trim().length > 0) {
+                      setExerciseResult('correct');
+                      const idx = Number(exerciseAnswer);
+                      if (!isNaN(idx) && idx < exercises.length) {
+                        addXp(exercises[idx].xp);
+                      }
+                    } else {
+                      setExerciseResult('wrong');
+                    }
+                  }}>
+                    提交当前答案
+                  </Button>
+                  <Button variant="outline" onClick={() => {
+                    setExerciseAnswer('');
+                    setExerciseResult(null);
+                  }}>
+                    全部清空
+                  </Button>
+                </div>
+                {exerciseResult === 'correct' && (
+                  <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}
+                    className="mt-3 p-3 rounded-lg bg-green-500/10 border border-green-500/30 flex items-center gap-2">
+                    <CheckCircle size={16} className="text-green-400"/>
+                    <span className="text-sm text-green-400">✅ 太棒了！继续挑战下一题！</span>
+                  </motion.div>
+                )}
+                {exerciseResult === 'wrong' && (
+                  <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}
+                    className="mt-3 p-3 rounded-lg bg-cyber-gold/5 border border-cyber-gold/20 flex items-center gap-2">
+                    <AlertCircle size={16} className="text-cyber-gold"/>
+                    <span className="text-sm text-gray-300">💡 请在任意题目中输入答案后再提交</span>
+                  </motion.div>
+                )}
               </Card>
             </motion.div>
-          )}
+            );
+          })()}
             </>
           )}
 
@@ -1016,15 +1618,20 @@ export const CyberDailyLearning: React.FC = () => {
           )}
 
           {/* 学习资源 */}
-          {day.resources && day.resources.length > 0 && (
+          {effectiveResources.length > 0 && (
             <motion.div variants={itemVariants}>
               <Card>
                 <h3 className={`text-sm font-medium ${color.main} mb-3 flex items-center gap-2`}>
                   <BookOpen size={16} />
                   学习资源
+                  {extractedFromMd.extraLinks.length > 0 && (
+                    <span className="text-xs text-gray-500 font-normal ml-1">
+                      (含{extractedFromMd.extraLinks.length}个延伸推荐)
+                    </span>
+                  )}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {day.resources.map((resource, i) => (
+                  {effectiveResources.map((resource, i) => (
                     <a
                       key={i}
                       href={resource.url}
@@ -1061,21 +1668,131 @@ export const CyberDailyLearning: React.FC = () => {
             </motion.div>
           )}
 
+          {/* ===== Tab: 课内读物 ===== */}
+          {activeTab === 'readings' && (
+            <>
+              <motion.div variants={itemVariants}>
+                <Card>
+                  <h3 className={`text-sm font-medium ${color.main} mb-4 flex items-center gap-2`}>
+                    <Library size={16} />
+                    课内读物
+                    <span className="text-xs text-gray-500 font-normal ml-1">
+                      精选{readings.length}篇
+                    </span>
+                  </h3>
+                  {readingsLoading ? (
+                    <div className="text-center py-8 text-gray-400">
+                      <RefreshCw size={20} className="mx-auto mb-2 animate-spin" />
+                      <p className="text-sm">加载课内读物中...</p>
+                    </div>
+                  ) : readings.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <BookOpen size={28} className="mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">暂无该课程的课内读物</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {readings.map(r => (
+                        <div
+                          key={r.id}
+                          className="bg-cyber-purple/10 border border-cyber-purple/20 rounded-lg p-4 hover:border-cyber-purple/40 transition-colors group"
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="text-sm font-medium text-white group-hover:text-cyber-green transition-colors line-clamp-2 flex-1 mr-2">
+                              {r.title}
+                            </h4>
+                            <Badge
+                              className={`text-[10px] px-1.5 py-0.5 whitespace-nowrap ${
+                                r.difficulty === '入门' ? 'bg-cyber-green/20 text-cyber-green border-cyber-green/30' :
+                                r.difficulty === '进阶' ? 'bg-cyber-blue/20 text-cyber-blue border-cyber-blue/30' :
+                                'bg-cyber-gold/20 text-cyber-gold border-cyber-gold/30'
+                              }`}
+                            >
+                              {r.difficulty}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-gray-400 mb-3 line-clamp-2">
+                            {r.summary}
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 mb-3">
+                            {r.tags.slice(0, 3).map((tag, i) => (
+                              <span
+                                key={i}
+                                className="text-[10px] px-1.5 py-0.5 rounded bg-cyber-purple/20 text-gray-400"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <div className="flex items-center gap-3">
+                              <span className="flex items-center gap-1">
+                                <Clock size={12} />
+                                {r.readMinutes}分钟
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <User size={12} />
+                                {r.author}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => navigate(`/resources/${r.id}`)}
+                              className="flex items-center gap-1 text-cyber-green hover:text-cyber-green/80 font-medium transition-colors"
+                            >
+                              阅读全文
+                              <ExternalLink size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              </motion.div>
+            </>
+          )}
+
           {/* ===== Tab: 随堂测验 ===== */}
-          {activeTab === 'quiz' && day.quiz && day.quiz.length > 0 && (
+          {activeTab === 'quiz' && allQuizQuestions.length > 0 && (
             <>
 
           {/* 随堂测验 */}
-          {day.quiz && day.quiz.length > 0 && (
+          {allQuizQuestions.length > 0 && (
             <motion.div variants={itemVariants}>
               <Card>
                 <div className="flex items-center justify-between mb-4">
                   <h3 className={`text-sm font-medium ${color.main} flex items-center gap-2`}>
                     <Target size={16} />
                     随堂测验
+                    {wrongBookCount > 0 && (
+                      <span className="text-xs px-2 py-0.5 rounded bg-cyber-red/20 text-cyber-red font-normal ml-1">
+                        含{wrongBookCount}道错题复习
+                      </span>
+                    )}
+                    {mdGenCount > 0 && (
+                      <span className="text-xs px-2 py-0.5 rounded bg-cyber-blue/20 text-cyber-blue font-normal ml-1">
+                        +{mdGenCount}道扩展
+                      </span>
+                    )}
                   </h3>
                   <div className="flex items-center gap-3">
+                    {/* 全部展开 / 逐题作答 切换 */}
+                    <button
+                      onClick={() => {
+                        setQuizFullyExpanded(!quizFullyExpanded);
+                        setExpandedAnswers({});
+                        setExpandedShowAnswer({});
+                      }}
+                      className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                        quizFullyExpanded
+                          ? 'bg-cyber-green/15 text-cyber-green border-cyber-green/30'
+                          : 'bg-cyber-purple/10 text-gray-400 border-cyber-purple/20 hover:text-gray-200'
+                      }`}
+                    >
+                      {quizFullyExpanded ? '全部展开中' : '逐题作答'}
+                    </button>
                     {/* 30秒计时器 */}
+                    {!quizFullyExpanded && (
                     <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-bold ${
                       quizTimer <= 10 ? 'bg-red-500/20 text-red-400 animate-pulse' :
                       quizTimer <= 20 ? 'bg-yellow-500/20 text-yellow-400' :
@@ -1084,26 +1801,195 @@ export const CyberDailyLearning: React.FC = () => {
                       <Clock size={13} />
                       {quizTimer}s
                     </div>
+                    )}
+                    {!quizFullyExpanded && (
                     <span className="text-xs text-gray-400">
-                      {quiz.currentIndex + 1} / {day.quiz.length}
+                      {quiz.currentIndex + 1} / {allQuizQuestions.length}
                     </span>
+                    )}
                   </div>
                 </div>
                 
-                {day.quiz[quiz.currentIndex] && (() => {
-                  const rawQ = day.quiz[quiz.currentIndex] as QuizQuestion;
+                {/* ─── 全部展开模式：一次性显示所有题目 ─── */}
+                {quizFullyExpanded ? (
+                  <div className="space-y-6">
+                    {allQuizQuestions.map((rawQ, qIdx) => {
+                      const question: QuizQuestion = {
+                        ...rawQ,
+                        type: rawQ.type || (rawQ.options && rawQ.options.length > 0 ? 'single' : 'fill'),
+                      };
+                      const isWrongBookQ = quizKeyMap[qIdx] && wrongQuestionBook.entries.some(e => e.key === quizKeyMap[qIdx] && e.consecutiveCorrect < 3);
+                      const isMdGen = String(rawQ.id || '').startsWith('mdgen_');
+                      const userAnswer = expandedAnswers[qIdx];
+                      const showAns = !!expandedShowAnswer[qIdx];
+                      const isCorrect = showAns ? checkQuizAnswer(question, userAnswer) : null;
+                      const handleExpandAnswer = (answer: QuizAnswer) => {
+                        setExpandedAnswers(prev => ({ ...prev, [qIdx]: answer }));
+                        setExpandedShowAnswer(prev => ({ ...prev, [qIdx]: true }));
+                        const qKey = quizKeyMap[qIdx] || `${planId}_${currentDay}_q${qIdx}`;
+                        wrongQuestionBook.recordAnswer(qKey, question, planId!, currentDay, qIdx, checkQuizAnswer(question, answer));
+                      };
+                      const handleExpandMultiToggle = (oi: number) => {
+                        const cur = expandedAnswers[qIdx];
+                        const arr = Array.isArray(cur) ? cur : [];
+                        const ns = arr.includes(oi) ? arr.filter(i => i !== oi) : [...arr, oi].sort((a, b) => a - b);
+                        setExpandedAnswers(prev => ({ ...prev, [qIdx]: ns }));
+                      };
+                      return (
+                        <motion.div
+                          key={qIdx}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: qIdx * 0.03 }}
+                          className="p-4 rounded-xl bg-cyber-purple/5 border border-cyber-purple/15"
+                        >
+                          {/* 题号 + 标签 */}
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-xs font-bold px-2 py-0.5 rounded bg-cyber-purple/30 text-gray-300">
+                              第{qIdx + 1}题
+                            </span>
+                            <span className={`text-xs px-2 py-0.5 rounded ${
+                              question.type === 'single' ? 'bg-cyber-blue/20 text-cyber-blue' :
+                              question.type === 'multiple' ? 'bg-cyber-green/20 text-cyber-green' :
+                              question.type === 'boolean' ? 'bg-cyber-gold/20 text-cyber-gold' :
+                              'bg-[#6b5b95]/20 text-gray-300'
+                            }`}>
+                              {question.type === 'single' ? '单选' :
+                               question.type === 'multiple' ? '多选' :
+                               question.type === 'boolean' ? '判断' : '填空'}
+                            </span>
+                            {isWrongBookQ && <span className="text-xs px-2 py-0.5 rounded bg-cyber-red/20 text-cyber-red">错题复习</span>}
+                            {isMdGen && <span className="text-xs px-2 py-0.5 rounded bg-cyber-blue/20 text-cyber-blue">扩展题</span>}
+                          </div>
+                          {/* 题目 */}
+                          <p className="text-sm text-white font-medium leading-relaxed mb-3">{question.question}</p>
+                          {/* 选项 */}
+                          {question.options && (question.type === 'single' || question.type === 'boolean' || question.type === 'multiple') && (
+                            <div className="space-y-1.5 mb-3">
+                              {question.options.map((opt, i) => {
+                                const isSelected = question.type === 'multiple'
+                                  ? (Array.isArray(userAnswer) && userAnswer.includes(i))
+                                  : userAnswer === i;
+                                let cls = color.optionDefault;
+                                if (showAns) {
+                                  const isCorrectOption = question.type === 'multiple'
+                                    ? (question.correctIndices || []).includes(i)
+                                    : i === question.correctIndex;
+                                  if (isCorrectOption) cls = color.optionCorrect;
+                                  else if (isSelected) cls = color.optionWrong;
+                                  else cls = color.optionDim;
+                                }
+                                return (
+                                  <button
+                                    key={i}
+                                    onClick={() => {
+                                      if (showAns) return;
+                                      if (question.type === 'multiple') {
+                                        handleExpandMultiToggle(i);
+                                      } else {
+                                        handleExpandAnswer(i);
+                                      }
+                                    }}
+                                    disabled={showAns}
+                                    className={`w-full text-left px-3 py-2 rounded-lg border transition-all text-sm ${cls}`}
+                                  >
+                                    <span className="font-mono mr-2 text-gray-400">{String.fromCharCode(65 + i)}.</span>
+                                    <span className="text-gray-200">{opt}</span>
+                                    {question.type === 'multiple' && !showAns && (
+                                      <span className={`ml-auto text-xs ${isSelected ? 'text-cyber-green' : 'text-gray-500'}`}>
+                                        {isSelected ? '✓' : '○'}
+                                      </span>
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                          {/* 填空题 */}
+                          {question.type === 'fill' && !showAns && (
+                            <div className="flex gap-2 mb-3">
+                              <input
+                                type="text"
+                                value={String(userAnswer || '')}
+                                onChange={(e) => setExpandedAnswers(prev => ({ ...prev, [qIdx]: e.target.value }))}
+                                onKeyDown={(e) => { if (e.key === 'Enter') handleExpandAnswer(userAnswer ?? ''); }}
+                                className="flex-1 px-3 py-2 bg-cyber-purple/10 border border-cyber-purple/30 rounded-lg text-white text-sm outline-none focus:border-cyber-green"
+                                placeholder="请输入答案..."
+                              />
+                              <button
+                                onClick={() => handleExpandAnswer(userAnswer ?? '')}
+                                className={`px-4 py-2 rounded-lg text-sm ${color.btnDefault} transition-colors`}
+                              >
+                                提交
+                              </button>
+                            </div>
+                          )}
+                          {/* 多选提交按钮 */}
+                          {question.type === 'multiple' && !showAns && (
+                            <button
+                              onClick={() => handleExpandAnswer(userAnswer as number[] || [])}
+                              className={`w-full py-1.5 rounded-lg text-sm mb-3 ${color.btnDefault} transition-colors`}
+                            >
+                              提交答案
+                            </button>
+                          )}
+                          {/* 答案解析 */}
+                          {showAns && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="p-3 rounded-lg bg-cyber-purple/10 border border-cyber-purple/20"
+                            >
+                              <div className={`flex items-center gap-1.5 mb-1.5 ${isCorrect ? 'text-cyber-green' : 'text-cyber-red'}`}>
+                                {isCorrect ? <CheckCircle size={14} /> : <AlertTriangle size={14} />}
+                                <span className="font-medium text-xs">{isCorrect ? '✓ 正确' : '✗ 错误'}</span>
+                              </div>
+                              {question.type === 'fill' && question.correctAnswer && (
+                                <div className="text-xs text-cyber-green mb-1">
+                                  <span className="text-gray-400">正确答案：</span>{question.correctAnswer}
+                                </div>
+                              )}
+                              <p className="text-xs text-gray-300 leading-relaxed">{question.explanation}</p>
+                            </motion.div>
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                ) :
+                  /* ─── 逐题模式：一题一题作答 ─── */
+                  allQuizQuestions[quiz.currentIndex] && (() => {
+                  const questionIndexInQuiz = quiz.currentIndex;
+                  const isWrongBookQ = quizKeyMap[questionIndexInQuiz] && wrongQuestionBook.entries.some(e => e.key === quizKeyMap[questionIndexInQuiz] && e.consecutiveCorrect < 3);
+                  const wbEntry = isWrongBookQ ? wrongQuestionBook.entries.find(e => e.key === quizKeyMap[questionIndexInQuiz]) : undefined;
+                  const rawQ = allQuizQuestions[quiz.currentIndex] as QuizQuestion;
                   const question: QuizQuestion = {
                     ...rawQ,
                     type: rawQ.type || (rawQ.options && rawQ.options.length > 0 ? 'single' : 'fill'),
                   };
                   const userAnswer = quiz.answers[quiz.currentIndex];
+                  const isMdGen = String(rawQ.id || '').startsWith('mdgen_');
                   
-                  const isCorrect = quiz.showAnswer
+                  const isCorrect2 = quiz.showAnswer
                     ? checkQuizAnswer(question, userAnswer)
                     : null;
                   
                   return (
                     <div className="space-y-4">
+                      {/* 错题/自动生成题标记 */}
+                      {isWrongBookQ && wbEntry && (
+                        <div className="flex items-center gap-2 px-2 py-1 rounded bg-cyber-red/10 border border-cyber-red/20 text-xs text-cyber-red">
+                          <AlertCircle size={13} />
+                          <span>错题复习 · 已连续答对 {wbEntry.consecutiveCorrect}/3 次</span>
+                          <span className="text-gray-500">（连续答对3次后移出错题本）</span>
+                        </div>
+                      )}
+                      {isMdGen && (
+                        <div className="flex items-center gap-2 px-2 py-1 rounded bg-cyber-blue/10 border border-cyber-blue/20 text-xs text-cyber-blue">
+                          <Zap size={13} />
+                          <span>扩展题 · 从课程内容自动生成</span>
+                        </div>
+                      )}
                       <div className="flex items-start gap-2">
                         <span className={`text-xs px-2 py-1 rounded mr-2 ${
                           question.type === 'single' ? 'bg-cyber-blue/20 text-cyber-blue' :
@@ -1215,10 +2101,10 @@ export const CyberDailyLearning: React.FC = () => {
                           animate={{ opacity: 1, y: 0 }}
                           className="p-4 rounded-lg bg-cyber-purple/10 border border-cyber-purple/20"
                         >
-                          <div className={`flex items-center gap-2 mb-2 ${isCorrect ? 'text-cyber-green' : 'text-cyber-red'}`}>
-                            {isCorrect ? <CheckCircle size={18} /> : <AlertTriangle size={18} />}
+                          <div className={`flex items-center gap-2 mb-2 ${isCorrect2 ? 'text-cyber-green' : 'text-cyber-red'}`}>
+                            {isCorrect2 ? <CheckCircle size={18} /> : <AlertTriangle size={18} />}
                             <span className="font-medium text-sm">
-                              {isCorrect ? '回答正确！' : '回答错误'}
+                              {isCorrect2 ? '回答正确！' : '回答错误'}
                             </span>
                           </div>
                           {question.type === 'fill' && question.correctAnswer && (
@@ -1245,48 +2131,149 @@ export const CyberDailyLearning: React.FC = () => {
               </Card>
             </motion.div>
           )}
-            </>
+          {extractedFromMd.acceptanceChecklist.length > 0 && (
+            <motion.div variants={itemVariants}>
+              <Card className="bg-gradient-to-br from-cyber-green/5 to-cyber-purple/5 border-cyber-green/20">
+                <h3 className="text-sm font-medium text-cyber-green mb-3 flex items-center gap-2">
+                  <CheckCircle size={16} />
+                  ✅ 验收自检清单
+                </h3>
+                <div className="space-y-1.5">
+                  {extractedFromMd.acceptanceChecklist.map((item, i) => (
+                    <label key={i} className="flex items-start gap-3 p-2 rounded hover:bg-cyber-green/5 cursor-pointer transition-colors">
+                      <input type="checkbox" className="mt-1 accent-cyber-green" />
+                      <span className="text-sm text-gray-300">{item}</span>
+                    </label>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
           )}
 
-          {/* ===== Tab: 大神笔记 ===== */}
-          {activeTab === 'expert' && day.expertNotes && day.expertNotes.length > 0 && (
-            <>
-
-          {/* 大神笔记 */}
-          {day.expertNotes && day.expertNotes.length > 0 && (
+          {/* 学习效果自检（从 .md 中提取） */}
+          {extractedFromMd.selfCheckQuestions.length > 0 && (
             <motion.div variants={itemVariants}>
-              <Card className="bg-gradient-to-br from-cyber-gold/5 to-cyber-purple/5 border-cyber-gold/20">
+              <Card>
                 <h3 className="text-sm font-medium text-cyber-gold mb-3 flex items-center gap-2">
-                  <Award size={16} />
-                  大神笔记
+                  <Target size={16} />
+                  📈 学习效果自检
                 </h3>
-                <div className="space-y-4">
-                  {day.expertNotes.map((note, i) => (
-                    <div key={i} className="p-4 rounded-lg bg-cyber-black/30 border border-cyber-gold/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <User size={14} className="text-cyber-gold" />
-                        <span className="text-sm font-medium text-cyber-gold">{note.author}</span>
-                        <span className="text-xs text-gray-500">·</span>
-                        <span className="text-xs text-gray-400">{note.title}</span>
-                      </div>
-                      <p className="text-sm text-gray-300 leading-relaxed">{note.content}</p>
-                      {note.url && (
-                        <a
-                          href={note.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 mt-2 text-xs text-cyber-gold hover:text-cyber-green transition-colors"
-                        >
-                          <ExternalLink size={12} />
-                          查看原文
-                        </a>
-                      )}
+                <div className="space-y-3">
+                  {extractedFromMd.selfCheckQuestions.map((q, i) => (
+                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-cyber-purple/10">
+                      <span className="text-cyber-gold font-bold text-sm mt-0.5">{i + 1}.</span>
+                      <span className="text-sm text-gray-300">{q}</span>
                     </div>
                   ))}
                 </div>
               </Card>
             </motion.div>
           )}
+
+          {/* 面试高频题（从 .md 中提取） */}
+          {extractedFromMd.interviewQA.length > 0 && (
+            <motion.div variants={itemVariants}>
+              <Card className="bg-gradient-to-br from-cyber-red/5 to-cyber-purple/5 border-cyber-red/20">
+                <h3 className="text-sm font-medium text-cyber-red mb-3 flex items-center gap-2">
+                  <Award size={16} />
+                  🎯 蓝队面试高频题
+                </h3>
+                <div className="space-y-4">
+                  {extractedFromMd.interviewQA.map((item, i) => {
+                    const isExpanded = expandedQA.has(i);
+                    return (
+                      <div key={i} className="p-3 rounded-lg bg-cyber-black/30 border border-cyber-red/10">
+                        <button
+                          onClick={() => {
+                            const next = new Set(expandedQA);
+                            isExpanded ? next.delete(i) : next.add(i);
+                            setExpandedQA(next);
+                          }}
+                          className="flex items-start gap-2 w-full text-left group"
+                        >
+                          <span className="text-cyber-red text-sm font-medium mt-0.5 group-hover:text-white transition-colors">
+                            Q{i + 1}:
+                          </span>
+                          <span className="text-sm text-white flex-1">{item.q}</span>
+                          <ChevronDown
+                            size={16}
+                            className={`text-gray-400 mt-0.5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                          />
+                        </button>
+                        {isExpanded && (
+                          <div className="mt-3 p-3 rounded bg-cyber-red/5 border border-cyber-red/10 text-sm text-gray-300 leading-relaxed whitespace-pre-line">
+                            {item.a}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </Card>
+            </motion.div>
+          )}
+            </>
+          )}
+
+          {activeTab === 'quiz' && allQuizQuestions.length === 0 && (
+            <motion.div variants={itemVariants}>
+              <Card>
+                <h3 className={`text-sm font-medium ${color.main} mb-3 flex items-center gap-2`}>
+                  <FileQuestion size={16} />
+                  随堂测验
+                </h3>
+                <div className="text-center py-8 text-gray-500">
+                  <FileQuestion size={32} className="mx-auto mb-3 opacity-30" />
+                  <p className="text-sm">本日暂无测验题目</p>
+                  <p className="text-xs mt-1">请先阅读课程内容后再来测验</p>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* ===== Tab: 大神笔记 ===== */}
+          {activeTab === 'expert' && (
+            <>
+              <motion.div variants={itemVariants}>
+                <Card className="bg-gradient-to-br from-cyber-gold/5 to-cyber-purple/5 border-cyber-gold/20">
+                  <h3 className="text-sm font-medium text-cyber-gold mb-3 flex items-center gap-2">
+                    <Award size={16} />
+                    大神笔记
+                  </h3>
+                  {day.expertNotes && day.expertNotes.length > 0 ? (
+                    <div className="space-y-4">
+                      {day.expertNotes.map((note, i) => (
+                        <div key={i} className="p-4 rounded-lg bg-cyber-black/30 border border-cyber-gold/10">
+                          <div className="flex items-center gap-2 mb-2">
+                            <User size={14} className="text-cyber-gold" />
+                            <span className="text-sm font-medium text-cyber-gold">{note.author}</span>
+                            <span className="text-xs text-gray-500">·</span>
+                            <span className="text-xs text-gray-400">{note.title}</span>
+                          </div>
+                          <p className="text-sm text-gray-300 leading-relaxed">{note.content}</p>
+                          {note.url && (
+                            <a
+                              href={note.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 mt-2 text-xs text-cyber-gold hover:text-cyber-green transition-colors"
+                            >
+                              <ExternalLink size={12} />
+                              查看原文
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <Award size={32} className="mx-auto mb-3 opacity-30" />
+                      <p className="text-sm">本日暂无大神笔记</p>
+                      <p className="text-xs mt-1">更多专家内容持续更新中</p>
+                    </div>
+                  )}
+                </Card>
+              </motion.div>
             </>
           )}
 
@@ -1334,14 +2321,15 @@ export const CyberDailyLearning: React.FC = () => {
                     {noteSavedAt ? '已保存' : '自动保存'}
                   </span>
                 </div>
-                <textarea
+                <MilkdownEditor
                   value={note}
-                  onChange={(e) => handleNoteChange(e.target.value)}
-                  placeholder="记录学习心得、疑问、重点..."
-                  className="w-full h-48 bg-cyber-purple/10 border border-cyber-purple/30 rounded-lg p-3 text-sm text-white outline-none focus:border-cyber-green resize-y placeholder:text-gray-500"
+                  onChange={handleNoteChange}
+                  ready={noteReady}
+                  placeholder="记录学习心得、疑问、重点…"
                 />
-                <div className="mt-2 text-xs text-gray-500">
-                  共 {note.length} 字 · 第{currentDay}天笔记
+                <div className="mt-2 text-xs text-gray-500 flex items-center justify-between">
+                  <span>共 {note.length} 字 · 第{currentDay}天笔记</span>
+                  <span className="text-gray-600">✏️ 所见即所得 · 按 / 唤出命令面板</span>
                 </div>
               </Card>
             </motion.div>

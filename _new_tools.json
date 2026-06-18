@@ -1,0 +1,97 @@
+[
+  {
+    "id": "tools-nmap-001",
+    "category": "tools",
+    "title": "Nmap 从入门到精通：端口扫描的瑞士军刀",
+    "summary": "全面掌握 Nmap 的各种扫描技术，从基础主机发现到高级 NSE 脚本引擎，覆盖渗透测试中的信息收集全流程",
+    "tags": [
+      "Nmap",
+      "端口扫描",
+      "信息收集",
+      "NSE脚本",
+      "主机发现",
+      "OS探测"
+    ],
+    "difficulty": "入门",
+    "readMinutes": 25,
+    "updatedAt": "2026-06-18",
+    "contentPath": "contents/tools/tools-nmap-001.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "tools-burp-001",
+    "category": "tools",
+    "title": "Burp Suite 实战完全指南：Web 渗透的必备利器",
+    "summary": "从 Proxy 拦截到 Intruder 爆破，再到 Repeater 重放和 Scanner 扫描，全方位掌握 Burp Suite 在 Web 渗透中的实战用法",
+    "tags": [
+      "Burp Suite",
+      "Web渗透",
+      "代理拦截",
+      "Intruder",
+      "Repeater",
+      "漏洞扫描"
+    ],
+    "difficulty": "进阶",
+    "readMinutes": 30,
+    "updatedAt": "2026-06-18",
+    "contentPath": "contents/tools/tools-burp-001.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "tools-wireshark-001",
+    "category": "tools",
+    "title": "Wireshark 流量分析实战：从抓包到溯源",
+    "summary": "深入掌握 Wireshark 过滤语法、协议分析与攻击流量识别，涵盖 HTTP/HTTPS/DNS/TCP 等常见协议的分析技巧",
+    "tags": [
+      "Wireshark",
+      "流量分析",
+      "抓包",
+      "协议分析",
+      "溯源",
+      "网络取证"
+    ],
+    "difficulty": "进阶",
+    "readMinutes": 28,
+    "updatedAt": "2026-06-18",
+    "contentPath": "contents/tools/tools-wireshark-001.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "tools-metasploit-001",
+    "category": "tools",
+    "title": "Metasploit 渗透测试框架深度使用指南",
+    "summary": "系统学习 Metasploit 的核心模块体系：exploit、payload、auxiliary、post-exploitation，构建完整的渗透测试工作流",
+    "tags": [
+      "Metasploit",
+      "渗透测试",
+      "漏洞利用",
+      "Meterpreter",
+      "payload",
+      "后渗透"
+    ],
+    "difficulty": "进阶",
+    "readMinutes": 30,
+    "updatedAt": "2026-06-18",
+    "contentPath": "contents/tools/tools-metasploit-001.md",
+    "author": "网安百宝箱编辑部"
+  },
+  {
+    "id": "tools-ida-001",
+    "category": "reverse",
+    "title": "IDA Pro & Ghidra 逆向分析入门：从二进制到伪代码",
+    "summary": "掌握静态逆向分析的核心方法论，学会使用 IDA Pro 和 Ghidra 进行反汇编、函数识别、交叉引用分析和关键逻辑定位",
+    "tags": [
+      "IDA Pro",
+      "Ghidra",
+      "逆向工程",
+      "反汇编",
+      "反编译",
+      "二进制分析"
+    ],
+    "difficulty": "精通",
+    "readMinutes": 30,
+    "updatedAt": "2026-06-18",
+    "contentPath": "contents/reverse/tools-ida-001.md",
+    "author": "网安百宝箱编辑部"
+  }
+]

@@ -7,7 +7,6 @@ import {
   Target,
   Lock,
   ChevronRight,
-  Clock,
   BookOpen,
   Trophy,
   Star,
@@ -15,14 +14,17 @@ import {
   Globe,
   Cpu,
   Brain,
-  GraduationCap
+  GraduationCap,
+  Clock,
+  Monitor,
 } from 'lucide-react';
-import { Card } from '../components/UI';
+import { Card, Button } from '../components/UI';
 import { cyberBasicPlan, CyberLearningPlan } from '../data/cyberBasic';
 import { cyberPenetrationPlan } from '../data/cyberPenetration';
 import { cyberDefensePlan } from '../data/cyberDefense';
 import { cyberAiPlan } from '../data/cyberAi';
 import { cyberHwPlan } from '../data/cyberHw';
+import { cyberVendorPlan } from '../data/cyberVendor';
 import { learningData as cispLearningData } from '../data/learningData';
 import { loadData } from '../data/persistData';
 import { useLearningStore } from '../store';
@@ -34,7 +36,8 @@ const plans: CyberLearningPlan[] = [
   cyberPenetrationPlan,
   cyberDefensePlan,
   cyberAiPlan,
-  cyberHwPlan
+  cyberHwPlan,
+  cyberVendorPlan,
 ];
 
 const difficultyIcon = (d: string) => {
@@ -48,6 +51,7 @@ const planIcon = (id: string) => {
   if (id === 'penetration') return <Target size={40} />;
   if (id === 'ai') return <Brain size={40} />;
   if (id === 'hw') return <Globe size={40} />;
+  if (id === 'vendor') return <Monitor size={40} />;
   return <Cpu size={40} />;
 };
 
@@ -56,6 +60,7 @@ const planBg = (id: string) => {
   if (id === 'penetration') return 'from-cyber-red/5 to-transparent';
   if (id === 'ai') return 'from-white/[0.03] to-transparent';
   if (id === 'hw') return 'from-cyber-gold/5 to-transparent';
+  if (id === 'vendor') return 'from-cyber-teal/5 to-transparent';
   return 'from-cyber-blue/5 to-transparent';
 };
 
@@ -64,6 +69,7 @@ const planBorder = (id: string) => {
   if (id === 'penetration') return 'border-cyber-red/30';
   if (id === 'ai') return 'border-white/15';
   if (id === 'hw') return 'border-cyber-gold/30';
+  if (id === 'vendor') return 'border-cyber-teal/30';
   return 'border-cyber-blue/30';
 };
 
@@ -72,6 +78,7 @@ const planHover = (id: string) => {
   if (id === 'penetration') return 'hover:border-cyber-red/50';
   if (id === 'ai') return 'hover:border-white/30';
   if (id === 'hw') return 'hover:border-cyber-gold/50';
+  if (id === 'vendor') return 'hover:border-cyber-teal/50';
   return 'hover:border-cyber-blue/50';
 };
 
@@ -126,7 +133,7 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
               网络安全学习中心
             </h1>
             <p className="text-gray-400 mt-1">
-              五个阶段 · 实战学习 · 从基础到高级
+              七大阶段 · CISP备考 + 6大专项 · 从基础到高级
             </p>
           </div>
         </div>
@@ -141,20 +148,24 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
       >
         <motion.div variants={itemVariants}>
           <Card className="text-center py-4">
-            <div className="text-2xl font-bold text-cyber-green">{plans.reduce((s, p) => s + p.totalDays, 0)}</div>
+            <div className="text-2xl font-bold text-cyber-green">{plans.reduce((s, p) => s + p.totalDays, 0) + cispTotal}</div>
             <div className="text-xs text-gray-400 mt-1">总学习天数</div>
           </Card>
         </motion.div>
         <motion.div variants={itemVariants}>
           <Card className="text-center py-4">
             <div className="text-2xl font-bold text-gray-200">
+              {(() => {
+                const total = getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw') + getProgress('vendor') + cispCompleted;
+                return total;
+              })()}
             </div>
             <div className="text-xs text-gray-400 mt-1">已完成天数</div>
           </Card>
         </motion.div>
         <motion.div variants={itemVariants}>
           <Card className="text-center py-4">
-            <div className="text-2xl font-bold text-cyber-blue">{plans.length}</div>
+            <div className="text-2xl font-bold text-cyber-blue">{plans.length + 1}</div>
             <div className="text-xs text-gray-400 mt-1">学习阶段</div>
           </Card>
         </motion.div>
@@ -162,8 +173,8 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
           <Card className="text-center py-4">
             <div className="text-2xl font-bold text-cyber-gold">
               {(() => {
-                const totalDays = plans.reduce((s, p) => s + p.totalDays, 0);
-                const completed = getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw');
+                const totalDays = plans.reduce((s, p) => s + p.totalDays, 0) + cispTotal;
+                const completed = getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw') + getProgress('vendor') + cispCompleted;
                 return completed > 0 ? Math.round((completed / totalDays) * 100) : 0;
               })()}%
             </div>
@@ -179,6 +190,48 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
         animate="visible"
         className="space-y-6"
       >
+        {/* CISP 备考计划卡片 */}
+        <motion.div variants={itemVariants}>
+          <Card
+            className="bg-gradient-to-br from-cyber-green/[0.04] to-cyber-green/[0.01] border border-cyber-green/30 hover:border-cyber-green/50 transition-all duration-300 cursor-pointer"
+            onClick={() => navigate(`/cyber-learning/cisp/${cispNextDay}`)}
+          >
+            <div className="flex items-start gap-5">
+              <div className="w-20 h-20 rounded-xl bg-cyber-green/20 text-cyber-green flex items-center justify-center flex-shrink-0">
+                <BookOpen size={36} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-2">
+                  <h2 className="font-orbitron text-lg font-bold text-white">📚 CISP 备考学习</h2>
+                  <span className="text-xs px-2 py-0.5 rounded-full border border-cyber-green/30 text-cyber-green flex items-center gap-1">
+                    <Target size={12} /> CISP认证
+                  </span>
+                </div>
+                <p className="text-sm text-gray-400 mb-3">
+                  90天系统备考计划，覆盖CISP考试十大知识域。每天一课，从基础理论到实战技能全面覆盖。
+                </p>
+                <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
+                  <span><Clock size={12} className="inline mr-1" />{cispTotal}天</span>
+                  <span><Target size={12} className="inline mr-1" />CISP认证</span>
+                  <span><BookOpen size={12} className="inline mr-1" />十大知识域</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-2 bg-cyber-purple/20 rounded-full overflow-hidden">
+                    <div className="h-full bg-cyber-green rounded-full transition-all duration-500" style={{ width: `${cispPct}%` }} />
+                  </div>
+                  <span className="text-xs text-cyber-green font-medium">{cispPct}%</span>
+                  <span className="text-xs text-gray-500">{cispCompleted}/{cispTotal}天</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Button variant="outline" size="sm" className="text-cyber-green text-xs border-cyber-green/30">
+                  继续学习 <ChevronRight size={14} className="ml-1" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
         {plans.map((plan) => {
           const completed = getProgress(plan.id);
           const pct = Math.round((completed / plan.totalDays) * 100);
@@ -201,6 +254,7 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                       ${plan.id === 'defense' ? 'bg-cyber-blue/20 text-cyber-blue' : ''}
                       ${plan.id === 'ai' ? 'bg-white/[0.08] text-white' : ''}
                       ${plan.id === 'hw' ? 'bg-cyber-gold/20 text-cyber-gold' : ''}
+                      ${plan.id === 'vendor' ? 'bg-cyber-teal/20 text-cyber-teal' : ''}
                     `}
                   >
                     {planIcon(plan.id)}
@@ -234,7 +288,8 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                             plan.id === 'basic' ? 'bg-cyber-green' :
                             plan.id === 'penetration' ? 'bg-cyber-red' :
                             plan.id === 'ai' ? 'bg-[#7a8a9a]' :
-                            plan.id === 'hw' ? 'bg-cyber-gold' : 'bg-cyber-blue'
+                            plan.id === 'hw' ? 'bg-cyber-gold' :
+                            plan.id === 'vendor' ? 'bg-cyber-teal' : 'bg-cyber-blue'
                           }`}
                           style={{ width: `${pct}%` }}
                         />
@@ -285,6 +340,8 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                           ? 'border-gray-500/50 text-gray-300 hover:bg-white/10 hover:border-gray-400'
                         : plan.id === 'hw'
                           ? 'border-cyber-gold/50 text-cyber-gold hover:bg-cyber-gold/20 hover:border-cyber-gold/80'
+                        : plan.id === 'vendor'
+                          ? 'border-cyber-teal/50 text-cyber-teal hover:bg-cyber-teal/20 hover:border-cyber-teal/80'
                         : 'border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/20 hover:border-cyber-blue/80'
                       }`}
                     >
@@ -301,6 +358,8 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                           ? 'bg-[#5b7a8a] text-white hover:bg-[#789aa8] shadow-[0_0_10px_rgba(91,122,138,0.3)] hover:shadow-[0_0_16px_rgba(91,122,138,0.45)]'
                         : plan.id === 'hw'
                           ? 'bg-[#e8a020] text-black hover:bg-[#ffb830] shadow-[0_0_12px_rgba(232,160,32,0.35)] hover:shadow-[0_0_20px_rgba(232,160,32,0.5)]'
+                        : plan.id === 'vendor'
+                          ? 'bg-[#14b8a6] text-white hover:bg-[#2dd4bf] shadow-[0_0_12px_rgba(20,184,166,0.35)] hover:shadow-[0_0_18px_rgba(20,184,166,0.5)]'
                         : 'bg-[#3388ee] text-white hover:bg-[#5599ff] shadow-[0_0_12px_rgba(51,136,238,0.3)] hover:shadow-[0_0_20px_rgba(51,136,238,0.5)]'
                       }`}
                     >

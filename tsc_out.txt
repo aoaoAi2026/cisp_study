@@ -1,0 +1,6 @@
+src/data/cyberAi.ts(698,72): error TS1005: ',' expected.
+src/data/cyberAi.ts(698,76): error TS1005: ',' expected.
+src/data/cyberAi.ts(698,293): error TS1005: ':' expected.
+src/data/cyberAi.ts(716,153): error TS1005: ',' expected.
+src/data/cyberAi.ts(716,159): error TS1005: ',' expected.
+src/data/cyberAi.ts(716,326): error TS1005: ':' expected.

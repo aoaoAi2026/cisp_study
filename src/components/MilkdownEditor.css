@@ -1,0 +1,296 @@
+/* ===== Milkdown Crepe Cyber Dark 主题定制 ===== */
+
+.milkdown-cyber-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 255, 136, 0.12);
+}
+
+/* 顶层容器 */
+.milkdown-cyber-wrapper .milkdown {
+  border-radius: 10px;
+  background: rgba(10, 15, 25, 0.5);
+}
+
+/* 顶部工具栏 */
+.milkdown-cyber-wrapper .crepe-toolbar {
+  background: rgba(0, 255, 136, 0.04) !important;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.1) !important;
+  padding: 4px 8px !important;
+}
+
+.milkdown-cyber-wrapper .crepe-toolbar button {
+  color: #8899aa !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+.milkdown-cyber-wrapper .crepe-toolbar button:hover {
+  color: #00ff88 !important;
+  background: rgba(0, 255, 136, 0.15) !important;
+}
+
+.milkdown-cyber-wrapper .crepe-toolbar button.active,
+.milkdown-cyber-wrapper .crepe-toolbar button[data-active="true"] {
+  color: #00ff88 !important;
+  background: rgba(0, 255, 136, 0.2) !important;
+}
+
+.milkdown-cyber-wrapper .crepe-toolbar .divider {
+  background: rgba(0, 255, 136, 0.15) !important;
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+}
+
+/* 编辑区 */
+.milkdown-cyber-wrapper .ProseMirror,
+.milkdown-cyber-wrapper .editor {
+  padding: 16px 20px !important;
+  min-height: 340px !important;
+  max-height: 420px;
+  overflow-y: auto;
+  color: #c8d6e5 !important;
+  font-family: 'Fira Code', 'Consolas', 'Noto Sans SC', monospace, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.75 !important;
+  outline: none !important;
+  background: rgba(10, 15, 25, 0.3) !important;
+}
+
+.milkdown-cyber-wrapper .ProseMirror:focus {
+  background: rgba(10, 15, 25, 0.45) !important;
+}
+
+/* 标题样式 */
+.milkdown-cyber-wrapper .ProseMirror h1 {
+  color: #00ff88 !important;
+  font-size: 1.5em !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.2) !important;
+  padding-bottom: 6px !important;
+  margin: 16px 0 8px !important;
+}
+
+.milkdown-cyber-wrapper .ProseMirror h2 {
+  color: #00ff88 !important;
+  font-size: 1.3em !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.12) !important;
+  padding-bottom: 4px !important;
+  margin: 14px 0 6px !important;
+}
+
+.milkdown-cyber-wrapper .ProseMirror h3 {
+  color: #00ff88 !important;
+  font-size: 1.15em !important;
+  font-weight: 600 !important;
+  margin: 12px 0 4px !important;
+}
+
+/* 粗体 & 斜体 */
+.milkdown-cyber-wrapper .ProseMirror strong {
+  color: #00ff88 !important;
+}
+
+.milkdown-cyber-wrapper .ProseMirror em {
+  color: #00d4ff !important;
+}
+
+/* 行内代码 */
+.milkdown-cyber-wrapper .ProseMirror code {
+  background: rgba(0, 255, 136, 0.1) !important;
+  color: #00ff88 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-size: 0.9em !important;
+}
+
+/* 代码块 */
+.milkdown-cyber-wrapper .ProseMirror pre {
+  background: rgba(10, 14, 23, 0.9) !important;
+  border: 1px solid rgba(0, 255, 136, 0.15) !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  margin: 8px 0 !important;
+  overflow-x: auto;
+}
+
+.milkdown-cyber-wrapper .ProseMirror pre code {
+  background: transparent !important;
+  color: #00ff88 !important;
+  padding: 0 !important;
+}
+
+/* 引用块 */
+.milkdown-cyber-wrapper .ProseMirror blockquote {
+  border-left: 3px solid #00ff88 !important;
+  background: rgba(0, 255, 136, 0.05) !important;
+  padding: 8px 16px !important;
+  margin: 8px 0 !important;
+  border-radius: 0 6px 6px 0 !important;
+  color: #aabbcc !important;
+}
+
+/* 链接 */
+.milkdown-cyber-wrapper .ProseMirror a {
+  color: #00d4ff !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+}
+
+/* 列表 */
+.milkdown-cyber-wrapper .ProseMirror ul,
+.milkdown-cyber-wrapper .ProseMirror ol {
+  padding-left: 24px !important;
+  margin: 4px 0 !important;
+}
+
+.milkdown-cyber-wrapper .ProseMirror li {
+  margin: 2px 0 !important;
+}
+
+.milkdown-cyber-wrapper .ProseMirror li::marker {
+  color: #00ff88 !important;
+}
+
+/* 分割线 */
+.milkdown-cyber-wrapper .ProseMirror hr {
+  border: none !important;
+  border-top: 1px solid rgba(0, 255, 136, 0.15) !important;
+  margin: 16px 0 !important;
+}
+
+/* 表格 */
+.milkdown-cyber-wrapper .ProseMirror table {
+  border-collapse: collapse !important;
+  margin: 8px 0 !important;
+  width: 100% !important;
+}
+
+.milkdown-cyber-wrapper .ProseMirror th {
+  background: rgba(0, 255, 136, 0.1) !important;
+  border: 1px solid rgba(0, 255, 136, 0.2) !important;
+  padding: 6px 12px !important;
+  color: #00ff88 !important;
+  font-weight: 600 !important;
+}
+
+.milkdown-cyber-wrapper .ProseMirror td {
+  border: 1px solid rgba(0, 255, 136, 0.08) !important;
+  padding: 6px 12px !important;
+}
+
+/* 删除线 */
+.milkdown-cyber-wrapper .ProseMirror s,
+.milkdown-cyber-wrapper .ProseMirror del {
+  color: #8899aa !important;
+}
+
+/* 选中文本颜色 */
+.milkdown-cyber-wrapper .ProseMirror ::selection {
+  background: rgba(0, 255, 136, 0.25) !important;
+  color: #fff !important;
+}
+
+/* 光标颜色 */
+.milkdown-cyber-wrapper .ProseMirror .ProseMirror-gapcursor::after {
+  border-color: #00ff88 !important;
+}
+
+/* 占位提示 */
+.milkdown-cyber-wrapper .ProseMirror p.is-editor-empty:first-child::before {
+  color: #556677 !important;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* 图片 */
+.milkdown-cyber-wrapper .ProseMirror img {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 136, 0.1);
+}
+
+/* 滚动条 */
+.milkdown-cyber-wrapper .ProseMirror::-webkit-scrollbar {
+  width: 6px;
+}
+
+.milkdown-cyber-wrapper .ProseMirror::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.milkdown-cyber-wrapper .ProseMirror::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 136, 0.15);
+  border-radius: 3px;
+}
+
+.milkdown-cyber-wrapper .ProseMirror::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 136, 0.35);
+}
+
+/* ===== 骨架屏 ===== */
+.milkdown-skeleton {
+  height: 420px;
+  background: rgba(10, 15, 25, 0.4);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 136, 0.08);
+  overflow: hidden;
+}
+
+.milkdown-skeleton-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(0, 255, 136, 0.03);
+  border-bottom: 1px solid rgba(0, 255, 136, 0.06);
+}
+
+.milkdown-skeleton-toolbar span {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  background: rgba(0, 255, 136, 0.06);
+  animation: milkdown-pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.milkdown-skeleton-toolbar i {
+  width: 1px;
+  height: 20px;
+  background: rgba(0, 255, 136, 0.08);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+.milkdown-skeleton-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.milkdown-skeleton-bar {
+  height: 14px;
+  background: rgba(0, 255, 136, 0.08);
+  border-radius: 7px;
+  animation: milkdown-pulse 1.5s ease-in-out infinite;
+  width: 70%;
+}
+
+.milkdown-skeleton-bar.short {
+  width: 50%;
+}
+
+.milkdown-skeleton-bar.shorter {
+  width: 35%;
+}
+
+@keyframes milkdown-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}

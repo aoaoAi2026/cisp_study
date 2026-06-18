@@ -1,11 +1,5 @@
 import { useState, useCallback } from 'react';
 
-interface CodeExecResult {
-  output: string;
-  exitCode?: number;
-  executionTime?: number;
-}
-
 export function useCodeExecutor() {
   const [codeOutput, setCodeOutput] = useState<string | null>(null);
   const [codeRunning, setCodeRunning] = useState(false);

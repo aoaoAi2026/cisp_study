@@ -1,13 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { saveData, loadData } from '../data/persistData';
 
-interface GamifyState {
-  xp: number;
-  level: number;
-  heatmap: number[];
-  quizAvg: number;
-}
-
 interface UseGamificationOptions {
   /** localStorage 键名 */
   storageKey: string;

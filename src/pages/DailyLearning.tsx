@@ -65,7 +65,7 @@ export const DailyLearning: React.FC = () => {
 
   // Gamification (共享hook)
   const gamify = useGamification({ storageKey: 'cisp_gamify' });
-  const { xp, userLevel, streakHeatmap, quizAvg, showLevelUp, setShowLevelUp, showConfetti, setShowConfetti, newBadge, setNewBadge, addXp, bumpHeatmap, updateQuizAvg } = gamify;
+  const { xp, userLevel, streakHeatmap, quizAvg, showLevelUp, setShowLevelUp, showConfetti, addXp, bumpHeatmap } = gamify;
   const [showStats, setShowStats] = useState(true);
 
   // Monaco editor
@@ -181,7 +181,8 @@ export const DailyLearning: React.FC = () => {
     if (currentDay.quiz) {
       currentDay.quiz.forEach((q, i) => {
         const isCorrect = result.correctIndices.includes(i);
-        wrongQuestionBook.recordAnswer('cisp', currentDay.day, i, isCorrect);
+        const qKey = `cisp_${currentDay.day}_${i}`;
+        wrongQuestionBook.recordAnswer(qKey, q, 'cisp', currentDay.day, i, isCorrect);
       });
     }
     if (result.score >= 90) {

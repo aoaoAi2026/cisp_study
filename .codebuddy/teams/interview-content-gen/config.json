@@ -1,0 +1,43 @@
+{
+  "name": "interview-content-gen",
+  "leadAgentId": "bbc925e135cd4605a466decad9d0ca6d",
+  "workspacePath": "e:/internal_safe/cisp1/cisp",
+  "createdAt": "2026-06-17T18:51:35.507Z",
+  "options": {
+    "workspacePath": "e:/internal_safe/cisp1/cisp",
+    "isAutoTeam": false
+  },
+  "members": [
+    {
+      "memberId": "team-lead@interview-content-gen",
+      "name": "team-lead",
+      "role": "Team Lead - coordinates the team and interacts with the user"
+    },
+    {
+      "memberId": "basic-writer@interview-content-gen",
+      "name": "basic-writer",
+      "role": "生成basic面试突击45天内容"
+    },
+    {
+      "memberId": "penetration-writer@interview-content-gen",
+      "name": "penetration-writer",
+      "role": "生成penetration面试突击45天"
+    },
+    {
+      "memberId": "defense-writer@interview-content-gen",
+      "name": "defense-writer",
+      "role": "生成defense面试突击45天"
+    },
+    {
+      "memberId": "ai-writer@interview-content-gen",
+      "name": "ai-writer",
+      "role": "生成ai面试突击45天"
+    },
+    {
+      "memberId": "hw-writer@interview-content-gen",
+      "name": "hw-writer",
+      "role": "生成hw面试突击45天"
+    }
+  ],
+  "isAutoTeam": false
+}

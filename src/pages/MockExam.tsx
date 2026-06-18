@@ -13,7 +13,7 @@ import {
   Pause,
   PlayCircle
 } from 'lucide-react';
-import { Card, Badge, Button } from '../components/UI';
+import { Card, Badge } from '../components/UI';
 import { mockExamPool, type MockQuestion } from '../data/mockExamPool';
 
 interface ExamSession {

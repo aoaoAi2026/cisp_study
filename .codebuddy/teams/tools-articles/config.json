@@ -1,0 +1,18 @@
+{
+  "name": "tools-articles",
+  "leadAgentId": "bbc925e135cd4605a466decad9d0ca6d",
+  "workspacePath": "e:/internal_safe/cisp1/cisp",
+  "createdAt": "2026-06-18T08:00:54.088Z",
+  "options": {
+    "workspacePath": "e:/internal_safe/cisp1/cisp",
+    "isAutoTeam": false
+  },
+  "members": [
+    {
+      "memberId": "team-lead@tools-articles",
+      "name": "team-lead",
+      "role": "Team Lead - coordinates the team and interacts with the user"
+    }
+  ],
+  "isAutoTeam": false
+}

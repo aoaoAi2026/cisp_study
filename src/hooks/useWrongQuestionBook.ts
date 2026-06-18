@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
+import type { QuizQuestion } from './useQuiz';
 
 export interface WrongQuestionEntry {
-  key: string;          // 唯一标识: `${planId}_${day}_${questionIndex}`
+  key: string;          // 唯一标识: `${planId}_${day}_${questionIndex}` 或 `${planId}_wrong_${uuid}`
   planId: string;
   day: number;
   questionIndex: number;
   consecutiveCorrect: number;
+  question: QuizQuestion;  // 存储完整题目，便于跨天复现
 }
 
 const STORAGE_KEY = 'cisp_wrong_questions';
@@ -43,8 +45,7 @@ export function useWrongQuestionBook() {
   }, []);
 
   const recordAnswer = useCallback(
-    (planId: string, day: number, questionIndex: number, isCorrect: boolean) => {
-      const key = `${planId}_${day}_${questionIndex}`;
+    (key: string, question: QuizQuestion, planId: string, day: number, questionIndex: number, isCorrect: boolean) => {
       setEntries(prev => {
         const idx = prev.findIndex(e => e.key === key);
 
@@ -68,7 +69,7 @@ export function useWrongQuestionBook() {
             saveEntries(updated);
             return updated;
           } else {
-            const updated = [...prev, { key, planId, day, questionIndex, consecutiveCorrect: 0 }];
+            const updated = [...prev, { key, question, planId, day, questionIndex, consecutiveCorrect: 0 }];
             saveEntries(updated);
             return updated;
           }

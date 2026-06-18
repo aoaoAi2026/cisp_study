@@ -12,7 +12,8 @@ import {
   Briefcase,
   Star,
   Zap,
-  Lock
+  Lock,
+  BookOpen
 } from 'lucide-react';
 import { Card } from '../components/UI';
 import { CyberLearningPlan } from '../data/cyberBasic';
@@ -21,11 +22,13 @@ import { interviewPenetrationPlan } from '../data/interviewPenetration';
 import { interviewDefensePlan } from '../data/interviewDefense';
 import { interviewAiPlan } from '../data/interviewAi';
 import { interviewHwPlan } from '../data/interviewHw';
+import { interviewCispPlan } from '../data/interviewCisp';
 import { loadData } from '../data/persistData';
 
 interface InterviewLearningMainProps {}
 
 const plans: CyberLearningPlan[] = [
+  interviewCispPlan,
   interviewBasicPlan,
   interviewPenetrationPlan,
   interviewDefensePlan,
@@ -40,6 +43,7 @@ const difficultyIcon = (d: string) => {
 };
 
 const planIcon = (id: string) => {
+  if (id === 'cisp') return <BookOpen size={40} />;
   if (id === 'basic') return <Shield size={40} />;
   if (id === 'penetration') return <Target size={40} />;
   if (id === 'ai') return <Brain size={40} />;
@@ -48,6 +52,7 @@ const planIcon = (id: string) => {
 };
 
 const planBg = (id: string) => {
+  if (id === 'cisp') return 'from-cyber-green/5 to-transparent';
   if (id === 'basic') return 'from-cyber-green/5 to-transparent';
   if (id === 'penetration') return 'from-cyber-red/5 to-transparent';
   if (id === 'ai') return 'from-white/[0.03] to-transparent';
@@ -56,6 +61,7 @@ const planBg = (id: string) => {
 };
 
 const planBorder = (id: string) => {
+  if (id === 'cisp') return 'border-cyber-green/30';
   if (id === 'basic') return 'border-cyber-green/30';
   if (id === 'penetration') return 'border-cyber-red/30';
   if (id === 'ai') return 'border-white/15';
@@ -64,6 +70,7 @@ const planBorder = (id: string) => {
 };
 
 const planHover = (id: string) => {
+  if (id === 'cisp') return 'hover:border-cyber-green/50';
   if (id === 'basic') return 'hover:border-cyber-green/50';
   if (id === 'penetration') return 'hover:border-cyber-red/50';
   if (id === 'ai') return 'hover:border-white/30';
@@ -89,7 +96,7 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
   const getProgress = (planId: string) => progressMap[planId] || 0;
 
   const totalDays = plans.reduce((s, p) => s + p.totalDays, 0);
-  const totalCompleted = getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw');
+  const totalCompleted = getProgress('cisp') + getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw');
   const totalPct = totalCompleted > 0 ? Math.round((totalCompleted / totalDays) * 100) : 0;
 
   const itemVariants = {
@@ -110,7 +117,7 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
               面试突击学习中心
             </h1>
             <p className="text-gray-400 mt-1">
-              五个模块 · 每模块40天 · {totalDays}天面试全案
+              六大模块 · 每模块45天 · {totalDays}天面试全案
             </p>
           </div>
         </div>
@@ -179,6 +186,7 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
                   <div
                     className={`
                       w-20 h-20 rounded-xl flex items-center justify-center flex-shrink-0
+                      ${plan.id === 'cisp' ? 'bg-cyber-green/20 text-cyber-green' : ''}
                       ${plan.id === 'basic' ? 'bg-cyber-green/20 text-cyber-green' : ''}
                       ${plan.id === 'penetration' ? 'bg-cyber-red/20 text-cyber-red' : ''}
                       ${plan.id === 'defense' ? 'bg-cyber-blue/20 text-cyber-blue' : ''}
@@ -214,6 +222,7 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
                       <div className="flex-1 h-2 rounded-full bg-white/10 overflow-hidden">
                         <div
                           className={`h-full transition-all duration-500 ${
+                            plan.id === 'cisp' ? 'bg-cyber-green' :
                             plan.id === 'basic' ? 'bg-cyber-green' :
                             plan.id === 'penetration' ? 'bg-cyber-red' :
                             plan.id === 'ai' ? 'bg-[#7a8a9a]' :
@@ -258,7 +267,9 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
                     <button
                       onClick={() => setExpanded(expanded === plan.id ? null : plan.id)}
                       className={`text-xs px-4 py-2 rounded-lg border bg-white/5 backdrop-blur-sm transition-all duration-200 ${
-                        plan.id === 'basic'
+                        plan.id === 'cisp'
+                          ? 'border-cyber-green/50 text-cyber-green hover:bg-cyber-green/20 hover:border-cyber-green/80'
+                        : plan.id === 'basic'
                           ? 'border-cyber-green/50 text-cyber-green hover:bg-cyber-green/20 hover:border-cyber-green/80'
                         : plan.id === 'penetration'
                           ? 'border-cyber-red/50 text-cyber-red hover:bg-cyber-red/20 hover:border-cyber-red/80'
@@ -274,7 +285,9 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
                     <button
                       onClick={() => navigate(`/interview-learning/${plan.id}`)}
                       className={`flex items-center gap-1 text-xs px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
-                        plan.id === 'basic'
+                        plan.id === 'cisp'
+                          ? 'bg-[#00cc66] text-black hover:bg-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.3)] hover:shadow-[0_0_20px_rgba(0,255,136,0.5)]'
+                        : plan.id === 'basic'
                           ? 'bg-[#00cc66] text-black hover:bg-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.3)] hover:shadow-[0_0_20px_rgba(0,255,136,0.5)]'
                         : plan.id === 'penetration'
                           ? 'bg-[#e04444] text-white hover:bg-[#ff5555] shadow-[0_0_12px_rgba(255,68,68,0.3)] hover:shadow-[0_0_20px_rgba(255,68,68,0.5)]'
@@ -302,8 +315,8 @@ export const InterviewLearningMain: React.FC<InterviewLearningMainProps> = () =>
           <div className="text-center py-4">
             <p className="text-sm text-gray-400">
               💡 <span className="text-cyber-gold">面试突击</span> = 
-              每模块40天 · 前26天全量知识速览 · 后14天纯面试实战 · 
-              5模块共{totalDays}天覆盖全部安全面试考点
+              每模块45天 · 前26天全量知识速览 · 后19天纯面试实战 · 
+              6模块共{totalDays}天覆盖全部安全面试考点
             </p>
           </div>
         </Card>

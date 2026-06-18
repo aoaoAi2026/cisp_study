@@ -10,7 +10,6 @@ export const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const loadFromServer = useLearningStore((s) => s.loadFromServer);
   const initFromStorage = useUserStore((s) => s.initFromStorage);
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -21,7 +20,6 @@ export const Layout: React.FC = () => {
       if (token) {
         await loadFromServer();
       }
-      setLoaded(true);
     }
     init();
   }, []);
@@ -33,7 +31,7 @@ export const Layout: React.FC = () => {
       <div className="lg:ml-64">
         <TopNav />
 
-        <main className="p-6">
+        <main className="p-3 sm:p-4 lg:p-6">
           <Outlet />
         </main>
       </div>

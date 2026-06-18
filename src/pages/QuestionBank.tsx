@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useNavigate, NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Library, Search, ChevronRight,
   CheckCircle, Trash2, Target,
   Zap, BarChart3, AlertCircle,
-  Lightbulb
+  XCircle
 } from 'lucide-react';
 import { Card, Button, QuizQuestion } from '../components/UI';
 import type { QuizQuestionData } from '../components/UI';
@@ -15,6 +15,7 @@ import {
   type BankQuestion
 } from '../data/questionBank';
 import { saveData, loadData, removeData } from '../data/persistData';
+import type { WrongQuestionEntry } from '../hooks/useWrongQuestionBook';
 
 // =========================== 类型 ===========================
 
@@ -28,6 +29,11 @@ interface WrongItem {
   domain: string;
   date: string;
   consecutiveCorrect: number; // 连续答对次数（3次自动移除）
+  // 随堂测验错题扩展字段
+  quizType?: 'single' | 'multiple' | 'boolean' | 'fill';
+  correctAnswer?: string;     // 填空题正确答案
+  source?: 'bank' | 'cyber';  // 来源
+  entryKey?: string;          // cisp_wrong_questions 中的 key
 }
 
 type TabId = 'browse' | 'practice' | 'daily' | 'wrongbook';
@@ -39,11 +45,6 @@ interface DailyRecord { date: string; correct: number; total: number; }
 const fadeIn = {
   hidden: { opacity: 0, y: 12 },
   visible: { opacity: 1, y: 0 },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
 // =========================== 辅助 ===========================
@@ -69,13 +70,48 @@ function optionLabel(i: number): string {
 
 // =========================== 组件 ===========================
 
+// 将随堂测验错题转换为 WrongItem 格式
+function cyberWrongToItem(entry: WrongQuestionEntry): WrongItem {
+  const q = entry.question;
+  const hasOptions = q.options && q.options.length > 0;
+  const qType = q.type || (hasOptions ? 'single' : 'fill');
+  const options = hasOptions ? q.options! : [q.correctAnswer || ''];
+  const correctIndex = hasOptions ? (q.correctIndex ?? 0) : 0;
+  return {
+    questionId: entry.key,
+    question: q.question,
+    options,
+    correctIndex,
+    yourAnswer: -1, // 随堂测验不记录具体答案
+    explanation: q.explanation || '',
+    domain: entry.planId,
+    date: new Date().toISOString(),
+    consecutiveCorrect: entry.consecutiveCorrect,
+    quizType: qType,
+    correctAnswer: q.correctAnswer,
+    source: 'cyber',
+    entryKey: entry.key,
+  };
+}
+
 // =========================== 布局壳 ===========================
 
 export const QuestionBank: React.FC = () => {
   const stats = useMemo(() => getBankStats(), []);
   const [wrongList, setWrongList] = useState<WrongItem[]>([]);
+  const [cyberWrongCount, setCyberWrongCount] = useState(0);
 
-  useEffect(() => { loadData<WrongItem[]>('cisp_wrong_bank', []).then(setWrongList); }, []);
+  useEffect(() => {
+    loadData<WrongItem[]>('cisp_wrong_bank', []).then(setWrongList);
+    // 读取随堂测验错题数量
+    try {
+      const raw = localStorage.getItem('cisp_wrong_questions');
+      if (raw) {
+        const arr: WrongQuestionEntry[] = JSON.parse(raw);
+        setCyberWrongCount(arr.filter(e => e.consecutiveCorrect < 3).length);
+      }
+    } catch { /* ignore */ }
+  }, []);
 
   const tabBtn = (to: string, end: boolean, label: string, icon: string) => (
     <NavLink
@@ -108,7 +144,14 @@ export const QuestionBank: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="text-right">
             <p className="text-xs text-gray-500">错题本</p>
-            <p className="text-lg font-bold text-cyber-red">{wrongList.length} 题</p>
+            <p className="text-lg font-bold text-cyber-red">
+              {wrongList.length + cyberWrongCount} 题
+              {cyberWrongCount > 0 && (
+                <span className="text-xs font-normal text-gray-500 ml-1">
+                  (题库{wrongList.length} + 随堂{cyberWrongCount})
+                </span>
+              )}
+            </p>
           </div>
         </div>
       </div>
@@ -129,22 +172,51 @@ export const QuestionBank: React.FC = () => {
 // =========================== 习题练习（原 5 标签页） ===========================
 
 export const QuestionBankTabs: React.FC = () => {
-  const navigate = useNavigate();
   const stats = useMemo(() => getBankStats(), []);
 
   // ---- tab 状态 ----
   const [tab, setTab] = useState<TabId>('browse');
 
-  // ---- 错题本 ----
+  // ---- 错题本（合并题库错题 + 随堂测验错题） ----
   const [wrongList, setWrongList] = useState<WrongItem[]>([]);
   const [wrongReviewIdx, setWrongReviewIdx] = useState(0);
   const [showWrongReview, setShowWrongReview] = useState(false);
 
-  useEffect(() => { loadData<WrongItem[]>('cisp_wrong_bank', []).then(setWrongList); }, []);
+  // 加载错题：题库错题 + 随堂测验错题
+  const loadAllWrongs = useCallback(async () => {
+    const bankItems = await loadData<WrongItem[]>('cisp_wrong_bank', []);
+    const cyberItems: WrongItem[] = [];
+    try {
+      const raw = localStorage.getItem('cisp_wrong_questions');
+      if (raw) {
+        const arr: WrongQuestionEntry[] = JSON.parse(raw);
+        arr.filter(e => e.consecutiveCorrect < 3).forEach(e => {
+          cyberItems.push(cyberWrongToItem(e));
+        });
+      }
+    } catch { /* ignore */ }
+    // 题库错题在前，随堂错题在后
+    setWrongList([...bankItems, ...cyberItems]);
+  }, []);
+
+  useEffect(() => { loadAllWrongs(); }, [loadAllWrongs]);
 
   const saveWrongList = useCallback(async (list: WrongItem[]) => {
+    const bankItems = list.filter(w => w.source !== 'cyber');
+    const cyberItems = list.filter(w => w.source === 'cyber');
     setWrongList(list);
-    await saveData('cisp_wrong_bank', list);
+    await saveData('cisp_wrong_bank', bankItems);
+    // 同步更新 cisp_wrong_questions 中对应条目的 consecutiveCorrect
+    try {
+      const raw = localStorage.getItem('cisp_wrong_questions');
+      const allEntries: WrongQuestionEntry[] = raw ? JSON.parse(raw) : [];
+      const cyberMap = new Map(cyberItems.map(w => [w.entryKey!, w.consecutiveCorrect]));
+      allEntries.forEach(e => {
+        if (cyberMap.has(e.key)) e.consecutiveCorrect = cyberMap.get(e.key)!;
+      });
+      // 移除连续答对 >= 3 的条目
+      localStorage.setItem('cisp_wrong_questions', JSON.stringify(allEntries.filter(e => e.consecutiveCorrect < 3)));
+    } catch { /* ignore */ }
   }, []);
 
   const addWrong = useCallback(async (item: WrongItem) => {
@@ -508,9 +580,15 @@ export const QuestionBankTabs: React.FC = () => {
                   <h3 className="font-medium text-white flex items-center gap-2">
                     <XCircle size={16} className="text-cyber-red" />
                     全部错题 ({wrongList.length})
+                    {wrongList.some(w => w.source === 'cyber') && (
+                      <span className="text-xs px-2 py-0.5 rounded bg-cyber-blue/20 text-cyber-blue">
+                        含{wrongList.filter(w => w.source === 'cyber').length}道随堂错题
+                      </span>
+                    )}
                   </h3>
                   <Button size="sm" variant="outline" onClick={async () => {
                     await removeData('cisp_wrong_bank');
+                    localStorage.removeItem('cisp_wrong_questions');
                     setWrongList([]);
                   }}>清空全部</Button>
                 </div>
@@ -523,13 +601,24 @@ export const QuestionBankTabs: React.FC = () => {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-white line-clamp-2">{w.question}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="px-1.5 py-0.5 rounded text-xs"
-                            style={{ backgroundColor: getDomainColor(w.domain) + '30', color: getDomainColor(w.domain) }}>
-                            {w.domain}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {new Date(w.date).toLocaleDateString()}
-                          </span>
+                          {w.source === 'cyber' ? (
+                            <span className="px-1.5 py-0.5 rounded text-xs bg-cyber-blue/20 text-cyber-blue">
+                              📖 随堂测验
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.5 rounded text-xs"
+                              style={{ backgroundColor: getDomainColor(w.domain) + '30', color: getDomainColor(w.domain) }}>
+                              {w.domain}
+                            </span>
+                          )}
+                          {w.quizType === 'fill' && (
+                            <span className="px-1.5 py-0.5 rounded text-xs bg-purple-500/20 text-purple-400">填空</span>
+                          )}
+                          {w.consecutiveCorrect > 0 && (
+                            <span className="text-xs text-cyber-green">
+                              已答对{w.consecutiveCorrect}/3次
+                            </span>
+                          )}
                         </div>
                       </div>
                       <ChevronRight size={16} className="text-gray-500 flex-shrink-0" />
@@ -682,30 +771,59 @@ const WrongReviewView: React.FC<{
       <div className="flex items-center gap-2">
         <Button size="sm" variant="outline" onClick={onBack}>← 列表</Button>
         <span className="text-sm text-gray-400">{index + 1}/{total}</span>
+        {item.source === 'cyber' && (
+          <span className="text-xs px-2 py-0.5 rounded bg-cyber-blue/20 text-cyber-blue">📖 随堂测验</span>
+        )}
+        {item.quizType === 'fill' && (
+          <span className="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-400">填空</span>
+        )}
       </div>
       <div className="flex gap-2">
-        <Button size="sm" variant="outline" onClick={onMarkCorrect}
-          title="标记为已掌握（连续3次答对自动移除）">我会了</Button>
+        <span title="标记为已掌握（连续3次答对自动移除）">
+          <Button size="sm" variant="outline" onClick={onMarkCorrect}>
+            我会了 {item.consecutiveCorrect > 0 ? `(${item.consecutiveCorrect}/3)` : ''}
+          </Button>
+        </span>
         <Button size="sm" variant="outline" className="text-red-400 border-red-400/30" onClick={onRemove}>
           <Trash2 size={14} className="mr-1" />移除
         </Button>
       </div>
     </div>
 
-    <QuizQuestion
-      question={{
-        id: item.questionId,
-        question: item.question,
-        options: item.options,
-        correctIndex: item.correctIndex,
-        explanation: item.explanation,
-      }}
-      selectedIndex={item.yourAnswer}
-      showResult={true}
-      onSelect={() => {}}
-      readOnly
-      variant="compact"
-    />
+    {item.quizType === 'fill' ? (
+      /* 填空题专用显示 */
+      <div className="space-y-3">
+        <div className="p-4 rounded-lg bg-cyber-purple/10 border border-cyber-purple/20">
+          <p className="text-white text-sm leading-relaxed mb-3">{item.question}</p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-500">正确答案：</span>
+            <span className="px-3 py-1 rounded bg-cyber-green/20 text-cyber-green text-sm font-medium border border-cyber-green/30">
+              {item.correctAnswer || item.options[0]}
+            </span>
+          </div>
+        </div>
+        {item.explanation && (
+          <div className="p-3 rounded-lg bg-cyber-purple/10 border border-cyber-purple/20">
+            <p className="text-xs text-gray-400 leading-relaxed">{item.explanation}</p>
+          </div>
+        )}
+      </div>
+    ) : (
+      <QuizQuestion
+        question={{
+          id: item.questionId,
+          question: item.question,
+          options: item.options,
+          correctIndex: item.correctIndex,
+          explanation: item.explanation,
+        }}
+        selectedIndex={item.yourAnswer >= 0 ? item.yourAnswer : null}
+        showResult={true}
+        onSelect={() => {}}
+        readOnly
+        variant="compact"
+      />
+    )}
 
     <div className="flex justify-between mt-4">
       <Button size="sm" variant="outline" disabled={index === 0} onClick={onPrev}>上一题</Button>

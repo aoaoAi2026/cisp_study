@@ -6,7 +6,6 @@ import {
   Bell,
   Shield,
   Database,
-  Clock,
   Award,
   BookOpen,
   Code,
@@ -16,10 +15,9 @@ import {
 } from 'lucide-react';
 import { useUserStore, useLearningStore, useAchievementStore, getLevel } from '../store';
 import { Card, Badge, Button } from '../components/UI';
-import { ProgressRing } from '../components/UI/ProgressRing';
 
 export const Profile: React.FC = () => {
-  const { user, logout, settings, updateSettings } = useUserStore();
+  const { user, settings, updateSettings } = useUserStore();
   const { completedDays, completedLabs, streak, quizResults, resetProgress } = useLearningStore();
   const { badges, unlockedBadgeIds, points, resetAchievements } = useAchievementStore();
 

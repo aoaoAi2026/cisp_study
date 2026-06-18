@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, CheckCircle, ChevronDown, Terminal as TerminalIcon,
-  Copy, Info, Play, Lightbulb, BookOpen, Shield, FileCode, AlertOctagon, Package, Loader2,
+  Copy, Info, Play, Lightbulb, BookOpen, Shield, FileCode, AlertOctagon, Loader2,
 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import { securityScripts, scriptCategories } from '../../data/securityScripts';

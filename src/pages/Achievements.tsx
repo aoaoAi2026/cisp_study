@@ -6,7 +6,6 @@ import {
   Star,
   Flame,
   Lock,
-  CheckCircle,
   Zap,
   BookOpen,
   Code,
@@ -16,7 +15,6 @@ import {
 } from 'lucide-react';
 import { useAchievementStore, useLearningStore, getLevel } from '../store';
 import { Card, Badge } from '../components/UI';
-import { ProgressRing } from '../components/UI/ProgressRing';
 
 const badgeIcons: Record<string, any> = {
   'beginner': Star,

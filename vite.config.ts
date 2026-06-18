@@ -19,8 +19,6 @@ export default defineConfig({
     allowedHosts: true,
     cors: true,
     hmr: {
-      host: '0.0.0.0',
-      port: 6776,
       protocol: 'ws',
     },
     proxy: {

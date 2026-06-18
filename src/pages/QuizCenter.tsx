@@ -3,20 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   FileQuestion,
-  Clock,
-  CheckCircle,
-  Target,
   Trophy,
   BookOpen,
   ChevronRight,
-  Zap,
   XCircle,
   RotateCcw,
   Trash2
 } from 'lucide-react';
 import { useLearningStore, useAchievementStore } from '../store';
 import { learningData } from '../data/learningData';
-import { checkQuizAnswer } from '../hooks/useQuiz';
 import { Card, Badge, Button, QuizQuestion } from '../components/UI';
 import { ProgressRing } from '../components/UI/ProgressRing';
 import { saveData, loadData, removeData } from '../data/persistData';

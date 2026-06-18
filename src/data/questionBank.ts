@@ -2,7 +2,7 @@
 // 统一习题库 - 合并 mockExamPool / pastPapers / learningData
 // ============================================================
 import { mockExamPool, MockQuestion } from './mockExamPool';
-import { getAllPastPaperQuestions, getQuestionsByDomain, getRandomQuestions } from './pastPapers';
+import { getAllPastPaperQuestions } from './pastPapers';
 import type { PastPaperQuestion } from './pastPapers';
 
 // ---------- 统一题目接口 ----------
@@ -52,7 +52,7 @@ export type QuestionDomain = (typeof questionDomains)[number];
 // ---------- 数据归一化 ----------
 
 function normalizeMockExam(): BankQuestion[] {
-  return mockExamPool.map((q: MockQuestion, i: number) => {
+  return mockExamPool.map((q: MockQuestion) => {
     const options = q.options.map(o => o.text);
     const correctIndex = q.options.findIndex(o => o.label === q.correct);
     return {

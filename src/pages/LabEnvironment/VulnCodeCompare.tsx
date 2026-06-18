@@ -15,7 +15,7 @@ export const VulnCodeCompare: React.FC = () => {
   ];
 
   const [current, setCurrent] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false);
+  const [, setShowAnswer] = useState(false);
 
   return (
     <div className="space-y-4">

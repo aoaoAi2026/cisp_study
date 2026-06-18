@@ -116,15 +116,20 @@ npm run dev
 
 ### Windows 一键启动
 
-```bat
-scripts\start-app.bat
+```powershell
+# 终端1: 启动后端
+cd backend
+npm start
+
+# 终端2: 启动前端
+npm run dev
 ```
 
-脚本会自动：
-1. 检查 Node.js 是否安装
-2. 检查并安装缺失的依赖（前端 + 后端）
-3. 在新窗口中启动后端
-4. 在当前窗口启动前端
+手动启动步骤：
+1. 确保 Node.js 已安装
+2. 安装依赖: `npm install && cd backend && npm install`
+3. 在一个终端启动后端: `cd backend && npm start`
+4. 在另一个终端启动前端: `npm run dev`
 
 ### 生产模式（一体化部署）
 

@@ -10,10 +10,12 @@ export default {
     'border-cyber-green', 'border-cyber-green/10', 'border-cyber-green/20', 'border-cyber-green/30', 'border-cyber-green/40', 'border-cyber-green/50',
     'border-cyber-red', 'border-cyber-red/10', 'border-cyber-red/20', 'border-cyber-red/30', 'border-cyber-red/40', 'border-cyber-red/50',
     'border-cyber-blue', 'border-cyber-blue/10', 'border-cyber-blue/20', 'border-cyber-blue/30', 'border-cyber-blue/40', 'border-cyber-blue/50',
-    'text-cyber-green', 'text-cyber-red', 'text-cyber-blue',
+    'text-cyber-green', 'text-cyber-red', 'text-cyber-blue', 'text-cyber-teal',
     'bg-cyber-green/10', 'bg-cyber-green/20', 'bg-cyber-green/30',
     'bg-cyber-red/10', 'bg-cyber-red/20', 'bg-cyber-red/30',
     'bg-cyber-blue/10', 'bg-cyber-blue/20', 'bg-cyber-blue/30',
+    'bg-cyber-teal/10', 'bg-cyber-teal/20', 'bg-cyber-teal/30',
+    'border-cyber-teal/10', 'border-cyber-teal/20', 'border-cyber-teal/30', 'border-cyber-teal/40', 'border-cyber-teal/50',
   ],
   theme: {
     container: {
@@ -28,6 +30,7 @@ export default {
           blue: "#00d4ff",
           red: "#ff3366",
           gold: "#ffd700",
+          teal: "#14b8a6",
         },
       },
       fontFamily: {

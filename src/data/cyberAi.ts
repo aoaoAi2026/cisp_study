@@ -1,4 +1,4 @@
-// AI网络安全学习计划（30天）
+// AI网络安全学习计划（168天）
 import { CyberLearningPlan, CyberDay } from './cyberBasic';
 
 const week1: CyberDay[] = [
@@ -322,617 +322,2549 @@ const week5: CyberDay[] = [
 
 
 const week5_extra: CyberDay[] = [
-  { id: "ai-31", day: 31, title: "安全仪表盘基础（实时数据流可视化）", subtitle: "安全仪表盘基础（实时数据流可视化）",
-    objectives: ["理解安全仪表盘基础（实时数据流可视化）的核心概念", "掌握相关技术原理", "完成实践任务"],
-    content: "## 安全仪表盘基础（实时数据流可视化）\n\n实践任务：用Streamlit搭建安全数据探索仪表盘\n\n详细课程内容请查看课程文件。",
-    keyPoints: ["安全仪表盘基础（实时数据流可视化）", "实践: 用Streamlit搭建安全数据探索仪表盘"] },
-  { id: "ai-32", day: 32, title: "网络图可视化（NetworkX/力导向图）", subtitle: "网络图可视化（NetworkX/力导向图）",
-    objectives: ["理解网络图可视化（NetworkX/力导向图的核心概念", "掌握相关技术原理", "完成实践任务"],
-    content: "## 网络图可视化（NetworkX/力导向图）\n\n实践任务：可视化目标网络的IP通信关系图，标注攻击源\n\n详细课程内容请查看课程文件。",
-    keyPoints: ["网络图可视化（NetworkX/力导向图）", "实践: 可视化目标网络的IP通信关系图，标注攻击源"] },
-  { id: "ai-33", day: 33, title: "时间线可视化（事件序列/甘特图/水印图）", subtitle: "时间线可视化（事件序列/甘特图/水印图）",
-    objectives: ["理解时间线可视化（事件序列/甘特图/水印图）的核心概念", "掌握相关技术原理", "完成实践任务"],
-    content: "## 时间线可视化（事件序列/甘特图/水印图）\n\n实践任务：可视化一次多步攻击的时间线（扫描→漏洞利用→横向移动→数据窃取）\n\n详细课程内容请查看课程文件。",
-    keyPoints: ["时间线可视化（事件序列/甘特图/水印图）", "实践: 可视化一次多步攻击的时间线（扫描→漏洞利用→横向移动→数据窃"] },
-  { id: "ai-34", day: 34, title: "日志异常模式可视化（PCA投影/异常分数分布）", subtitle: "日志异常模式可视化（PCA投影/异常分数分布）",
-    objectives: ["理解日志异常模式可视化（PCA投影/异常分数的核心概念", "掌握相关技术原理", "完成实践任务"],
-    content: "## 日志异常模式可视化（PCA投影/异常分数分布）\n\n实践任务：用PCA+散点图展示异常检测模型的决策边界\n\n详细课程内容请查看课程文件。",
-    keyPoints: ["日志异常模式可视化（PCA投影/异常分数分布）", "实践: 用PCA+散点图展示异常检测模型的决策边界"] },
-  { id: "ai-35", day: 35, title: "**阶段总结**", subtitle: "**阶段总结**",
-    objectives: ["理解**阶段总结**的核心概念", "掌握相关技术原理", "完成实践任务"],
-    content: "## **阶段总结**\n\n实践任务：输出一份完整的安全数据EDA报告（含10+可视化图表）\n\n详细课程内容请查看课程文件。",
-    keyPoints: ["**阶段总结**", "实践: 输出一份完整的安全数据EDA报告（含10+可视化图表）"] }
+    { id: "ai-31", day: 31, title: "安全仪表盘基础（实时数据流可视化）", subtitle: "安全仪表盘基础（实时数据流可视化）",
+    objectives: ['理解安全仪表盘基础（实时数据流可视化）的核心概念和原理', '掌握安全仪表盘基础（实时数据流可视化）的技术实现方法', '了解安全仪表盘基础（实时数据流可视化）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "安全仪表盘基础（实时数据流可视化）严重直接影响模型效果。安全数据常见问题：缺失值(设备未上报)、异常值(攻击流量)、类别不平衡(攻击样本极少)、特征量纲不一致。\\n\\n处理策略：缺失值→分析原因后填充(均值/中位数/众数)或删除；异常值→IQR方法检测+Winsorize capping；类别不平衡→SMOTE过采样/欠采样/代价敏感。\\n\\nsklearn Pipeline: StandardScaler+SimpleImputer+ColumnTransformer组合不同类型数据的预处理。关键原则：训练集fit_transform，测试集只用transform防信息泄露。",
+    keyPoints: ['安全仪表盘基础（实时数据流可视化）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Streamlit仪表盘的优势？","options":["A. 复杂", "B. Python代码直接渲染Web交互界面无需前端开发", "C. 需要JS", "D. 慢"],"correctIndex":1,"explanation":"Streamlit是纯Python的Web框架安全分析师可快速搭建展示界面。"},
+    {"question":"安全仪表盘的核心设计原则？","options":["A. 随便", "B. 信息层次(总览→详情)+交互(筛选下钻)+告警分级(红橙黄)", "C. 复杂", "D. 静态"],"correctIndex":1,"explanation":"好的安全仪表盘让分析师一眼看到最重要的威胁并能深入钻取分析。"},
+    {"question":"Grafana在安全可视化中的定位？","options":["A. 代码编辑", "B. 时序数据仪表盘对接Prometheus/ES做安全监控", "C. 文件", "D. 数据库"],"correctIndex":1,"explanation":"Grafana擅长时序可视化是安全监控大屏的常用方案配合告警规则。"},
+    {"question":"Plotly相比Matplotlib的优势？","options":["A. 打印", "B. 交互式图表支持缩放悬停筛选", "C. 更简单", "D. 基础"],"correctIndex":1,"explanation":"Plotly生成的图表可交互让分析师在Web仪表盘上动态探索安全数据。"},
+    {"question":"安全可视化中最常用的图类型？","options":["A. 3D", "B. 时序折线图流量趋势+DDoS检测", "C. 饼图", "D. 散点"],"correctIndex":1,"explanation":"时序折线图是安全监控最核心的可视化形式直观展示异常流量突增事件。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import streamlit as st\nimport pandas as pd\nimport numpy as np\nimport plotly.express as px\n\n# Security Dashboard\nst.set_page_config(page_title=\"Security Dashboard\", layout=\"wide\")\nst.title(\"🛡️ AI Security Monitor\")\n\n# 模拟数据\nnp.random.seed(42)\ndf = pd.DataFrame({\n    \"timestamp\": pd.date_range(\"2024-01-01\", periods=100, freq=\"H\"),\n    \"requests\": np.random.poisson(1000, 100),\n    \"alerts\": np.random.poisson(5, 100),\n    \"anomaly_score\": np.random.random(100)\n})\n\ncol1, col2 = st.columns(2)\nwith col1:\n    fig = px.line(df, x=\"timestamp\", y=\"requests\", title=\"Traffic\")\n    st.plotly_chart(fig, use_container_width=True)\nwith col2:\n    fig2 = px.scatter(df, x=\"timestamp\", y=\"anomaly_score\", color=df.anomaly_score>0.9)\n    st.plotly_chart(fig2, use_container_width=True)\nprint(\"Streamlit dashboard code - run with: streamlit run dashboard.py\")","explanation":"Streamlit安全仪表盘：流量监控+异常检测可视化"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"安全仪表盘基础（实时数据流可视化）实验","description":"搭建安全仪表盘基础（实时数据流可视化）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备安全仪表盘基础（实时数据流可视化）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握安全仪表盘基础（实时数据流可视化）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"安全仪表盘基础（实时数据流可视化）学习要点","content":"学习安全仪表盘基础（实时数据流可视化）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-32", day: 32, title: "网络图可视化（NetworkX/力导向图）", subtitle: "网络图可视化（NetworkX/力导向图）",
+    objectives: ['理解网络图可视化（NetworkX/力导向图）的核心概念和原理', '掌握网络图可视化（NetworkX/力导向图）的技术实现方法', '了解网络图可视化（NetworkX/力导向图）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "网络图可视化（NetworkX/力导向图）把安全数据和检测结果直观展示给安全分析师。\\n\\n展示维度：流量趋势时序图(发现DDoS突增)、告警分布热力图(看告警密度)、Top攻击IP/端口排行、攻击类型饼图、异常检测结果散点图。\\n\\n技术栈：Streamlit(Python快速开发,几行代码变Web仪表盘)、Grafana(时序数据展示,对接ES/Prometheus)、Kibana(ES可视化)、Plotly Dash(Python交互图表)。\\n\\n仪表盘原则：信息层次(总览→详情)、告警分级(红橙黄)、可交互(筛选/下钻)、实时刷新。",
+    keyPoints: ['网络图可视化（NetworkX/力导向图）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Streamlit仪表盘的优势？","options":["A. 复杂", "B. Python代码直接渲染Web交互界面无需前端开发", "C. 需要JS", "D. 慢"],"correctIndex":1,"explanation":"Streamlit是纯Python的Web框架安全分析师可快速搭建展示界面。"},
+    {"question":"安全仪表盘的核心设计原则？","options":["A. 随便", "B. 信息层次(总览→详情)+交互(筛选下钻)+告警分级(红橙黄)", "C. 复杂", "D. 静态"],"correctIndex":1,"explanation":"好的安全仪表盘让分析师一眼看到最重要的威胁并能深入钻取分析。"},
+    {"question":"Grafana在安全可视化中的定位？","options":["A. 代码编辑", "B. 时序数据仪表盘对接Prometheus/ES做安全监控", "C. 文件", "D. 数据库"],"correctIndex":1,"explanation":"Grafana擅长时序可视化是安全监控大屏的常用方案配合告警规则。"},
+    {"question":"Plotly相比Matplotlib的优势？","options":["A. 打印", "B. 交互式图表支持缩放悬停筛选", "C. 更简单", "D. 基础"],"correctIndex":1,"explanation":"Plotly生成的图表可交互让分析师在Web仪表盘上动态探索安全数据。"},
+    {"question":"安全可视化中最常用的图类型？","options":["A. 3D", "B. 时序折线图流量趋势+DDoS检测", "C. 饼图", "D. 散点"],"correctIndex":1,"explanation":"时序折线图是安全监控最核心的可视化形式直观展示异常流量突增事件。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import streamlit as st\nimport pandas as pd\nimport numpy as np\nimport plotly.express as px\n\n# Security Dashboard\nst.set_page_config(page_title=\"Security Dashboard\", layout=\"wide\")\nst.title(\"🛡️ AI Security Monitor\")\n\n# 模拟数据\nnp.random.seed(42)\ndf = pd.DataFrame({\n    \"timestamp\": pd.date_range(\"2024-01-01\", periods=100, freq=\"H\"),\n    \"requests\": np.random.poisson(1000, 100),\n    \"alerts\": np.random.poisson(5, 100),\n    \"anomaly_score\": np.random.random(100)\n})\n\ncol1, col2 = st.columns(2)\nwith col1:\n    fig = px.line(df, x=\"timestamp\", y=\"requests\", title=\"Traffic\")\n    st.plotly_chart(fig, use_container_width=True)\nwith col2:\n    fig2 = px.scatter(df, x=\"timestamp\", y=\"anomaly_score\", color=df.anomaly_score>0.9)\n    st.plotly_chart(fig2, use_container_width=True)\nprint(\"Streamlit dashboard code - run with: streamlit run dashboard.py\")","explanation":"Streamlit安全仪表盘：流量监控+异常检测可视化"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"网络图可视化（NetworkX/力导向图）实验","description":"搭建网络图可视化（NetworkX/力导向图）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备网络图可视化（NetworkX/力导向图）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握网络图可视化（NetworkX/力导向图）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"网络图可视化（NetworkX/力导向图学习要点","content":"学习网络图可视化（NetworkX/力导向图关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-33", day: 33, title: "时间线可视化（事件序列/甘特图/水印图）", subtitle: "时间线可视化（事件序列/甘特图/水印图）",
+    objectives: ['理解时间线可视化（事件序列/甘特图/水印图）的核心概念和原理', '掌握时间线可视化（事件序列/甘特图/水印图）的技术实现方法', '了解时间线可视化（事件序列/甘特图/水印图）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "时间线可视化（事件序列/甘特图/水印图）把安全数据和检测结果直观展示给安全分析师。\\n\\n展示维度：流量趋势时序图(发现DDoS突增)、告警分布热力图(看告警密度)、Top攻击IP/端口排行、攻击类型饼图、异常检测结果散点图。\\n\\n技术栈：Streamlit(Python快速开发,几行代码变Web仪表盘)、Grafana(时序数据展示,对接ES/Prometheus)、Kibana(ES可视化)、Plotly Dash(Python交互图表)。\\n\\n仪表盘原则：信息层次(总览→详情)、告警分级(红橙黄)、可交互(筛选/下钻)、实时刷新。",
+    keyPoints: ['时间线可视化（事件序列/甘特图/水印图）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Streamlit仪表盘的优势？","options":["A. 复杂", "B. Python代码直接渲染Web交互界面无需前端开发", "C. 需要JS", "D. 慢"],"correctIndex":1,"explanation":"Streamlit是纯Python的Web框架安全分析师可快速搭建展示界面。"},
+    {"question":"安全仪表盘的核心设计原则？","options":["A. 随便", "B. 信息层次(总览→详情)+交互(筛选下钻)+告警分级(红橙黄)", "C. 复杂", "D. 静态"],"correctIndex":1,"explanation":"好的安全仪表盘让分析师一眼看到最重要的威胁并能深入钻取分析。"},
+    {"question":"Grafana在安全可视化中的定位？","options":["A. 代码编辑", "B. 时序数据仪表盘对接Prometheus/ES做安全监控", "C. 文件", "D. 数据库"],"correctIndex":1,"explanation":"Grafana擅长时序可视化是安全监控大屏的常用方案配合告警规则。"},
+    {"question":"Plotly相比Matplotlib的优势？","options":["A. 打印", "B. 交互式图表支持缩放悬停筛选", "C. 更简单", "D. 基础"],"correctIndex":1,"explanation":"Plotly生成的图表可交互让分析师在Web仪表盘上动态探索安全数据。"},
+    {"question":"安全可视化中最常用的图类型？","options":["A. 3D", "B. 时序折线图流量趋势+DDoS检测", "C. 饼图", "D. 散点"],"correctIndex":1,"explanation":"时序折线图是安全监控最核心的可视化形式直观展示异常流量突增事件。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import streamlit as st\nimport pandas as pd\nimport numpy as np\nimport plotly.express as px\n\n# Security Dashboard\nst.set_page_config(page_title=\"Security Dashboard\", layout=\"wide\")\nst.title(\"🛡️ AI Security Monitor\")\n\n# 模拟数据\nnp.random.seed(42)\ndf = pd.DataFrame({\n    \"timestamp\": pd.date_range(\"2024-01-01\", periods=100, freq=\"H\"),\n    \"requests\": np.random.poisson(1000, 100),\n    \"alerts\": np.random.poisson(5, 100),\n    \"anomaly_score\": np.random.random(100)\n})\n\ncol1, col2 = st.columns(2)\nwith col1:\n    fig = px.line(df, x=\"timestamp\", y=\"requests\", title=\"Traffic\")\n    st.plotly_chart(fig, use_container_width=True)\nwith col2:\n    fig2 = px.scatter(df, x=\"timestamp\", y=\"anomaly_score\", color=df.anomaly_score>0.9)\n    st.plotly_chart(fig2, use_container_width=True)\nprint(\"Streamlit dashboard code - run with: streamlit run dashboard.py\")","explanation":"Streamlit安全仪表盘：流量监控+异常检测可视化"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"时间线可视化（事件序列/甘特图/水印图）实验","description":"搭建时间线可视化（事件序列/甘特图/水印图）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备时间线可视化（事件序列/甘特图/水印图）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握时间线可视化（事件序列/甘特图/水印图）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"时间线可视化（事件序列/甘特图/水印图）学习要点","content":"学习时间线可视化（事件序列/甘特图/水印图）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-34", day: 34, title: "日志异常模式可视化（PCA投影/异常分数分布）", subtitle: "日志异常模式可视化（PCA投影/异常分数分布）",
+    objectives: ['理解日志异常模式可视化（PCA投影/异常分数分布）的核心概念和原理', '掌握日志异常模式可视化（PCA投影/异常分数分布）的技术实现方法', '了解日志异常模式可视化（PCA投影/异常分数分布）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "日志异常模式可视化（PCA投影/异常分数分布）把安全数据和检测结果直观展示给安全分析师。\\n\\n展示维度：流量趋势时序图(发现DDoS突增)、告警分布热力图(看告警密度)、Top攻击IP/端口排行、攻击类型饼图、异常检测结果散点图。\\n\\n技术栈：Streamlit(Python快速开发,几行代码变Web仪表盘)、Grafana(时序数据展示,对接ES/Prometheus)、Kibana(ES可视化)、Plotly Dash(Python交互图表)。\\n\\n仪表盘原则：信息层次(总览→详情)、告警分级(红橙黄)、可交互(筛选/下钻)、实时刷新。",
+    keyPoints: ['日志异常模式可视化（PCA投影/异常分数分布）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Streamlit仪表盘的优势？","options":["A. 复杂", "B. Python代码直接渲染Web交互界面无需前端开发", "C. 需要JS", "D. 慢"],"correctIndex":1,"explanation":"Streamlit是纯Python的Web框架安全分析师可快速搭建展示界面。"},
+    {"question":"安全仪表盘的核心设计原则？","options":["A. 随便", "B. 信息层次(总览→详情)+交互(筛选下钻)+告警分级(红橙黄)", "C. 复杂", "D. 静态"],"correctIndex":1,"explanation":"好的安全仪表盘让分析师一眼看到最重要的威胁并能深入钻取分析。"},
+    {"question":"Grafana在安全可视化中的定位？","options":["A. 代码编辑", "B. 时序数据仪表盘对接Prometheus/ES做安全监控", "C. 文件", "D. 数据库"],"correctIndex":1,"explanation":"Grafana擅长时序可视化是安全监控大屏的常用方案配合告警规则。"},
+    {"question":"Plotly相比Matplotlib的优势？","options":["A. 打印", "B. 交互式图表支持缩放悬停筛选", "C. 更简单", "D. 基础"],"correctIndex":1,"explanation":"Plotly生成的图表可交互让分析师在Web仪表盘上动态探索安全数据。"},
+    {"question":"安全可视化中最常用的图类型？","options":["A. 3D", "B. 时序折线图流量趋势+DDoS检测", "C. 饼图", "D. 散点"],"correctIndex":1,"explanation":"时序折线图是安全监控最核心的可视化形式直观展示异常流量突增事件。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import streamlit as st\nimport pandas as pd\nimport numpy as np\nimport plotly.express as px\n\n# Security Dashboard\nst.set_page_config(page_title=\"Security Dashboard\", layout=\"wide\")\nst.title(\"🛡️ AI Security Monitor\")\n\n# 模拟数据\nnp.random.seed(42)\ndf = pd.DataFrame({\n    \"timestamp\": pd.date_range(\"2024-01-01\", periods=100, freq=\"H\"),\n    \"requests\": np.random.poisson(1000, 100),\n    \"alerts\": np.random.poisson(5, 100),\n    \"anomaly_score\": np.random.random(100)\n})\n\ncol1, col2 = st.columns(2)\nwith col1:\n    fig = px.line(df, x=\"timestamp\", y=\"requests\", title=\"Traffic\")\n    st.plotly_chart(fig, use_container_width=True)\nwith col2:\n    fig2 = px.scatter(df, x=\"timestamp\", y=\"anomaly_score\", color=df.anomaly_score>0.9)\n    st.plotly_chart(fig2, use_container_width=True)\nprint(\"Streamlit dashboard code - run with: streamlit run dashboard.py\")","explanation":"Streamlit安全仪表盘：流量监控+异常检测可视化"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"日志异常模式可视化（PCA投影/异常分数分布）实验","description":"搭建日志异常模式可视化（PCA投影/异常分数分布）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备日志异常模式可视化（PCA投影/异常分数分布）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握日志异常模式可视化（PCA投影/异常分数分布）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"日志异常模式可视化（PCA投影/异常分数学习要点","content":"学习日志异常模式可视化（PCA投影/异常分数关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-35", day: 35, title: "阶段总结", subtitle: "阶段总结",
+    objectives: ['理解阶段总结的核心概念和原理', '掌握阶段总结的技术实现方法', '了解阶段总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['阶段总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 阶段总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"阶段总结... Model accuracy: {score:.3f}\")","explanation":"阶段总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"阶段总结实验","description":"搭建阶段总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备阶段总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握阶段总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"阶段总结学习要点","content":"学习阶段总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 // === 第6-24周 (由脚本自动生成) ===
 
 const week6: CyberDay[] = [
-  { id: "ai-36", day: 36, title: "机器学习全景（监督/无监督/半监督/强化/迁移学习）", subtitle: "机器学习全景（监督/无监督/半监督/强化/迁移学习）",
-    objectives: ['理解机器学习全景（监督/无监督/半监督/强化的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 机器学习全景（监督/无监督/半监督/强化/迁移学习）\n\n实践任务：梳理5种学习范式在安全领域的应用场景\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['机器学习全景（监督/无监督/半监督/强化/迁移学习）', '实践: 梳理5种学习范式在安全领域的应用场景'] },
-  { id: "ai-37", day: 37, title: "数据预处理Pipeline（sklearn Pipeline/ColumnTransformer）", subtitle: "数据预处理Pipeline（sklearn Pipeline/Column...",
-    objectives: ['理解数据预处理Pipeline（sklear的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 数据预处理Pipeline（sklearn Pipeline/ColumnTransformer）\n\n实践任务：构建可复用的流量数据预处理Pipeline\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['数据预处理Pipeline（sklearn Pipeline', '实践: 构建可复用的流量数据预处理Pipeline'] },
-  { id: "ai-38", day: 38, title: "逻辑回归（Sigmoid/梯度下降/正则化）", subtitle: "逻辑回归（Sigmoid/梯度下降/正则化）",
-    objectives: ['理解逻辑回归（Sigmoid/梯度下降/正则的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 逻辑回归（Sigmoid/梯度下降/正则化）\n\n实践任务：用逻辑回归做二分类：DDoS流量vs正常流量\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['逻辑回归（Sigmoid/梯度下降/正则化）', '实践: 用逻辑回归做二分类：DDoS流量vs正常流量'] },
-  { id: "ai-39", day: 39, title: "SVM（核函数/软间隔/多分类策略）", subtitle: "SVM（核函数/软间隔/多分类策略）",
-    objectives: ['理解SVM（核函数/软间隔/多分类策略）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## SVM（核函数/软间隔/多分类策略）\n\n实践任务：用SVM(RBF核)做CIC-IDS多类攻击分类\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['SVM（核函数/软间隔/多分类策略）', '实践: 用SVM(RBF核)做CIC-IDS多类攻击分类'] },
-  { id: "ai-40", day: 40, title: "KNN & 朴素贝叶斯", subtitle: "KNN & 朴素贝叶斯",
-    objectives: ['理解KNN & 朴素贝叶斯的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## KNN & 朴素贝叶斯\n\n实践任务：对比KNN/Naive Bayes在高维流量数据上的分类效率\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['KNN & 朴素贝叶斯', '实践: 对比KNN/Naive Bayes在高维流量数据上的分类效率'] },
-  { id: "ai-41", day: 41, title: "类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）", subtitle: "类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）",
-    objectives: ['理解类别不平衡处理（SMOTE/ADASYN的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）\n\n实践任务：处理IDS中0.1%攻击样本的不平衡问题，对比5种方法\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动', '实践: 处理IDS中0.1%攻击样本的不平衡问题，对比5种方法'] },
-  { id: "ai-42", day: 42, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：4种分类器+4种不平衡处理=16个组合对比实验报告\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: 4种分类器+4种不平衡处理=16个组合对比实验报告'] }
+    { id: "ai-36", day: 36, title: "机器学习全景（监督/无监督/半监督/强化/迁移学习）", subtitle: "机器学习全景（监督/无监督/半监督/强化/迁移学习）",
+    objectives: ['理解机器学习全景（监督/无监督/半监督/强化/迁移学习）的核心概念和原理', '掌握机器学习全景（监督/无监督/半监督/强化/迁移学习）的技术实现方法', '了解机器学习全景（监督/无监督/半监督/强化/迁移学习）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "机器学习全景（监督/无监督/半监督/强化/迁移学习）是安全基线管理和配置加固的关键技术。\\n\\nAI辅助加固：自动化配置合规检查(基准vs实际)、异常配置检测(ML识别高危配置)、安全配置推荐(基于威胁情报)。\\n\\n工具：OpenSCAP(安全配置评估)、Ansible安全加固自动化、CIS Benchmark(安全基线标准)。\\n\\nAI方向：NLP解析安全策略文档→自动生成加固脚本；ML分析配置变更历史→预测风险配置变更。",
+    keyPoints: ['机器学习全景（监督/无监督/半监督/强化/迁移学习）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"机器学习全景（监督/无监督/半监督/强化/迁移学习）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 机器学习全景（监督/无监督/半监督/强化/迁移学习）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"机器学习全景（监督/无监督/半监督/强化... Model accuracy: {score:.3f}\")","explanation":"机器学习全景（监督/无监督/半监督/强化/迁移学习）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"机器学习全景（监督/无监督/半监督/强化/迁移学习）实验","description":"搭建机器学习全景（监督/无监督/半监督/强化/迁移学习）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备机器学习全景（监督/无监督/半监督/强化/迁移学习）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握机器学习全景（监督/无监督/半监督/强化/迁移学习）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"机器学习全景（监督/无监督/半监督/强化学习要点","content":"学习机器学习全景（监督/无监督/半监督/强化关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-37", day: 37, title: "数据预处理Pipeline（sklearn Pipeline/ColumnTransformer）", subtitle: "数据预处理Pipeline（sklearn Pipeline/Column...",
+    objectives: ['理解数据预处理Pipeline（sklearn Pipeline/ColumnTransformer）的核心概念和原理', '掌握数据预处理Pipeline（sklearn Pipeline/ColumnTransformer）的技术实现方法', '了解数据预处理Pipeline（sklearn Pipeline/ColumnTransformer）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "数据预处理Pipeline（sklearn Pipeline/ColumnTransformer）通过自注意力机制建模全局依赖关系。Self-Attention:Q=XWq,K=XWk,V=XWv → Attention(Q,K,V)=softmax(QK^T/√dk)V。\\n\\n相比RNN优势：并行计算(非序列处理)、长距离依赖(直接对应位置)、可解释性(注意力权重可视化哪个特征受关注)。\\n\\n安全应用：Transformer编码器做日志异常检测、Multi-Head Attention分析多维度异常、位置编码捕获时间依赖。PyTorch: nn.MultiheadAttention(embed_dim, num_heads)。",
+    keyPoints: ['数据预处理Pipeline（sklearn Pipeline/ColumnTransformer）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Self-Attention的核心计算？","options":["A. 简单求和", "B. softmax(QK^T/√dk)V", "C. 矩阵乘法", "D. 卷积"],"correctIndex":1,"explanation":"Query与所有Key计算相似度softmax归一化后加权Value。"},
+    {"question":"Transformer相比LSTM的主要优势？","options":["A. 更简单", "B. 并行计算+长距离依赖建模", "C. 更少参数", "D. 不需要训练"],"correctIndex":1,"explanation":"Transformer不依赖时间步展开可并行处理并直接建立任意位置关联。"},
+    {"question":"Multi-Head Attention的含义？","options":["A. 多头", "B. 多组Q/K/V在不同子空间学习不同的注意力模式", "C. 单个", "D. 共享"],"correctIndex":1,"explanation":"多个注意力头并行从不同角度学习特征关系提升模型表达能力。"},
+    {"question":"位置编码(Positional Encoding)的作用？","options":["A. 不需要", "B. 注入位置信息因为Self-Attention本身不感知顺序", "C. 加密", "D. 降维"],"correctIndex":1,"explanation":"没有位置编码Transformer无法区分序列顺序只能当成集合处理。"},
+    {"question":"Transformer在安全中的优势应用？","options":["A. 简单任务", "B. 多维度长序列日志关联分析", "C. 不适用", "D. 替代CNN"],"correctIndex":1,"explanation":"Transformer能同时建模多维度特征的复杂关联关系适合SIEM分析。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\nclass LogTransformer(nn.Module):\n    def __init__(self, d_model=64, nhead=4, num_layers=2):\n        super().__init__()\n        self.encoder = nn.TransformerEncoder(\n            nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward=256,\n                                       dropout=0.1, batch_first=True),\n            num_layers\n        )\n        self.classifier = nn.Linear(d_model, 2)\n    def forward(self, x):\n        return self.classifier(self.encoder(x).mean(dim=1))\n\n# 日志序列异常检测\nmodel = LogTransformer(d_model=64, nhead=4, num_layers=2)\nprint(f\"Transformer params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"Transformer日志异常检测：Self-Attention捕获全局特征依赖"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"数据预处理Pipeline（sklearn Pipeline/ColumnTra实验","description":"搭建数据预处理Pipeline（sklearn Pipeline/ColumnTra相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备数据预处理Pipeline（sklearn Pipeline/ColumnTra实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握数据预处理Pipeline（sklearn Pipeline/ColumnTra的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"数据预处理Pipeline（sklear学习要点","content":"学习数据预处理Pipeline（sklear关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-38", day: 38, title: "逻辑回归（Sigmoid/梯度下降/正则化）", subtitle: "逻辑回归（Sigmoid/梯度下降/正则化）",
+    objectives: ['理解逻辑回归（Sigmoid/梯度下降/正则化）的核心概念和原理', '掌握逻辑回归（Sigmoid/梯度下降/正则化）的技术实现方法', '了解逻辑回归（Sigmoid/梯度下降/正则化）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "逻辑回归（Sigmoid/梯度下降/正则化）是分类问题：hθ(x)=sigmoid(θTx)。线性决策边界，输出0-1概率，训练最小化交叉熵损失。\\n\\n安全应用：流量DDoS二分类、恶意软件检测(基础baseline)、日志正常/异常二分类。\\n\\n优势：训练快、可解释(权重即特征重要性)、低数据需求。劣势：线性假设限制、对非线性模式表现差。\\n\\nsklearn: LogisticRegression(C=1.0, penalty=\'l2\')，C控制正则化强度。调参重点：正则化类型(l1/l2)和强度C。",
+    keyPoints: ['逻辑回归（Sigmoid/梯度下降/正则化）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"逻辑回归的Sigmoid函数输出范围？","options":["A. 任意值", "B. (0,1)可解释为概率", "C. (-1,1)", "D. (0,∞)"],"correctIndex":1,"explanation":"Sigmoid(z)=1/(1+e^(-z))将线性输出压缩到0-1区间天然适合概率解释。"},
+    {"question":"逻辑回归在安全中的首选场景？","options":["A. 复杂模式", "B. 需要快速训练可解释的baseline二分类", "C. 图像", "D. 序列"],"correctIndex":1,"explanation":"逻辑回归训练快可解释性强是安全检测任务的理想baseline模型。"},
+    {"question":"正则化(L2)在逻辑回归中的作用？","options":["A. 加噪", "B. 防止过拟合限制权重过大", "C. 加速", "D. 降维"],"correctIndex":1,"explanation":"L2正则化惩罚大权重迫使模型选择更简单的决策边界提高泛化。"},
+    {"question":"逻辑回归假设的局限性？","options":["A. 无局限", "B. 线性决策边界不适合复杂非线性模式", "C. 太慢", "D. 需要GPU"],"correctIndex":1,"explanation":"逻辑回归假设特征与log-odds线性关系当关系复杂时表现不如树模型或DNN。"},
+    {"question":"逻辑回归训练使用的损失函数？","options":["A. MSE", "B. 交叉熵(Cross-Entropy Loss)", "C. MAE", "D. Hinge Loss"],"correctIndex":1,"explanation":"二分类交叉熵是逻辑回归标准损失函数最大化对数似然等价最小化交叉熵。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import roc_auc_score, classification_report\nimport numpy as np\n\nnp.random.seed(42)\nX_train = np.random.randn(1000, 10)\ny_train = (X_train[:, 0] + X_train[:, 3] > 0).astype(int)\nX_test = np.random.randn(200, 10)\ny_test = (X_test[:, 0] + X_test[:, 3] > 0).astype(int)\n\nmodel = LogisticRegression(C=1.0, max_iter=1000)\nmodel.fit(X_train, y_train)\nprobs = model.predict_proba(X_test)[:, 1]\npreds = model.predict(X_test)\n\nprint(f\"AUC: {roc_auc_score(y_test, probs):.3f}\")\nprint(classification_report(y_test, preds, target_names=[\"Normal\", \"Attack\"]))","explanation":"逻辑回归安全分类：快速baseline用于二分类安全检测"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"逻辑回归（Sigmoid/梯度下降/正则化）实验","description":"搭建逻辑回归（Sigmoid/梯度下降/正则化）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备逻辑回归（Sigmoid/梯度下降/正则化）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握逻辑回归（Sigmoid/梯度下降/正则化）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"逻辑回归（Sigmoid/梯度下降/正则学习要点","content":"学习逻辑回归（Sigmoid/梯度下降/正则关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-39", day: 39, title: "SVM（核函数/软间隔/多分类策略）", subtitle: "SVM（核函数/软间隔/多分类策略）",
+    objectives: ['理解SVM（核函数/软间隔/多分类策略）的核心概念和原理', '掌握SVM（核函数/软间隔/多分类策略）的技术实现方法', '了解SVM（核函数/软间隔/多分类策略）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "SVM（核函数/软间隔/多分类策略）寻找最大化分类间隔的超平面。核函数(Kernel Trick)将数据映射到高维空间实现非线性分类。\\n\\n常见核：Linear(线性可分)、RBF(通用默认)、Polynomial(已知多项式关系)。\\n\\n安全应用：IDS多类攻击分类(RBF核)、恶意URL检测(字符级核)、系统调用异常检测。\\n\\nsklearn: SVC(kernel=\'rbf\', C=1.0, gamma=\'scale\')。C控制误分类惩罚(越大过拟合风险越高)，gamma控制RBF核宽度。",
+    keyPoints: ['SVM（核函数/软间隔/多分类策略）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"SVM的核心目标？","options":["A. 任意分类面", "B. 最大化分类间隔(margin)", "C. 最少点", "D. 最快"],"correctIndex":1,"explanation":"SVM寻找能最大化类别间距的超平面间隔越大泛化能力越强。"},
+    {"question":"RBF核函数的作用？","options":["A. 线性", "B. 隐式将数据映射到高维实现非线性分类", "C. 加速", "D. 降维"],"correctIndex":1,"explanation":"RBF核在原始空间计算内积效果等价高维映射让SVM处理复杂模式。"},
+    {"question":"SVM的C参数控制什么？","options":["A. 随机", "B. 误分类惩罚强度C大过拟合风险高", "C. 速度", "D. 层数"],"correctIndex":1,"explanation":"C在最大化间隔和最小分类错误间权衡C小间隔大泛化C大拟合强。"},
+    {"question":"SVM在安全中的适用场景？","options":["A. 小样本", "B. 小样本场景如APT行为特征分析", "C. 不适用", "D. 数据多"],"correctIndex":1,"explanation":"SVM在小样本高维数据上表现好适合特征维度高但样本少的APT检测。"},
+    {"question":"支持向量的含义？","options":["A. 所有点", "B. 落在间隔边界上决定超平面的关键样本", "C. 随机点", "D. 无意义"],"correctIndex":1,"explanation":"只有落在margin上的支持向量才决定SVM的超平面位置和方向。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nimport numpy as np\n\nnp.random.seed(42)\nX = np.random.randn(500, 15)\ny = (X[:, 0]**2 + X[:, 3]*2 > 1).astype(int)\n\npipeline = Pipeline([\n    ('scaler', StandardScaler()),\n    ('svm', SVC(kernel='rbf', C=1.0, gamma='scale', probability=True))\n])\npipeline.fit(X, y)\nscore = pipeline.score(X, y)\nprint(f\"SVM(RBF) accuracy: {score:.3f}\")","explanation":"SVM(RBF核)安全分类：标准化+SVM的sklearn标准Pipeline"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"SVM（核函数/软间隔/多分类策略）实验","description":"搭建SVM（核函数/软间隔/多分类策略）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备SVM（核函数/软间隔/多分类策略）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握SVM（核函数/软间隔/多分类策略）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"SVM（核函数/软间隔/多分类策略）学习要点","content":"学习SVM（核函数/软间隔/多分类策略）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-40", day: 40, title: "KNN & 朴素贝叶斯", subtitle: "KNN & 朴素贝叶斯",
+    objectives: ['理解KNN & 朴素贝叶斯的核心概念和原理', '掌握KNN & 朴素贝叶斯的技术实现方法', '了解KNN & 朴素贝叶斯在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "KNN & 朴素贝叶斯是两种简单有效的分类方法。KNN: 对测试样本找K个最近邻居，多数投票决定类别。距离度量可选欧氏/曼哈顿/余弦。\\n\\n朴素贝叶斯：假设特征条件独立，通过贝叶斯定理计算后验概率。GaussianNB(连续值)、MultinomialNB(计数特征)、BernoulliNB(二值特征)。\\n\\n安全应用：KNN异常检测(距离K近邻越远越异常)、朴素贝叶斯垃圾邮件检测、Web攻击payload分类。两者都可作为安全检测baseline。",
+    keyPoints: ['KNN & 朴素贝叶斯是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"KNN & 朴素贝叶斯在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# KNN & 朴素贝叶斯\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"KNN & 朴素贝叶斯... Model accuracy: {score:.3f}\")","explanation":"KNN & 朴素贝叶斯的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"KNN & 朴素贝叶斯实验","description":"搭建KNN & 朴素贝叶斯相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备KNN & 朴素贝叶斯实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握KNN & 朴素贝叶斯的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"KNN & 朴素贝叶斯学习要点","content":"学习KNN & 朴素贝叶斯关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-41", day: 41, title: "类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）", subtitle: "类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）",
+    objectives: ['理解类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）的核心概念和原理', '掌握类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）的技术实现方法', '了解类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）确保模型输出概率与实际置信度一致。校准误差(ECE)衡量预测概率与真实准确率的偏差。\\n\\n校准方法：Platt Scaling(逻辑回归校准输出)、Isotonic Regression(非参数保序回归)、Temperature Scaling(温度参数T软化Softmax)。\\n\\n阈值优化：根据业务需求(误报成本vs漏报成本)选择最优决策阈值。方法：ROC曲线找最优点、成本敏感阈值搜索、precision-recall曲线选阈值。\\n\\nsklearn: CalibratedClassifierCV做校、calibration_curve画校准曲线。",
+    keyPoints: ['类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"概率校准的含义？","options":["A. 调整模型", "B. 模型输出概率与实际置信度一致", "C. 增加参数", "D. 训练"],"correctIndex":1,"explanation":"校准后0.8的概率输出真正意味着80%的正确率而不是虚高的分数。"},
+    {"question":"Temperature Scaling的原理？","options":["A. 加噪", "B. 用温度参数T软化softmax调整概率分布", "C. 训练", "D. 加密"],"correctIndex":1,"explanation":"T>1使softmax平滑降低过度自信T<1使softmax更尖锐增加区分度。"},
+    {"question":"ECE(Expected Calibration Error)是什么？","options":["A. 加密", "B. 衡量模型校准程度的指标", "C. 错误率", "D. 准确率"],"correctIndex":1,"explanation":"ECE将预测概率分组计算每组预测均值与实际准确率的平均偏差。"},
+    {"question":"安全模型中阈值优化的目标？","options":["A. 任意", "B. 平衡误报(业务成本)和漏报(安全风险)", "C. 最大化", "D. 最小化"],"correctIndex":1,"explanation":"安全检测需权衡降低误报减少分析告警疲劳和降低漏报保证安全覆盖。"},
+    {"question":"Platt Scaling校准方法？","options":["A. 直接", "B. 在模型输出后接逻辑回归映射到校准概率", "C. 随机", "D. 增强"],"correctIndex":1,"explanation":"Platt Scaling是简单的后处理校准方法将原始分数经逻辑回归转换。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from imblearn.over_sampling import SMOTE\nfrom imblearn.under_sampling import RandomUnderSampler\nfrom imblearn.pipeline import Pipeline\nfrom sklearn.ensemble import RandomForestClassifier\nimport numpy as np\n\n# 严重不平衡数据\nnp.random.seed(42)\nX = np.random.randn(2000, 10)\ny = np.zeros(2000); y[:20] = 1  # 仅1%攻击\n\n# SMOTE+欠采样+分类器\npipeline = Pipeline([\n    ('smote', SMOTE(sampling_strategy=0.2, random_state=42)),\n    ('under', RandomUnderSampler(sampling_strategy=0.5)),\n    ('clf', RandomForestClassifier(n_estimators=50))\n])\npipeline.fit(X, y)\nprint(f\"Balanced pipeline ready: SMOTE->UnderSample->RF\")","explanation":"不平衡处理Pipeline：SMOTE过采样+随机欠采样+分类器"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）实验","description":"搭建类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握类别不平衡处理（SMOTE/ADASYN/代价敏感/阈值移动）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"类别不平衡处理（SMOTE/ADASYN学习要点","content":"学习类别不平衡处理（SMOTE/ADASYN关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-42", day: 42, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week7: CyberDay[] = [
-  { id: "ai-43", day: 43, title: "决策树原理（ID3/C4.5/CART/剪枝策略）", subtitle: "决策树原理（ID3/C4.5/CART/剪枝策略）",
-    objectives: ['理解决策树原理（ID3/C4.5/CART/的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 决策树原理（ID3/C4.5/CART/剪枝策略）\n\n实践任务：手写信息增益计算，构建简单决策树入侵检测器\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['决策树原理（ID3/C4.5/CART/剪枝策略）', '实践: 手写信息增益计算，构建简单决策树入侵检测器'] },
-  { id: "ai-44", day: 44, title: "随机森林（Bagging/特征随机/OOB误差）", subtitle: "随机森林（Bagging/特征随机/OOB误差）",
-    objectives: ['理解随机森林（Bagging/特征随机/OO的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 随机森林（Bagging/特征随机/OOB误差）\n\n实践任务：sklearn RandomForest做CIC-IDS多分类，分析OOB误差\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['随机森林（Bagging/特征随机/OOB误差）', '实践: sklearn RandomForest做CIC-IDS多分'] },
-  { id: "ai-45", day: 45, title: "梯度提升（XGBoost/LightGBM/CatBoost）", subtitle: "梯度提升（XGBoost/LightGBM/CatBoost）",
-    objectives: ['理解梯度提升（XGBoost/LightGB的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 梯度提升（XGBoost/LightGBM/CatBoost）\n\n实践任务：三类GBDT在IDS上的全面对比：F1/训练时间/内存\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['梯度提升（XGBoost/LightGBM/CatBoost', '实践: 三类GBDT在IDS上的全面对比：F1/训练时间/内存'] },
+    { id: "ai-43", day: 43, title: "决策树原理（ID3/C4.5/CART/剪枝策略）", subtitle: "决策树原理（ID3/C4.5/CART/剪枝策略）",
+    objectives: ['理解决策树原理（ID3/C4.5/CART/剪枝策略）的核心概念和原理', '掌握决策树原理（ID3/C4.5/CART/剪枝策略）的技术实现方法', '了解决策树原理（ID3/C4.5/CART/剪枝策略）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "决策树原理（ID3/C4.5/CART/剪枝策略）通过递归划分特征空间构建树形分类结构。节点分裂准则：ID3(信息增益)、C4.5(增益率)、CART(基尼系数)。\\n\\n优势：完全可解释(可视化决策路径)、无需特征标准化、处理混合类型。\\n\\n防止过拟合：预剪枝(max_depth/min_samples_split限制)、后剪枝(剪除贡献小分支)。\\n\\n安全应用：IDS规则可视化(决策路径=检测规则)、安全事件triaging (自动分级处理)。sklearn: DecisionTreeClassifier(max_depth=5, min_samples_split=10)。",
+    keyPoints: ['决策树原理（ID3/C4.5/CART/剪枝策略）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"决策树在安全中的核心优势？","options":["A. 准确率最高", "B. 完全可解释决策规则可视化", "C. 最快", "D. 不需要数据"],"correctIndex":1,"explanation":"决策树白盒可解释安全分析师可以直接理解和验证检测规则。"},
+    {"question":"ID3的分裂准则？","options":["A. 随机", "B. 信息增益(Information Gain)", "C. 基尼系数", "D. 均方误差"],"correctIndex":1,"explanation":"ID3选择信息增益最大的特征作为分类节点信息增益基于熵的减少量。"},
+    {"question":"CART分类树的分裂准则？","options":["A. 信息增益", "B. 基尼系数(Gini Impurity)", "C. 信息增益率", "D. 卡方"],"correctIndex":1,"explanation":"CART分类树使用基尼系数作为节点分裂准则度量集合的纯度。"},
+    {"question":"预剪枝通常限制哪个参数？","options":["A. 随机", "B. max_depth限制树的最大深度防止过拟合", "C. 颜色", "D. 速度"],"correctIndex":1,"explanation":"max_depth限制决策树深度是最常用的预剪枝策略防止记住噪声数据。"},
+    {"question":"决策树的安全应用场景？","options":["A. 图像", "B. IDS检测规则提取和可视化", "C. 不适用", "D. 加密"],"correctIndex":1,"explanation":"决策树的可解释性使其适合安全运营可提取为Snort/Suricata规则。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 决策树原理（ID3/C4.5/CART/剪枝策略）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"决策树原理（ID3/C4.5/CART/... Model accuracy: {score:.3f}\")","explanation":"决策树原理（ID3/C4.5/CART/剪枝策略）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"决策树原理（ID3/C4.5/CART/剪枝策略）实验","description":"搭建决策树原理（ID3/C4.5/CART/剪枝策略）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备决策树原理（ID3/C4.5/CART/剪枝策略）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握决策树原理（ID3/C4.5/CART/剪枝策略）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"决策树原理（ID3/C4.5/CART/学习要点","content":"学习决策树原理（ID3/C4.5/CART/关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-44", day: 44, title: "随机森林（Bagging/特征随机/OOB误差）", subtitle: "随机森林（Bagging/特征随机/OOB误差）",
+    objectives: ['理解随机森林（Bagging/特征随机/OOB误差）的核心概念和原理', '掌握随机森林（Bagging/特征随机/OOB误差）的技术实现方法', '了解随机森林（Bagging/特征随机/OOB误差）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "随机森林（Bagging/特征随机/OOB误差）通过Bagging集成多棵决策树。每棵树用随机抽取样本(bootstrap)+随机选取特征子集训练→投票/平均得到最终预测。\\n\\n优势：不易过拟合(树间独立)、处理高维数据(特征随机选择)、OOB误差提供无偏评估无需单独的验证集。\\n\\n安全应用：IDS多类攻击分类、恶意软件家族分类、UEBA行为异常评分。\\n\\nsklearn: RandomForestClassifier(n_estimators=100, max_depth=10)。调参：n_estimators越多越稳定但越慢，max_features=\'sqrt\'经典选择。",
+    keyPoints: ['随机森林（Bagging/特征随机/OOB误差）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"随机森林两个随机性来源？","options":["A. 同样", "B. Bootstrap样本随机+特征子集随机", "C. 单随机", "D. 不随机"],"correctIndex":1,"explanation":"对样本和特征的双重随机性降低了树间相关性提高了集成泛化能力。"},
+    {"question":"OOB误差的优势？","options":["A. 额外数据", "B. 使用未参与训练样本评估无需单独验证集", "C. 更快", "D. 随机"],"correctIndex":1,"explanation":"每棵树只用约63%样本训练剩下37%OOB样本自动做测试集。"},
+    {"question":"随机森林相比单棵决策树的优势？","options":["A. 相同", "B. 集成降低方差不易过拟合", "C. 更快", "D. 更简单"],"correctIndex":1,"explanation":"多棵树的平均抵消了单棵决策树的高方差问题大幅提升泛化能力。"},
+    {"question":"n_estimators的选择策略？","options":["A. 尽量少", "B. 越大性能越稳定但边际收益递减50-200常用", "C. 固定", "D. 随机"],"correctIndex":1,"explanation":"n_estimators越大越稳定但速度和内存消耗递增需平衡选择。"},
+    {"question":"feature_importance的含义？","options":["A. 无关", "B. 基尼不纯度减少量衡量特征贡献大小", "C. 参数", "D. 数据量"],"correctIndex":1,"explanation":"特征重要性显示哪些特征对判断攻击贡献最大帮助安全分析聚焦重点。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 随机森林（Bagging/特征随机/OOB误差）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"随机森林（Bagging/特征随机/OO... Model accuracy: {score:.3f}\")","explanation":"随机森林（Bagging/特征随机/OOB误差）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"随机森林（Bagging/特征随机/OOB误差）实验","description":"搭建随机森林（Bagging/特征随机/OOB误差）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备随机森林（Bagging/特征随机/OOB误差）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握随机森林（Bagging/特征随机/OOB误差）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"随机森林（Bagging/特征随机/OO学习要点","content":"学习随机森林（Bagging/特征随机/OO关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-45", day: 45, title: "梯度提升（XGBoost/LightGBM/CatBoost）", subtitle: "梯度提升（XGBoost/LightGBM/CatBoost）",
+    objectives: ['理解梯度提升（XGBoost/LightGBM/CatBoost）的核心概念和原理', '掌握梯度提升（XGBoost/LightGBM/CatBoost）的技术实现方法', '了解梯度提升（XGBoost/LightGBM/CatBoost）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "梯度提升（XGBoost/LightGBM/CatBoost）通过序列训练弱学习器，每轮拟合前轮残差，逐步降低整体误差。XGBoost正则化强(防止过拟合)；LightGBM基于直方图(训练快3-10倍)；CatBoost原生处理类别特征(无需One-Hot)。\\n\\n安全应用：IDS多分类(SOTA准确率)、威胁检测二分类、安全事件优先级排序。\\n\\n实战：先用LightGBM快速迭代(LGBMClassifier(boosting_type=\'gbdt\',n_estimators=200))→交叉验证调参→XGBoost精调。利用feature_importance输出Top特征。",
+    keyPoints: ['梯度提升（XGBoost/LightGBM/CatBoost）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"GBDT的训练方式？","options":["A. 并行", "B. 串行每棵树拟合前一轮残差", "C. 同步", "D. 独立"],"correctIndex":1,"explanation":"GBDT逐棵串行训练每轮针对前一轮的错误(残差)进行修正。"},
+    {"question":"XGBoost相比传统GBDT的改进？","options":["A. 相同", "B. 二阶导数+L1/L2正则化防止过拟合", "C. 更慢", "D. 更简单"],"correctIndex":1,"explanation":"XGBoost引入二阶泰勒展开和显式正则化项在准确率和泛化上都更好。"},
+    {"question":"LightGBM训练快的核心技术？","options":["A. 更简单", "B. 直方图算法+Leaf-wise生长+EFB", "C. 更少数据", "D. 随机"],"correctIndex":1,"explanation":"直方图算法降低内存消耗Leaf-wise生长减少无效分裂EFB合并互斥特征。"},
+    {"question":"CatBoost处理类别特征的方式？","options":["A. One-Hot", "B. Ordered Target Encoding基于目标编码无需预处理", "C. 丢弃", "D. 忽略"],"correctIndex":1,"explanation":"CatBoost原生支持类别特征通过有序目标统计自动编码避免信息泄露。"},
+    {"question":"GBDT在安全中的SOTA应用？","options":["A. 基础", "B. 网络入侵检测IDS的SOTA方案准确率超99%", "C. 无应用", "D. 辅助"],"correctIndex":1,"explanation":"在CIC-IDS等标准IDS数据集上GBDT系列模型是准确率最高的方案之一。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import lightgbm as lgb\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import classification_report\n\n# 模拟IDS数据\nnp.random.seed(42)\nn_samples = 5000\nX = np.random.randn(n_samples, 20)\ny = (X[:, 0] + 2*X[:, 5] - X[:, 10] + np.random.randn(n_samples)*0.5 > 0).astype(int)\ny = np.where(np.random.rand(n_samples) < 0.02, 1, y)  # 2% anomaly\n\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)\n\nmodel = lgb.LGBMClassifier(n_estimators=100, max_depth=5, learning_rate=0.05)\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)\nprint(classification_report(y_test, y_pred, target_names=[\"Normal\", \"Attack\"]))","explanation":"LightGBM IDS分类：梯度提升模型在入侵检测上的应用"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"梯度提升（XGBoost/LightGBM/CatBoost）实验","description":"搭建梯度提升（XGBoost/LightGBM/CatBoost）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备梯度提升（XGBoost/LightGBM/CatBoost）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握梯度提升（XGBoost/LightGBM/CatBoost）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"梯度提升（XGBoost/LightGB学习要点","content":"学习梯度提升（XGBoost/LightGB关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
   { id: "ai-46", day: 46, title: "模型解释性（SHAP/LIME/Partial Dependence）", subtitle: "模型解释性（SHAP/LIME/Partial Dependence）",
-    objectives: ['理解模型解释性（SHAP/LIME/Part的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 模型解释性（SHAP/LIME/Partial Dependence）\n\n实践任务：用SHAP分析\"什么特征让XGBoost判定这是DDoS\"\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['模型解释性（SHAP/LIME/Partial Depend', '实践: 用SHAP分析"什么特征让XGBoost判定这是DDoS"'] },
-  { id: "ai-47", day: 47, title: "交叉验证与超参数优化（Grid/Random/Bayesian Search）", subtitle: "交叉验证与超参数优化（Grid/Random/Bayesian Search）",
-    objectives: ['理解交叉验证与超参数优化（Grid/Rand的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 交叉验证与超参数优化（Grid/Random/Bayesian Search）\n\n实践任务：用Optuna做贝叶斯超参搜索，提升GBDT的F1到最优\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['交叉验证与超参数优化（Grid/Random/Bayesia', '实践: 用Optuna做贝叶斯超参搜索，提升GBDT的F1到最优'] },
-  { id: "ai-48", day: 48, title: "模型校准与阈值优化（概率校准/阈值搜索）", subtitle: "模型校准与阈值优化（概率校准/阈值搜索）",
-    objectives: ['理解模型校准与阈值优化（概率校准/阈值搜索）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 模型校准与阈值优化（概率校准/阈值搜索）\n\n实践任务：优化分类阈值使误报率<1%且召回率>95%\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['模型校准与阈值优化（概率校准/阈值搜索）', '实践: 优化分类阈值使误报率<1%且召回率>95%'] },
-  { id: "ai-49", day: 49, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：完整ML实验报告：数据→特征→模型→调优→解释→结论\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: 完整ML实验报告：数据→特征→模型→调优→解释→结论'] }
+      objectives: ['理解模型解释性（SHAP/LIME/Partial Dependence）的核心概念和原理', '掌握模型解释性（SHAP/LIME/Partial Dependence）的技术实现方法', '了解模型解释性（SHAP/LIME/Partial Dependence）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+      content: "模型解释性（SHAP/LIME/Partial Dependence）在安全检测中至关重要——需要知道\'为什么判定为攻击\'才能给分析师可操作的证据。\\n\\nSHAP(Shapley值)：每个特征对预测的边际贡献，支持全局(特征重要性)+局部(单个样本原因)解释。\\n\\nLIME：在预测点附近训练可解释的简单模型(如线性回归)近似原模型行为。\\n\\n安全应用：SHAP分析IDS告警→\'因为SYN包比率0.8、端口数>50判定为扫描\'→分析师验证。SHAP waterfall可视化展示逐特征贡献。",
+      keyPoints: ['模型解释性（SHAP/LIME/Partial Dependence）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+      quiz: [
+    {"question":"SHAP使用的理论基础？","options":["A. 随机", "B. 博弈论中的Shapley值公平分配特征贡献", "C. 统计", "D. 信息论"],"correctIndex":1,"explanation":"Shapley值将预测结果公平地分配给各特征衡量每个特征的边际贡献。"},
+    {"question":"LIME的解释方式？","options":["A. 全模型", "B. 在预测点附近训练可解释简单模型近似", "C. DSP", "D. 随机"],"correctIndex":1,"explanation":"LIME在预测点局部用线性模型等可解释模型近似原模型给出局部解释。"},
+    {"question":"安全领域中模型可解释性的价值？","options":["A. 无价值", "B. 让分析师理解为什么判定为攻击提供可操作的调查线索", "C. 好看", "D. 加速"],"correctIndex":1,"explanation":"可解释性让AI检测不再黑盒分析师理解告警原因才能高效响应。"},
+    {"question":"SHAP waterfall图展示什么？","options":["A. 数据流", "B. 逐特征累积贡献从基线到最终预测", "C. 时间", "D. 网络"],"correctIndex":1,"explanation":"waterfall图清晰展示每个特征把预测从基值推向最终值的步进贡献。"},
+    {"question":"Feature Interaction的检测方法？","options":["A. 无方法", "B. SHAP dependence plot展示特征间交互", "C. 随机", "D. 忽略"],"correctIndex":1,"explanation":"SHAP dependence plot显示两个特征如何共同影响预测发现交互模式。"}
+      ],
+      codeExamples: [
+    {"title":"代码示例","language":"python","code":"import shap; import lightgbm as lgb; import numpy as np\\nnp.random.seed(42)\\nX = np.random.randn(200, 10)\\ny = (X[:,0] + X[:,2] - X[:,5] > 0).astype(int)\\nmodel = lgb.LGBMClassifier(n_estimators=50).fit(X, y)\\nexplainer = shap.TreeExplainer(model)\\nshap_values = explainer.shap_values(X[:50])\\nprint('SHAP analysis complete - check the plots for feature importance')","explanation":"SHAP模型可解释性：分析哪些特征驱动了攻击检测决策"}
+      ],
+      resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI安全项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+      recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+      labEnvironment: [{"name":"模型解释性（SHAP/LIME/Partial Dependence）实验","description":"搭建模型解释性（SHAP/LIME/Partial Dependence）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备模型解释性（SHAP/LIME/Partial Dependence）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握模型解释性（SHAP/LIME/Partial Dependence）的实战应用能力"}],
+      expertNotes: [{"author":"李智能","title":"模型解释性（SHAP/LIME/Part学习要点","content":"学习模型解释性（SHAP/LIME/Part关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关->看Figures了解核心思路->再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-47", day: 47, title: "交叉验证与超参数优化（Grid/Random/Bayesian Search）", subtitle: "交叉验证与超参数优化（Grid/Random/Bayesian Search）",
+    objectives: ['理解交叉验证与超参数优化（Grid/Random/Bayesian Search）的核心概念和原理', '掌握交叉验证与超参数优化（Grid/Random/Bayesian Search）的技术实现方法', '了解交叉验证与超参数优化（Grid/Random/Bayesian Search）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "交叉验证与超参数优化（Grid/Random/Bayesian Search）确保模型输出概率与实际置信度一致。校准误差(ECE)衡量预测概率与真实准确率的偏差。\\n\\n校准方法：Platt Scaling(逻辑回归校准输出)、Isotonic Regression(非参数保序回归)、Temperature Scaling(温度参数T软化Softmax)。\\n\\n阈值优化：根据业务需求(误报成本vs漏报成本)选择最优决策阈值。方法：ROC曲线找最优点、成本敏感阈值搜索、precision-recall曲线选阈值。\\n\\nsklearn: CalibratedClassifierCV做校、calibration_curve画校准曲线。",
+    keyPoints: ['交叉验证与超参数优化（Grid/Random/Bayesian Search）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"交叉验证与超参数优化（Grid/Random/Bayesian Search）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 交叉验证与超参数优化（Grid/Random/Bayesian Search）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"交叉验证与超参数优化（Grid/Rand... Model accuracy: {score:.3f}\")","explanation":"交叉验证与超参数优化（Grid/Random/Bayesia的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"交叉验证与超参数优化（Grid/Random/Bayesian Search）实验","description":"搭建交叉验证与超参数优化（Grid/Random/Bayesian Search）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备交叉验证与超参数优化（Grid/Random/Bayesian Search）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握交叉验证与超参数优化（Grid/Random/Bayesian Search）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"交叉验证与超参数优化（Grid/Rand学习要点","content":"学习交叉验证与超参数优化（Grid/Rand关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-48", day: 48, title: "模型校准与阈值优化（概率校准/阈值搜索）", subtitle: "模型校准与阈值优化（概率校准/阈值搜索）",
+    objectives: ['理解模型校准与阈值优化（概率校准/阈值搜索）的核心概念和原理', '掌握模型校准与阈值优化（概率校准/阈值搜索）的技术实现方法', '了解模型校准与阈值优化（概率校准/阈值搜索）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "模型校准与阈值优化（概率校准/阈值搜索）确保模型输出概率与实际置信度一致。校准误差(ECE)衡量预测概率与真实准确率的偏差。\\n\\n校准方法：Platt Scaling(逻辑回归校准输出)、Isotonic Regression(非参数保序回归)、Temperature Scaling(温度参数T软化Softmax)。\\n\\n阈值优化：根据业务需求(误报成本vs漏报成本)选择最优决策阈值。方法：ROC曲线找最优点、成本敏感阈值搜索、precision-recall曲线选阈值。\\n\\nsklearn: CalibratedClassifierCV做校、calibration_curve画校准曲线。",
+    keyPoints: ['模型校准与阈值优化（概率校准/阈值搜索）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"概率校准的含义？","options":["A. 调整模型", "B. 模型输出概率与实际置信度一致", "C. 增加参数", "D. 训练"],"correctIndex":1,"explanation":"校准后0.8的概率输出真正意味着80%的正确率而不是虚高的分数。"},
+    {"question":"Temperature Scaling的原理？","options":["A. 加噪", "B. 用温度参数T软化softmax调整概率分布", "C. 训练", "D. 加密"],"correctIndex":1,"explanation":"T>1使softmax平滑降低过度自信T<1使softmax更尖锐增加区分度。"},
+    {"question":"ECE(Expected Calibration Error)是什么？","options":["A. 加密", "B. 衡量模型校准程度的指标", "C. 错误率", "D. 准确率"],"correctIndex":1,"explanation":"ECE将预测概率分组计算每组预测均值与实际准确率的平均偏差。"},
+    {"question":"安全模型中阈值优化的目标？","options":["A. 任意", "B. 平衡误报(业务成本)和漏报(安全风险)", "C. 最大化", "D. 最小化"],"correctIndex":1,"explanation":"安全检测需权衡降低误报减少分析告警疲劳和降低漏报保证安全覆盖。"},
+    {"question":"Platt Scaling校准方法？","options":["A. 直接", "B. 在模型输出后接逻辑回归映射到校准概率", "C. 随机", "D. 增强"],"correctIndex":1,"explanation":"Platt Scaling是简单的后处理校准方法将原始分数经逻辑回归转换。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 模型校准与阈值优化（概率校准/阈值搜索）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"模型校准与阈值优化（概率校准/阈值搜索）... Model accuracy: {score:.3f}\")","explanation":"模型校准与阈值优化（概率校准/阈值搜索）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"模型校准与阈值优化（概率校准/阈值搜索）实验","description":"搭建模型校准与阈值优化（概率校准/阈值搜索）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备模型校准与阈值优化（概率校准/阈值搜索）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握模型校准与阈值优化（概率校准/阈值搜索）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"模型校准与阈值优化（概率校准/阈值搜索）学习要点","content":"学习模型校准与阈值优化（概率校准/阈值搜索）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-49", day: 49, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week8: CyberDay[] = [
-  { id: "ai-50", day: 50, title: "聚类算法（K-Means/DBSCAN/HDBSCAN）", subtitle: "聚类算法（K-Means/DBSCAN/HDBSCAN）",
-    objectives: ['理解聚类算法（K-Means/DBSCAN/的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 聚类算法（K-Means/DBSCAN/HDBSCAN）\n\n实践任务：用DBSCAN对网络流量聚类，发现未知攻击模式\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['聚类算法（K-Means/DBSCAN/HDBSCAN）', '实践: 用DBSCAN对网络流量聚类，发现未知攻击模式'] },
-  { id: "ai-51", day: 51, title: "孤立森林（Isolation Forest）原理与实战", subtitle: "孤立森林（Isolation Forest）原理与实战",
-    objectives: ['理解孤立森林（Isolation Fores的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 孤立森林（Isolation Forest）原理与实战\n\n实践任务：手写简化版iForest，理解随机分割+路径长度\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['孤立森林（Isolation Forest）原理与实战', '实践: 手写简化版iForest，理解随机分割+路径长度'] },
-  { id: "ai-52", day: 52, title: "One-Class SVM & Local Outlier Factor (LOF)", subtitle: "One-Class SVM & Local Outlier Factor ...",
-    objectives: ['理解One-Class SVM & Loca的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## One-Class SVM & Local Outlier Factor (LOF)\n\n实践任务：只用正常流量训练OC-SVM，检测Novelty异常\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['One-Class SVM & Local Outlier ', '实践: 只用正常流量训练OC-SVM，检测Novelty异常'] },
-  { id: "ai-53", day: 53, title: "时序异常检测（STL分解/Prophet/Matrix Profile）", subtitle: "时序异常检测（STL分解/Prophet/Matrix Profile）",
-    objectives: ['理解时序异常检测（STL分解/Prophet的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 时序异常检测（STL分解/Prophet/Matrix Profile）\n\n实践任务：用Prophet检测DDoS流量中的异常时间点\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['时序异常检测（STL分解/Prophet/Matrix Pr', '实践: 用Prophet检测DDoS流量中的异常时间点'] },
-  { id: "ai-54", day: 54, title: "异常检测评估指标（Precision@K/Range-based指标）", subtitle: "异常检测评估指标（Precision@K/Range-based指标）",
-    objectives: ['理解异常检测评估指标（Precision@K的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 异常检测评估指标（Precision@K/Range-based指标）\n\n实践任务：理解为什么传统的Precision/Recall在异常检测中有偏差\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['异常检测评估指标（Precision@K/Range-bas', '实践: 理解为什么传统的Precision/Recall在异常检测中'] },
-  { id: "ai-55", day: 55, title: "SSH暴力破解端到端检测器", subtitle: "SSH暴力破解端到端检测器",
-    objectives: ['理解SSH暴力破解端到端检测器的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## SSH暴力破解端到端检测器\n\n实践任务：特征提取→异常检测→实时告警，综合对比3种算法\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['SSH暴力破解端到端检测器', '实践: 特征提取→异常检测→实时告警，综合对比3种算法'] },
-  { id: "ai-56", day: 56, title: "**阶段总结**", subtitle: "**阶段总结**",
-    objectives: ['理解**阶段总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **阶段总结**\n\n实践任务：输出异常检测专题报告：无监督vs统计vs时序三种范式对比\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**阶段总结**', '实践: 输出异常检测专题报告：无监督vs统计vs时序三种范式对比'] }
+    { id: "ai-50", day: 50, title: "聚类算法（K-Means/DBSCAN/HDBSCAN）", subtitle: "聚类算法（K-Means/DBSCAN/HDBSCAN）",
+    objectives: ['理解聚类算法（K-Means/DBSCAN/HDBSCAN）的核心概念和原理', '掌握聚类算法（K-Means/DBSCAN/HDBSCAN）的技术实现方法', '了解聚类算法（K-Means/DBSCAN/HDBSCAN）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "聚类算法（K-Means/DBSCAN/HDBSCAN）是AI安全中无监督学习的核心技术。\\n\\nK-Means按距离迭代聚类，需预设K值；DBSCAN基于密度无需预设簇数且能发现任意形状簇；HDBSCAN在DBSCAN基础上自适应选择ε参数，对参数更鲁棒。\\n\\n安全应用：网络流量聚类发现未知攻击模式、日志聚类识别异常行为模式、用户行为聚类建立基线画像。\\n\\n实战建议：先用HDBSCAN探索数据(不需指定簇数)+PCA降维可视化，找到模式后再用有监督方法针对性建模。关键参数：min_cluster_size(最小簇大小)和min_samples(核心点邻居数)。",
+    keyPoints: ['聚类算法（K-Means/DBSCAN/HDBSCAN）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"DBSCAN相比K-Means的最大优势？","options":["A. 计算更快", "B. 不需预设K且能发现任意形状", "C. 更适合高维", "D. 参数更少"],"correctIndex":1,"explanation":"DBSCAN基于密度自动确定簇数且能发现非凸簇。"},
+    {"question":"HDBSCAN的核心原理？","options":["A. 固定ε", "B. 自适应选择ε", "C. 纯随机", "D. PCA降维"],"correctIndex":1,"explanation":"HDBSCAN自适应选择密度阈值减少参数调优。"},
+    {"question":"聚类在安全中的典型应用？","options":["A. 图像分类", "B. 发现未知攻击模式", "C. 字符串匹配", "D. 文件加密"],"correctIndex":1,"explanation":"无监督聚类自动发现异常模式可支持未知威胁检测。"},
+    {"question":"K-Means聚类数K的选取方法？","options":["A. 随便选", "B. Elbow Method(肘部法)", "C. 固定K=3", "D. 随机测试"],"correctIndex":1,"explanation":"肘部法画K-误差图找到拐点是K选取的经典方法。"},
+    {"question":"DBSCAN的两个关键参数是？","options":["A. K和距离", "B. ε和min_samples", "C. 深度和宽度", "D. C和gamma"],"correctIndex":1,"explanation":"ε邻域半径和min_samples最小密度点是DBSCAN的两个核心参数。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from sklearn.cluster import KMeans, DBSCAN\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\n# 生成模拟网络流特征\nnp.random.seed(42)\nX = np.vstack([\n    np.random.normal(0, 1, (100, 5)),  # 正常流量\n    np.random.normal(5, 0.5, (10, 5)),  # 异常流量\n])\n\n# DBSCAN: 无需预设K\ndb = DBSCAN(eps=1.5, min_samples=3)\nlabels_db = db.fit_predict(X)\nprint(f\"DBSCAN clusters: {len(set(labels_db)) - (1 if -1 in labels_db else 0)}\")\nprint(f\"Noise points: {(labels_db == -1).sum()}\")\n\n# PCA降维可视化\npca = PCA(2)\nX_pca = pca.fit_transform(X)\nprint(f\"Explained variance: {pca.explained_variance_ratio_}\")","explanation":"DBSCAN聚类+PCA降维：自动发现网络流量中的异常模式"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"聚类算法（K-Means/DBSCAN/HDBSCAN）实验","description":"搭建聚类算法（K-Means/DBSCAN/HDBSCAN）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备聚类算法（K-Means/DBSCAN/HDBSCAN）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握聚类算法（K-Means/DBSCAN/HDBSCAN）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"聚类算法（K-Means/DBSCAN/学习要点","content":"学习聚类算法（K-Means/DBSCAN/关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-51", day: 51, title: "孤立森林（Isolation Forest）原理与实战", subtitle: "孤立森林（Isolation Forest）原理与实战",
+    objectives: ['理解孤立森林（Isolation Forest）原理与实战的核心概念和原理', '掌握孤立森林（Isolation Forest）原理与实战的技术实现方法', '了解孤立森林（Isolation Forest）原理与实战在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "孤立森林（Isolation Forest）原理与实战是无监督异常检测的代表性算法。\\n\\n核心思想：异常点\\\"少且不同\\\"，通过随机分割容易隔离。构建多棵iTree，用随机特征+随机分割值递归划分数据，异常点平均路径长度短。\\n\\n优势：线性时间复杂度O(n)、无需距离度量可处理高维数据、无参数假设。\\n\\nsklearn实战：IsolationForest(contamination=0.01,n_estimators=100)。关键调参：contamination控制异常比例(建议从预计攻击比例开始)和n_estimators树数量。",
+    keyPoints: ['孤立森林（Isolation Forest）原理与实战是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"孤立森林检测异常的核心原理？","options":["A. 正常点多", "B. 异常点'少且不同'易被隔离", "C. 随机选取", "D. 深度学习"],"correctIndex":1,"explanation":"异常点少且分布稀疏通过随机分割更易被隔离平均路径短。"},
+    {"question":"Isolation Forest的时间复杂度？","options":["A. O(n²)", "B. O(n log n)", "C. O(n)", "D. O(2ⁿ)"],"correctIndex":2,"explanation":"iForest训练是线性时间复杂度适合大规模数据。"},
+    {"question":"contamination参数的含义？","options":["A. 训练次数", "B. 预期异常比例", "C. 树深度", "D. 学习率"],"correctIndex":1,"explanation":"contamination指定训练集中预期异常样本所占的比例。"},
+    {"question":"iForest处理高维数据的优势？","options":["A. 降维处理", "B. 无需距离度量", "C. 特征更少", "D. 只能用低维"],"correctIndex":1,"explanation":"iForest基于随机分割不使用距离度量因此高维维数灾难不严重。"},
+    {"question":"构建iTree时每个节点的分割特征如何选择？","options":["A. 最优特征", "B. 随机选择", "C. 穷举", "D. 用户指定"],"correctIndex":1,"explanation":"iTree在每个节点随机选择特征和分割值这是高效性的关键。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from sklearn.ensemble import IsolationForest\nimport numpy as np\n\n# 正常流量+攻击流量\nnp.random.seed(42)\nX_train = np.random.normal(0, 1, (1000, 10))\nX_test = np.vstack([\n    np.random.normal(0, 1, (200, 10)),\n    np.random.normal(5, 0.5, (20, 10)),  # 攻击\n])\n\nmodel = IsolationForest(contamination=0.02, n_estimators=100, random_state=42)\nmodel.fit(X_train)\npreds = model.predict(X_test)  # 1=正常, -1=异常\nscores = model.decision_function(X_test)\n\nprint(f\"Detected anomalies: {(preds == -1).sum()}/{len(preds)}\")\nprint(f\"Score range: [{scores.min():.2f}, {scores.max():.2f}]\")","explanation":"孤立森林训练：用正常流量训练检测异常流量的偏差"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"孤立森林（Isolation Forest）原理与实战实验","description":"搭建孤立森林（Isolation Forest）原理与实战相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备孤立森林（Isolation Forest）原理与实战实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握孤立森林（Isolation Forest）原理与实战的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"孤立森林（Isolation Fores学习要点","content":"学习孤立森林（Isolation Fores关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-52", day: 52, title: "One-Class SVM & Local Outlier Factor (LOF)", subtitle: "One-Class SVM & Local Outlier Factor ...",
+    objectives: ['理解One-Class SVM & Local Outlier Factor (LOF)的核心概念和原理', '掌握One-Class SVM & Local Outlier Factor (LOF)的技术实现方法', '了解One-Class SVM & Local Outlier Factor (LOF)在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "One-Class SVM & Local Outlier Factor (LOF)通过在高维空间找到一个超球面，把正常数据包在里面，落在球外的点判为异常。\\n\\n核心原理：RBF核映射到高维空间→找寻最小包围超球面→测试点到球心距离。\\n\\n实战：OC-SVM适合\\\"只有正常样本\\\"的场景(如新系统尚无攻击样本)。sklearn: OneClassSVM(nu=0.01,kernel='rbf',gamma='auto')。nu≈异常比例上界，gamma控制边界复杂度。\\n\\n与iForest对比：iForest在数据量大时更快；OC-SVM在小样本数据上表现更好。两者可融合使用取并集提高召回。",
+    keyPoints: ['One-Class SVM & Local Outlier Factor (LOF)是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"SVM的核心目标？","options":["A. 任意分类面", "B. 最大化分类间隔(margin)", "C. 最少点", "D. 最快"],"correctIndex":1,"explanation":"SVM寻找能最大化类别间距的超平面间隔越大泛化能力越强。"},
+    {"question":"RBF核函数的作用？","options":["A. 线性", "B. 隐式将数据映射到高维实现非线性分类", "C. 加速", "D. 降维"],"correctIndex":1,"explanation":"RBF核在原始空间计算内积效果等价高维映射让SVM处理复杂模式。"},
+    {"question":"SVM的C参数控制什么？","options":["A. 随机", "B. 误分类惩罚强度C大过拟合风险高", "C. 速度", "D. 层数"],"correctIndex":1,"explanation":"C在最大化间隔和最小分类错误间权衡C小间隔大泛化C大拟合强。"},
+    {"question":"SVM在安全中的适用场景？","options":["A. 小样本", "B. 小样本场景如APT行为特征分析", "C. 不适用", "D. 数据多"],"correctIndex":1,"explanation":"SVM在小样本高维数据上表现好适合特征维度高但样本少的APT检测。"},
+    {"question":"支持向量的含义？","options":["A. 所有点", "B. 落在间隔边界上决定超平面的关键样本", "C. 随机点", "D. 无意义"],"correctIndex":1,"explanation":"只有落在margin上的支持向量才决定SVM的超平面位置和方向。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from sklearn.svm import SVC\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nimport numpy as np\n\nnp.random.seed(42)\nX = np.random.randn(500, 15)\ny = (X[:, 0]**2 + X[:, 3]*2 > 1).astype(int)\n\npipeline = Pipeline([\n    ('scaler', StandardScaler()),\n    ('svm', SVC(kernel='rbf', C=1.0, gamma='scale', probability=True))\n])\npipeline.fit(X, y)\nscore = pipeline.score(X, y)\nprint(f\"SVM(RBF) accuracy: {score:.3f}\")","explanation":"SVM(RBF核)安全分类：标准化+SVM的sklearn标准Pipeline"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"One-Class SVM & Local Outlier Factor (LO实验","description":"搭建One-Class SVM & Local Outlier Factor (LO相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备One-Class SVM & Local Outlier Factor (LO实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握One-Class SVM & Local Outlier Factor (LO的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"One-Class SVM & Loca学习要点","content":"学习One-Class SVM & Loca关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-53", day: 53, title: "时序异常检测（STL分解/Prophet/Matrix Profile）", subtitle: "时序异常检测（STL分解/Prophet/Matrix Profile）",
+    objectives: ['理解时序异常检测（STL分解/Prophet/Matrix Profile）的核心概念和原理', '掌握时序异常检测（STL分解/Prophet/Matrix Profile）的技术实现方法', '了解时序异常检测（STL分解/Prophet/Matrix Profile）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "时序异常检测（STL分解/Prophet/Matrix Profile）处理序列数据的神经网络。LSTM通过遗忘门/输入门/输出门解决长序列梯度消失问题；GRU简化为重置门/更新门，参数更少。\\n\\n安全应用：攻击行为序列建模(多步攻击检测)、网络流时间序列预测(流量基线)、API调用序列恶意检测、键盘行为生物识别。\\n\\n架构：LSTM(hidden_size=128,num_layers=2)→Dense(64,ReLU)→Dropout(0.5)→Dense(num_classes)。序列预处理：定长截断/填充+标准化。",
+    keyPoints: ['时序异常检测（STL分解/Prophet/Matrix Profile）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"时序异常检测（STL分解/Prophet/Matrix Profile）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 时序异常检测（STL分解/Prophet/Matrix Profile）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"时序异常检测（STL分解/Prophet... Model accuracy: {score:.3f}\")","explanation":"时序异常检测（STL分解/Prophet/Matrix Pr的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"时序异常检测（STL分解/Prophet/Matrix Profile）实验","description":"搭建时序异常检测（STL分解/Prophet/Matrix Profile）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备时序异常检测（STL分解/Prophet/Matrix Profile）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握时序异常检测（STL分解/Prophet/Matrix Profile）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"时序异常检测（STL分解/Prophet学习要点","content":"学习时序异常检测（STL分解/Prophet关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-54", day: 54, title: "异常检测评估指标（Precision@K/Range-based指标）", subtitle: "异常检测评估指标（Precision@K/Range-based指标）",
+    objectives: ['理解异常检测评估指标（Precision@K/Range-based指标）的核心概念和原理', '掌握异常检测评估指标（Precision@K/Range-based指标）的技术实现方法', '了解异常检测评估指标（Precision@K/Range-based指标）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "异常检测评估指标（Precision@K/Range-based指标）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解异常检测评估指标（Precision@K/Range-based指标）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['异常检测评估指标（Precision@K/Range-based指标）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"异常检测评估指标（Precision@K/Range-based指标）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 异常检测评估指标（Precision@K/Range-based指标）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"异常检测评估指标（Precision@K... Model accuracy: {score:.3f}\")","explanation":"异常检测评估指标（Precision@K/Range-bas的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"异常检测评估指标（Precision@K/Range-based指标）实验","description":"搭建异常检测评估指标（Precision@K/Range-based指标）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备异常检测评估指标（Precision@K/Range-based指标）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握异常检测评估指标（Precision@K/Range-based指标）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"异常检测评估指标（Precision@K学习要点","content":"学习异常检测评估指标（Precision@K关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-55", day: 55, title: "SSH暴力破解端到端检测器", subtitle: "SSH暴力破解端到端检测器",
+    objectives: ['理解SSH暴力破解端到端检测器的核心概念和原理', '掌握SSH暴力破解端到端检测器的技术实现方法', '了解SSH暴力破解端到端检测器在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "SSH暴力破解端到端检测器是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解SSH暴力破解端到端检测器在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['SSH暴力破解端到端检测器是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"SSH暴力破解端到端检测器在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# SSH暴力破解端到端检测器\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"SSH暴力破解端到端检测器... Model accuracy: {score:.3f}\")","explanation":"SSH暴力破解端到端检测器的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"SSH暴力破解端到端检测器实验","description":"搭建SSH暴力破解端到端检测器相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备SSH暴力破解端到端检测器实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握SSH暴力破解端到端检测器的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"SSH暴力破解端到端检测器学习要点","content":"学习SSH暴力破解端到端检测器关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-56", day: 56, title: "阶段总结", subtitle: "阶段总结",
+    objectives: ['理解阶段总结的核心概念和原理', '掌握阶段总结的技术实现方法', '了解阶段总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['阶段总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 阶段总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"阶段总结... Model accuracy: {score:.3f}\")","explanation":"阶段总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"阶段总结实验","description":"搭建阶段总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备阶段总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握阶段总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"阶段总结学习要点","content":"学习阶段总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week9: CyberDay[] = [
-  { id: "ai-57", day: 57, title: "神经网络原理（前向/反向传播/链式法则/梯度下降）", subtitle: "神经网络原理（前向/反向传播/链式法则/梯度下降）",
-    objectives: ['理解神经网络原理（前向/反向传播/链式法则/的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 神经网络原理（前向/反向传播/链式法则/梯度下降）\n\n实践任务：手写3层MLP的NumPy实现（不要框架），在MNIST上验证\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['神经网络原理（前向/反向传播/链式法则/梯度下降）', '实践: 手写3层MLP的NumPy实现（不要框架），在MNIST上验'] },
-  { id: "ai-58", day: 58, title: "PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）", subtitle: "PyTorch入门（Tensor/AutoGrad/nn.Module/D...",
-    objectives: ['理解PyTorch入门（Tensor/Aut的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）\n\n实践任务：用PyTorch重写MLP，对比手写版的速度和准确率\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['PyTorch入门（Tensor/AutoGrad/nn.M', '实践: 用PyTorch重写MLP，对比手写版的速度和准确率'] },
-  { id: "ai-59", day: 59, title: "优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weight Decay）", subtitle: "优化器与正则化（Adam/SGD/Dropout/BatchNorm/We...",
-    objectives: ['理解优化器与正则化（Adam/SGD/Dro的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weight Decay）\n\n实践任务：对比6种优化器+4种正则化组合对IDS分类的影响\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['优化器与正则化（Adam/SGD/Dropout/Batch', '实践: 对比6种优化器+4种正则化组合对IDS分类的影响'] },
-  { id: "ai-60", day: 60, title: "激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）", subtitle: "激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）",
-    objectives: ['理解激活函数与初始化（ReLU/GELU/S的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）\n\n实践任务：实验不同激活函数下的梯度消失/爆炸问题\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['激活函数与初始化（ReLU/GELU/Swish/Xavie', '实践: 实验不同激活函数下的梯度消失/爆炸问题'] },
-  { id: "ai-61", day: 61, title: "学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）", subtitle: "学习率调度与早停（Step/Cosine/CyclicLR/EarlySt...",
-    objectives: ['理解学习率调度与早停（Step/Cosine的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）\n\n实践任务：用CosineAnnealing+Warmup训练技巧提升收敛速度\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['学习率调度与早停（Step/Cosine/CyclicLR/', '实践: 用CosineAnnealing+Warmup训练技巧提升收'] },
-  { id: "ai-62", day: 62, title: "MLP入侵检测实战", subtitle: "MLP入侵检测实战",
-    objectives: ['理解MLP入侵检测实战的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## MLP入侵检测实战\n\n实践任务：用PyTorch搭建3层MLP，在CIC-IDS上完成多分类\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['MLP入侵检测实战', '实践: 用PyTorch搭建3层MLP，在CIC-IDS上完成多分类'] },
-  { id: "ai-63", day: 63, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：MLP vs 传统ML（RF/XGBoost）在IDS上的性能对比报告\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: MLP vs 传统ML（RF/XGBoost）在IDS上的性'] }
+    { id: "ai-57", day: 57, title: "神经网络原理（前向/反向传播/链式法则/梯度下降）", subtitle: "神经网络原理（前向/反向传播/链式法则/梯度下降）",
+    objectives: ['理解神经网络原理（前向/反向传播/链式法则/梯度下降）的核心概念和原理', '掌握神经网络原理（前向/反向传播/链式法则/梯度下降）的技术实现方法', '了解神经网络原理（前向/反向传播/链式法则/梯度下降）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "神经网络原理（前向/反向传播/链式法则/梯度下降）通过多层非线性变换自动学习层次化特征表示。核心组件：全连接层(Wx+b)、激活函数(ReLU/Sigmoid)、损失函数(交叉熵/MSE)、优化器(Adam/SGD)。\\n\\n安全中DL的优势：自动特征提取(替代手工特征工程)、处理高维复杂数据(原始数据包/payload)、端到端学习。\\n\\n实战架构：输入(特征维度)→Hidden1(256,ReLU)→Dropout(0.3)→Hidden2(128,ReLU)→Dropout(0.2)→Hidden3(64,ReLU)→输出(类别数,Softmax)。训练：Adam(lr=0.001)+CrossEntropyLoss+EarlyStopping。",
+    keyPoints: ['神经网络原理（前向/反向传播/链式法则/梯度下降）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"神经网络原理（前向/反向传播/链式法则/梯度下降）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 神经网络原理（前向/反向传播/链式法则/梯度下降）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"神经网络原理（前向/反向传播/链式法则/... Model accuracy: {score:.3f}\")","explanation":"神经网络原理（前向/反向传播/链式法则/梯度下降）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"神经网络原理（前向/反向传播/链式法则/梯度下降）实验","description":"搭建神经网络原理（前向/反向传播/链式法则/梯度下降）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备神经网络原理（前向/反向传播/链式法则/梯度下降）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握神经网络原理（前向/反向传播/链式法则/梯度下降）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"神经网络原理（前向/反向传播/链式法则/学习要点","content":"学习神经网络原理（前向/反向传播/链式法则/关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-58", day: 58, title: "PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）", subtitle: "PyTorch入门（Tensor/AutoGrad/nn.Module/D...",
+    objectives: ['理解PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）的核心概念和原理', '掌握PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）的技术实现方法', '了解PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# PyTorch入门（Tensor/AutoGrad/nn.Module/DataLoader）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"PyTorch入门（Tensor/Aut... Model accuracy: {score:.3f}\")","explanation":"PyTorch入门（Tensor/AutoGrad/nn.M的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"PyTorch入门（Tensor/AutoGrad/nn.Module/Data实验","description":"搭建PyTorch入门（Tensor/AutoGrad/nn.Module/Data相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备PyTorch入门（Tensor/AutoGrad/nn.Module/Data实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握PyTorch入门（Tensor/AutoGrad/nn.Module/Data的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"PyTorch入门（Tensor/Aut学习要点","content":"学习PyTorch入门（Tensor/Aut关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-59", day: 59, title: "优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weight Decay）", subtitle: "优化器与正则化（Adam/SGD/Dropout/BatchNorm/We...",
+    objectives: ['理解优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weight Decay）的核心概念和原理', '掌握优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weight Decay）的技术实现方法', '了解优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weight Decay）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weight Decay）确保模型输出概率与实际置信度一致。校准误差(ECE)衡量预测概率与真实准确率的偏差。\\n\\n校准方法：Platt Scaling(逻辑回归校准输出)、Isotonic Regression(非参数保序回归)、Temperature Scaling(温度参数T软化Softmax)。\\n\\n阈值优化：根据业务需求(误报成本vs漏报成本)选择最优决策阈值。方法：ROC曲线找最优点、成本敏感阈值搜索、precision-recall曲线选阈值。\\n\\nsklearn: CalibratedClassifierCV做校、calibration_curve画校准曲线。",
+    keyPoints: ['优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weight Decay）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weight Decay）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weight Decay）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"优化器与正则化（Adam/SGD/Dro... Model accuracy: {score:.3f}\")","explanation":"优化器与正则化（Adam/SGD/Dropout/Batch的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weigh实验","description":"搭建优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weigh相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weigh实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握优化器与正则化（Adam/SGD/Dropout/BatchNorm/Weigh的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"优化器与正则化（Adam/SGD/Dro学习要点","content":"学习优化器与正则化（Adam/SGD/Dro关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-60", day: 60, title: "激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）", subtitle: "激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）",
+    objectives: ['理解激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）的核心概念和原理', '掌握激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）的技术实现方法', '了解激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"激活函数与初始化（ReLU/GELU/S... Model accuracy: {score:.3f}\")","explanation":"激活函数与初始化（ReLU/GELU/Swish/Xavie的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）实验","description":"搭建激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握激活函数与初始化（ReLU/GELU/Swish/Xavier/Kaiming）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"激活函数与初始化（ReLU/GELU/S学习要点","content":"学习激活函数与初始化（ReLU/GELU/S关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-61", day: 61, title: "学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）", subtitle: "学习率调度与早停（Step/Cosine/CyclicLR/EarlySt...",
+    objectives: ['理解学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）的核心概念和原理', '掌握学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）的技术实现方法', '了解学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopping）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"学习率调度与早停（Step/Cosine... Model accuracy: {score:.3f}\")","explanation":"学习率调度与早停（Step/Cosine/CyclicLR/的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopp实验","description":"搭建学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopp相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopp实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握学习率调度与早停（Step/Cosine/CyclicLR/EarlyStopp的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"学习率调度与早停（Step/Cosine学习要点","content":"学习学习率调度与早停（Step/Cosine关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-62", day: 62, title: "MLP入侵检测实战", subtitle: "MLP入侵检测实战",
+    objectives: ['理解MLP入侵检测实战的核心概念和原理', '掌握MLP入侵检测实战的技术实现方法', '了解MLP入侵检测实战在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "MLP入侵检测实战通过监控网络/系统行为发现攻击。\\n\\n检测方法：基于签名的(Snort规则匹配已知攻击)、基于异常的(ML检测偏离基线)、基于状态的(协议状态机检测violation)。\\n\\nAI增强：ML分类区分攻击类型、DL自动提取深层特征、集成学习融合多检测器结果。\\n\\n实战系统：Suricata(Snort兼容)+Python ML推理引擎+ELK展示告警。模型输入：CICFlowMeter提取的79维流特征。",
+    keyPoints: ['MLP入侵检测实战是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"MLP入侵检测实战在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# MLP入侵检测实战\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"MLP入侵检测实战... Model accuracy: {score:.3f}\")","explanation":"MLP入侵检测实战的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"MLP入侵检测实战实验","description":"搭建MLP入侵检测实战相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备MLP入侵检测实战实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握MLP入侵检测实战的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"MLP入侵检测实战学习要点","content":"学习MLP入侵检测实战关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-63", day: 63, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week10: CyberDay[] = [
-  { id: "ai-64", day: 64, title: "CNN原理（卷积/池化/通道/感受野）", subtitle: "CNN原理（卷积/池化/通道/感受野）",
-    objectives: ['理解CNN原理（卷积/池化/通道/感受野）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## CNN原理（卷积/池化/通道/感受野）\n\n实践任务：手写conv2d前向传播，理解参数共享和稀疏连接\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['CNN原理（卷积/池化/通道/感受野）', '实践: 手写conv2d前向传播，理解参数共享和稀疏连接'] },
-  { id: "ai-65", day: 65, title: "CNN经典架构（LeNet/VGG/ResNet/Inception）", subtitle: "CNN经典架构（LeNet/VGG/ResNet/Inception）",
-    objectives: ['理解CNN经典架构（LeNet/VGG/Re的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## CNN经典架构（LeNet/VGG/ResNet/Inception）\n\n实践任务：理解跳跃连接/瓶颈层/深度可分离卷积的设计思想\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['CNN经典架构（LeNet/VGG/ResNet/Incep', '实践: 理解跳跃连接/瓶颈层/深度可分离卷积的设计思想'] },
-  { id: "ai-66", day: 66, title: "CNN恶意软件图像分类（Malimg）", subtitle: "CNN恶意软件图像分类（Malimg）",
-    objectives: ['理解CNN恶意软件图像分类（Malimg）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## CNN恶意软件图像分类（Malimg）\n\n实践任务：将PE文件转为灰度图→ResNet18训练→恶意软件家族分类\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['CNN恶意软件图像分类（Malimg）', '实践: 将PE文件转为灰度图→ResNet18训练→恶意软件家族分类'] },
-  { id: "ai-67", day: 67, title: "1D-CNN网络流量分类", subtitle: "1D-CNN网络流量分类",
-    objectives: ['理解1D-CNN网络流量分类的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 1D-CNN网络流量分类\n\n实践任务：用1D-CNN对网络流时间序列做端到端分类\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['1D-CNN网络流量分类', '实践: 用1D-CNN对网络流时间序列做端到端分类'] },
-  { id: "ai-68", day: 68, title: "RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）", subtitle: "RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）",
-    objectives: ['理解RNN/LSTM原理（循环状态/门控/梯的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）\n\n实践任务：手写LSTM门的计算，理解遗忘门/输入门/输出门\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）', '实践: 手写LSTM门的计算，理解遗忘门/输入门/输出门'] },
-  { id: "ai-69", day: 69, title: "LSTM流量预测与异常检测", subtitle: "LSTM流量预测与异常检测",
-    objectives: ['理解LSTM流量预测与异常检测的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## LSTM流量预测与异常检测\n\n实践任务：LSTM预测网络流量趋势→残差分析→异常信号检测\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['LSTM流量预测与异常检测', '实践: LSTM预测网络流量趋势→残差分析→异常信号检测'] },
-  { id: "ai-70", day: 70, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：CNN vs LSTM 在安全和网络场景下的适用性对比\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: CNN vs LSTM 在安全和网络场景下的适用性对比'] }
+    { id: "ai-64", day: 64, title: "CNN原理（卷积/池化/通道/感受野）", subtitle: "CNN原理（卷积/池化/通道/感受野）",
+    objectives: ['理解CNN原理（卷积/池化/通道/感受野）的核心概念和原理', '掌握CNN原理（卷积/池化/通道/感受野）的技术实现方法', '了解CNN原理（卷积/池化/通道/感受野）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "CNN原理（卷积/池化/通道/感受野）通过卷积核在输入上滑动提取局部特征。相比全连接：参数共享大幅减少参数量、平移不变性适应位置变化。\\n\\n安全应用：恶意软件可视化(字节转灰度图/马尔可夫图)用CNN分类、网络流量时空特征(流矩阵)分析、Web payload模式检测。\\n\\n架构：Conv2D→BatchNorm→ReLU→MaxPool→...→Flatten→Dense→Softmax。关键超参：kernel_size(3或5)、filters(32/64递进)、pool_size(2)。PyTorch实现用nn.Conv2d。",
+    keyPoints: ['CNN原理（卷积/池化/通道/感受野）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"CNN的平移不变性对安全有什么好处？","options":["A. 无关", "B. 恶意payload位置变化不影响检测", "C. 加速", "D. 降低内存"],"correctIndex":1,"explanation":"平移不变性使CNN对输入模式位置不敏感适合检测变种payload。"},
+    {"question":"恶意软件灰度图的主要用途？","options":["A. 美化", "B. 将二进制文件转为图像用于CNN分类", "C. 压缩", "D. 加密"],"correctIndex":1,"explanation":"字节转灰度图把恶意软件分类转为图像分类问题CNN天然适合。"},
+    {"question":"卷积层的核心操作？","options":["A. 全连接", "B. 卷积核在输入上滑动做点积", "C. 随机采样", "D. 矩阵乘法"],"correctIndex":1,"explanation":"卷积核与输入局部区域做内积提取局部特征。"},
+    {"question":"MaxPooling的安全意义？","options":["A. 保持位置", "B. 下采样提取关键特征降低对精确位置的敏感度", "C. 加密", "D. 加噪"],"correctIndex":1,"explanation":"MaxPooling降维并保持显著特征也增加了对抗样本的抗干扰能力。"},
+    {"question":"CNN BatchNorm的作用？","options":["A. 归一化", "B. 加速训练+缓解梯度问题", "C. 过拟合", "D. 降维"],"correctIndex":1,"explanation":"BatchNorm标准化每层输入加速收敛缓解梯度消失爆炸问题。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch.nn as nn\n\nclass MalwareCNN(nn.Module):\n    def __init__(self, num_classes=9):\n        super().__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(1, 32, 3, padding=1),\n            nn.BatchNorm2d(32), nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(32, 64, 3, padding=1),\n            nn.BatchNorm2d(64), nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(64, 128, 3, padding=1),\n            nn.BatchNorm2d(128), nn.ReLU(), nn.AdaptiveAvgPool2d((4,4)),\n        )\n        self.classifier = nn.Sequential(\n            nn.Flatten(),\n            nn.Linear(128*4*4, 128),\n            nn.ReLU(), nn.Dropout(0.5),\n            nn.Linear(128, num_classes),\n        )\n    def forward(self, x): return self.classifier(self.features(x))\n\nmodel = MalwareCNN(num_classes=9)\nprint(f\"Params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"恶意软件灰度图CNN：3层卷积+分类头自动识别恶意软件家族"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"CNN原理（卷积/池化/通道/感受野）实验","description":"搭建CNN原理（卷积/池化/通道/感受野）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备CNN原理（卷积/池化/通道/感受野）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握CNN原理（卷积/池化/通道/感受野）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"CNN原理（卷积/池化/通道/感受野）学习要点","content":"学习CNN原理（卷积/池化/通道/感受野）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-65", day: 65, title: "CNN经典架构（LeNet/VGG/ResNet/Inception）", subtitle: "CNN经典架构（LeNet/VGG/ResNet/Inception）",
+    objectives: ['理解CNN经典架构（LeNet/VGG/ResNet/Inception）的核心概念和原理', '掌握CNN经典架构（LeNet/VGG/ResNet/Inception）的技术实现方法', '了解CNN经典架构（LeNet/VGG/ResNet/Inception）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "CNN经典架构（LeNet/VGG/ResNet/Inception）通过卷积核在输入上滑动提取局部特征。相比全连接：参数共享大幅减少参数量、平移不变性适应位置变化。\\n\\n安全应用：恶意软件可视化(字节转灰度图/马尔可夫图)用CNN分类、网络流量时空特征(流矩阵)分析、Web payload模式检测。\\n\\n架构：Conv2D→BatchNorm→ReLU→MaxPool→...→Flatten→Dense→Softmax。关键超参：kernel_size(3或5)、filters(32/64递进)、pool_size(2)。PyTorch实现用nn.Conv2d。",
+    keyPoints: ['CNN经典架构（LeNet/VGG/ResNet/Inception）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"CNN的平移不变性对安全有什么好处？","options":["A. 无关", "B. 恶意payload位置变化不影响检测", "C. 加速", "D. 降低内存"],"correctIndex":1,"explanation":"平移不变性使CNN对输入模式位置不敏感适合检测变种payload。"},
+    {"question":"恶意软件灰度图的主要用途？","options":["A. 美化", "B. 将二进制文件转为图像用于CNN分类", "C. 压缩", "D. 加密"],"correctIndex":1,"explanation":"字节转灰度图把恶意软件分类转为图像分类问题CNN天然适合。"},
+    {"question":"卷积层的核心操作？","options":["A. 全连接", "B. 卷积核在输入上滑动做点积", "C. 随机采样", "D. 矩阵乘法"],"correctIndex":1,"explanation":"卷积核与输入局部区域做内积提取局部特征。"},
+    {"question":"MaxPooling的安全意义？","options":["A. 保持位置", "B. 下采样提取关键特征降低对精确位置的敏感度", "C. 加密", "D. 加噪"],"correctIndex":1,"explanation":"MaxPooling降维并保持显著特征也增加了对抗样本的抗干扰能力。"},
+    {"question":"CNN BatchNorm的作用？","options":["A. 归一化", "B. 加速训练+缓解梯度问题", "C. 过拟合", "D. 降维"],"correctIndex":1,"explanation":"BatchNorm标准化每层输入加速收敛缓解梯度消失爆炸问题。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch.nn as nn\n\nclass MalwareCNN(nn.Module):\n    def __init__(self, num_classes=9):\n        super().__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(1, 32, 3, padding=1),\n            nn.BatchNorm2d(32), nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(32, 64, 3, padding=1),\n            nn.BatchNorm2d(64), nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(64, 128, 3, padding=1),\n            nn.BatchNorm2d(128), nn.ReLU(), nn.AdaptiveAvgPool2d((4,4)),\n        )\n        self.classifier = nn.Sequential(\n            nn.Flatten(),\n            nn.Linear(128*4*4, 128),\n            nn.ReLU(), nn.Dropout(0.5),\n            nn.Linear(128, num_classes),\n        )\n    def forward(self, x): return self.classifier(self.features(x))\n\nmodel = MalwareCNN(num_classes=9)\nprint(f\"Params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"恶意软件灰度图CNN：3层卷积+分类头自动识别恶意软件家族"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"CNN经典架构（LeNet/VGG/ResNet/Inception）实验","description":"搭建CNN经典架构（LeNet/VGG/ResNet/Inception）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备CNN经典架构（LeNet/VGG/ResNet/Inception）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握CNN经典架构（LeNet/VGG/ResNet/Inception）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"CNN经典架构（LeNet/VGG/Re学习要点","content":"学习CNN经典架构（LeNet/VGG/Re关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-66", day: 66, title: "CNN恶意软件图像分类（Malimg）", subtitle: "CNN恶意软件图像分类（Malimg）",
+    objectives: ['理解CNN恶意软件图像分类（Malimg）的核心概念和原理', '掌握CNN恶意软件图像分类（Malimg）的技术实现方法', '了解CNN恶意软件图像分类（Malimg）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "CNN恶意软件图像分类（Malimg）通过卷积核在输入上滑动提取局部特征。相比全连接：参数共享大幅减少参数量、平移不变性适应位置变化。\\n\\n安全应用：恶意软件可视化(字节转灰度图/马尔可夫图)用CNN分类、网络流量时空特征(流矩阵)分析、Web payload模式检测。\\n\\n架构：Conv2D→BatchNorm→ReLU→MaxPool→...→Flatten→Dense→Softmax。关键超参：kernel_size(3或5)、filters(32/64递进)、pool_size(2)。PyTorch实现用nn.Conv2d。",
+    keyPoints: ['CNN恶意软件图像分类（Malimg）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"CNN的平移不变性对安全有什么好处？","options":["A. 无关", "B. 恶意payload位置变化不影响检测", "C. 加速", "D. 降低内存"],"correctIndex":1,"explanation":"平移不变性使CNN对输入模式位置不敏感适合检测变种payload。"},
+    {"question":"恶意软件灰度图的主要用途？","options":["A. 美化", "B. 将二进制文件转为图像用于CNN分类", "C. 压缩", "D. 加密"],"correctIndex":1,"explanation":"字节转灰度图把恶意软件分类转为图像分类问题CNN天然适合。"},
+    {"question":"卷积层的核心操作？","options":["A. 全连接", "B. 卷积核在输入上滑动做点积", "C. 随机采样", "D. 矩阵乘法"],"correctIndex":1,"explanation":"卷积核与输入局部区域做内积提取局部特征。"},
+    {"question":"MaxPooling的安全意义？","options":["A. 保持位置", "B. 下采样提取关键特征降低对精确位置的敏感度", "C. 加密", "D. 加噪"],"correctIndex":1,"explanation":"MaxPooling降维并保持显著特征也增加了对抗样本的抗干扰能力。"},
+    {"question":"CNN BatchNorm的作用？","options":["A. 归一化", "B. 加速训练+缓解梯度问题", "C. 过拟合", "D. 降维"],"correctIndex":1,"explanation":"BatchNorm标准化每层输入加速收敛缓解梯度消失爆炸问题。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch.nn as nn\n\nclass MalwareCNN(nn.Module):\n    def __init__(self, num_classes=9):\n        super().__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(1, 32, 3, padding=1),\n            nn.BatchNorm2d(32), nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(32, 64, 3, padding=1),\n            nn.BatchNorm2d(64), nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(64, 128, 3, padding=1),\n            nn.BatchNorm2d(128), nn.ReLU(), nn.AdaptiveAvgPool2d((4,4)),\n        )\n        self.classifier = nn.Sequential(\n            nn.Flatten(),\n            nn.Linear(128*4*4, 128),\n            nn.ReLU(), nn.Dropout(0.5),\n            nn.Linear(128, num_classes),\n        )\n    def forward(self, x): return self.classifier(self.features(x))\n\nmodel = MalwareCNN(num_classes=9)\nprint(f\"Params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"恶意软件灰度图CNN：3层卷积+分类头自动识别恶意软件家族"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"CNN恶意软件图像分类（Malimg）实验","description":"搭建CNN恶意软件图像分类（Malimg）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备CNN恶意软件图像分类（Malimg）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握CNN恶意软件图像分类（Malimg）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"CNN恶意软件图像分类（Malimg）学习要点","content":"学习CNN恶意软件图像分类（Malimg）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-67", day: 67, title: "1D-CNN网络流量分类", subtitle: "1D-CNN网络流量分类",
+    objectives: ['理解1D-CNN网络流量分类的核心概念和原理', '掌握1D-CNN网络流量分类的技术实现方法', '了解1D-CNN网络流量分类在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "1D-CNN网络流量分类通过卷积核在输入上滑动提取局部特征。相比全连接：参数共享大幅减少参数量、平移不变性适应位置变化。\\n\\n安全应用：恶意软件可视化(字节转灰度图/马尔可夫图)用CNN分类、网络流量时空特征(流矩阵)分析、Web payload模式检测。\\n\\n架构：Conv2D→BatchNorm→ReLU→MaxPool→...→Flatten→Dense→Softmax。关键超参：kernel_size(3或5)、filters(32/64递进)、pool_size(2)。PyTorch实现用nn.Conv2d。",
+    keyPoints: ['1D-CNN网络流量分类是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"CNN的平移不变性对安全有什么好处？","options":["A. 无关", "B. 恶意payload位置变化不影响检测", "C. 加速", "D. 降低内存"],"correctIndex":1,"explanation":"平移不变性使CNN对输入模式位置不敏感适合检测变种payload。"},
+    {"question":"恶意软件灰度图的主要用途？","options":["A. 美化", "B. 将二进制文件转为图像用于CNN分类", "C. 压缩", "D. 加密"],"correctIndex":1,"explanation":"字节转灰度图把恶意软件分类转为图像分类问题CNN天然适合。"},
+    {"question":"卷积层的核心操作？","options":["A. 全连接", "B. 卷积核在输入上滑动做点积", "C. 随机采样", "D. 矩阵乘法"],"correctIndex":1,"explanation":"卷积核与输入局部区域做内积提取局部特征。"},
+    {"question":"MaxPooling的安全意义？","options":["A. 保持位置", "B. 下采样提取关键特征降低对精确位置的敏感度", "C. 加密", "D. 加噪"],"correctIndex":1,"explanation":"MaxPooling降维并保持显著特征也增加了对抗样本的抗干扰能力。"},
+    {"question":"CNN BatchNorm的作用？","options":["A. 归一化", "B. 加速训练+缓解梯度问题", "C. 过拟合", "D. 降维"],"correctIndex":1,"explanation":"BatchNorm标准化每层输入加速收敛缓解梯度消失爆炸问题。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch.nn as nn\n\nclass MalwareCNN(nn.Module):\n    def __init__(self, num_classes=9):\n        super().__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(1, 32, 3, padding=1),\n            nn.BatchNorm2d(32), nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(32, 64, 3, padding=1),\n            nn.BatchNorm2d(64), nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(64, 128, 3, padding=1),\n            nn.BatchNorm2d(128), nn.ReLU(), nn.AdaptiveAvgPool2d((4,4)),\n        )\n        self.classifier = nn.Sequential(\n            nn.Flatten(),\n            nn.Linear(128*4*4, 128),\n            nn.ReLU(), nn.Dropout(0.5),\n            nn.Linear(128, num_classes),\n        )\n    def forward(self, x): return self.classifier(self.features(x))\n\nmodel = MalwareCNN(num_classes=9)\nprint(f\"Params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"恶意软件灰度图CNN：3层卷积+分类头自动识别恶意软件家族"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"1D-CNN网络流量分类实验","description":"搭建1D-CNN网络流量分类相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备1D-CNN网络流量分类实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握1D-CNN网络流量分类的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"1D-CNN网络流量分类学习要点","content":"学习1D-CNN网络流量分类关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-68", day: 68, title: "RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）", subtitle: "RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）",
+    objectives: ['理解RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）的核心概念和原理', '掌握RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）的技术实现方法', '了解RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）处理序列数据的神经网络。LSTM通过遗忘门/输入门/输出门解决长序列梯度消失问题；GRU简化为重置门/更新门，参数更少。\\n\\n安全应用：攻击行为序列建模(多步攻击检测)、网络流时间序列预测(流量基线)、API调用序列恶意检测、键盘行为生物识别。\\n\\n架构：LSTM(hidden_size=128,num_layers=2)→Dense(64,ReLU)→Dropout(0.5)→Dense(num_classes)。序列预处理：定长截断/填充+标准化。",
+    keyPoints: ['RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"LSTM相比传统RNN的核心改进？","options":["A. 更快", "B. 门控机制解决长序列梯度消失", "C. 更深的网络", "D. 不需要数据"],"correctIndex":1,"explanation":"通过遗忘门/输入门/输出门控制信息流解决长距离依赖问题。"},
+    {"question":"安全场景中LSTM的典型应用？","options":["A. 图像分类", "B. 攻击行为序列建模检测多步攻击", "C. 文件存储", "D. 加密"],"correctIndex":1,"explanation":"LSTM擅长序列建模适合检测分步骤进行的复合攻击行为。"},
+    {"question":"GRU与LSTM的主要区别？","options":["A. 完全相同", "B. GRU简化只有重置门/更新门参数更少", "C. GRU更复杂", "D. GRU不能处理序列"],"correctIndex":1,"explanation":"GRU将遗忘门+输入门合并为更新门减少参数量训练更快。"},
+    {"question":"LSTM的hidden_size参数含义？","options":["A. 层数", "B. 隐藏状态向量的维度", "C. 输入维度", "D. 训练次数"],"correctIndex":1,"explanation":"hidden_size决定LSTM单元的记忆容量大小和表达能力。"},
+    {"question":"变长序列LSTM如何处理？","options":["A. 必须定长", "B. pack_padded_sequence掩码跳过padding", "C. 截断", "D. 忽略"],"correctIndex":1,"explanation":"PyTorch的pack_padded_sequence允许LSTM忽略填充部分高效处理变长。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\nclass AttackSeqLSTM(nn.Module):\n    def __init__(self, input_size, hidden_size=128, num_layers=2, num_classes=2):\n        super().__init__()\n        self.lstm = nn.LSTM(input_size, hidden_size, num_layers,\n                            batch_first=True, dropout=0.3)\n        self.classifier = nn.Sequential(\n            nn.Linear(hidden_size, 64),\n            nn.ReLU(), nn.Dropout(0.5),\n            nn.Linear(64, num_classes)\n        )\n    def forward(self, x):\n        # x: (batch, seq_len, input_size)\n        _, (h_n, _) = self.lstm(x)\n        return self.classifier(h_n[-1])\n\n# 攻击行为序列检测\nmodel = AttackSeqLSTM(input_size=20, hidden_size=128)\nprint(f\"LSTM params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"LSTM攻击行为序列检测：建模多步攻击的时间依赖关系"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）实验","description":"搭建RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握RNN/LSTM原理（循环状态/门控/梯度消失/BPTT）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"RNN/LSTM原理（循环状态/门控/梯学习要点","content":"学习RNN/LSTM原理（循环状态/门控/梯关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-69", day: 69, title: "LSTM流量预测与异常检测", subtitle: "LSTM流量预测与异常检测",
+    objectives: ['理解LSTM流量预测与异常检测的核心概念和原理', '掌握LSTM流量预测与异常检测的技术实现方法', '了解LSTM流量预测与异常检测在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "LSTM流量预测与异常检测处理序列数据的神经网络。LSTM通过遗忘门/输入门/输出门解决长序列梯度消失问题；GRU简化为重置门/更新门，参数更少。\\n\\n安全应用：攻击行为序列建模(多步攻击检测)、网络流时间序列预测(流量基线)、API调用序列恶意检测、键盘行为生物识别。\\n\\n架构：LSTM(hidden_size=128,num_layers=2)→Dense(64,ReLU)→Dropout(0.5)→Dense(num_classes)。序列预处理：定长截断/填充+标准化。",
+    keyPoints: ['LSTM流量预测与异常检测是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"LSTM相比传统RNN的核心改进？","options":["A. 更快", "B. 门控机制解决长序列梯度消失", "C. 更深的网络", "D. 不需要数据"],"correctIndex":1,"explanation":"通过遗忘门/输入门/输出门控制信息流解决长距离依赖问题。"},
+    {"question":"安全场景中LSTM的典型应用？","options":["A. 图像分类", "B. 攻击行为序列建模检测多步攻击", "C. 文件存储", "D. 加密"],"correctIndex":1,"explanation":"LSTM擅长序列建模适合检测分步骤进行的复合攻击行为。"},
+    {"question":"GRU与LSTM的主要区别？","options":["A. 完全相同", "B. GRU简化只有重置门/更新门参数更少", "C. GRU更复杂", "D. GRU不能处理序列"],"correctIndex":1,"explanation":"GRU将遗忘门+输入门合并为更新门减少参数量训练更快。"},
+    {"question":"LSTM的hidden_size参数含义？","options":["A. 层数", "B. 隐藏状态向量的维度", "C. 输入维度", "D. 训练次数"],"correctIndex":1,"explanation":"hidden_size决定LSTM单元的记忆容量大小和表达能力。"},
+    {"question":"变长序列LSTM如何处理？","options":["A. 必须定长", "B. pack_padded_sequence掩码跳过padding", "C. 截断", "D. 忽略"],"correctIndex":1,"explanation":"PyTorch的pack_padded_sequence允许LSTM忽略填充部分高效处理变长。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\nclass AttackSeqLSTM(nn.Module):\n    def __init__(self, input_size, hidden_size=128, num_layers=2, num_classes=2):\n        super().__init__()\n        self.lstm = nn.LSTM(input_size, hidden_size, num_layers,\n                            batch_first=True, dropout=0.3)\n        self.classifier = nn.Sequential(\n            nn.Linear(hidden_size, 64),\n            nn.ReLU(), nn.Dropout(0.5),\n            nn.Linear(64, num_classes)\n        )\n    def forward(self, x):\n        # x: (batch, seq_len, input_size)\n        _, (h_n, _) = self.lstm(x)\n        return self.classifier(h_n[-1])\n\n# 攻击行为序列检测\nmodel = AttackSeqLSTM(input_size=20, hidden_size=128)\nprint(f\"LSTM params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"LSTM攻击行为序列检测：建模多步攻击的时间依赖关系"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"LSTM流量预测与异常检测实验","description":"搭建LSTM流量预测与异常检测相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备LSTM流量预测与异常检测实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握LSTM流量预测与异常检测的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"LSTM流量预测与异常检测学习要点","content":"学习LSTM流量预测与异常检测关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-70", day: 70, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week11: CyberDay[] = [
-  { id: "ai-71", day: 71, title: "AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）", subtitle: "AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）",
-    objectives: ['理解AutoEncoder原理（编码器/解码的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）\n\n实践任务：搭建浅层AE，对正常流量学习压缩表示\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['AutoEncoder原理（编码器/解码器/重构误差/瓶颈层', '实践: 搭建浅层AE，对正常流量学习压缩表示'] },
-  { id: "ai-72", day: 72, title: "变分自编码器 (VAE)", subtitle: "变分自编码器 (VAE)",
-    objectives: ['理解变分自编码器 (VAE)的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 变分自编码器 (VAE)\n\n实践任务：VAE生成网络流量模拟数据，评估生成质量\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['变分自编码器 (VAE)', '实践: VAE生成网络流量模拟数据，评估生成质量'] },
-  { id: "ai-73", day: 73, title: "去噪/稀疏/收缩自编码器", subtitle: "去噪/稀疏/收缩自编码器",
-    objectives: ['理解去噪/稀疏/收缩自编码器的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 去噪/稀疏/收缩自编码器\n\n实践任务：对比3种AE变体在异常检测上的重构误差分布\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['去噪/稀疏/收缩自编码器', '实践: 对比3种AE变体在异常检测上的重构误差分布'] },
-  { id: "ai-74", day: 74, title: "AE异常检测实战：异常流量识别", subtitle: "AE异常检测实战：异常流量识别",
-    objectives: ['理解AE异常检测实战：异常流量识别的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## AE异常检测实战：异常流量识别\n\n实践任务：仅用正常流量训练AE→重构误差阈值→检测未知攻击\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['AE异常检测实战：异常流量识别', '实践: 仅用正常流量训练AE→重构误差阈值→检测未知攻击'] },
-  { id: "ai-75", day: 75, title: "GAN基础（生成器/判别器/对抗训练）", subtitle: "GAN基础（生成器/判别器/对抗训练）",
-    objectives: ['理解GAN基础（生成器/判别器/对抗训练）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## GAN基础（生成器/判别器/对抗训练）\n\n实践任务：训练一个DCGAN生成MNIST图像，理解博弈过程\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['GAN基础（生成器/判别器/对抗训练）', '实践: 训练一个DCGAN生成MNIST图像，理解博弈过程'] },
-  { id: "ai-76", day: 76, title: "GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）", subtitle: "GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）",
-    objectives: ['理解GAN在安全中的应用（恶意样本生成/流量的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）\n\n实践任务：用GAN生成对抗性流量样本，测试IDS的检测率\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）', '实践: 用GAN生成对抗性流量样本，测试IDS的检测率'] },
-  { id: "ai-77", day: 77, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：AE/GAN在安全检测和攻防中的能力边界分析\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: AE/GAN在安全检测和攻防中的能力边界分析'] }
+    { id: "ai-71", day: 71, title: "AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）", subtitle: "AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）",
+    objectives: ['理解AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）的核心概念和原理', '掌握AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）的技术实现方法', '了解AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）通过重构输入学习数据低维表示。正常数据重构误差小，异常数据重构误差大。\\n\\n架构：编码器(压缩)→瓶颈层(低维表示)→解码器(重建)。重建误差(reconstruction error=||x-x\'||²)作为异常分数。\\n\\n安全应用：网络流量异常检测、系统调用序列异常检测、日志异常检测。\\n\\n变体：Sparse AE(加L1正则)、Denoising AE(加噪声训练提高鲁棒性)、VAE(生成模型可计算概率)。PyTorch实现：encoder=3层全连接(渐进降维)+decoder=对称3层+均方误差loss。",
+    keyPoints: ['AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"AutoEncoder用于异常检测的机制？","options":["A. 分类", "B. 正常样本重构误差小异常样本重构误差大", "C. 聚类", "D. 回归"],"correctIndex":1,"explanation":"AE学到正常数据分布因此异常数据重构效果差误差大。"},
+    {"question":"VAE相比传统AE的主要区别？","options":["A. 更深", "B. 学习潜在分布可采样生成", "C. 更快", "D. 不需要解码器"],"correctIndex":1,"explanation":"VAE编码到概率分布μ,σ再从分布z采样解码到生成输出。"},
+    {"question":"Denoising AE的训练方式？","options":["A. 标准训练", "B. 输入加噪声要求重建干净数据", "C. 只用解码器", "D. 无监督"],"correctIndex":1,"explanation":"Denoising AE在输入加入噪声迫使模型学到更鲁棒的特征表示。"},
+    {"question":"AE常见的瓶颈层维度设置？","options":["A. 随便选", "B. 远小于输入维度", "C. 等于输入", "D. 大于输入"],"correctIndex":1,"explanation":"瓶颈层必须远小于输入维度才能压缩信息提取关键特征。"},
+    {"question":"用AE做异常检测如何设定阈值？","options":["A. 固定值", "B. 训练集重构误差的百分位数(如95%)", "C. 随机", "D. 平均值"],"correctIndex":1,"explanation":"用训练集正常数据重构误差的指定百分位数做阈值是最常见方式。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\nclass AutoEncoder(nn.Module):\n    def __init__(self, input_dim):\n        super().__init__()\n        self.encoder = nn.Sequential(\n            nn.Linear(input_dim, 64),\n            nn.ReLU(),\n            nn.Linear(64, 32),\n            nn.ReLU(),\n            nn.Linear(32, 8),  # bottleneck\n        )\n        self.decoder = nn.Sequential(\n            nn.Linear(8, 32),\n            nn.ReLU(),\n            nn.Linear(32, 64),\n            nn.ReLU(),\n            nn.Linear(64, input_dim),\n        )\n    \n    def forward(self, x):\n        z = self.encoder(x)\n        x_hat = self.decoder(z)\n        return x_hat, z\n\n# 训练后用重构误差判断异常\n# recon_error = torch.mean((x - x_hat)**2, dim=1)\n# is_anomaly = recon_error > threshold","explanation":"PyTorch自编码器：通过重构误差检测异常流量"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）实验","description":"搭建AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握AutoEncoder原理（编码器/解码器/重构误差/瓶颈层）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"AutoEncoder原理（编码器/解码学习要点","content":"学习AutoEncoder原理（编码器/解码关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-72", day: 72, title: "变分自编码器 (VAE)", subtitle: "变分自编码器 (VAE)",
+    objectives: ['理解变分自编码器 (VAE)的核心概念和原理', '掌握变分自编码器 (VAE)的技术实现方法', '了解变分自编码器 (VAE)在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "变分自编码器 (VAE)通过重构输入学习数据低维表示。正常数据重构误差小，异常数据重构误差大。\\n\\n架构：编码器(压缩)→瓶颈层(低维表示)→解码器(重建)。重建误差(reconstruction error=||x-x\'||²)作为异常分数。\\n\\n安全应用：网络流量异常检测、系统调用序列异常检测、日志异常检测。\\n\\n变体：Sparse AE(加L1正则)、Denoising AE(加噪声训练提高鲁棒性)、VAE(生成模型可计算概率)。PyTorch实现：encoder=3层全连接(渐进降维)+decoder=对称3层+均方误差loss。",
+    keyPoints: ['变分自编码器 (VAE)是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"变分自编码器 (VAE)在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 变分自编码器 (VAE)\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"变分自编码器 (VAE)... Model accuracy: {score:.3f}\")","explanation":"变分自编码器 (VAE)的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"变分自编码器 (VAE)实验","description":"搭建变分自编码器 (VAE)相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备变分自编码器 (VAE)实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握变分自编码器 (VAE)的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"变分自编码器 (VAE)学习要点","content":"学习变分自编码器 (VAE)关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-73", day: 73, title: "去噪/稀疏/收缩自编码器", subtitle: "去噪/稀疏/收缩自编码器",
+    objectives: ['理解去噪/稀疏/收缩自编码器的核心概念和原理', '掌握去噪/稀疏/收缩自编码器的技术实现方法', '了解去噪/稀疏/收缩自编码器在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "去噪/稀疏/收缩自编码器是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解去噪/稀疏/收缩自编码器在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['去噪/稀疏/收缩自编码器是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"去噪/稀疏/收缩自编码器在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 去噪/稀疏/收缩自编码器\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"去噪/稀疏/收缩自编码器... Model accuracy: {score:.3f}\")","explanation":"去噪/稀疏/收缩自编码器的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"去噪/稀疏/收缩自编码器实验","description":"搭建去噪/稀疏/收缩自编码器相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备去噪/稀疏/收缩自编码器实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握去噪/稀疏/收缩自编码器的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"去噪/稀疏/收缩自编码器学习要点","content":"学习去噪/稀疏/收缩自编码器关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-74", day: 74, title: "AE异常检测实战：异常流量识别", subtitle: "AE异常检测实战：异常流量识别",
+    objectives: ['理解AE异常检测实战：异常流量识别的核心概念和原理', '掌握AE异常检测实战：异常流量识别的技术实现方法', '了解AE异常检测实战：异常流量识别在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "AE异常检测实战：异常流量识别通过重构输入学习数据低维表示。正常数据重构误差小，异常数据重构误差大。\\n\\n架构：编码器(压缩)→瓶颈层(低维表示)→解码器(重建)。重建误差(reconstruction error=||x-x\'||²)作为异常分数。\\n\\n安全应用：网络流量异常检测、系统调用序列异常检测、日志异常检测。\\n\\n变体：Sparse AE(加L1正则)、Denoising AE(加噪声训练提高鲁棒性)、VAE(生成模型可计算概率)。PyTorch实现：encoder=3层全连接(渐进降维)+decoder=对称3层+均方误差loss。",
+    keyPoints: ['AE异常检测实战：异常流量识别是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"AE异常检测实战：异常流量识别在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# AE异常检测实战：异常流量识别\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"AE异常检测实战：异常流量识别... Model accuracy: {score:.3f}\")","explanation":"AE异常检测实战：异常流量识别的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"AE异常检测实战：异常流量识别实验","description":"搭建AE异常检测实战：异常流量识别相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备AE异常检测实战：异常流量识别实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握AE异常检测实战：异常流量识别的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"AE异常检测实战：异常流量识别学习要点","content":"学习AE异常检测实战：异常流量识别关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-75", day: 75, title: "GAN基础（生成器/判别器/对抗训练）", subtitle: "GAN基础（生成器/判别器/对抗训练）",
+    objectives: ['理解GAN基础（生成器/判别器/对抗训练）的核心概念和原理', '掌握GAN基础（生成器/判别器/对抗训练）的技术实现方法', '了解GAN基础（生成器/判别器/对抗训练）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "GAN基础（生成器/判别器/对抗训练）由生成器G和判别器D对抗训练：G生成假样本，D区分真假。最终G生成以假乱真的数据。\\n\\n安全攻击面：GAN生成逼真钓鱼邮件/恶意payload绕过检测、GAN生成对抗样本逃逸ML模型。\\n\\n安全防御面：GAN生成攻击样本增强训练集(WGAN-GP)、GAN检测异常流量分布变化。\\n\\n训练技巧：Wasserstein Loss更稳定、Gradient Penalty防梯度爆炸、Spectral Normalization稳定D。核心代码：GAN(generator, discriminator, latent_dim=100)。",
+    keyPoints: ['GAN基础（生成器/判别器/对抗训练）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"GAN由哪些模块组成？","options":["A. 单模块", "B. 生成器G和判别器D对抗训练", "C. 三个模块", "D. 只在编码器"],"correctIndex":1,"explanation":"G生成假样本让D难区分D努力区分真假两者对抗提升。"},
+    {"question":"GAN在安全中的攻击应用？","options":["A. 防御", "B. 生成逼真对抗样本绕过检测", "C. 增强", "D. 无应用"],"correctIndex":1,"explanation":"GAN可生成对抗样本欺骗IDS但也可用于生成训练样本增强模型。"},
+    {"question":"WGAN相比标准GAN的改进？","options":["A. 相同", "B. Wasserstein距离替代JS散度训练更稳定", "C. 更慢", "D. 更简单"],"correctIndex":1,"explanation":"Wasserstein距离提供更有意义的梯度解决标准GAN的模式坍塌问题。"},
+    {"question":"GAN训练不稳定的表现？","options":["A. 很快", "B. Mode Collapse生成样本单一缺乏多样性", "C. 完美", "D. 不收敛"],"correctIndex":1,"explanation":"模式坍塌是GAN训练中的常见问题意味着G只生成少数几种样本。"},
+    {"question":"Gradient Penalty(WGAN-GP)的作用？","options":["A. 随机", "B. 替代权重裁剪更平滑满足Lipschitz约束", "C. 加噪", "D. 无用"],"correctIndex":1,"explanation":"Gradient Penalty对梯度范数做惩罚替代WGAN的粗暴权重裁剪效果更好。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"GAN基础（生成器/判别器/对抗训练）实验","description":"搭建GAN基础（生成器/判别器/对抗训练）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备GAN基础（生成器/判别器/对抗训练）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握GAN基础（生成器/判别器/对抗训练）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"GAN基础（生成器/判别器/对抗训练）学习要点","content":"学习GAN基础（生成器/判别器/对抗训练）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-76", day: 76, title: "GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）", subtitle: "GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）",
+    objectives: ['理解GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）的核心概念和原理', '掌握GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）的技术实现方法', '了解GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）由生成器G和判别器D对抗训练：G生成假样本，D区分真假。最终G生成以假乱真的数据。\\n\\n安全攻击面：GAN生成逼真钓鱼邮件/恶意payload绕过检测、GAN生成对抗样本逃逸ML模型。\\n\\n安全防御面：GAN生成攻击样本增强训练集(WGAN-GP)、GAN检测异常流量分布变化。\\n\\n训练技巧：Wasserstein Loss更稳定、Gradient Penalty防梯度爆炸、Spectral Normalization稳定D。核心代码：GAN(generator, discriminator, latent_dim=100)。",
+    keyPoints: ['GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"GAN由哪些模块组成？","options":["A. 单模块", "B. 生成器G和判别器D对抗训练", "C. 三个模块", "D. 只在编码器"],"correctIndex":1,"explanation":"G生成假样本让D难区分D努力区分真假两者对抗提升。"},
+    {"question":"GAN在安全中的攻击应用？","options":["A. 防御", "B. 生成逼真对抗样本绕过检测", "C. 增强", "D. 无应用"],"correctIndex":1,"explanation":"GAN可生成对抗样本欺骗IDS但也可用于生成训练样本增强模型。"},
+    {"question":"WGAN相比标准GAN的改进？","options":["A. 相同", "B. Wasserstein距离替代JS散度训练更稳定", "C. 更慢", "D. 更简单"],"correctIndex":1,"explanation":"Wasserstein距离提供更有意义的梯度解决标准GAN的模式坍塌问题。"},
+    {"question":"GAN训练不稳定的表现？","options":["A. 很快", "B. Mode Collapse生成样本单一缺乏多样性", "C. 完美", "D. 不收敛"],"correctIndex":1,"explanation":"模式坍塌是GAN训练中的常见问题意味着G只生成少数几种样本。"},
+    {"question":"Gradient Penalty(WGAN-GP)的作用？","options":["A. 随机", "B. 替代权重裁剪更平滑满足Lipschitz约束", "C. 加噪", "D. 无用"],"correctIndex":1,"explanation":"Gradient Penalty对梯度范数做惩罚替代WGAN的粗暴权重裁剪效果更好。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"GAN在安全中的应用（恶意样本生成/流量... Model accuracy: {score:.3f}\")","explanation":"GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）实验","description":"搭建GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握GAN在安全中的应用（恶意样本生成/流量生成/绕过检测）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"GAN在安全中的应用（恶意样本生成/流量学习要点","content":"学习GAN在安全中的应用（恶意样本生成/流量关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-77", day: 77, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week12: CyberDay[] = [
-  { id: "ai-78", day: 78, title: "图论基础（邻接矩阵/度/中心性/PageRank/社区发现）", subtitle: "图论基础（邻接矩阵/度/中心性/PageRank/社区发现）",
-    objectives: ['理解图论基础（邻接矩阵/度/中心性/Page的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 图论基础（邻接矩阵/度/中心性/PageRank/社区发现）\n\n实践任务：构建网络通信拓扑图，分析关键节点和攻击路径\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['图论基础（邻接矩阵/度/中心性/PageRank/社区发现）', '实践: 构建网络通信拓扑图，分析关键节点和攻击路径'] },
-  { id: "ai-79", day: 79, title: "GNN原理（消息传递/图卷积GCN/GraphSAGE）", subtitle: "GNN原理（消息传递/图卷积GCN/GraphSAGE）",
-    objectives: ['理解GNN原理（消息传递/图卷积GCN/Gr的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## GNN原理（消息传递/图卷积GCN/GraphSAGE）\n\n实践任务：手写GCN层的前向传播，理解邻居聚合机制\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['GNN原理（消息传递/图卷积GCN/GraphSAGE）', '实践: 手写GCN层的前向传播，理解邻居聚合机制'] },
-  { id: "ai-80", day: 80, title: "GNN攻击检测：网络入侵图分析", subtitle: "GNN攻击检测：网络入侵图分析",
-    objectives: ['理解GNN攻击检测：网络入侵图分析的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## GNN攻击检测：网络入侵图分析\n\n实践任务：将流量日志转为主机通信图→GCN节点分类→检测被攻击主机\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['GNN攻击检测：网络入侵图分析', '实践: 将流量日志转为主机通信图→GCN节点分类→检测被攻击主机'] },
-  { id: "ai-81", day: 81, title: "Transformer原理（Self-Attention/Multi-Head/位置编码）", subtitle: "Transformer原理（Self-Attention/Multi-He...",
-    objectives: ['理解Transformer原理（Self-A的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## Transformer原理（Self-Attention/Multi-Head/位置编码）\n\n实践任务：手写Scaled Dot-Product Attention，理解Q/K/V\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['Transformer原理（Self-Attention/M', '实践: 手写Scaled Dot-Product Attention'] },
-  { id: "ai-82", day: 82, title: "Transformer在安全文本中的应用", subtitle: "Transformer在安全文本中的应用",
-    objectives: ['理解Transformer在安全文本中的应用的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## Transformer在安全文本中的应用\n\n实践任务：用Transformer编码HTTP请求payload，检测Web攻击\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['Transformer在安全文本中的应用', '实践: 用Transformer编码HTTP请求payload，检测'] },
-  { id: "ai-83", day: 83, title: "预训练模型 (BERT/RoBERTa/SecBERT)", subtitle: "预训练模型 (BERT/RoBERTa/SecBERT)",
-    objectives: ['理解预训练模型 (BERT/RoBERTa/的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 预训练模型 (BERT/RoBERTa/SecBERT)\n\n实践任务：用SecBERT做安全日志的语义编码与异常检测\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['预训练模型 (BERT/RoBERTa/SecBERT)', '实践: 用SecBERT做安全日志的语义编码与异常检测'] },
-  { id: "ai-84", day: 84, title: "**阶段总结**", subtitle: "**阶段总结**",
-    objectives: ['理解**阶段总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **阶段总结**\n\n实践任务：GNN+Transformer在安全领域的前沿应用调研报告\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**阶段总结**', '实践: GNN+Transformer在安全领域的前沿应用调研报告'] }
+    { id: "ai-78", day: 78, title: "图论基础（邻接矩阵/度/中心性/PageRank/社区发现）", subtitle: "图论基础（邻接矩阵/度/中心性/PageRank/社区发现）",
+    objectives: ['理解图论基础（邻接矩阵/度/中心性/PageRank/社区发现）的核心概念和原理', '掌握图论基础（邻接矩阵/度/中心性/PageRank/社区发现）的技术实现方法', '了解图论基础（邻接矩阵/度/中心性/PageRank/社区发现）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "图论基础（邻接矩阵/度/中心性/PageRank/社区发现）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解图论基础（邻接矩阵/度/中心性/PageRank/社区发现）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['图论基础（邻接矩阵/度/中心性/PageRank/社区发现）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"图论基础（邻接矩阵/度/中心性/PageRank/社区发现）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 图论基础（邻接矩阵/度/中心性/PageRank/社区发现）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"图论基础（邻接矩阵/度/中心性/Page... Model accuracy: {score:.3f}\")","explanation":"图论基础（邻接矩阵/度/中心性/PageRank/社区发现）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"图论基础（邻接矩阵/度/中心性/PageRank/社区发现）实验","description":"搭建图论基础（邻接矩阵/度/中心性/PageRank/社区发现）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备图论基础（邻接矩阵/度/中心性/PageRank/社区发现）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握图论基础（邻接矩阵/度/中心性/PageRank/社区发现）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"图论基础（邻接矩阵/度/中心性/Page学习要点","content":"学习图论基础（邻接矩阵/度/中心性/Page关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-79", day: 79, title: "GNN原理（消息传递/图卷积GCN/GraphSAGE）", subtitle: "GNN原理（消息传递/图卷积GCN/GraphSAGE）",
+    objectives: ['理解GNN原理（消息传递/图卷积GCN/GraphSAGE）的核心概念和原理', '掌握GNN原理（消息传递/图卷积GCN/GraphSAGE）的技术实现方法', '了解GNN原理（消息传递/图卷积GCN/GraphSAGE）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "GNN原理（消息传递/图卷积GCN/GraphSAGE）通过卷积核在输入上滑动提取局部特征。相比全连接：参数共享大幅减少参数量、平移不变性适应位置变化。\\n\\n安全应用：恶意软件可视化(字节转灰度图/马尔可夫图)用CNN分类、网络流量时空特征(流矩阵)分析、Web payload模式检测。\\n\\n架构：Conv2D→BatchNorm→ReLU→MaxPool→...→Flatten→Dense→Softmax。关键超参：kernel_size(3或5)、filters(32/64递进)、pool_size(2)。PyTorch实现用nn.Conv2d。",
+    keyPoints: ['GNN原理（消息传递/图卷积GCN/GraphSAGE）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"CNN的平移不变性对安全有什么好处？","options":["A. 无关", "B. 恶意payload位置变化不影响检测", "C. 加速", "D. 降低内存"],"correctIndex":1,"explanation":"平移不变性使CNN对输入模式位置不敏感适合检测变种payload。"},
+    {"question":"恶意软件灰度图的主要用途？","options":["A. 美化", "B. 将二进制文件转为图像用于CNN分类", "C. 压缩", "D. 加密"],"correctIndex":1,"explanation":"字节转灰度图把恶意软件分类转为图像分类问题CNN天然适合。"},
+    {"question":"卷积层的核心操作？","options":["A. 全连接", "B. 卷积核在输入上滑动做点积", "C. 随机采样", "D. 矩阵乘法"],"correctIndex":1,"explanation":"卷积核与输入局部区域做内积提取局部特征。"},
+    {"question":"MaxPooling的安全意义？","options":["A. 保持位置", "B. 下采样提取关键特征降低对精确位置的敏感度", "C. 加密", "D. 加噪"],"correctIndex":1,"explanation":"MaxPooling降维并保持显著特征也增加了对抗样本的抗干扰能力。"},
+    {"question":"CNN BatchNorm的作用？","options":["A. 归一化", "B. 加速训练+缓解梯度问题", "C. 过拟合", "D. 降维"],"correctIndex":1,"explanation":"BatchNorm标准化每层输入加速收敛缓解梯度消失爆炸问题。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch.nn as nn\n\nclass MalwareCNN(nn.Module):\n    def __init__(self, num_classes=9):\n        super().__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(1, 32, 3, padding=1),\n            nn.BatchNorm2d(32), nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(32, 64, 3, padding=1),\n            nn.BatchNorm2d(64), nn.ReLU(), nn.MaxPool2d(2),\n            nn.Conv2d(64, 128, 3, padding=1),\n            nn.BatchNorm2d(128), nn.ReLU(), nn.AdaptiveAvgPool2d((4,4)),\n        )\n        self.classifier = nn.Sequential(\n            nn.Flatten(),\n            nn.Linear(128*4*4, 128),\n            nn.ReLU(), nn.Dropout(0.5),\n            nn.Linear(128, num_classes),\n        )\n    def forward(self, x): return self.classifier(self.features(x))\n\nmodel = MalwareCNN(num_classes=9)\nprint(f\"Params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"恶意软件灰度图CNN：3层卷积+分类头自动识别恶意软件家族"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"GNN原理（消息传递/图卷积GCN/GraphSAGE）实验","description":"搭建GNN原理（消息传递/图卷积GCN/GraphSAGE）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备GNN原理（消息传递/图卷积GCN/GraphSAGE）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握GNN原理（消息传递/图卷积GCN/GraphSAGE）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"GNN原理（消息传递/图卷积GCN/Gr学习要点","content":"学习GNN原理（消息传递/图卷积GCN/Gr关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-80", day: 80, title: "GNN攻击检测：网络入侵图分析", subtitle: "GNN攻击检测：网络入侵图分析",
+    objectives: ['理解GNN攻击检测：网络入侵图分析的核心概念和原理', '掌握GNN攻击检测：网络入侵图分析的技术实现方法', '了解GNN攻击检测：网络入侵图分析在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "GNN攻击检测：网络入侵图分析专门处理图结构数据(节点+边)。消息传递框架：节点聚合邻居信息→更新自身表示→重复多次。GCN/GAT/GraphSAGE是三大代表。\\n\\n安全应用：威胁情报关联图(IP-域名-哈希-攻击者)、APT攻击路径图、代码依赖关系安全分析。\\n\\n工具：PyG(PyTorch Geometric)节点分类、DGL(Deep Graph Library)大规模图训练、NetworkX图构建。实战：IP通信关系图→GCN节点分类→标注恶意IP。",
+    keyPoints: ['GNN攻击检测：网络入侵图分析是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"GCN的层间传播规则？","options":["A. 随机", "B. H^(l+1)=σ(D_hat^(-1/2)A_hat D_hat^(-1/2)H^(l)W^(l))", "C. 简单", "D. 线性"],"correctIndex":1,"explanation":"GCN通过归一化邻接矩阵聚合邻居特征实现图上的卷积操作。"},
+    {"question":"GNN在威胁情报中的应用？","options":["A. 文本", "B. 构建IP-域名-哈希关联图自动发现攻击基础设施", "C. 图像", "D. 音频"],"correctIndex":1,"explanation":"威胁情报本质是图结构GNN能自动发现关联实体和攻击组织归属。"},
+    {"question":"GraphSAGE如何处理大图？","options":["A. 全图", "B. 采样邻居子图使得单个GPU也能训练十亿节点图", "C. 裁剪", "D. 忽略"],"correctIndex":1,"explanation":"GraphSAGE对每个节点采样固定数量的邻居支持mini-batch训练扩展至大图。"},
+    {"question":"GAT注意力机制的作用？","options":["A. 随机", "B. 自动学习邻居权重区分不同邻居的重要性", "C. 固定", "D. 平均"],"correctIndex":1,"explanation":"不同邻居对节点的影响不同GAT让模型自动学哪个邻居更重要。"},
+    {"question":"PyG(PyTorch Geometric)的主要优势？","options":["A. 简单", "B. 专门的图神经网络框架消息传递自动批处理", "C. 通用", "D. 无关"],"correctIndex":1,"explanation":"PyG提供大量GNN层和数据集是图神经网络研究和应用的首选框架。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# GNN攻击检测：网络入侵图分析\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"GNN攻击检测：网络入侵图分析... Model accuracy: {score:.3f}\")","explanation":"GNN攻击检测：网络入侵图分析的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"GNN攻击检测：网络入侵图分析实验","description":"搭建GNN攻击检测：网络入侵图分析相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备GNN攻击检测：网络入侵图分析实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握GNN攻击检测：网络入侵图分析的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"GNN攻击检测：网络入侵图分析学习要点","content":"学习GNN攻击检测：网络入侵图分析关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-81", day: 81, title: "Transformer原理（Self-Attention/Multi-Head/位置编码）", subtitle: "Transformer原理（Self-Attention/Multi-He...",
+    objectives: ['理解Transformer原理（Self-Attention/Multi-Head/位置编码）的核心概念和原理', '掌握Transformer原理（Self-Attention/Multi-Head/位置编码）的技术实现方法', '了解Transformer原理（Self-Attention/Multi-Head/位置编码）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "Transformer原理（Self-Attention/Multi-Head/位置编码）通过自注意力机制建模全局依赖关系。Self-Attention:Q=XWq,K=XWk,V=XWv → Attention(Q,K,V)=softmax(QK^T/√dk)V。\\n\\n相比RNN优势：并行计算(非序列处理)、长距离依赖(直接对应位置)、可解释性(注意力权重可视化哪个特征受关注)。\\n\\n安全应用：Transformer编码器做日志异常检测、Multi-Head Attention分析多维度异常、位置编码捕获时间依赖。PyTorch: nn.MultiheadAttention(embed_dim, num_heads)。",
+    keyPoints: ['Transformer原理（Self-Attention/Multi-Head/位置编码）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Self-Attention的核心计算？","options":["A. 简单求和", "B. softmax(QK^T/√dk)V", "C. 矩阵乘法", "D. 卷积"],"correctIndex":1,"explanation":"Query与所有Key计算相似度softmax归一化后加权Value。"},
+    {"question":"Transformer相比LSTM的主要优势？","options":["A. 更简单", "B. 并行计算+长距离依赖建模", "C. 更少参数", "D. 不需要训练"],"correctIndex":1,"explanation":"Transformer不依赖时间步展开可并行处理并直接建立任意位置关联。"},
+    {"question":"Multi-Head Attention的含义？","options":["A. 多头", "B. 多组Q/K/V在不同子空间学习不同的注意力模式", "C. 单个", "D. 共享"],"correctIndex":1,"explanation":"多个注意力头并行从不同角度学习特征关系提升模型表达能力。"},
+    {"question":"位置编码(Positional Encoding)的作用？","options":["A. 不需要", "B. 注入位置信息因为Self-Attention本身不感知顺序", "C. 加密", "D. 降维"],"correctIndex":1,"explanation":"没有位置编码Transformer无法区分序列顺序只能当成集合处理。"},
+    {"question":"Transformer在安全中的优势应用？","options":["A. 简单任务", "B. 多维度长序列日志关联分析", "C. 不适用", "D. 替代CNN"],"correctIndex":1,"explanation":"Transformer能同时建模多维度特征的复杂关联关系适合SIEM分析。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\nclass LogTransformer(nn.Module):\n    def __init__(self, d_model=64, nhead=4, num_layers=2):\n        super().__init__()\n        self.encoder = nn.TransformerEncoder(\n            nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward=256,\n                                       dropout=0.1, batch_first=True),\n            num_layers\n        )\n        self.classifier = nn.Linear(d_model, 2)\n    def forward(self, x):\n        return self.classifier(self.encoder(x).mean(dim=1))\n\n# 日志序列异常检测\nmodel = LogTransformer(d_model=64, nhead=4, num_layers=2)\nprint(f\"Transformer params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"Transformer日志异常检测：Self-Attention捕获全局特征依赖"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"Transformer原理（Self-Attention/Multi-Head/实验","description":"搭建Transformer原理（Self-Attention/Multi-Head/相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备Transformer原理（Self-Attention/Multi-Head/实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握Transformer原理（Self-Attention/Multi-Head/的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"Transformer原理（Self-A学习要点","content":"学习Transformer原理（Self-A关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-82", day: 82, title: "Transformer在安全文本中的应用", subtitle: "Transformer在安全文本中的应用",
+    objectives: ['理解Transformer在安全文本中的应用的核心概念和原理', '掌握Transformer在安全文本中的应用的技术实现方法', '了解Transformer在安全文本中的应用在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "Transformer在安全文本中的应用通过自注意力机制建模全局依赖关系。Self-Attention:Q=XWq,K=XWk,V=XWv → Attention(Q,K,V)=softmax(QK^T/√dk)V。\\n\\n相比RNN优势：并行计算(非序列处理)、长距离依赖(直接对应位置)、可解释性(注意力权重可视化哪个特征受关注)。\\n\\n安全应用：Transformer编码器做日志异常检测、Multi-Head Attention分析多维度异常、位置编码捕获时间依赖。PyTorch: nn.MultiheadAttention(embed_dim, num_heads)。",
+    keyPoints: ['Transformer在安全文本中的应用是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Self-Attention的核心计算？","options":["A. 简单求和", "B. softmax(QK^T/√dk)V", "C. 矩阵乘法", "D. 卷积"],"correctIndex":1,"explanation":"Query与所有Key计算相似度softmax归一化后加权Value。"},
+    {"question":"Transformer相比LSTM的主要优势？","options":["A. 更简单", "B. 并行计算+长距离依赖建模", "C. 更少参数", "D. 不需要训练"],"correctIndex":1,"explanation":"Transformer不依赖时间步展开可并行处理并直接建立任意位置关联。"},
+    {"question":"Multi-Head Attention的含义？","options":["A. 多头", "B. 多组Q/K/V在不同子空间学习不同的注意力模式", "C. 单个", "D. 共享"],"correctIndex":1,"explanation":"多个注意力头并行从不同角度学习特征关系提升模型表达能力。"},
+    {"question":"位置编码(Positional Encoding)的作用？","options":["A. 不需要", "B. 注入位置信息因为Self-Attention本身不感知顺序", "C. 加密", "D. 降维"],"correctIndex":1,"explanation":"没有位置编码Transformer无法区分序列顺序只能当成集合处理。"},
+    {"question":"Transformer在安全中的优势应用？","options":["A. 简单任务", "B. 多维度长序列日志关联分析", "C. 不适用", "D. 替代CNN"],"correctIndex":1,"explanation":"Transformer能同时建模多维度特征的复杂关联关系适合SIEM分析。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\nclass LogTransformer(nn.Module):\n    def __init__(self, d_model=64, nhead=4, num_layers=2):\n        super().__init__()\n        self.encoder = nn.TransformerEncoder(\n            nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward=256,\n                                       dropout=0.1, batch_first=True),\n            num_layers\n        )\n        self.classifier = nn.Linear(d_model, 2)\n    def forward(self, x):\n        return self.classifier(self.encoder(x).mean(dim=1))\n\n# 日志序列异常检测\nmodel = LogTransformer(d_model=64, nhead=4, num_layers=2)\nprint(f\"Transformer params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"Transformer日志异常检测：Self-Attention捕获全局特征依赖"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"Transformer在安全文本中的应用实验","description":"搭建Transformer在安全文本中的应用相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备Transformer在安全文本中的应用实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握Transformer在安全文本中的应用的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"Transformer在安全文本中的应用学习要点","content":"学习Transformer在安全文本中的应用关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-83", day: 83, title: "预训练模型 (BERT/RoBERTa/SecBERT)", subtitle: "预训练模型 (BERT/RoBERTa/SecBERT)",
+    objectives: ['理解预训练模型 (BERT/RoBERTa/SecBERT)的核心概念和原理', '掌握预训练模型 (BERT/RoBERTa/SecBERT)的技术实现方法', '了解预训练模型 (BERT/RoBERTa/SecBERT)在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "预训练模型 (BERT/RoBERTa/SecBERT)是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解预训练模型 (BERT/RoBERTa/SecBERT)在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['预训练模型 (BERT/RoBERTa/SecBERT)是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"预训练模型 (BERT/RoBERTa/SecBERT)在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 预训练模型 (BERT/RoBERTa/SecBERT)\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"预训练模型 (BERT/RoBERTa/... Model accuracy: {score:.3f}\")","explanation":"预训练模型 (BERT/RoBERTa/SecBERT)的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"预训练模型 (BERT/RoBERTa/SecBERT)实验","description":"搭建预训练模型 (BERT/RoBERTa/SecBERT)相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备预训练模型 (BERT/RoBERTa/SecBERT)实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握预训练模型 (BERT/RoBERTa/SecBERT)的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"预训练模型 (BERT/RoBERTa/学习要点","content":"学习预训练模型 (BERT/RoBERTa/关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-84", day: 84, title: "阶段总结", subtitle: "阶段总结",
+    objectives: ['理解阶段总结的核心概念和原理', '掌握阶段总结的技术实现方法', '了解阶段总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['阶段总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 阶段总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"阶段总结... Model accuracy: {score:.3f}\")","explanation":"阶段总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"阶段总结实验","description":"搭建阶段总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备阶段总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握阶段总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"阶段总结学习要点","content":"学习阶段总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week13: CyberDay[] = [
-  { id: "ai-85", day: 85, title: "对抗样本理论基础（对抗扰动/Lp范数/威胁模型）", subtitle: "对抗样本理论基础（对抗扰动/Lp范数/威胁模型）",
-    objectives: ['理解对抗样本理论基础（对抗扰动/Lp范数/威的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 对抗样本理论基础（对抗扰动/Lp范数/威胁模型）\n\n实践任务：理解白盒/灰盒/黑盒、目标/无目标攻击的区别\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['对抗样本理论基础（对抗扰动/Lp范数/威胁模型）', '实践: 理解白盒/灰盒/黑盒、目标/无目标攻击的区别'] },
-  { id: "ai-86", day: 86, title: "FGSM（快速梯度符号法）原理与实现", subtitle: "FGSM（快速梯度符号法）原理与实现",
-    objectives: ['理解FGSM（快速梯度符号法）原理与实现的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## FGSM（快速梯度符号法）原理与实现\n\n实践任务：对图像分类器实现FGSM，可视化扰动和人眼不可察觉性\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['FGSM（快速梯度符号法）原理与实现', '实践: 对图像分类器实现FGSM，可视化扰动和人眼不可察觉性'] },
-  { id: "ai-87", day: 87, title: "迭代攻击（BIM/PGD/MIM）", subtitle: "迭代攻击（BIM/PGD/MIM）",
-    objectives: ['理解迭代攻击（BIM/PGD/MIM）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 迭代攻击（BIM/PGD/MIM）\n\n实践任务：对比FGSM(单步)和PGD(多步迭代)的攻击成功率\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['迭代攻击（BIM/PGD/MIM）', '实践: 对比FGSM(单步)和PGD(多步迭代)的攻击成功率'] },
-  { id: "ai-88", day: 88, title: "优化攻击（C&W/DeepFool）", subtitle: "优化攻击（C&W/DeepFool）",
-    objectives: ['理解优化攻击（C&W/DeepFool）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 优化攻击（C&W/DeepFool）\n\n实践任务：实现C&W攻击，理解最小扰动约束优化\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['优化攻击（C&W/DeepFool）', '实践: 实现C&W攻击，理解最小扰动约束优化'] },
-  { id: "ai-89", day: 89, title: "对IDS模型的FGSM/PGD攻击", subtitle: "对IDS模型的FGSM/PGD攻击",
-    objectives: ['理解对IDS模型的FGSM/PGD攻击的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 对IDS模型的FGSM/PGD攻击\n\n实践任务：在网络流量特征上添加对抗扰动，使IDS误判\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['对IDS模型的FGSM/PGD攻击', '实践: 在网络流量特征上添加对抗扰动，使IDS误判'] },
-  { id: "ai-90", day: 90, title: "对恶意软件检测的对抗攻击", subtitle: "对恶意软件检测的对抗攻击",
-    objectives: ['理解对恶意软件检测的对抗攻击的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 对恶意软件检测的对抗攻击\n\n实践任务：在PE特征向量上实施PGD，绕过恶意软件分类器\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['对恶意软件检测的对抗攻击', '实践: 在PE特征向量上实施PGD，绕过恶意软件分类器'] },
-  { id: "ai-91", day: 91, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：攻击方法横向对比：FGSM/PGD/C&W在IDS和MalDet上的效果\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: 攻击方法横向对比：FGSM/PGD/C&W在IDS和MalD'] }
+    { id: "ai-85", day: 85, title: "对抗样本理论基础（对抗扰动/Lp范数/威胁模型）", subtitle: "对抗样本理论基础（对抗扰动/Lp范数/威胁模型）",
+    objectives: ['理解对抗样本理论基础（对抗扰动/Lp范数/威胁模型）的核心概念和原理', '掌握对抗样本理论基础（对抗扰动/Lp范数/威胁模型）的技术实现方法', '了解对抗样本理论基础（对抗扰动/Lp范数/威胁模型）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "对抗样本理论基础（对抗扰动/Lp范数/威胁模型）通过对输入添加人眼不可见扰动使ML模型错误分类。核心攻击：FGSM(x\'=x+ε×sign(∇xJ))快速但粗略；PGD迭代多步攻击更强；C&W优化最小扰动。\\n\\n安全场景：对抗样本绕过IDS/NIDS检测、恶意软件检测逃逸、验证码识别欺骗。\\n\\n防御策略：对抗训练(训练集混入对抗样本)、梯度掩蔽、输入变换(JPEG压缩/随机裁剪)、检测器(二分类区分正常/对抗)。CleverHans库一键生成攻击/防御。",
+    keyPoints: ['对抗样本理论基础（对抗扰动/Lp范数/威胁模型）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM攻击的原理？","options":["A. 随机扰动", "B. x'=x+ε×sign(∇xJ)沿梯度方向单步扰动", "C. 迭代", "D. 重训练"],"correctIndex":1,"explanation":"FGSM计算损失对输入的梯度符号乘以小步长ε快速生成对抗样本。"},
+    {"question":"最有效的对抗防御方法？","options":["A. 不做防御", "B. 对抗训练(训练集包含对抗样本)", "C. 加密", "D. 删除模型"],"correctIndex":1,"explanation":"对抗训练在训练过程中注入对抗样本是目前验证最有效的通用防御。"},
+    {"question":"PGD相比FGSM的优势？","options":["A. 更快", "B. 多步迭代攻击更强", "C. 更简单", "D. 不需要梯度"],"correctIndex":1,"explanation":"PGD进行多步小扰动迭代每步投影回ε-ball产生更强的对抗样本。"},
+    {"question":"CleverHans库的功能？","options":["A. 数据处理", "B. 对抗攻击和防御的标准化实现", "C. 可视化", "D. 爬虫"],"correctIndex":1,"explanation":"CleverHans是AI对抗攻防的标准库提供多种攻击和防御方法。"},
+    {"question":"安全模型上线前必须做什么？","options":["A. 直接上线", "B. 对抗鲁棒性测试", "C. 加密", "D. 备份"],"correctIndex":1,"explanation":"所有安全AI模型上线前必须经过对抗鲁棒性评估确保在攻击下不失效。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"对抗样本理论基础（对抗扰动/Lp范数/威胁模型）实验","description":"搭建对抗样本理论基础（对抗扰动/Lp范数/威胁模型）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备对抗样本理论基础（对抗扰动/Lp范数/威胁模型）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握对抗样本理论基础（对抗扰动/Lp范数/威胁模型）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"对抗样本理论基础（对抗扰动/Lp范数/威学习要点","content":"学习对抗样本理论基础（对抗扰动/Lp范数/威关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-86", day: 86, title: "FGSM（快速梯度符号法）原理与实现", subtitle: "FGSM（快速梯度符号法）原理与实现",
+    objectives: ['理解FGSM（快速梯度符号法）原理与实现的核心概念和原理', '掌握FGSM（快速梯度符号法）原理与实现的技术实现方法', '了解FGSM（快速梯度符号法）原理与实现在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "FGSM（快速梯度符号法）原理与实现是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解FGSM（快速梯度符号法）原理与实现在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['FGSM（快速梯度符号法）原理与实现是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM（快速梯度符号法）原理与实现在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# FGSM（快速梯度符号法）原理与实现\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"FGSM（快速梯度符号法）原理与实现... Model accuracy: {score:.3f}\")","explanation":"FGSM（快速梯度符号法）原理与实现的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"FGSM（快速梯度符号法）原理与实现实验","description":"搭建FGSM（快速梯度符号法）原理与实现相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备FGSM（快速梯度符号法）原理与实现实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握FGSM（快速梯度符号法）原理与实现的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"FGSM（快速梯度符号法）原理与实现学习要点","content":"学习FGSM（快速梯度符号法）原理与实现关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-87", day: 87, title: "迭代攻击（BIM/PGD/MIM）", subtitle: "迭代攻击（BIM/PGD/MIM）",
+    objectives: ['理解迭代攻击（BIM/PGD/MIM）的核心概念和原理', '掌握迭代攻击（BIM/PGD/MIM）的技术实现方法', '了解迭代攻击（BIM/PGD/MIM）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "迭代攻击（BIM/PGD/MIM）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解迭代攻击（BIM/PGD/MIM）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['迭代攻击（BIM/PGD/MIM）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"迭代攻击（BIM/PGD/MIM）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 迭代攻击（BIM/PGD/MIM）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"迭代攻击（BIM/PGD/MIM）... Model accuracy: {score:.3f}\")","explanation":"迭代攻击（BIM/PGD/MIM）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"迭代攻击（BIM/PGD/MIM）实验","description":"搭建迭代攻击（BIM/PGD/MIM）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备迭代攻击（BIM/PGD/MIM）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握迭代攻击（BIM/PGD/MIM）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"迭代攻击（BIM/PGD/MIM）学习要点","content":"学习迭代攻击（BIM/PGD/MIM）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-88", day: 88, title: "优化攻击（C&W/DeepFool）", subtitle: "优化攻击（C&W/DeepFool）",
+    objectives: ['理解优化攻击（C&W/DeepFool）的核心概念和原理', '掌握优化攻击（C&W/DeepFool）的技术实现方法', '了解优化攻击（C&W/DeepFool）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "优化攻击（C&W/DeepFool）确保模型输出概率与实际置信度一致。校准误差(ECE)衡量预测概率与真实准确率的偏差。\\n\\n校准方法：Platt Scaling(逻辑回归校准输出)、Isotonic Regression(非参数保序回归)、Temperature Scaling(温度参数T软化Softmax)。\\n\\n阈值优化：根据业务需求(误报成本vs漏报成本)选择最优决策阈值。方法：ROC曲线找最优点、成本敏感阈值搜索、precision-recall曲线选阈值。\\n\\nsklearn: CalibratedClassifierCV做校、calibration_curve画校准曲线。",
+    keyPoints: ['优化攻击（C&W/DeepFool）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"优化攻击（C&W/DeepFool）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 优化攻击（C&W/DeepFool）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"优化攻击（C&W/DeepFool）... Model accuracy: {score:.3f}\")","explanation":"优化攻击（C&W/DeepFool）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"优化攻击（C&W/DeepFool）实验","description":"搭建优化攻击（C&W/DeepFool）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备优化攻击（C&W/DeepFool）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握优化攻击（C&W/DeepFool）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"优化攻击（C&W/DeepFool）学习要点","content":"学习优化攻击（C&W/DeepFool）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-89", day: 89, title: "对IDS模型的FGSM/PGD攻击", subtitle: "对IDS模型的FGSM/PGD攻击",
+    objectives: ['理解对IDS模型的FGSM/PGD攻击的核心概念和原理', '掌握对IDS模型的FGSM/PGD攻击的技术实现方法', '了解对IDS模型的FGSM/PGD攻击在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "对IDS模型的FGSM/PGD攻击通过监控网络/系统行为发现攻击。\\n\\n检测方法：基于签名的(Snort规则匹配已知攻击)、基于异常的(ML检测偏离基线)、基于状态的(协议状态机检测violation)。\\n\\nAI增强：ML分类区分攻击类型、DL自动提取深层特征、集成学习融合多检测器结果。\\n\\n实战系统：Suricata(Snort兼容)+Python ML推理引擎+ELK展示告警。模型输入：CICFlowMeter提取的79维流特征。",
+    keyPoints: ['对IDS模型的FGSM/PGD攻击是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"对IDS模型的FGSM/PGD攻击在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 对IDS模型的FGSM/PGD攻击\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"对IDS模型的FGSM/PGD攻击... Model accuracy: {score:.3f}\")","explanation":"对IDS模型的FGSM/PGD攻击的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"对IDS模型的FGSM/PGD攻击实验","description":"搭建对IDS模型的FGSM/PGD攻击相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备对IDS模型的FGSM/PGD攻击实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握对IDS模型的FGSM/PGD攻击的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"对IDS模型的FGSM/PGD攻击学习要点","content":"学习对IDS模型的FGSM/PGD攻击关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-90", day: 90, title: "对恶意软件检测的对抗攻击", subtitle: "对恶意软件检测的对抗攻击",
+    objectives: ['理解对恶意软件检测的对抗攻击的核心概念和原理', '掌握对恶意软件检测的对抗攻击的技术实现方法', '了解对恶意软件检测的对抗攻击在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "对恶意软件检测的对抗攻击通过卷积核在输入上滑动提取局部特征。相比全连接：参数共享大幅减少参数量、平移不变性适应位置变化。\\n\\n安全应用：恶意软件可视化(字节转灰度图/马尔可夫图)用CNN分类、网络流量时空特征(流矩阵)分析、Web payload模式检测。\\n\\n架构：Conv2D→BatchNorm→ReLU→MaxPool→...→Flatten→Dense→Softmax。关键超参：kernel_size(3或5)、filters(32/64递进)、pool_size(2)。PyTorch实现用nn.Conv2d。",
+    keyPoints: ['对恶意软件检测的对抗攻击是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM攻击的原理？","options":["A. 随机扰动", "B. x'=x+ε×sign(∇xJ)沿梯度方向单步扰动", "C. 迭代", "D. 重训练"],"correctIndex":1,"explanation":"FGSM计算损失对输入的梯度符号乘以小步长ε快速生成对抗样本。"},
+    {"question":"最有效的对抗防御方法？","options":["A. 不做防御", "B. 对抗训练(训练集包含对抗样本)", "C. 加密", "D. 删除模型"],"correctIndex":1,"explanation":"对抗训练在训练过程中注入对抗样本是目前验证最有效的通用防御。"},
+    {"question":"PGD相比FGSM的优势？","options":["A. 更快", "B. 多步迭代攻击更强", "C. 更简单", "D. 不需要梯度"],"correctIndex":1,"explanation":"PGD进行多步小扰动迭代每步投影回ε-ball产生更强的对抗样本。"},
+    {"question":"CleverHans库的功能？","options":["A. 数据处理", "B. 对抗攻击和防御的标准化实现", "C. 可视化", "D. 爬虫"],"correctIndex":1,"explanation":"CleverHans是AI对抗攻防的标准库提供多种攻击和防御方法。"},
+    {"question":"安全模型上线前必须做什么？","options":["A. 直接上线", "B. 对抗鲁棒性测试", "C. 加密", "D. 备份"],"correctIndex":1,"explanation":"所有安全AI模型上线前必须经过对抗鲁棒性评估确保在攻击下不失效。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"对恶意软件检测的对抗攻击实验","description":"搭建对恶意软件检测的对抗攻击相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备对恶意软件检测的对抗攻击实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握对恶意软件检测的对抗攻击的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"对恶意软件检测的对抗攻击学习要点","content":"学习对恶意软件检测的对抗攻击关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-91", day: 91, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week14: CyberDay[] = [
-  { id: "ai-92", day: 92, title: "迁移攻击（Transfer Attack）", subtitle: "迁移攻击（Transfer Attack）",
-    objectives: ['理解迁移攻击（Transfer Attack的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 迁移攻击（Transfer Attack）\n\n实践任务：训练替代模型→生成对抗样本→迁移到目标黑盒模型\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['迁移攻击（Transfer Attack）', '实践: 训练替代模型→生成对抗样本→迁移到目标黑盒模型'] },
-  { id: "ai-93", day: 93, title: "查询攻击（ZOO/HopSkipJump/Square Attack）", subtitle: "查询攻击（ZOO/HopSkipJump/Square Attack）",
-    objectives: ['理解查询攻击（ZOO/HopSkipJump的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 查询攻击（ZOO/HopSkipJump/Square Attack）\n\n实践任务：只通过API查询输入输出构造对抗样本，测试查询效率\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['查询攻击（ZOO/HopSkipJump/Square At', '实践: 只通过API查询输入输出构造对抗样本，测试查询效率'] },
-  { id: "ai-94", day: 94, title: "得分攻击（NES/SPSA）", subtitle: "得分攻击（NES/SPSA）",
-    objectives: ['理解得分攻击（NES/SPSA）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 得分攻击（NES/SPSA）\n\n实践任务：利用置信度分数的梯度估计攻击，对比查询次数\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['得分攻击（NES/SPSA）', '实践: 利用置信度分数的梯度估计攻击，对比查询次数'] },
-  { id: "ai-95", day: 95, title: "决策攻击（Boundary Attack）", subtitle: "决策攻击（Boundary Attack）",
-    objectives: ['理解决策攻击（Boundary Attack的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 决策攻击（Boundary Attack）\n\n实践任务：仅基于硬标签(0/1)的对抗攻击，观察攻击轨迹\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['决策攻击（Boundary Attack）', '实践: 仅基于硬标签(0/1)的对抗攻击，观察攻击轨迹'] },
-  { id: "ai-96", day: 96, title: "物理世界对抗攻击（贴纸/眼镜/反光）", subtitle: "物理世界对抗攻击（贴纸/眼镜/反光）",
-    objectives: ['理解物理世界对抗攻击（贴纸/眼镜/反光）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 物理世界对抗攻击（贴纸/眼镜/反光）\n\n实践任务：理解物理对抗样本的鲁棒性要求和变换增强(EOT)\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['物理世界对抗攻击（贴纸/眼镜/反光）', '实践: 理解物理对抗样本的鲁棒性要求和变换增强(EOT)'] },
-  { id: "ai-97", day: 97, title: "针对NLP模型的对抗攻击（同义词替换/字符扰动）", subtitle: "针对NLP模型的对抗攻击（同义词替换/字符扰动）",
-    objectives: ['理解针对NLP模型的对抗攻击（同义词替换/字的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 针对NLP模型的对抗攻击（同义词替换/字符扰动）\n\n实践任务：对安全日志分类器实施文本对抗攻击\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['针对NLP模型的对抗攻击（同义词替换/字符扰动）', '实践: 对安全日志分类器实施文本对抗攻击'] },
-  { id: "ai-98", day: 98, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：黑盒攻击金字塔：从梯度访问→分数→标签→物理世界的攻击能力递减分析\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: 黑盒攻击金字塔：从梯度访问→分数→标签→物理世界的攻击能力递'] }
+    { id: "ai-92", day: 92, title: "迁移攻击（Transfer Attack）", subtitle: "迁移攻击（Transfer Attack）",
+    objectives: ['理解迁移攻击（Transfer Attack）的核心概念和原理', '掌握迁移攻击（Transfer Attack）的技术实现方法', '了解迁移攻击（Transfer Attack）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "迁移攻击（Transfer Attack）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解迁移攻击（Transfer Attack）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['迁移攻击（Transfer Attack）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"迁移攻击（Transfer Attack）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 迁移攻击（Transfer Attack）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"迁移攻击（Transfer Attack... Model accuracy: {score:.3f}\")","explanation":"迁移攻击（Transfer Attack）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"迁移攻击（Transfer Attack）实验","description":"搭建迁移攻击（Transfer Attack）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备迁移攻击（Transfer Attack）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握迁移攻击（Transfer Attack）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"迁移攻击（Transfer Attack学习要点","content":"学习迁移攻击（Transfer Attack关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-93", day: 93, title: "查询攻击（ZOO/HopSkipJump/Square Attack）", subtitle: "查询攻击（ZOO/HopSkipJump/Square Attack）",
+    objectives: ['理解查询攻击（ZOO/HopSkipJump/Square Attack）的核心概念和原理', '掌握查询攻击（ZOO/HopSkipJump/Square Attack）的技术实现方法', '了解查询攻击（ZOO/HopSkipJump/Square Attack）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "查询攻击（ZOO/HopSkipJump/Square Attack）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解查询攻击（ZOO/HopSkipJump/Square Attack）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['查询攻击（ZOO/HopSkipJump/Square Attack）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"查询攻击（ZOO/HopSkipJump/Square Attack）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 查询攻击（ZOO/HopSkipJump/Square Attack）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"查询攻击（ZOO/HopSkipJump... Model accuracy: {score:.3f}\")","explanation":"查询攻击（ZOO/HopSkipJump/Square At的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"查询攻击（ZOO/HopSkipJump/Square Attack）实验","description":"搭建查询攻击（ZOO/HopSkipJump/Square Attack）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备查询攻击（ZOO/HopSkipJump/Square Attack）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握查询攻击（ZOO/HopSkipJump/Square Attack）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"查询攻击（ZOO/HopSkipJump学习要点","content":"学习查询攻击（ZOO/HopSkipJump关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-94", day: 94, title: "得分攻击（NES/SPSA）", subtitle: "得分攻击（NES/SPSA）",
+    objectives: ['理解得分攻击（NES/SPSA）的核心概念和原理', '掌握得分攻击（NES/SPSA）的技术实现方法', '了解得分攻击（NES/SPSA）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "得分攻击（NES/SPSA）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解得分攻击（NES/SPSA）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['得分攻击（NES/SPSA）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"得分攻击（NES/SPSA）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 得分攻击（NES/SPSA）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"得分攻击（NES/SPSA）... Model accuracy: {score:.3f}\")","explanation":"得分攻击（NES/SPSA）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"得分攻击（NES/SPSA）实验","description":"搭建得分攻击（NES/SPSA）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备得分攻击（NES/SPSA）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握得分攻击（NES/SPSA）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"得分攻击（NES/SPSA）学习要点","content":"学习得分攻击（NES/SPSA）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-95", day: 95, title: "决策攻击（Boundary Attack）", subtitle: "决策攻击（Boundary Attack）",
+    objectives: ['理解决策攻击（Boundary Attack）的核心概念和原理', '掌握决策攻击（Boundary Attack）的技术实现方法', '了解决策攻击（Boundary Attack）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "决策攻击（Boundary Attack）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解决策攻击（Boundary Attack）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['决策攻击（Boundary Attack）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"决策攻击（Boundary Attack）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 决策攻击（Boundary Attack）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"决策攻击（Boundary Attack... Model accuracy: {score:.3f}\")","explanation":"决策攻击（Boundary Attack）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"决策攻击（Boundary Attack）实验","description":"搭建决策攻击（Boundary Attack）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备决策攻击（Boundary Attack）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握决策攻击（Boundary Attack）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"决策攻击（Boundary Attack学习要点","content":"学习决策攻击（Boundary Attack关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-96", day: 96, title: "物理世界对抗攻击（贴纸/眼镜/反光）", subtitle: "物理世界对抗攻击（贴纸/眼镜/反光）",
+    objectives: ['理解物理世界对抗攻击（贴纸/眼镜/反光）的核心概念和原理', '掌握物理世界对抗攻击（贴纸/眼镜/反光）的技术实现方法', '了解物理世界对抗攻击（贴纸/眼镜/反光）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "物理世界对抗攻击（贴纸/眼镜/反光）通过对输入添加人眼不可见扰动使ML模型错误分类。核心攻击：FGSM(x\'=x+ε×sign(∇xJ))快速但粗略；PGD迭代多步攻击更强；C&W优化最小扰动。\\n\\n安全场景：对抗样本绕过IDS/NIDS检测、恶意软件检测逃逸、验证码识别欺骗。\\n\\n防御策略：对抗训练(训练集混入对抗样本)、梯度掩蔽、输入变换(JPEG压缩/随机裁剪)、检测器(二分类区分正常/对抗)。CleverHans库一键生成攻击/防御。",
+    keyPoints: ['物理世界对抗攻击（贴纸/眼镜/反光）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM攻击的原理？","options":["A. 随机扰动", "B. x'=x+ε×sign(∇xJ)沿梯度方向单步扰动", "C. 迭代", "D. 重训练"],"correctIndex":1,"explanation":"FGSM计算损失对输入的梯度符号乘以小步长ε快速生成对抗样本。"},
+    {"question":"最有效的对抗防御方法？","options":["A. 不做防御", "B. 对抗训练(训练集包含对抗样本)", "C. 加密", "D. 删除模型"],"correctIndex":1,"explanation":"对抗训练在训练过程中注入对抗样本是目前验证最有效的通用防御。"},
+    {"question":"PGD相比FGSM的优势？","options":["A. 更快", "B. 多步迭代攻击更强", "C. 更简单", "D. 不需要梯度"],"correctIndex":1,"explanation":"PGD进行多步小扰动迭代每步投影回ε-ball产生更强的对抗样本。"},
+    {"question":"CleverHans库的功能？","options":["A. 数据处理", "B. 对抗攻击和防御的标准化实现", "C. 可视化", "D. 爬虫"],"correctIndex":1,"explanation":"CleverHans是AI对抗攻防的标准库提供多种攻击和防御方法。"},
+    {"question":"安全模型上线前必须做什么？","options":["A. 直接上线", "B. 对抗鲁棒性测试", "C. 加密", "D. 备份"],"correctIndex":1,"explanation":"所有安全AI模型上线前必须经过对抗鲁棒性评估确保在攻击下不失效。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"物理世界对抗攻击（贴纸/眼镜/反光）实验","description":"搭建物理世界对抗攻击（贴纸/眼镜/反光）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备物理世界对抗攻击（贴纸/眼镜/反光）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握物理世界对抗攻击（贴纸/眼镜/反光）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"物理世界对抗攻击（贴纸/眼镜/反光）学习要点","content":"学习物理世界对抗攻击（贴纸/眼镜/反光）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-97", day: 97, title: "针对NLP模型的对抗攻击（同义词替换/字符扰动）", subtitle: "针对NLP模型的对抗攻击（同义词替换/字符扰动）",
+    objectives: ['理解针对NLP模型的对抗攻击（同义词替换/字符扰动）的核心概念和原理', '掌握针对NLP模型的对抗攻击（同义词替换/字符扰动）的技术实现方法', '了解针对NLP模型的对抗攻击（同义词替换/字符扰动）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "针对NLP模型的对抗攻击（同义词替换/字符扰动）通过对输入添加人眼不可见扰动使ML模型错误分类。核心攻击：FGSM(x\'=x+ε×sign(∇xJ))快速但粗略；PGD迭代多步攻击更强；C&W优化最小扰动。\\n\\n安全场景：对抗样本绕过IDS/NIDS检测、恶意软件检测逃逸、验证码识别欺骗。\\n\\n防御策略：对抗训练(训练集混入对抗样本)、梯度掩蔽、输入变换(JPEG压缩/随机裁剪)、检测器(二分类区分正常/对抗)。CleverHans库一键生成攻击/防御。",
+    keyPoints: ['针对NLP模型的对抗攻击（同义词替换/字符扰动）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM攻击的原理？","options":["A. 随机扰动", "B. x'=x+ε×sign(∇xJ)沿梯度方向单步扰动", "C. 迭代", "D. 重训练"],"correctIndex":1,"explanation":"FGSM计算损失对输入的梯度符号乘以小步长ε快速生成对抗样本。"},
+    {"question":"最有效的对抗防御方法？","options":["A. 不做防御", "B. 对抗训练(训练集包含对抗样本)", "C. 加密", "D. 删除模型"],"correctIndex":1,"explanation":"对抗训练在训练过程中注入对抗样本是目前验证最有效的通用防御。"},
+    {"question":"PGD相比FGSM的优势？","options":["A. 更快", "B. 多步迭代攻击更强", "C. 更简单", "D. 不需要梯度"],"correctIndex":1,"explanation":"PGD进行多步小扰动迭代每步投影回ε-ball产生更强的对抗样本。"},
+    {"question":"CleverHans库的功能？","options":["A. 数据处理", "B. 对抗攻击和防御的标准化实现", "C. 可视化", "D. 爬虫"],"correctIndex":1,"explanation":"CleverHans是AI对抗攻防的标准库提供多种攻击和防御方法。"},
+    {"question":"安全模型上线前必须做什么？","options":["A. 直接上线", "B. 对抗鲁棒性测试", "C. 加密", "D. 备份"],"correctIndex":1,"explanation":"所有安全AI模型上线前必须经过对抗鲁棒性评估确保在攻击下不失效。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"针对NLP模型的对抗攻击（同义词替换/字符扰动）实验","description":"搭建针对NLP模型的对抗攻击（同义词替换/字符扰动）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备针对NLP模型的对抗攻击（同义词替换/字符扰动）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握针对NLP模型的对抗攻击（同义词替换/字符扰动）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"针对NLP模型的对抗攻击（同义词替换/字学习要点","content":"学习针对NLP模型的对抗攻击（同义词替换/字关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-98", day: 98, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week15: CyberDay[] = [
-  { id: "ai-99", day: 99, title: "对抗训练（Adversarial Training）原理", subtitle: "对抗训练（Adversarial Training）原理",
-    objectives: ['理解对抗训练（Adversarial Tra的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 对抗训练（Adversarial Training）原理\n\n实践任务：训练中注入PGD对抗样本，对比训练前后的鲁棒性变化\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['对抗训练（Adversarial Training）原理', '实践: 训练中注入PGD对抗样本，对比训练前后的鲁棒性变化'] },
-  { id: "ai-100", day: 100, title: "对抗训练实战：加固IDS", subtitle: "对抗训练实战：加固IDS",
-    objectives: ['理解对抗训练实战：加固IDS的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 对抗训练实战：加固IDS\n\n实践任务：对IDS模型做对抗训练，重新评估FGSM/PGD攻击效果\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['对抗训练实战：加固IDS', '实践: 对IDS模型做对抗训练，重新评估FGSM/PGD攻击效果'] },
-  { id: "ai-101", day: 101, title: "输入变换防御（JPEG压缩/随机缩放/特征压缩）", subtitle: "输入变换防御（JPEG压缩/随机缩放/特征压缩）",
-    objectives: ['理解输入变换防御（JPEG压缩/随机缩放/特的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 输入变换防御（JPEG压缩/随机缩放/特征压缩）\n\n实践任务：5种输入变换对对抗扰动的影响对比\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['输入变换防御（JPEG压缩/随机缩放/特征压缩）', '实践: 5种输入变换对对抗扰动的影响对比'] },
+    { id: "ai-99", day: 99, title: "对抗训练（Adversarial Training）原理", subtitle: "对抗训练（Adversarial Training）原理",
+    objectives: ['理解对抗训练（Adversarial Training）原理的核心概念和原理', '掌握对抗训练（Adversarial Training）原理的技术实现方法', '了解对抗训练（Adversarial Training）原理在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "对抗训练（Adversarial Training）原理通过对输入添加人眼不可见扰动使ML模型错误分类。核心攻击：FGSM(x\'=x+ε×sign(∇xJ))快速但粗略；PGD迭代多步攻击更强；C&W优化最小扰动。\\n\\n安全场景：对抗样本绕过IDS/NIDS检测、恶意软件检测逃逸、验证码识别欺骗。\\n\\n防御策略：对抗训练(训练集混入对抗样本)、梯度掩蔽、输入变换(JPEG压缩/随机裁剪)、检测器(二分类区分正常/对抗)。CleverHans库一键生成攻击/防御。",
+    keyPoints: ['对抗训练（Adversarial Training）原理是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM攻击的原理？","options":["A. 随机扰动", "B. x'=x+ε×sign(∇xJ)沿梯度方向单步扰动", "C. 迭代", "D. 重训练"],"correctIndex":1,"explanation":"FGSM计算损失对输入的梯度符号乘以小步长ε快速生成对抗样本。"},
+    {"question":"最有效的对抗防御方法？","options":["A. 不做防御", "B. 对抗训练(训练集包含对抗样本)", "C. 加密", "D. 删除模型"],"correctIndex":1,"explanation":"对抗训练在训练过程中注入对抗样本是目前验证最有效的通用防御。"},
+    {"question":"PGD相比FGSM的优势？","options":["A. 更快", "B. 多步迭代攻击更强", "C. 更简单", "D. 不需要梯度"],"correctIndex":1,"explanation":"PGD进行多步小扰动迭代每步投影回ε-ball产生更强的对抗样本。"},
+    {"question":"CleverHans库的功能？","options":["A. 数据处理", "B. 对抗攻击和防御的标准化实现", "C. 可视化", "D. 爬虫"],"correctIndex":1,"explanation":"CleverHans是AI对抗攻防的标准库提供多种攻击和防御方法。"},
+    {"question":"安全模型上线前必须做什么？","options":["A. 直接上线", "B. 对抗鲁棒性测试", "C. 加密", "D. 备份"],"correctIndex":1,"explanation":"所有安全AI模型上线前必须经过对抗鲁棒性评估确保在攻击下不失效。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"对抗训练（Adversarial Training）原理实验","description":"搭建对抗训练（Adversarial Training）原理相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备对抗训练（Adversarial Training）原理实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握对抗训练（Adversarial Training）原理的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"对抗训练（Adversarial Tra学习要点","content":"学习对抗训练（Adversarial Tra关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-100", day: 100, title: "对抗训练实战：加固IDS", subtitle: "对抗训练实战：加固IDS",
+    objectives: ['理解对抗训练实战：加固IDS的核心概念和原理', '掌握对抗训练实战：加固IDS的技术实现方法', '了解对抗训练实战：加固IDS在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "对抗训练实战：加固IDS通过对输入添加人眼不可见扰动使ML模型错误分类。核心攻击：FGSM(x\'=x+ε×sign(∇xJ))快速但粗略；PGD迭代多步攻击更强；C&W优化最小扰动。\\n\\n安全场景：对抗样本绕过IDS/NIDS检测、恶意软件检测逃逸、验证码识别欺骗。\\n\\n防御策略：对抗训练(训练集混入对抗样本)、梯度掩蔽、输入变换(JPEG压缩/随机裁剪)、检测器(二分类区分正常/对抗)。CleverHans库一键生成攻击/防御。",
+    keyPoints: ['对抗训练实战：加固IDS是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM攻击的原理？","options":["A. 随机扰动", "B. x'=x+ε×sign(∇xJ)沿梯度方向单步扰动", "C. 迭代", "D. 重训练"],"correctIndex":1,"explanation":"FGSM计算损失对输入的梯度符号乘以小步长ε快速生成对抗样本。"},
+    {"question":"最有效的对抗防御方法？","options":["A. 不做防御", "B. 对抗训练(训练集包含对抗样本)", "C. 加密", "D. 删除模型"],"correctIndex":1,"explanation":"对抗训练在训练过程中注入对抗样本是目前验证最有效的通用防御。"},
+    {"question":"PGD相比FGSM的优势？","options":["A. 更快", "B. 多步迭代攻击更强", "C. 更简单", "D. 不需要梯度"],"correctIndex":1,"explanation":"PGD进行多步小扰动迭代每步投影回ε-ball产生更强的对抗样本。"},
+    {"question":"CleverHans库的功能？","options":["A. 数据处理", "B. 对抗攻击和防御的标准化实现", "C. 可视化", "D. 爬虫"],"correctIndex":1,"explanation":"CleverHans是AI对抗攻防的标准库提供多种攻击和防御方法。"},
+    {"question":"安全模型上线前必须做什么？","options":["A. 直接上线", "B. 对抗鲁棒性测试", "C. 加密", "D. 备份"],"correctIndex":1,"explanation":"所有安全AI模型上线前必须经过对抗鲁棒性评估确保在攻击下不失效。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"对抗训练实战：加固IDS实验","description":"搭建对抗训练实战：加固IDS相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备对抗训练实战：加固IDS实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握对抗训练实战：加固IDS的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"对抗训练实战：加固IDS学习要点","content":"学习对抗训练实战：加固IDS关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-101", day: 101, title: "输入变换防御（JPEG压缩/随机缩放/特征压缩）", subtitle: "输入变换防御（JPEG压缩/随机缩放/特征压缩）",
+    objectives: ['理解输入变换防御（JPEG压缩/随机缩放/特征压缩）的核心概念和原理', '掌握输入变换防御（JPEG压缩/随机缩放/特征压缩）的技术实现方法', '了解输入变换防御（JPEG压缩/随机缩放/特征压缩）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "输入变换防御（JPEG压缩/随机缩放/特征压缩）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解输入变换防御（JPEG压缩/随机缩放/特征压缩）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['输入变换防御（JPEG压缩/随机缩放/特征压缩）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"输入变换防御（JPEG压缩/随机缩放/特征压缩）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 输入变换防御（JPEG压缩/随机缩放/特征压缩）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"输入变换防御（JPEG压缩/随机缩放/特... Model accuracy: {score:.3f}\")","explanation":"输入变换防御（JPEG压缩/随机缩放/特征压缩）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"输入变换防御（JPEG压缩/随机缩放/特征压缩）实验","description":"搭建输入变换防御（JPEG压缩/随机缩放/特征压缩）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备输入变换防御（JPEG压缩/随机缩放/特征压缩）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握输入变换防御（JPEG压缩/随机缩放/特征压缩）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"输入变换防御（JPEG压缩/随机缩放/特学习要点","content":"学习输入变换防御（JPEG压缩/随机缩放/特关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
   { id: "ai-102", day: 102, title: "梯度掩蔽与防御蒸馏", subtitle: "梯度掩蔽与防御蒸馏",
-    objectives: ['理解梯度掩蔽与防御蒸馏的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 梯度掩蔽与防御蒸馏\n\n实践任务：实现知识蒸馏防御，分析\"梯度模糊\"的安全性和可绕过性\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['梯度掩蔽与防御蒸馏', '实践: 实现知识蒸馏防御，分析"梯度模糊"的安全性和可绕过性'] },
-  { id: "ai-103", day: 103, title: "对抗样本检测（特征一致性/MagNet/LID）", subtitle: "对抗样本检测（特征一致性/MagNet/LID）",
-    objectives: ['理解对抗样本检测（特征一致性/MagNet/的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 对抗样本检测（特征一致性/MagNet/LID）\n\n实践任务：训练二分类器判断输入是否为对抗样本\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['对抗样本检测（特征一致性/MagNet/LID）', '实践: 训练二分类器判断输入是否为对抗样本'] },
-  { id: "ai-104", day: 104, title: "鲁棒性评估框架（RobustBench/AutoAttack）", subtitle: "鲁棒性评估框架（RobustBench/AutoAttack）",
-    objectives: ['理解鲁棒性评估框架（RobustBench/的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 鲁棒性评估框架（RobustBench/AutoAttack）\n\n实践任务：用AutoAttack标准攻击集全面评估IDS模型鲁棒性\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['鲁棒性评估框架（RobustBench/AutoAttack', '实践: 用AutoAttack标准攻击集全面评估IDS模型鲁棒性'] },
-  { id: "ai-105", day: 105, title: "**阶段总结**", subtitle: "**阶段总结**",
-    objectives: ['理解**阶段总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **阶段总结**\n\n实践任务：攻防对抗完整报告：攻击方法×防御策略的交叉评估矩阵\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**阶段总结**', '实践: 攻防对抗完整报告：攻击方法×防御策略的交叉评估矩阵'] }
+      objectives: ['理解梯度掩蔽与防御蒸馏的核心概念和原理', '掌握梯度掩蔽与防御蒸馏的技术实现方法', '了解梯度掩蔽与防御蒸馏在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+      content: "梯度掩蔽与防御蒸馏是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解梯度掩蔽与防御蒸馏在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能黑盒上线。",
+      keyPoints: ['梯度掩蔽与防御蒸馏是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+      quiz: [
+    {"question":"梯度掩蔽与防御蒸馏在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+      ],
+      codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 梯度掩蔽与防御蒸馏\\nimport numpy as np\\nfrom sklearn.ensemble import RandomForestClassifier\\n\\nnp.random.seed(42)\\nX = np.random.randn(500, 10)\\ny = (X[:,0] + X[:,2] - X[:,5] > 0).astype(int)\\n\\nmodel = RandomForestClassifier(n_estimators=50)\\nmodel.fit(X, y)\\nprint(f'Model accuracy: {model.score(X, y):.3f}')","explanation":"梯度掩蔽与防御蒸馏的Python代码示例"}
+      ],
+      resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI安全项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+      recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+      labEnvironment: [{"name":"梯度掩蔽与防御蒸馏实验","description":"搭建梯度掩蔽与防御蒸馏相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备梯度掩蔽与防御蒸馏实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握梯度掩蔽与防御蒸馏的实战应用能力"}],
+      expertNotes: [{"author":"李智能","title":"梯度掩蔽与防御蒸馏学习要点","content":"学习梯度掩蔽与防御蒸馏关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关->看Figures了解核心思路->再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-103", day: 103, title: "对抗样本检测（特征一致性/MagNet/LID）", subtitle: "对抗样本检测（特征一致性/MagNet/LID）",
+    objectives: ['理解对抗样本检测（特征一致性/MagNet/LID）的核心概念和原理', '掌握对抗样本检测（特征一致性/MagNet/LID）的技术实现方法', '了解对抗样本检测（特征一致性/MagNet/LID）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "对抗样本检测（特征一致性/MagNet/LID）通过对输入添加人眼不可见扰动使ML模型错误分类。核心攻击：FGSM(x\'=x+ε×sign(∇xJ))快速但粗略；PGD迭代多步攻击更强；C&W优化最小扰动。\\n\\n安全场景：对抗样本绕过IDS/NIDS检测、恶意软件检测逃逸、验证码识别欺骗。\\n\\n防御策略：对抗训练(训练集混入对抗样本)、梯度掩蔽、输入变换(JPEG压缩/随机裁剪)、检测器(二分类区分正常/对抗)。CleverHans库一键生成攻击/防御。",
+    keyPoints: ['对抗样本检测（特征一致性/MagNet/LID）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM攻击的原理？","options":["A. 随机扰动", "B. x'=x+ε×sign(∇xJ)沿梯度方向单步扰动", "C. 迭代", "D. 重训练"],"correctIndex":1,"explanation":"FGSM计算损失对输入的梯度符号乘以小步长ε快速生成对抗样本。"},
+    {"question":"最有效的对抗防御方法？","options":["A. 不做防御", "B. 对抗训练(训练集包含对抗样本)", "C. 加密", "D. 删除模型"],"correctIndex":1,"explanation":"对抗训练在训练过程中注入对抗样本是目前验证最有效的通用防御。"},
+    {"question":"PGD相比FGSM的优势？","options":["A. 更快", "B. 多步迭代攻击更强", "C. 更简单", "D. 不需要梯度"],"correctIndex":1,"explanation":"PGD进行多步小扰动迭代每步投影回ε-ball产生更强的对抗样本。"},
+    {"question":"CleverHans库的功能？","options":["A. 数据处理", "B. 对抗攻击和防御的标准化实现", "C. 可视化", "D. 爬虫"],"correctIndex":1,"explanation":"CleverHans是AI对抗攻防的标准库提供多种攻击和防御方法。"},
+    {"question":"安全模型上线前必须做什么？","options":["A. 直接上线", "B. 对抗鲁棒性测试", "C. 加密", "D. 备份"],"correctIndex":1,"explanation":"所有安全AI模型上线前必须经过对抗鲁棒性评估确保在攻击下不失效。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"对抗样本检测（特征一致性/MagNet/LID）实验","description":"搭建对抗样本检测（特征一致性/MagNet/LID）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备对抗样本检测（特征一致性/MagNet/LID）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握对抗样本检测（特征一致性/MagNet/LID）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"对抗样本检测（特征一致性/MagNet/学习要点","content":"学习对抗样本检测（特征一致性/MagNet/关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-104", day: 104, title: "鲁棒性评估框架（RobustBench/AutoAttack）", subtitle: "鲁棒性评估框架（RobustBench/AutoAttack）",
+    objectives: ['理解鲁棒性评估框架（RobustBench/AutoAttack）的核心概念和原理', '掌握鲁棒性评估框架（RobustBench/AutoAttack）的技术实现方法', '了解鲁棒性评估框架（RobustBench/AutoAttack）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "鲁棒性评估框架（RobustBench/AutoAttack）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解鲁棒性评估框架（RobustBench/AutoAttack）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['鲁棒性评估框架（RobustBench/AutoAttack）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"鲁棒性评估框架（RobustBench/AutoAttack）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 鲁棒性评估框架（RobustBench/AutoAttack）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"鲁棒性评估框架（RobustBench/... Model accuracy: {score:.3f}\")","explanation":"鲁棒性评估框架（RobustBench/AutoAttack的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"鲁棒性评估框架（RobustBench/AutoAttack）实验","description":"搭建鲁棒性评估框架（RobustBench/AutoAttack）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备鲁棒性评估框架（RobustBench/AutoAttack）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握鲁棒性评估框架（RobustBench/AutoAttack）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"鲁棒性评估框架（RobustBench/学习要点","content":"学习鲁棒性评估框架（RobustBench/关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-105", day: 105, title: "阶段总结", subtitle: "阶段总结",
+    objectives: ['理解阶段总结的核心概念和原理', '掌握阶段总结的技术实现方法', '了解阶段总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['阶段总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 阶段总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"阶段总结... Model accuracy: {score:.3f}\")","explanation":"阶段总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"阶段总结实验","description":"搭建阶段总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备阶段总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握阶段总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"阶段总结学习要点","content":"学习阶段总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week16: CyberDay[] = [
-  { id: "ai-106", day: 106, title: "LLM原理概述（Transformer/预训练/RLHF/涌现能力）", subtitle: "LLM原理概述（Transformer/预训练/RLHF/涌现能力）",
-    objectives: ['理解LLM原理概述（Transformer/的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## LLM原理概述（Transformer/预训练/RLHF/涌现能力）\n\n实践任务：梳理GPT/Claude/Llama/Qwen的架构差异和安全设计\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['LLM原理概述（Transformer/预训练/RLHF/涌', '实践: 梳理GPT/Claude/Llama/Qwen的架构差异和安'] },
-  { id: "ai-107", day: 107, title: "OWASP Top 10 for LLM Application 深度解读", subtitle: "OWASP Top 10 for LLM Application 深度解读",
-    objectives: ['理解OWASP Top 10 for LLM的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## OWASP Top 10 for LLM Application 深度解读\n\n实践任务：LLM01-LLM10逐条分析：成因/案例/检测/修复\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['OWASP Top 10 for LLM Applicati', '实践: LLM01-LLM10逐条分析：成因/案例/检测/修复'] },
-  { id: "ai-108", day: 108, title: "Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）", subtitle: "Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）",
-    objectives: ['理解Prompt注入-直接注入（指令覆盖/角的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）\n\n实践任务：在本地LLM上测试30+种直接注入payload的绕过成功率\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）', '实践: 在本地LLM上测试30+种直接注入payload的绕过成功率'] },
-  { id: "ai-109", day: 109, title: "Prompt注入-间接注入（网页内容/邮件/文档诱导）", subtitle: "Prompt注入-间接注入（网页内容/邮件/文档诱导）",
-    objectives: ['理解Prompt注入-间接注入（网页内容/邮的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## Prompt注入-间接注入（网页内容/邮件/文档诱导）\n\n实践任务：构造含恶意指令的网页，测试RAG系统的间接注入\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['Prompt注入-间接注入（网页内容/邮件/文档诱导）', '实践: 构造含恶意指令的网页，测试RAG系统的间接注入'] },
-  { id: "ai-110", day: 110, title: "Prompt注入-高级技术（编码绕过/多语言/多模态注入）", subtitle: "Prompt注入-高级技术（编码绕过/多语言/多模态注入）",
-    objectives: ['理解Prompt注入-高级技术（编码绕过/多的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## Prompt注入-高级技术（编码绕过/多语言/多模态注入）\n\n实践任务：用Base64/Unicode/多语言混合编码绕过输入过滤\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['Prompt注入-高级技术（编码绕过/多语言/多模态注入）', '实践: 用Base64/Unicode/多语言混合编码绕过输入过滤'] },
-  { id: "ai-111", day: 111, title: "Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）", subtitle: "Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）",
-    objectives: ['理解Prompt注入防御体系（输入清洗/意图的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）\n\n实践任务：搭建Layered Defense：过滤→分类→沙箱→审查四层防护\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查', '实践: 搭建Layered Defense：过滤→分类→沙箱→审查四'] },
-  { id: "ai-112", day: 112, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：Prompt注入攻击矩阵：技术×防御措施的对抗效果评估\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: Prompt注入攻击矩阵：技术×防御措施的对抗效果评估'] }
+    { id: "ai-106", day: 106, title: "LLM原理概述（Transformer/预训练/RLHF/涌现能力）", subtitle: "LLM原理概述（Transformer/预训练/RLHF/涌现能力）",
+    objectives: ['理解LLM原理概述（Transformer/预训练/RLHF/涌现能力）的核心概念和原理', '掌握LLM原理概述（Transformer/预训练/RLHF/涌现能力）的技术实现方法', '了解LLM原理概述（Transformer/预训练/RLHF/涌现能力）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "LLM原理概述（Transformer/预训练/RLHF/涌现能力）通过自注意力机制建模全局依赖关系。Self-Attention:Q=XWq,K=XWk,V=XWv → Attention(Q,K,V)=softmax(QK^T/√dk)V。\\n\\n相比RNN优势：并行计算(非序列处理)、长距离依赖(直接对应位置)、可解释性(注意力权重可视化哪个特征受关注)。\\n\\n安全应用：Transformer编码器做日志异常检测、Multi-Head Attention分析多维度异常、位置编码捕获时间依赖。PyTorch: nn.MultiheadAttention(embed_dim, num_heads)。",
+    keyPoints: ['LLM原理概述（Transformer/预训练/RLHF/涌现能力）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Self-Attention的核心计算？","options":["A. 简单求和", "B. softmax(QK^T/√dk)V", "C. 矩阵乘法", "D. 卷积"],"correctIndex":1,"explanation":"Query与所有Key计算相似度softmax归一化后加权Value。"},
+    {"question":"Transformer相比LSTM的主要优势？","options":["A. 更简单", "B. 并行计算+长距离依赖建模", "C. 更少参数", "D. 不需要训练"],"correctIndex":1,"explanation":"Transformer不依赖时间步展开可并行处理并直接建立任意位置关联。"},
+    {"question":"Multi-Head Attention的含义？","options":["A. 多头", "B. 多组Q/K/V在不同子空间学习不同的注意力模式", "C. 单个", "D. 共享"],"correctIndex":1,"explanation":"多个注意力头并行从不同角度学习特征关系提升模型表达能力。"},
+    {"question":"位置编码(Positional Encoding)的作用？","options":["A. 不需要", "B. 注入位置信息因为Self-Attention本身不感知顺序", "C. 加密", "D. 降维"],"correctIndex":1,"explanation":"没有位置编码Transformer无法区分序列顺序只能当成集合处理。"},
+    {"question":"Transformer在安全中的优势应用？","options":["A. 简单任务", "B. 多维度长序列日志关联分析", "C. 不适用", "D. 替代CNN"],"correctIndex":1,"explanation":"Transformer能同时建模多维度特征的复杂关联关系适合SIEM分析。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\nclass LogTransformer(nn.Module):\n    def __init__(self, d_model=64, nhead=4, num_layers=2):\n        super().__init__()\n        self.encoder = nn.TransformerEncoder(\n            nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward=256,\n                                       dropout=0.1, batch_first=True),\n            num_layers\n        )\n        self.classifier = nn.Linear(d_model, 2)\n    def forward(self, x):\n        return self.classifier(self.encoder(x).mean(dim=1))\n\n# 日志序列异常检测\nmodel = LogTransformer(d_model=64, nhead=4, num_layers=2)\nprint(f\"Transformer params: {sum(p.numel() for p in model.parameters()):,}\")","explanation":"Transformer日志异常检测：Self-Attention捕获全局特征依赖"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"LLM原理概述（Transformer/预训练/RLHF/涌现能力）实验","description":"搭建LLM原理概述（Transformer/预训练/RLHF/涌现能力）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备LLM原理概述（Transformer/预训练/RLHF/涌现能力）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握LLM原理概述（Transformer/预训练/RLHF/涌现能力）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"LLM原理概述（Transformer/学习要点","content":"学习LLM原理概述（Transformer/关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-107", day: 107, title: "OWASP Top 10 for LLM Application 深度解读", subtitle: "OWASP Top 10 for LLM Application 深度解读",
+    objectives: ['理解OWASP Top 10 for LLM Application 深度解读的核心概念和原理', '掌握OWASP Top 10 for LLM Application 深度解读的技术实现方法', '了解OWASP Top 10 for LLM Application 深度解读在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "OWASP Top 10 for LLM Application 深度解读是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['OWASP Top 10 for LLM Application 深度解读是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"OWASP Top 10 for LLM Application 深度解读实验","description":"搭建OWASP Top 10 for LLM Application 深度解读相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备OWASP Top 10 for LLM Application 深度解读实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握OWASP Top 10 for LLM Application 深度解读的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"OWASP Top 10 for LLM学习要点","content":"学习OWASP Top 10 for LLM关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-108", day: 108, title: "Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）", subtitle: "Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）",
+    objectives: ['理解Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）的核心概念和原理', '掌握Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）的技术实现方法', '了解Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）实验","description":"搭建Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握Prompt注入-直接注入（指令覆盖/角色扮演/目标劫持）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"Prompt注入-直接注入（指令覆盖/角学习要点","content":"学习Prompt注入-直接注入（指令覆盖/角关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-109", day: 109, title: "Prompt注入-间接注入（网页内容/邮件/文档诱导）", subtitle: "Prompt注入-间接注入（网页内容/邮件/文档诱导）",
+    objectives: ['理解Prompt注入-间接注入（网页内容/邮件/文档诱导）的核心概念和原理', '掌握Prompt注入-间接注入（网页内容/邮件/文档诱导）的技术实现方法', '了解Prompt注入-间接注入（网页内容/邮件/文档诱导）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "Prompt注入-间接注入（网页内容/邮件/文档诱导）是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['Prompt注入-间接注入（网页内容/邮件/文档诱导）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"Prompt注入-间接注入（网页内容/邮件/文档诱导）实验","description":"搭建Prompt注入-间接注入（网页内容/邮件/文档诱导）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备Prompt注入-间接注入（网页内容/邮件/文档诱导）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握Prompt注入-间接注入（网页内容/邮件/文档诱导）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"Prompt注入-间接注入（网页内容/邮学习要点","content":"学习Prompt注入-间接注入（网页内容/邮关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-110", day: 110, title: "Prompt注入-高级技术（编码绕过/多语言/多模态注入）", subtitle: "Prompt注入-高级技术（编码绕过/多语言/多模态注入）",
+    objectives: ['理解Prompt注入-高级技术（编码绕过/多语言/多模态注入）的核心概念和原理', '掌握Prompt注入-高级技术（编码绕过/多语言/多模态注入）的技术实现方法', '了解Prompt注入-高级技术（编码绕过/多语言/多模态注入）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "Prompt注入-高级技术（编码绕过/多语言/多模态注入）是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['Prompt注入-高级技术（编码绕过/多语言/多模态注入）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"Prompt注入-高级技术（编码绕过/多语言/多模态注入）实验","description":"搭建Prompt注入-高级技术（编码绕过/多语言/多模态注入）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备Prompt注入-高级技术（编码绕过/多语言/多模态注入）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握Prompt注入-高级技术（编码绕过/多语言/多模态注入）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"Prompt注入-高级技术（编码绕过/多学习要点","content":"学习Prompt注入-高级技术（编码绕过/多关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-111", day: 111, title: "Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）", subtitle: "Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）",
+    objectives: ['理解Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）的核心概念和原理', '掌握Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）的技术实现方法', '了解Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）实验","description":"搭建Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握Prompt注入防御体系（输入清洗/意图分析/沙箱/输出审查）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"Prompt注入防御体系（输入清洗/意图学习要点","content":"学习Prompt注入防御体系（输入清洗/意图关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-112", day: 112, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week17: CyberDay[] = [
-  { id: "ai-113", day: 113, title: "RAG安全（知识库投毒/检索劫持）", subtitle: "RAG安全（知识库投毒/检索劫持）",
-    objectives: ['理解RAG安全（知识库投毒/检索劫持）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## RAG安全（知识库投毒/检索劫持）\n\n实践任务：模拟知识库投毒攻击，使RAG检索到恶意文档\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['RAG安全（知识库投毒/检索劫持）', '实践: 模拟知识库投毒攻击，使RAG检索到恶意文档'] },
-  { id: "ai-114", day: 114, title: "LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）", subtitle: "LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）",
-    objectives: ['理解LLM Agent安全（工具调用劫持/越的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）\n\n实践任务：分析ReAct/FunctionCall链路中的安全风险点\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）', '实践: 分析ReAct/FunctionCall链路中的安全风险点'] },
-  { id: "ai-115", day: 115, title: "LLM数据安全（训练数据提取/成员推理攻击）", subtitle: "LLM数据安全（训练数据提取/成员推理攻击）",
-    objectives: ['理解LLM数据安全（训练数据提取/成员推理攻的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## LLM数据安全（训练数据提取/成员推理攻击）\n\n实践任务：实现简单的成员推理攻击，判断数据是否在训练集中\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['LLM数据安全（训练数据提取/成员推理攻击）', '实践: 实现简单的成员推理攻击，判断数据是否在训练集中'] },
-  { id: "ai-116", day: 116, title: "LLM供应链安全（模型投毒/后门攻击/恶意插件）", subtitle: "LLM供应链安全（模型投毒/后门攻击/恶意插件）",
-    objectives: ['理解LLM供应链安全（模型投毒/后门攻击/恶的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## LLM供应链安全（模型投毒/后门攻击/恶意插件）\n\n实践任务：分析HuggingFace模型仓库的安全风险\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['LLM供应链安全（模型投毒/后门攻击/恶意插件）', '实践: 分析HuggingFace模型仓库的安全风险'] },
-  { id: "ai-117", day: 117, title: "LLM内容安全（有害内容/幻觉/越狱）", subtitle: "LLM内容安全（有害内容/幻觉/越狱）",
-    objectives: ['理解LLM内容安全（有害内容/幻觉/越狱）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## LLM内容安全（有害内容/幻觉/越狱）\n\n实践任务：测试多种越狱技术（DAN/角色扮演/Token Smuggling）\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['LLM内容安全（有害内容/幻觉/越狱）', '实践: 测试多种越狱技术（DAN/角色扮演/Token Smuggl'] },
-  { id: "ai-118", day: 118, title: "LLM安全评估框架（Garak/Giskard/LLM Guard）", subtitle: "LLM安全评估框架（Garak/Giskard/LLM Guard）",
-    objectives: ['理解LLM安全评估框架（Garak/Gisk的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## LLM安全评估框架（Garak/Giskard/LLM Guard）\n\n实践任务：用Garak对本地LLM做自动化安全扫描\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['LLM安全评估框架（Garak/Giskard/LLM Gu', '实践: 用Garak对本地LLM做自动化安全扫描'] },
-  { id: "ai-119", day: 119, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：LLM安全全景图：从Prompt到Agent的6层攻击面分析\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: LLM安全全景图：从Prompt到Agent的6层攻击面分析'] }
+    { id: "ai-113", day: 113, title: "RAG安全（知识库投毒/检索劫持）", subtitle: "RAG安全（知识库投毒/检索劫持）",
+    objectives: ['理解RAG安全（知识库投毒/检索劫持）的核心概念和原理', '掌握RAG安全（知识库投毒/检索劫持）的技术实现方法', '了解RAG安全（知识库投毒/检索劫持）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "RAG安全（知识库投毒/检索劫持）通过污染训练数据控制模型行为。后门攻击：在训练数据插入带触发器的样本，训练后模型对含触发器的输入输出攻击者指定标签。\\n\\n攻击方式：标签翻转(恶意标良性)、清洁标签攻击(仅篡改特征)、后门植入(加触发器模式)。\\n\\n防御策略：数据清洗(异常检测剔除投毒样本)、鲁棒训练(TrimmedLoss)、后门检测(Neural Cleanse扫描触发器)、差分隐私训练。\\n\\n检测工具：STRIP(输入扰动分析)、ABS(神经元行为扫描)、Neural Cleanse(逆向触发器)。",
+    keyPoints: ['RAG安全（知识库投毒/检索劫持）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"RAG安全（知识库投毒/检索劫持）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# RAG安全（知识库投毒/检索劫持）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"RAG安全（知识库投毒/检索劫持）... Model accuracy: {score:.3f}\")","explanation":"RAG安全（知识库投毒/检索劫持）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"RAG安全（知识库投毒/检索劫持）实验","description":"搭建RAG安全（知识库投毒/检索劫持）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备RAG安全（知识库投毒/检索劫持）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握RAG安全（知识库投毒/检索劫持）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"RAG安全（知识库投毒/检索劫持）学习要点","content":"学习RAG安全（知识库投毒/检索劫持）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-114", day: 114, title: "LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）", subtitle: "LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）",
+    objectives: ['理解LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）的核心概念和原理', '掌握LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）的技术实现方法', '了解LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）通过对输入添加人眼不可见扰动使ML模型错误分类。核心攻击：FGSM(x\'=x+ε×sign(∇xJ))快速但粗略；PGD迭代多步攻击更强；C&W优化最小扰动。\\n\\n安全场景：对抗样本绕过IDS/NIDS检测、恶意软件检测逃逸、验证码识别欺骗。\\n\\n防御策略：对抗训练(训练集混入对抗样本)、梯度掩蔽、输入变换(JPEG压缩/随机裁剪)、检测器(二分类区分正常/对抗)。CleverHans库一键生成攻击/防御。",
+    keyPoints: ['LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）实验","description":"搭建LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握LLM Agent安全（工具调用劫持/越权操作/沙箱逃逸）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"LLM Agent安全（工具调用劫持/越学习要点","content":"学习LLM Agent安全（工具调用劫持/越关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-115", day: 115, title: "LLM数据安全（训练数据提取/成员推理攻击）", subtitle: "LLM数据安全（训练数据提取/成员推理攻击）",
+    objectives: ['理解LLM数据安全（训练数据提取/成员推理攻击）的核心概念和原理', '掌握LLM数据安全（训练数据提取/成员推理攻击）的技术实现方法', '了解LLM数据安全（训练数据提取/成员推理攻击）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "LLM数据安全（训练数据提取/成员推理攻击）是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['LLM数据安全（训练数据提取/成员推理攻击）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"LLM数据安全（训练数据提取/成员推理攻击）实验","description":"搭建LLM数据安全（训练数据提取/成员推理攻击）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备LLM数据安全（训练数据提取/成员推理攻击）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握LLM数据安全（训练数据提取/成员推理攻击）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"LLM数据安全（训练数据提取/成员推理攻学习要点","content":"学习LLM数据安全（训练数据提取/成员推理攻关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-116", day: 116, title: "LLM供应链安全（模型投毒/后门攻击/恶意插件）", subtitle: "LLM供应链安全（模型投毒/后门攻击/恶意插件）",
+    objectives: ['理解LLM供应链安全（模型投毒/后门攻击/恶意插件）的核心概念和原理', '掌握LLM供应链安全（模型投毒/后门攻击/恶意插件）的技术实现方法', '了解LLM供应链安全（模型投毒/后门攻击/恶意插件）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "LLM供应链安全（模型投毒/后门攻击/恶意插件）通过污染训练数据控制模型行为。后门攻击：在训练数据插入带触发器的样本，训练后模型对含触发器的输入输出攻击者指定标签。\\n\\n攻击方式：标签翻转(恶意标良性)、清洁标签攻击(仅篡改特征)、后门植入(加触发器模式)。\\n\\n防御策略：数据清洗(异常检测剔除投毒样本)、鲁棒训练(TrimmedLoss)、后门检测(Neural Cleanse扫描触发器)、差分隐私训练。\\n\\n检测工具：STRIP(输入扰动分析)、ABS(神经元行为扫描)、Neural Cleanse(逆向触发器)。",
+    keyPoints: ['LLM供应链安全（模型投毒/后门攻击/恶意插件）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"LLM供应链安全（模型投毒/后门攻击/恶意插件）实验","description":"搭建LLM供应链安全（模型投毒/后门攻击/恶意插件）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备LLM供应链安全（模型投毒/后门攻击/恶意插件）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握LLM供应链安全（模型投毒/后门攻击/恶意插件）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"LLM供应链安全（模型投毒/后门攻击/恶学习要点","content":"学习LLM供应链安全（模型投毒/后门攻击/恶关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-117", day: 117, title: "LLM内容安全（有害内容/幻觉/越狱）", subtitle: "LLM内容安全（有害内容/幻觉/越狱）",
+    objectives: ['理解LLM内容安全（有害内容/幻觉/越狱）的核心概念和原理', '掌握LLM内容安全（有害内容/幻觉/越狱）的技术实现方法', '了解LLM内容安全（有害内容/幻觉/越狱）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "LLM内容安全（有害内容/幻觉/越狱）是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['LLM内容安全（有害内容/幻觉/越狱）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"LLM内容安全（有害内容/幻觉/越狱）实验","description":"搭建LLM内容安全（有害内容/幻觉/越狱）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备LLM内容安全（有害内容/幻觉/越狱）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握LLM内容安全（有害内容/幻觉/越狱）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"LLM内容安全（有害内容/幻觉/越狱）学习要点","content":"学习LLM内容安全（有害内容/幻觉/越狱）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-118", day: 118, title: "LLM安全评估框架（Garak/Giskard/LLM Guard）", subtitle: "LLM安全评估框架（Garak/Giskard/LLM Guard）",
+    objectives: ['理解LLM安全评估框架（Garak/Giskard/LLM Guard）的核心概念和原理', '掌握LLM安全评估框架（Garak/Giskard/LLM Guard）的技术实现方法', '了解LLM安全评估框架（Garak/Giskard/LLM Guard）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "LLM安全评估框架（Garak/Giskard/LLM Guard）是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['LLM安全评估框架（Garak/Giskard/LLM Guard）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"LLM安全评估框架（Garak/Giskard/LLM Guard）实验","description":"搭建LLM安全评估框架（Garak/Giskard/LLM Guard）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备LLM安全评估框架（Garak/Giskard/LLM Guard）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握LLM安全评估框架（Garak/Giskard/LLM Guard）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"LLM安全评估框架（Garak/Gisk学习要点","content":"学习LLM安全评估框架（Garak/Gisk关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-119", day: 119, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week18: CyberDay[] = [
-  { id: "ai-120", day: 120, title: "LLM辅助代码审计（漏洞发现/补丁生成）", subtitle: "LLM辅助代码审计（漏洞发现/补丁生成）",
-    objectives: ['理解LLM辅助代码审计（漏洞发现/补丁生成）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## LLM辅助代码审计（漏洞发现/补丁生成）\n\n实践任务：用LLM分析10段含漏洞代码，评估发现率和误报率\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['LLM辅助代码审计（漏洞发现/补丁生成）', '实践: 用LLM分析10段含漏洞代码，评估发现率和误报率'] },
-  { id: "ai-121", day: 121, title: "LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）", subtitle: "LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）",
-    objectives: ['理解LLM辅助威胁情报分析（IOC提取/AT的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）\n\n实践任务：用LLM从威胁报告中自动提取IOC和TTP\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生', '实践: 用LLM从威胁报告中自动提取IOC和TTP'] },
-  { id: "ai-122", day: 122, title: "构建安全Copilot：IDS告警解读", subtitle: "构建安全Copilot：IDS告警解读",
-    objectives: ['理解构建安全Copilot：IDS告警解读的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 构建安全Copilot：IDS告警解读\n\n实践任务：用LangChain搭建告警解读助手，输入告警→自然语言解释\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['构建安全Copilot：IDS告警解读', '实践: 用LangChain搭建告警解读助手，输入告警→自然语言解释'] },
-  { id: "ai-123", day: 123, title: "Deepfake检测（视觉/音频/文本深度伪造）", subtitle: "Deepfake检测（视觉/音频/文本深度伪造）",
-    objectives: ['理解Deepfake检测（视觉/音频/文本深的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## Deepfake检测（视觉/音频/文本深度伪造）\n\n实践任务：用预训练模型检测AI生成的钓鱼邮件和虚假安全公告\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['Deepfake检测（视觉/音频/文本深度伪造）', '实践: 用预训练模型检测AI生成的钓鱼邮件和虚假安全公告'] },
-  { id: "ai-124", day: 124, title: "AI生成钓鱼检测（风格分析/语义一致性）", subtitle: "AI生成钓鱼检测（风格分析/语义一致性）",
-    objectives: ['理解AI生成钓鱼检测（风格分析/语义一致性）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## AI生成钓鱼检测（风格分析/语义一致性）\n\n实践任务：训练分类器区分人工和AI生成的钓鱼邮件\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['AI生成钓鱼检测（风格分析/语义一致性）', '实践: 训练分类器区分人工和AI生成的钓鱼邮件'] },
-  { id: "ai-125", day: 125, title: "对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）", subtitle: "对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）",
-    objectives: ['理解对抗性AI生成内容（WormGPT/Fr的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）\n\n实践任务：研究恶意LLM的能力边界和安全威胁\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['对抗性AI生成内容（WormGPT/FraudGPT/暗网L', '实践: 研究恶意LLM的能力边界和安全威胁'] },
-  { id: "ai-126", day: 126, title: "**阶段总结**", subtitle: "**阶段总结**",
-    objectives: ['理解**阶段总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **阶段总结**\n\n实践任务：LLM安全双视角报告：LLM的安全问题 + LLM用于安全的能力\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**阶段总结**', '实践: LLM安全双视角报告：LLM的安全问题 + LLM用于安全的'] }
+    { id: "ai-120", day: 120, title: "LLM辅助代码审计（漏洞发现/补丁生成）", subtitle: "LLM辅助代码审计（漏洞发现/补丁生成）",
+    objectives: ['理解LLM辅助代码审计（漏洞发现/补丁生成）的核心概念和原理', '掌握LLM辅助代码审计（漏洞发现/补丁生成）的技术实现方法', '了解LLM辅助代码审计（漏洞发现/补丁生成）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "LLM辅助代码审计（漏洞发现/补丁生成）是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['LLM辅助代码审计（漏洞发现/补丁生成）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"LLM辅助代码审计（漏洞发现/补丁生成）实验","description":"搭建LLM辅助代码审计（漏洞发现/补丁生成）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备LLM辅助代码审计（漏洞发现/补丁生成）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握LLM辅助代码审计（漏洞发现/补丁生成）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"LLM辅助代码审计（漏洞发现/补丁生成）学习要点","content":"学习LLM辅助代码审计（漏洞发现/补丁生成）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-121", day: 121, title: "LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）", subtitle: "LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）",
+    objectives: ['理解LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）的核心概念和原理', '掌握LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）的技术实现方法', '了解LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）实验","description":"搭建LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握LLM辅助威胁情报分析（IOC提取/ATT&CK映射/报告生成）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"LLM辅助威胁情报分析（IOC提取/AT学习要点","content":"学习LLM辅助威胁情报分析（IOC提取/AT关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-122", day: 122, title: "构建安全Copilot：IDS告警解读", subtitle: "构建安全Copilot：IDS告警解读",
+    objectives: ['理解构建安全Copilot：IDS告警解读的核心概念和原理', '掌握构建安全Copilot：IDS告警解读的技术实现方法', '了解构建安全Copilot：IDS告警解读在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "构建安全Copilot：IDS告警解读通过监控网络/系统行为发现攻击。\\n\\n检测方法：基于签名的(Snort规则匹配已知攻击)、基于异常的(ML检测偏离基线)、基于状态的(协议状态机检测violation)。\\n\\nAI增强：ML分类区分攻击类型、DL自动提取深层特征、集成学习融合多检测器结果。\\n\\n实战系统：Suricata(Snort兼容)+Python ML推理引擎+ELK展示告警。模型输入：CICFlowMeter提取的79维流特征。",
+    keyPoints: ['构建安全Copilot：IDS告警解读是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"构建安全Copilot：IDS告警解读在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 构建安全Copilot：IDS告警解读\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"构建安全Copilot：IDS告警解读... Model accuracy: {score:.3f}\")","explanation":"构建安全Copilot：IDS告警解读的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"构建安全Copilot：IDS告警解读实验","description":"搭建构建安全Copilot：IDS告警解读相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备构建安全Copilot：IDS告警解读实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握构建安全Copilot：IDS告警解读的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"构建安全Copilot：IDS告警解读学习要点","content":"学习构建安全Copilot：IDS告警解读关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-123", day: 123, title: "Deepfake检测（视觉/音频/文本深度伪造）", subtitle: "Deepfake检测（视觉/音频/文本深度伪造）",
+    objectives: ['理解Deepfake检测（视觉/音频/文本深度伪造）的核心概念和原理', '掌握Deepfake检测（视觉/音频/文本深度伪造）的技术实现方法', '了解Deepfake检测（视觉/音频/文本深度伪造）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "Deepfake检测（视觉/音频/文本深度伪造）在安全领域处理日志、告警描述、payload文本、威胁报告等信息。\\n\\n技术栈：TF-IDF(传统特征)、Word2Vec/FastText(词向量)、BERT/RoBERTa(预训练语言模型)。\\n\\n安全应用：Web payload分类(SQL注入/XSS/正常)、告警文本聚类去重、威胁情报实体抽取(NER)、钓鱼邮件检测。\\n\\n实战：transformers库加载bert-base→fine-tune安全分类任务→部署在线检测API。",
+    keyPoints: ['Deepfake检测（视觉/音频/文本深度伪造）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"TF-IDF的全称？","options":["A. 随机", "B. Term Frequency-Inverse Document Frequency", "C. 模型", "D. 算法"],"correctIndex":1,"explanation":"TF-IDF衡量词在文档中的重要性词频高中在少文档出现则权重高。"},
+    {"question":"BERT在安全中的应用？","options":["A. 无", "B. 安全文本分类告警payload日志智能分析", "C. 图像", "D. 视频"],"correctIndex":1,"explanation":"预训练BERT可fine-tune到安全文本分类任务理解安全语义上下文。"},
+    {"question":"NLP处理安全payload的挑战？","options":["A. 简单", "B. payload高度非自然语言包含特殊字符和编码需要领域适应", "C. 无", "D. 支持"],"correctIndex":1,"explanation":"SQL注入XSS等paylaod不是自然语言直接应用通用NLP效果有限需领域适配。"},
+    {"question":"Word2Vec与TF-IDF的主要区别？","options":["A. 相同", "B. Word2Vec学习低维稠密语义向量TF-IDF是高维稀疏统计特征", "C. 更快", "D. 更简单"],"correctIndex":1,"explanation":"Word2Vec捕获词语义相似关系如SQL注入和XSS向量接近TF-IDF只看频率。"},
+    {"question":"安全NER(命名实体识别)的提取目标？","options":["A. 人名", "B. IP域名哈希CVE编号等威胁情报实体", "C. 地名", "D. 日期"],"correctIndex":1,"explanation":"安全NER专门提取IOC/IP/域名/文件哈希/ATT&CK技术等安全实体。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# Deepfake检测（视觉/音频/文本深度伪造）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"Deepfake检测（视觉/音频/文本深... Model accuracy: {score:.3f}\")","explanation":"Deepfake检测（视觉/音频/文本深度伪造）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"Deepfake检测（视觉/音频/文本深度伪造）实验","description":"搭建Deepfake检测（视觉/音频/文本深度伪造）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备Deepfake检测（视觉/音频/文本深度伪造）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握Deepfake检测（视觉/音频/文本深度伪造）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"Deepfake检测（视觉/音频/文本深学习要点","content":"学习Deepfake检测（视觉/音频/文本深关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-124", day: 124, title: "AI生成钓鱼检测（风格分析/语义一致性）", subtitle: "AI生成钓鱼检测（风格分析/语义一致性）",
+    objectives: ['理解AI生成钓鱼检测（风格分析/语义一致性）的核心概念和原理', '掌握AI生成钓鱼检测（风格分析/语义一致性）的技术实现方法', '了解AI生成钓鱼检测（风格分析/语义一致性）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "AI生成钓鱼检测（风格分析/语义一致性）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解AI生成钓鱼检测（风格分析/语义一致性）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['AI生成钓鱼检测（风格分析/语义一致性）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"AI生成钓鱼检测（风格分析/语义一致性）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# AI生成钓鱼检测（风格分析/语义一致性）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"AI生成钓鱼检测（风格分析/语义一致性）... Model accuracy: {score:.3f}\")","explanation":"AI生成钓鱼检测（风格分析/语义一致性）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"AI生成钓鱼检测（风格分析/语义一致性）实验","description":"搭建AI生成钓鱼检测（风格分析/语义一致性）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备AI生成钓鱼检测（风格分析/语义一致性）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握AI生成钓鱼检测（风格分析/语义一致性）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"AI生成钓鱼检测（风格分析/语义一致性）学习要点","content":"学习AI生成钓鱼检测（风格分析/语义一致性）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-125", day: 125, title: "对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）", subtitle: "对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）",
+    objectives: ['理解对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）的核心概念和原理', '掌握对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）的技术实现方法', '了解对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）通过对输入添加人眼不可见扰动使ML模型错误分类。核心攻击：FGSM(x\'=x+ε×sign(∇xJ))快速但粗略；PGD迭代多步攻击更强；C&W优化最小扰动。\\n\\n安全场景：对抗样本绕过IDS/NIDS检测、恶意软件检测逃逸、验证码识别欺骗。\\n\\n防御策略：对抗训练(训练集混入对抗样本)、梯度掩蔽、输入变换(JPEG压缩/随机裁剪)、检测器(二分类区分正常/对抗)。CleverHans库一键生成攻击/防御。",
+    keyPoints: ['对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM攻击的原理？","options":["A. 随机扰动", "B. x'=x+ε×sign(∇xJ)沿梯度方向单步扰动", "C. 迭代", "D. 重训练"],"correctIndex":1,"explanation":"FGSM计算损失对输入的梯度符号乘以小步长ε快速生成对抗样本。"},
+    {"question":"最有效的对抗防御方法？","options":["A. 不做防御", "B. 对抗训练(训练集包含对抗样本)", "C. 加密", "D. 删除模型"],"correctIndex":1,"explanation":"对抗训练在训练过程中注入对抗样本是目前验证最有效的通用防御。"},
+    {"question":"PGD相比FGSM的优势？","options":["A. 更快", "B. 多步迭代攻击更强", "C. 更简单", "D. 不需要梯度"],"correctIndex":1,"explanation":"PGD进行多步小扰动迭代每步投影回ε-ball产生更强的对抗样本。"},
+    {"question":"CleverHans库的功能？","options":["A. 数据处理", "B. 对抗攻击和防御的标准化实现", "C. 可视化", "D. 爬虫"],"correctIndex":1,"explanation":"CleverHans是AI对抗攻防的标准库提供多种攻击和防御方法。"},
+    {"question":"安全模型上线前必须做什么？","options":["A. 直接上线", "B. 对抗鲁棒性测试", "C. 加密", "D. 备份"],"correctIndex":1,"explanation":"所有安全AI模型上线前必须经过对抗鲁棒性评估确保在攻击下不失效。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）实验","description":"搭建对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握对抗性AI生成内容（WormGPT/FraudGPT/暗网LLM）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"对抗性AI生成内容（WormGPT/Fr学习要点","content":"学习对抗性AI生成内容（WormGPT/Fr关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-126", day: 126, title: "阶段总结", subtitle: "阶段总结",
+    objectives: ['理解阶段总结的核心概念和原理', '掌握阶段总结的技术实现方法', '了解阶段总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['阶段总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 阶段总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"阶段总结... Model accuracy: {score:.3f}\")","explanation":"阶段总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"阶段总结实验","description":"搭建阶段总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备阶段总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握阶段总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"阶段总结学习要点","content":"学习阶段总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week19: CyberDay[] = [
-  { id: "ai-127", day: 127, title: "MLOps全景（数据流水线/特征存储/模型注册/监控）", subtitle: "MLOps全景（数据流水线/特征存储/模型注册/监控）",
-    objectives: ['理解MLOps全景（数据流水线/特征存储/模的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## MLOps全景（数据流水线/特征存储/模型注册/监控）\n\n实践任务：设计安全ML系统的MLOps架构图\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['MLOps全景（数据流水线/特征存储/模型注册/监控）', '实践: 设计安全ML系统的MLOps架构图'] },
-  { id: "ai-128", day: 128, title: "实验追踪（MLflow/Weights & Biases）", subtitle: "实验追踪（MLflow/Weights & Biases）",
-    objectives: ['理解实验追踪（MLflow/Weights 的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 实验追踪（MLflow/Weights & Biases）\n\n实践任务：用MLflow记录IDS模型的所有实验参数和评估指标\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['实验追踪（MLflow/Weights & Biases）', '实践: 用MLflow记录IDS模型的所有实验参数和评估指标'] },
-  { id: "ai-129", day: 129, title: "特征存储（Feast/Tecton）", subtitle: "特征存储（Feast/Tecton）",
-    objectives: ['理解特征存储（Feast/Tecton）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 特征存储（Feast/Tecton）\n\n实践任务：搭建Feast特征存储，管理安全特征的在线/离线一致性\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['特征存储（Feast/Tecton）', '实践: 搭建Feast特征存储，管理安全特征的在线/离线一致性'] },
-  { id: "ai-130", day: 130, title: "模型注册与版本管理", subtitle: "模型注册与版本管理",
-    objectives: ['理解模型注册与版本管理的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 模型注册与版本管理\n\n实践任务：用MLflow Model Registry管理IDS模型的版本和阶段\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['模型注册与版本管理', '实践: 用MLflow Model Registry管理IDS模型的'] },
-  { id: "ai-131", day: 131, title: "FastAPI部署ML模型到生产", subtitle: "FastAPI部署ML模型到生产",
-    objectives: ['理解FastAPI部署ML模型到生产的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## FastAPI部署ML模型到生产\n\n实践任务：将IDS模型封装为REST API，包含健康检查/监控/metrics\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['FastAPI部署ML模型到生产', '实践: 将IDS模型封装为REST API，包含健康检查/监控/me'] },
-  { id: "ai-132", day: 132, title: "Docker + K8s 模型服务化", subtitle: "Docker + K8s 模型服务化",
-    objectives: ['理解Docker + K8s 模型服务化的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## Docker + K8s 模型服务化\n\n实践任务：将FastAPI服务Docker化+K8s部署，配置自动扩缩容\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['Docker + K8s 模型服务化', '实践: 将FastAPI服务Docker化+K8s部署，配置自动扩缩'] },
-  { id: "ai-133", day: 133, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：端到端ML安全系统：训练Pipeline → 模型注册 → 服务部署\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: 端到端ML安全系统：训练Pipeline → 模型注册 → '] }
+    { id: "ai-127", day: 127, title: "MLOps全景（数据流水线/特征存储/模型注册/监控）", subtitle: "MLOps全景（数据流水线/特征存储/模型注册/监控）",
+    objectives: ['理解MLOps全景（数据流水线/特征存储/模型注册/监控）的核心概念和原理', '掌握MLOps全景（数据流水线/特征存储/模型注册/监控）的技术实现方法', '了解MLOps全景（数据流水线/特征存储/模型注册/监控）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "MLOps全景（数据流水线/特征存储/模型注册/监控）是AI安全模型工程化的关键环节。\\n\\nMLflow：实验追踪(记录参数/指标/模型)、模型注册(版本管理/阶段转换)、模型部署(REST API服务)。\\n\\n安全MLOps要点：模型签名验证(输入输出schema约束)、模型加密(防逆向)、推理审计日志(每次调用留痕)、A/B测试安全模型。\\n\\nMLflow安全实践：mlflow.log_params+mlflow.log_metrics记录所有实验、mlflow.pyfunc封装模型统一接口、模型存储加密。",
+    keyPoints: ['MLOps全景（数据流水线/特征存储/模型注册/监控）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"MLOps全景（数据流水线/特征存储/模型注册/监控）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# MLOps全景（数据流水线/特征存储/模型注册/监控）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"MLOps全景（数据流水线/特征存储/模... Model accuracy: {score:.3f}\")","explanation":"MLOps全景（数据流水线/特征存储/模型注册/监控）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"MLOps全景（数据流水线/特征存储/模型注册/监控）实验","description":"搭建MLOps全景（数据流水线/特征存储/模型注册/监控）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备MLOps全景（数据流水线/特征存储/模型注册/监控）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握MLOps全景（数据流水线/特征存储/模型注册/监控）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"MLOps全景（数据流水线/特征存储/模学习要点","content":"学习MLOps全景（数据流水线/特征存储/模关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-128", day: 128, title: "实验追踪（MLflow/Weights & Biases）", subtitle: "实验追踪（MLflow/Weights & Biases）",
+    objectives: ['理解实验追踪（MLflow/Weights & Biases）的核心概念和原理', '掌握实验追踪（MLflow/Weights & Biases）的技术实现方法', '了解实验追踪（MLflow/Weights & Biases）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "实验追踪（MLflow/Weights & Biases）是AI安全模型工程化的关键环节。\\n\\nMLflow：实验追踪(记录参数/指标/模型)、模型注册(版本管理/阶段转换)、模型部署(REST API服务)。\\n\\n安全MLOps要点：模型签名验证(输入输出schema约束)、模型加密(防逆向)、推理审计日志(每次调用留痕)、A/B测试安全模型。\\n\\nMLflow安全实践：mlflow.log_params+mlflow.log_metrics记录所有实验、mlflow.pyfunc封装模型统一接口、模型存储加密。",
+    keyPoints: ['实验追踪（MLflow/Weights & Biases）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"实验追踪（MLflow/Weights & Biases）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 实验追踪（MLflow/Weights & Biases）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"实验追踪（MLflow/Weights ... Model accuracy: {score:.3f}\")","explanation":"实验追踪（MLflow/Weights & Biases）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"实验追踪（MLflow/Weights & Biases）实验","description":"搭建实验追踪（MLflow/Weights & Biases）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备实验追踪（MLflow/Weights & Biases）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握实验追踪（MLflow/Weights & Biases）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"实验追踪（MLflow/Weights 学习要点","content":"学习实验追踪（MLflow/Weights 关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-129", day: 129, title: "特征存储（Feast/Tecton）", subtitle: "特征存储（Feast/Tecton）",
+    objectives: ['理解特征存储（Feast/Tecton）的核心概念和原理', '掌握特征存储（Feast/Tecton）的技术实现方法', '了解特征存储（Feast/Tecton）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "特征存储（Feast/Tecton）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解特征存储（Feast/Tecton）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['特征存储（Feast/Tecton）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"特征存储（Feast/Tecton）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 特征存储（Feast/Tecton）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"特征存储（Feast/Tecton）... Model accuracy: {score:.3f}\")","explanation":"特征存储（Feast/Tecton）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"特征存储（Feast/Tecton）实验","description":"搭建特征存储（Feast/Tecton）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备特征存储（Feast/Tecton）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握特征存储（Feast/Tecton）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"特征存储（Feast/Tecton）学习要点","content":"学习特征存储（Feast/Tecton）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-130", day: 130, title: "模型注册与版本管理", subtitle: "模型注册与版本管理",
+    objectives: ['理解模型注册与版本管理的核心概念和原理', '掌握模型注册与版本管理的技术实现方法', '了解模型注册与版本管理在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "模型注册与版本管理是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解模型注册与版本管理在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['模型注册与版本管理是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"模型注册与版本管理在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 模型注册与版本管理\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"模型注册与版本管理... Model accuracy: {score:.3f}\")","explanation":"模型注册与版本管理的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"模型注册与版本管理实验","description":"搭建模型注册与版本管理相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备模型注册与版本管理实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握模型注册与版本管理的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"模型注册与版本管理学习要点","content":"学习模型注册与版本管理关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-131", day: 131, title: "FastAPI部署ML模型到生产", subtitle: "FastAPI部署ML模型到生产",
+    objectives: ['理解FastAPI部署ML模型到生产的核心概念和原理', '掌握FastAPI部署ML模型到生产的技术实现方法', '了解FastAPI部署ML模型到生产在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "FastAPI部署ML模型到生产是AI安全模型工程化的关键环节。\\n\\nMLflow：实验追踪(记录参数/指标/模型)、模型注册(版本管理/阶段转换)、模型部署(REST API服务)。\\n\\n安全MLOps要点：模型签名验证(输入输出schema约束)、模型加密(防逆向)、推理审计日志(每次调用留痕)、A/B测试安全模型。\\n\\nMLflow安全实践：mlflow.log_params+mlflow.log_metrics记录所有实验、mlflow.pyfunc封装模型统一接口、模型存储加密。",
+    keyPoints: ['FastAPI部署ML模型到生产是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FastAPI部署ML模型到生产在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# FastAPI部署ML模型到生产\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"FastAPI部署ML模型到生产... Model accuracy: {score:.3f}\")","explanation":"FastAPI部署ML模型到生产的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"FastAPI部署ML模型到生产实验","description":"搭建FastAPI部署ML模型到生产相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备FastAPI部署ML模型到生产实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握FastAPI部署ML模型到生产的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"FastAPI部署ML模型到生产学习要点","content":"学习FastAPI部署ML模型到生产关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-132", day: 132, title: "Docker + K8s 模型服务化", subtitle: "Docker + K8s 模型服务化",
+    objectives: ['理解Docker + K8s 模型服务化的核心概念和原理', '掌握Docker + K8s 模型服务化的技术实现方法', '了解Docker + K8s 模型服务化在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "Docker + K8s 模型服务化是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解Docker + K8s 模型服务化在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['Docker + K8s 模型服务化是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Docker + K8s 模型服务化在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# Docker + K8s 模型服务化\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"Docker + K8s 模型服务化... Model accuracy: {score:.3f}\")","explanation":"Docker + K8s 模型服务化的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"Docker + K8s 模型服务化实验","description":"搭建Docker + K8s 模型服务化相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备Docker + K8s 模型服务化实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握Docker + K8s 模型服务化的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"Docker + K8s 模型服务化学习要点","content":"学习Docker + K8s 模型服务化关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-133", day: 133, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week20: CyberDay[] = [
-  { id: "ai-134", day: 134, title: "ML pipeline安全（数据投毒/模型窃取/后门攻击）", subtitle: "ML pipeline安全（数据投毒/模型窃取/后门攻击）",
-    objectives: ['理解ML pipeline安全（数据投毒/模的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## ML pipeline安全（数据投毒/模型窃取/后门攻击）\n\n实践任务：实现数据投毒攻击：注入中毒样本使模型后门触发\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['ML pipeline安全（数据投毒/模型窃取/后门攻击）', '实践: 实现数据投毒攻击：注入中毒样本使模型后门触发'] },
-  { id: "ai-135", day: 135, title: "模型水印与版权保护", subtitle: "模型水印与版权保护",
-    objectives: ['理解模型水印与版权保护的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 模型水印与版权保护\n\n实践任务：用模型水印技术保护自己训练的恶意软件检测模型\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['模型水印与版权保护', '实践: 用模型水印技术保护自己训练的恶意软件检测模型'] },
-  { id: "ai-136", day: 136, title: "差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）", subtitle: "差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）",
-    objectives: ['理解差分隐私基础（ε-差分隐私/拉普拉斯机制的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）\n\n实践任务：用Opacus为训练过程添加差分隐私保护\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）', '实践: 用Opacus为训练过程添加差分隐私保护'] },
-  { id: "ai-137", day: 137, title: "联邦学习原理（FedAvg/安全聚合/Non-IID挑战）", subtitle: "联邦学习原理（FedAvg/安全聚合/Non-IID挑战）",
-    objectives: ['理解联邦学习原理（FedAvg/安全聚合/N的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 联邦学习原理（FedAvg/安全聚合/Non-IID挑战）\n\n实践任务：用PySyft模拟3个组织协同训练IDS模型，数据不出本地\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['联邦学习原理（FedAvg/安全聚合/Non-IID挑战）', '实践: 用PySyft模拟3个组织协同训练IDS模型，数据不出本地'] },
-  { id: "ai-138", day: 138, title: "联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）", subtitle: "联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）",
-    objectives: ['理解联邦学习安全（梯度泄露/投毒攻击/拜占庭的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）\n\n实践任务：模拟梯度反演攻击从梯度中恢复训练数据\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）', '实践: 模拟梯度反演攻击从梯度中恢复训练数据'] },
-  { id: "ai-139", day: 139, title: "模型监控与漂移检测（数据漂移/概念漂移/预测漂移）", subtitle: "模型监控与漂移检测（数据漂移/概念漂移/预测漂移）",
-    objectives: ['理解模型监控与漂移检测（数据漂移/概念漂移/的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 模型监控与漂移检测（数据漂移/概念漂移/预测漂移）\n\n实践任务：用Evidently AI监控生产模型中攻击流量分布的变化\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['模型监控与漂移检测（数据漂移/概念漂移/预测漂移）', '实践: 用Evidently AI监控生产模型中攻击流量分布的变化'] },
-  { id: "ai-140", day: 140, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：ML安全防护方案：从训练→部署→监控的全生命周期安全\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: ML安全防护方案：从训练→部署→监控的全生命周期安全'] }
+    { id: "ai-134", day: 134, title: "ML pipeline安全（数据投毒/模型窃取/后门攻击）", subtitle: "ML pipeline安全（数据投毒/模型窃取/后门攻击）",
+    objectives: ['理解ML pipeline安全（数据投毒/模型窃取/后门攻击）的核心概念和原理', '掌握ML pipeline安全（数据投毒/模型窃取/后门攻击）的技术实现方法', '了解ML pipeline安全（数据投毒/模型窃取/后门攻击）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "ML pipeline安全（数据投毒/模型窃取/后门攻击）通过污染训练数据控制模型行为。后门攻击：在训练数据插入带触发器的样本，训练后模型对含触发器的输入输出攻击者指定标签。\\n\\n攻击方式：标签翻转(恶意标良性)、清洁标签攻击(仅篡改特征)、后门植入(加触发器模式)。\\n\\n防御策略：数据清洗(异常检测剔除投毒样本)、鲁棒训练(TrimmedLoss)、后门检测(Neural Cleanse扫描触发器)、差分隐私训练。\\n\\n检测工具：STRIP(输入扰动分析)、ABS(神经元行为扫描)、Neural Cleanse(逆向触发器)。",
+    keyPoints: ['ML pipeline安全（数据投毒/模型窃取/后门攻击）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"模型窃取攻击的定义？","options":["A. 偷硬件", "B. 通过大量查询API训练替代模型", "C. 复制代码", "D. 网络入侵"],"correctIndex":1,"explanation":"攻击者通过对目标模型API大量查询收集输入输出对训练替代模型。"},
+    {"question":"防御模型窃取的有效手段？","options":["A. 无所谓", "B. 查询频率限制+输出扰动+返回rounding", "C. 公开模型", "D. 加密"],"correctIndex":1,"explanation":"控制查询速率加噪输出降低窃取模型精度是有效的防御组合。"},
+    {"question":"PRADA检测的目标？","options":["A. 网络攻击", "B. 检测针对模型的系统性质询模式", "C. 病毒", "D. 木马"],"correctIndex":1,"explanation":"PRADA分析API查询分布模式判断是否存在模型窃取行为。"},
+    {"question":"模型窃取的知识产权风险？","options":["A. 无风险", "B. 泄露模型结构参数知识产权", "C. 仅性能", "D. 仅速度"],"correctIndex":1,"explanation":"替代模型可能高保真复现原模型间接窃取了知识产权和训练投入。"},
+    {"question":"知识蒸馏与模型窃取的区别？","options":["A. 完全相同", "B. 蒸馏合法有权限访问窃取通过黑盒API", "C. 蒸馏更快", "D. 无区别"],"correctIndex":1,"explanation":"知识蒸馏是合法的模型压缩技术需访问原始数据而窃取只需要API查询。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# ML pipeline安全（数据投毒/模型窃取/后门攻击）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"ML pipeline安全（数据投毒/模... Model accuracy: {score:.3f}\")","explanation":"ML pipeline安全（数据投毒/模型窃取/后门攻击）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"ML pipeline安全（数据投毒/模型窃取/后门攻击）实验","description":"搭建ML pipeline安全（数据投毒/模型窃取/后门攻击）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备ML pipeline安全（数据投毒/模型窃取/后门攻击）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握ML pipeline安全（数据投毒/模型窃取/后门攻击）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"ML pipeline安全（数据投毒/模学习要点","content":"学习ML pipeline安全（数据投毒/模关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-135", day: 135, title: "模型水印与版权保护", subtitle: "模型水印与版权保护",
+    objectives: ['理解模型水印与版权保护的核心概念和原理', '掌握模型水印与版权保护的技术实现方法', '了解模型水印与版权保护在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "模型水印与版权保护是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解模型水印与版权保护在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['模型水印与版权保护是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"模型水印与版权保护在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 模型水印与版权保护\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"模型水印与版权保护... Model accuracy: {score:.3f}\")","explanation":"模型水印与版权保护的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"模型水印与版权保护实验","description":"搭建模型水印与版权保护相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备模型水印与版权保护实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握模型水印与版权保护的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"模型水印与版权保护学习要点","content":"学习模型水印与版权保护关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-136", day: 136, title: "差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）", subtitle: "差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）",
+    objectives: ['理解差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）的核心概念和原理', '掌握差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）的技术实现方法', '了解差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"差分隐私基础（ε-差分隐私/拉普拉斯机制... Model accuracy: {score:.3f}\")","explanation":"差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）实验","description":"搭建差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握差分隐私基础（ε-差分隐私/拉普拉斯机制/高斯机制）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"差分隐私基础（ε-差分隐私/拉普拉斯机制学习要点","content":"学习差分隐私基础（ε-差分隐私/拉普拉斯机制关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-137", day: 137, title: "联邦学习原理（FedAvg/安全聚合/Non-IID挑战）", subtitle: "联邦学习原理（FedAvg/安全聚合/Non-IID挑战）",
+    objectives: ['理解联邦学习原理（FedAvg/安全聚合/Non-IID挑战）的核心概念和原理', '掌握联邦学习原理（FedAvg/安全聚合/Non-IID挑战）的技术实现方法', '了解联邦学习原理（FedAvg/安全聚合/Non-IID挑战）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "联邦学习原理（FedAvg/安全聚合/Non-IID挑战）在数据不出本地前提下协作训练模型。每个客户端本地训练→上传模型更新(非原始数据)→服务器聚合更新→下发新模型。\\n\\n安全优势：数据不离本地满足隐私合规(GDPR等)、减少数据泄露风险、多方安全协作。\\n\\n安全挑战：梯度逆向攻击(从梯度还原训练数据)、模型投毒(恶意客户端污染全局模型)、成员推断攻击。\\n\\n框架：Flower联邦学习框架+PyTorch。FedAvg: 各客户端SGD更新→服务器加权平均。关键参数：客户端数量、每轮通信频次、本地epoch数。",
+    keyPoints: ['联邦学习原理（FedAvg/安全聚合/Non-IID挑战）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"联邦学习的核心特点？","options":["A. 数据集中", "B. 数据不出本地模型参数聚合", "C. 单机训练", "D. 集中式"],"correctIndex":1,"explanation":"联邦学习各方数据不离开本地只共享加密的模型参数更新。"},
+    {"question":"FedAvg聚合算法？","options":["A. 随机选", "B. 各客户端参数按数据量加权平均", "C. 最大值", "D. 中位数"],"correctIndex":1,"explanation":"FedAvg把各客户端的模型更新按样本量加权平均得到全局模型。"},
+    {"question":"联邦学习面临的安全挑战？","options":["A. 没有", "B. 梯度逆向攻击模型投毒", "C. 网络带宽", "D. 存储"],"correctIndex":1,"explanation":"梯度可能泄露训练数据信息恶意客户端投毒可破坏全局模型。"},
+    {"question":"联邦学习中差分隐私的作用？","options":["A. 加速", "B. 给梯度加噪声保护训练数据隐私", "C. 加密", "D. 压缩"],"correctIndex":1,"explanation":"差分隐私让攻击者无法从梯度中推断单个训练样本的信息。"},
+    {"question":"联邦学习框架推荐？","options":["A. TensorFlow", "B. Flower Federation Framework", "C. Jupyter", "D. VSCode"],"correctIndex":1,"explanation":"Flower是专为联邦学习设计的开源框架支持PyTorch/TF等多后端。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import numpy as np\n\nclass FedAvg:\n    def __init__(self, num_clients=10):\n        self.num_clients = num_clients\n        self.global_weights = None\n    \n    def aggregate(self, client_updates, data_sizes):\n        total_size = sum(data_sizes)\n        new_weights = []\n        for i in range(len(client_updates[0])):\n            weighted_sum = sum(\n                c[i] * (s/total_size)\n                for c, s in zip(client_updates, data_sizes)\n            )\n            new_weights.append(weighted_sum)\n        self.global_weights = new_weights\n        return new_weights\n\naggregator = FedAvg(num_clients=5)\nprint(f\"Federated Averaging ready for {aggregator.num_clients} clients\")","explanation":"联邦学习FedAvg实现：多方协作训练数据不出本地"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"联邦学习原理（FedAvg/安全聚合/Non-IID挑战）实验","description":"搭建联邦学习原理（FedAvg/安全聚合/Non-IID挑战）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备联邦学习原理（FedAvg/安全聚合/Non-IID挑战）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握联邦学习原理（FedAvg/安全聚合/Non-IID挑战）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"联邦学习原理（FedAvg/安全聚合/N学习要点","content":"学习联邦学习原理（FedAvg/安全聚合/N关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-138", day: 138, title: "联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）", subtitle: "联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）",
+    objectives: ['理解联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）的核心概念和原理', '掌握联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）的技术实现方法', '了解联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）在数据不出本地前提下协作训练模型。每个客户端本地训练→上传模型更新(非原始数据)→服务器聚合更新→下发新模型。\\n\\n安全优势：数据不离本地满足隐私合规(GDPR等)、减少数据泄露风险、多方安全协作。\\n\\n安全挑战：梯度逆向攻击(从梯度还原训练数据)、模型投毒(恶意客户端污染全局模型)、成员推断攻击。\\n\\n框架：Flower联邦学习框架+PyTorch。FedAvg: 各客户端SGD更新→服务器加权平均。关键参数：客户端数量、每轮通信频次、本地epoch数。",
+    keyPoints: ['联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"联邦学习的核心特点？","options":["A. 数据集中", "B. 数据不出本地模型参数聚合", "C. 单机训练", "D. 集中式"],"correctIndex":1,"explanation":"联邦学习各方数据不离开本地只共享加密的模型参数更新。"},
+    {"question":"FedAvg聚合算法？","options":["A. 随机选", "B. 各客户端参数按数据量加权平均", "C. 最大值", "D. 中位数"],"correctIndex":1,"explanation":"FedAvg把各客户端的模型更新按样本量加权平均得到全局模型。"},
+    {"question":"联邦学习面临的安全挑战？","options":["A. 没有", "B. 梯度逆向攻击模型投毒", "C. 网络带宽", "D. 存储"],"correctIndex":1,"explanation":"梯度可能泄露训练数据信息恶意客户端投毒可破坏全局模型。"},
+    {"question":"联邦学习中差分隐私的作用？","options":["A. 加速", "B. 给梯度加噪声保护训练数据隐私", "C. 加密", "D. 压缩"],"correctIndex":1,"explanation":"差分隐私让攻击者无法从梯度中推断单个训练样本的信息。"},
+    {"question":"联邦学习框架推荐？","options":["A. TensorFlow", "B. Flower Federation Framework", "C. Jupyter", "D. VSCode"],"correctIndex":1,"explanation":"Flower是专为联邦学习设计的开源框架支持PyTorch/TF等多后端。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import numpy as np\n\nclass FedAvg:\n    def __init__(self, num_clients=10):\n        self.num_clients = num_clients\n        self.global_weights = None\n    \n    def aggregate(self, client_updates, data_sizes):\n        total_size = sum(data_sizes)\n        new_weights = []\n        for i in range(len(client_updates[0])):\n            weighted_sum = sum(\n                c[i] * (s/total_size)\n                for c, s in zip(client_updates, data_sizes)\n            )\n            new_weights.append(weighted_sum)\n        self.global_weights = new_weights\n        return new_weights\n\naggregator = FedAvg(num_clients=5)\nprint(f\"Federated Averaging ready for {aggregator.num_clients} clients\")","explanation":"联邦学习FedAvg实现：多方协作训练数据不出本地"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）实验","description":"搭建联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握联邦学习安全（梯度泄露/投毒攻击/拜占庭容错）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"联邦学习安全（梯度泄露/投毒攻击/拜占庭学习要点","content":"学习联邦学习安全（梯度泄露/投毒攻击/拜占庭关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-139", day: 139, title: "模型监控与漂移检测（数据漂移/概念漂移/预测漂移）", subtitle: "模型监控与漂移检测（数据漂移/概念漂移/预测漂移）",
+    objectives: ['理解模型监控与漂移检测（数据漂移/概念漂移/预测漂移）的核心概念和原理', '掌握模型监控与漂移检测（数据漂移/概念漂移/预测漂移）的技术实现方法', '了解模型监控与漂移检测（数据漂移/概念漂移/预测漂移）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "模型监控与漂移检测（数据漂移/概念漂移/预测漂移）严重直接影响模型效果。安全数据常见问题：缺失值(设备未上报)、异常值(攻击流量)、类别不平衡(攻击样本极少)、特征量纲不一致。\\n\\n处理策略：缺失值→分析原因后填充(均值/中位数/众数)或删除；异常值→IQR方法检测+Winsorize capping；类别不平衡→SMOTE过采样/欠采样/代价敏感。\\n\\nsklearn Pipeline: StandardScaler+SimpleImputer+ColumnTransformer组合不同类型数据的预处理。关键原则：训练集fit_transform，测试集只用transform防信息泄露。",
+    keyPoints: ['模型监控与漂移检测（数据漂移/概念漂移/预测漂移）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"模型监控与漂移检测（数据漂移/概念漂移/预测漂移）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 模型监控与漂移检测（数据漂移/概念漂移/预测漂移）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"模型监控与漂移检测（数据漂移/概念漂移/... Model accuracy: {score:.3f}\")","explanation":"模型监控与漂移检测（数据漂移/概念漂移/预测漂移）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"模型监控与漂移检测（数据漂移/概念漂移/预测漂移）实验","description":"搭建模型监控与漂移检测（数据漂移/概念漂移/预测漂移）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备模型监控与漂移检测（数据漂移/概念漂移/预测漂移）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握模型监控与漂移检测（数据漂移/概念漂移/预测漂移）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"模型监控与漂移检测（数据漂移/概念漂移/学习要点","content":"学习模型监控与漂移检测（数据漂移/概念漂移/关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-140", day: 140, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week21: CyberDay[] = [
-  { id: "ai-141", day: 141, title: "AI驱动SIEM系统设计", subtitle: "AI驱动SIEM系统设计",
-    objectives: ['理解AI驱动SIEM系统设计的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## AI驱动SIEM系统设计\n\n实践任务：设计架构：日志采集→特征提取→AI分析→告警→响应\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['AI驱动SIEM系统设计', '实践: 设计架构：日志采集→特征提取→AI分析→告警→响应'] },
-  { id: "ai-142", day: 142, title: "AI驱动SOAR（安全编排自动化与响应）", subtitle: "AI驱动SOAR（安全编排自动化与响应）",
-    objectives: ['理解AI驱动SOAR（安全编排自动化与响应）的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## AI驱动SOAR（安全编排自动化与响应）\n\n实践任务：用AI模型判断告警严重度，自动触发响应剧本\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['AI驱动SOAR（安全编排自动化与响应）', '实践: 用AI模型判断告警严重度，自动触发响应剧本'] },
-  { id: "ai-143", day: 143, title: "AI红队工具链（自动化渗透/漏洞发现优先级）", subtitle: "AI红队工具链（自动化渗透/漏洞发现优先级）",
-    objectives: ['理解AI红队工具链（自动化渗透/漏洞发现优先的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## AI红队工具链（自动化渗透/漏洞发现优先级）\n\n实践任务：用ML对漏洞扫描结果排序，AI辅助渗透路径规划\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['AI红队工具链（自动化渗透/漏洞发现优先级）', '实践: 用ML对漏洞扫描结果排序，AI辅助渗透路径规划'] },
-  { id: "ai-144", day: 144, title: "AI蓝队工具链（UEBA/NDR/EDR中的AI）", subtitle: "AI蓝队工具链（UEBA/NDR/EDR中的AI）",
-    objectives: ['理解AI蓝队工具链（UEBA/NDR/EDR的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## AI蓝队工具链（UEBA/NDR/EDR中的AI）\n\n实践任务：分析Splunk/CrowdStrike/Darktrace中AI的应用模式\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['AI蓝队工具链（UEBA/NDR/EDR中的AI）', '实践: 分析Splunk/CrowdStrike/Darktrace'] },
-  { id: "ai-145", day: 145, title: "搭建AI安全实验靶场（Kali+ML环境+Docker）", subtitle: "搭建AI安全实验靶场（Kali+ML环境+Docker）",
-    objectives: ['理解搭建AI安全实验靶场（Kali+ML环境的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 搭建AI安全实验靶场（Kali+ML环境+Docker）\n\n实践任务：环境搭建：JupyterLab+GPU+Kali+IDS+靶机\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['搭建AI安全实验靶场（Kali+ML环境+Docker）', '实践: 环境搭建：JupyterLab+GPU+Kali+IDS+靶'] },
-  { id: "ai-146", day: 146, title: "威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）", subtitle: "威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）",
-    objectives: ['理解威胁狩猎中的AI应用（行为聚类/异常检测的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）\n\n实践任务：构建攻击行为知识图谱，用GNN发现新型攻击模式\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）', '实践: 构建攻击行为知识图谱，用GNN发现新型攻击模式'] },
-  { id: "ai-147", day: 147, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：AI安全系统设计方案 + 个人实验靶场验收\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: AI安全系统设计方案 + 个人实验靶场验收'] }
+    { id: "ai-141", day: 141, title: "AI驱动SIEM系统设计", subtitle: "AI驱动SIEM系统设计",
+    objectives: ['理解AI驱动SIEM系统设计的核心概念和原理', '掌握AI驱动SIEM系统设计的技术实现方法', '了解AI驱动SIEM系统设计在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "AI驱动SIEM系统设计通过AI提升日志分析效率和准确性。\\n\\n应用：日志异常检测(ML识别异常模式)、日志聚类(自动分组相似日志)、日志语义解析(NLP理解日志含义)、根因分析(关联多源日志追溯攻击链)。\\n\\n技术：Drain(在线日志解析,基于固定深度树)、Loglizer(多种ML日志异常检测)、DeepLog(LSTM序列预测日志)。\\n\\n实战：ELK(采集索引)+Python ML(分析检测)+告警推送。先建立正常基线，在基线偏移时告警。",
+    keyPoints: ['AI驱动SIEM系统设计是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"AI驱动SIEM系统设计在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# AI驱动SIEM系统设计\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"AI驱动SIEM系统设计... Model accuracy: {score:.3f}\")","explanation":"AI驱动SIEM系统设计的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"AI驱动SIEM系统设计实验","description":"搭建AI驱动SIEM系统设计相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备AI驱动SIEM系统设计实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握AI驱动SIEM系统设计的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"AI驱动SIEM系统设计学习要点","content":"学习AI驱动SIEM系统设计关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-142", day: 142, title: "AI驱动SOAR（安全编排自动化与响应）", subtitle: "AI驱动SOAR（安全编排自动化与响应）",
+    objectives: ['理解AI驱动SOAR（安全编排自动化与响应）的核心概念和原理', '掌握AI驱动SOAR（安全编排自动化与响应）的技术实现方法', '了解AI驱动SOAR（安全编排自动化与响应）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "AI驱动SOAR（安全编排自动化与响应）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解AI驱动SOAR（安全编排自动化与响应）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['AI驱动SOAR（安全编排自动化与响应）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"AI驱动SOAR（安全编排自动化与响应）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# AI驱动SOAR（安全编排自动化与响应）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"AI驱动SOAR（安全编排自动化与响应）... Model accuracy: {score:.3f}\")","explanation":"AI驱动SOAR（安全编排自动化与响应）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"AI驱动SOAR（安全编排自动化与响应）实验","description":"搭建AI驱动SOAR（安全编排自动化与响应）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备AI驱动SOAR（安全编排自动化与响应）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握AI驱动SOAR（安全编排自动化与响应）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"AI驱动SOAR（安全编排自动化与响应）学习要点","content":"学习AI驱动SOAR（安全编排自动化与响应）关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-143", day: 143, title: "AI红队工具链（自动化渗透/漏洞发现优先级）", subtitle: "AI红队工具链（自动化渗透/漏洞发现优先级）",
+    objectives: ['理解AI红队工具链（自动化渗透/漏洞发现优先级）的核心概念和原理', '掌握AI红队工具链（自动化渗透/漏洞发现优先级）的技术实现方法', '了解AI红队工具链（自动化渗透/漏洞发现优先级）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "AI红队工具链（自动化渗透/漏洞发现优先级）用AI提升漏洞发现和管理效率。\\n\\n应用：NLP自动分析CVE描述→提取影响范围/攻击向量/修复方案；ML漏洞优先级排序(从CVSS到实际风险)；代码表示学习检测0day漏洞模式。\\n\\n工具：SARIF(静态分析结果格式)、CodeQL(代码查询漏洞)、Semgrep(AST模式匹配)。\\n\\n实战：用BERT fine-tune CVE分类→输入新漏洞描述→自动评估严重程度和影响范围。",
+    keyPoints: ['AI红队工具链（自动化渗透/漏洞发现优先级）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"NLP在漏洞管理中的主要应用？","options":["A. 无关", "B. 自动分析CVE描述提取影响范围攻击向量修复方案", "C. 图像", "D. 音频"],"correctIndex":1,"explanation":"NLP将非结构化CVE文本转为结构化信息加速漏洞研判和优先级排序。"},
+    {"question":"CVSS评分的局限性？","options":["A. 完美", "B. 不考虑实际环境影响和攻击活跃度", "C. 无局限", "D. 快"],"correctIndex":1,"explanation":"CVSS是通用评分不包含环境因素和威胁情报需要结合EPSS等动态评估。"},
+    {"question":"CodeQL在漏洞检测中的作用？","options":["A. 无关", "B. 将代码转数据库用QL语义查询发现漏洞模式", "C. 运行", "D. 测试"],"correctIndex":1,"explanation":"CodeQL把代码当数据用类SQL的QL语言查询潜在安全漏洞实现变种分析。"},
+    {"question":"Semgrep相比传统SAST的优势？","options":["A. 慢", "B. 基于AST模式匹配速度快支持多语言规则编写简单", "C. 复杂", "D. 单一"],"correctIndex":1,"explanation":"Semgrep不需要编译直接分析AST匹配模式速度快易上手被广泛采用。"},
+    {"question":"AI检测0day漏洞的核心思路？","options":["A. 签名", "B. 从已知漏洞代码模式学习泛化到未知漏洞模式", "C. 无方法", "D. 随机"],"correctIndex":1,"explanation":"类似ML的泛化能力从已知漏洞代码表示中学到通用危险模式发现未知漏洞。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# AI红队工具链（自动化渗透/漏洞发现优先级）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"AI红队工具链（自动化渗透/漏洞发现优先... Model accuracy: {score:.3f}\")","explanation":"AI红队工具链（自动化渗透/漏洞发现优先级）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"AI红队工具链（自动化渗透/漏洞发现优先级）实验","description":"搭建AI红队工具链（自动化渗透/漏洞发现优先级）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备AI红队工具链（自动化渗透/漏洞发现优先级）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握AI红队工具链（自动化渗透/漏洞发现优先级）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"AI红队工具链（自动化渗透/漏洞发现优先学习要点","content":"学习AI红队工具链（自动化渗透/漏洞发现优先关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-144", day: 144, title: "AI蓝队工具链（UEBA/NDR/EDR中的AI）", subtitle: "AI蓝队工具链（UEBA/NDR/EDR中的AI）",
+    objectives: ['理解AI蓝队工具链（UEBA/NDR/EDR中的AI）的核心概念和原理', '掌握AI蓝队工具链（UEBA/NDR/EDR中的AI）的技术实现方法', '了解AI蓝队工具链（UEBA/NDR/EDR中的AI）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "AI蓝队工具链（UEBA/NDR/EDR中的AI）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解AI蓝队工具链（UEBA/NDR/EDR中的AI）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['AI蓝队工具链（UEBA/NDR/EDR中的AI）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"AI蓝队工具链（UEBA/NDR/EDR中的AI）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# AI蓝队工具链（UEBA/NDR/EDR中的AI）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"AI蓝队工具链（UEBA/NDR/EDR... Model accuracy: {score:.3f}\")","explanation":"AI蓝队工具链（UEBA/NDR/EDR中的AI）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"AI蓝队工具链（UEBA/NDR/EDR中的AI）实验","description":"搭建AI蓝队工具链（UEBA/NDR/EDR中的AI）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备AI蓝队工具链（UEBA/NDR/EDR中的AI）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握AI蓝队工具链（UEBA/NDR/EDR中的AI）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"AI蓝队工具链（UEBA/NDR/EDR学习要点","content":"学习AI蓝队工具链（UEBA/NDR/EDR关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-145", day: 145, title: "搭建AI安全实验靶场（Kali+ML环境+Docker）", subtitle: "搭建AI安全实验靶场（Kali+ML环境+Docker）",
+    objectives: ['理解搭建AI安全实验靶场（Kali+ML环境+Docker）的核心概念和原理', '掌握搭建AI安全实验靶场（Kali+ML环境+Docker）的技术实现方法', '了解搭建AI安全实验靶场（Kali+ML环境+Docker）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "搭建AI安全实验靶场（Kali+ML环境+Docker）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解搭建AI安全实验靶场（Kali+ML环境+Docker）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['搭建AI安全实验靶场（Kali+ML环境+Docker）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"搭建AI安全实验靶场（Kali+ML环境+Docker）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 搭建AI安全实验靶场（Kali+ML环境+Docker）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"搭建AI安全实验靶场（Kali+ML环境... Model accuracy: {score:.3f}\")","explanation":"搭建AI安全实验靶场（Kali+ML环境+Docker）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"搭建AI安全实验靶场（Kali+ML环境+Docker）实验","description":"搭建搭建AI安全实验靶场（Kali+ML环境+Docker）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备搭建AI安全实验靶场（Kali+ML环境+Docker）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握搭建AI安全实验靶场（Kali+ML环境+Docker）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"搭建AI安全实验靶场（Kali+ML环境学习要点","content":"学习搭建AI安全实验靶场（Kali+ML环境关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-146", day: 146, title: "威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）", subtitle: "威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）",
+    objectives: ['理解威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）的核心概念和原理', '掌握威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）的技术实现方法', '了解威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）是AI安全中无监督学习的核心技术。\\n\\nK-Means按距离迭代聚类，需预设K值；DBSCAN基于密度无需预设簇数且能发现任意形状簇；HDBSCAN在DBSCAN基础上自适应选择ε参数，对参数更鲁棒。\\n\\n安全应用：网络流量聚类发现未知攻击模式、日志聚类识别异常行为模式、用户行为聚类建立基线画像。\\n\\n实战建议：先用HDBSCAN探索数据(不需指定簇数)+PCA降维可视化，找到模式后再用有监督方法针对性建模。关键参数：min_cluster_size(最小簇大小)和min_samples(核心点邻居数)。",
+    keyPoints: ['威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"DBSCAN相比K-Means的最大优势？","options":["A. 计算更快", "B. 不需预设K且能发现任意形状", "C. 更适合高维", "D. 参数更少"],"correctIndex":1,"explanation":"DBSCAN基于密度自动确定簇数且能发现非凸簇。"},
+    {"question":"HDBSCAN的核心原理？","options":["A. 固定ε", "B. 自适应选择ε", "C. 纯随机", "D. PCA降维"],"correctIndex":1,"explanation":"HDBSCAN自适应选择密度阈值减少参数调优。"},
+    {"question":"聚类在安全中的典型应用？","options":["A. 图像分类", "B. 发现未知攻击模式", "C. 字符串匹配", "D. 文件加密"],"correctIndex":1,"explanation":"无监督聚类自动发现异常模式可支持未知威胁检测。"},
+    {"question":"K-Means聚类数K的选取方法？","options":["A. 随便选", "B. Elbow Method(肘部法)", "C. 固定K=3", "D. 随机测试"],"correctIndex":1,"explanation":"肘部法画K-误差图找到拐点是K选取的经典方法。"},
+    {"question":"DBSCAN的两个关键参数是？","options":["A. K和距离", "B. ε和min_samples", "C. 深度和宽度", "D. C和gamma"],"correctIndex":1,"explanation":"ε邻域半径和min_samples最小密度点是DBSCAN的两个核心参数。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from sklearn.cluster import KMeans, DBSCAN\nfrom sklearn.decomposition import PCA\nimport numpy as np\n\n# 生成模拟网络流特征\nnp.random.seed(42)\nX = np.vstack([\n    np.random.normal(0, 1, (100, 5)),  # 正常流量\n    np.random.normal(5, 0.5, (10, 5)),  # 异常流量\n])\n\n# DBSCAN: 无需预设K\ndb = DBSCAN(eps=1.5, min_samples=3)\nlabels_db = db.fit_predict(X)\nprint(f\"DBSCAN clusters: {len(set(labels_db)) - (1 if -1 in labels_db else 0)}\")\nprint(f\"Noise points: {(labels_db == -1).sum()}\")\n\n# PCA降维可视化\npca = PCA(2)\nX_pca = pca.fit_transform(X)\nprint(f\"Explained variance: {pca.explained_variance_ratio_}\")","explanation":"DBSCAN聚类+PCA降维：自动发现网络流量中的异常模式"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）实验","description":"搭建威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握威胁狩猎中的AI应用（行为聚类/异常检测/知识图谱）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"威胁狩猎中的AI应用（行为聚类/异常检测学习要点","content":"学习威胁狩猎中的AI应用（行为聚类/异常检测关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-147", day: 147, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week22: CyberDay[] = [
-  { id: "ai-148", day: 148, title: "实战场景一：AI检测DDoS攻击（全链路）", subtitle: "实战场景一：AI检测DDoS攻击（全链路）",
-    objectives: ['理解实战场景一：AI检测DDoS攻击（全链路的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 实战场景一：AI检测DDoS攻击（全链路）\n\n实践任务：模拟DDoS→抓包→ML检测→自动封禁IP→告警\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['实战场景一：AI检测DDoS攻击（全链路）', '实践: 模拟DDoS→抓包→ML检测→自动封禁IP→告警'] },
-  { id: "ai-149", day: 149, title: "实战场景二：AI检测Web攻击（SQL注入/XSS）", subtitle: "实战场景二：AI检测Web攻击（SQL注入/XSS）",
-    objectives: ['理解实战场景二：AI检测Web攻击（SQL注的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 实战场景二：AI检测Web攻击（SQL注入/XSS）\n\n实践任务：实时HTTP流量→特征提取→ML分类→WAF联动\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['实战场景二：AI检测Web攻击（SQL注入/XSS）', '实践: 实时HTTP流量→特征提取→ML分类→WAF联动'] },
-  { id: "ai-150", day: 150, title: "实战场景三：恶意软件AI检测服务", subtitle: "实战场景三：恶意软件AI检测服务",
-    objectives: ['理解实战场景三：恶意软件AI检测服务的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 实战场景三：恶意软件AI检测服务\n\n实践任务：PE文件上传→特征提取→模型预测→API返回评分\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['实战场景三：恶意软件AI检测服务', '实践: PE文件上传→特征提取→模型预测→API返回评分'] },
-  { id: "ai-151", day: 151, title: "实战场景四：AI辅助日志分析&威胁狩猎", subtitle: "实战场景四：AI辅助日志分析&威胁狩猎",
-    objectives: ['理解实战场景四：AI辅助日志分析&威胁狩猎的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 实战场景四：AI辅助日志分析&威胁狩猎\n\n实践任务：海量日志→NLP/GPT分析→发现隐藏攻击链\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['实战场景四：AI辅助日志分析&威胁狩猎', '实践: 海量日志→NLP/GPT分析→发现隐藏攻击链'] },
-  { id: "ai-152", day: 152, title: "实战场景五：对抗攻防红蓝对抗", subtitle: "实战场景五：对抗攻防红蓝对抗",
-    objectives: ['理解实战场景五：对抗攻防红蓝对抗的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 实战场景五：对抗攻防红蓝对抗\n\n实践任务：红队：攻击ML模型 / 蓝队：检测对抗样本\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['实战场景五：对抗攻防红蓝对抗', '实践: 红队：攻击ML模型 / 蓝队：检测对抗样本'] },
-  { id: "ai-153", day: 153, title: "实战场景六：LLM安全评估", subtitle: "实战场景六：LLM安全评估",
-    objectives: ['理解实战场景六：LLM安全评估的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 实战场景六：LLM安全评估\n\n实践任务：对目标LLM做全量安全测试→输出评估报告\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['实战场景六：LLM安全评估', '实践: 对目标LLM做全量安全测试→输出评估报告'] },
-  { id: "ai-154", day: 154, title: "**周总结**", subtitle: "**周总结**",
-    objectives: ['理解**周总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **周总结**\n\n实践任务：6大实战场景逐一复盘，整理技能树和踩坑记录\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**周总结**', '实践: 6大实战场景逐一复盘，整理技能树和踩坑记录'] }
+    { id: "ai-148", day: 148, title: "实战场景一：AI检测DDoS攻击（全链路）", subtitle: "实战场景一：AI检测DDoS攻击（全链路）",
+    objectives: ['理解实战场景一：AI检测DDoS攻击（全链路）的核心概念和原理', '掌握实战场景一：AI检测DDoS攻击（全链路）的技术实现方法', '了解实战场景一：AI检测DDoS攻击（全链路）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "实战场景一：AI检测DDoS攻击（全链路）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解实战场景一：AI检测DDoS攻击（全链路）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['实战场景一：AI检测DDoS攻击（全链路）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"实战场景一：AI检测DDoS攻击（全链路）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 实战场景一：AI检测DDoS攻击（全链路）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"实战场景一：AI检测DDoS攻击（全链路... Model accuracy: {score:.3f}\")","explanation":"实战场景一：AI检测DDoS攻击（全链路）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"实战场景一：AI检测DDoS攻击（全链路）实验","description":"搭建实战场景一：AI检测DDoS攻击（全链路）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备实战场景一：AI检测DDoS攻击（全链路）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握实战场景一：AI检测DDoS攻击（全链路）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"实战场景一：AI检测DDoS攻击（全链路学习要点","content":"学习实战场景一：AI检测DDoS攻击（全链路关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-149", day: 149, title: "实战场景二：AI检测Web攻击（SQL注入/XSS）", subtitle: "实战场景二：AI检测Web攻击（SQL注入/XSS）",
+    objectives: ['理解实战场景二：AI检测Web攻击（SQL注入/XSS）的核心概念和原理', '掌握实战场景二：AI检测Web攻击（SQL注入/XSS）的技术实现方法', '了解实战场景二：AI检测Web攻击（SQL注入/XSS）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "实战场景二：AI检测Web攻击（SQL注入/XSS）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解实战场景二：AI检测Web攻击（SQL注入/XSS）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['实战场景二：AI检测Web攻击（SQL注入/XSS）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"实战场景二：AI检测Web攻击（SQL注入/XSS）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 实战场景二：AI检测Web攻击（SQL注入/XSS）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"实战场景二：AI检测Web攻击（SQL注... Model accuracy: {score:.3f}\")","explanation":"实战场景二：AI检测Web攻击（SQL注入/XSS）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"实战场景二：AI检测Web攻击（SQL注入/XSS）实验","description":"搭建实战场景二：AI检测Web攻击（SQL注入/XSS）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备实战场景二：AI检测Web攻击（SQL注入/XSS）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握实战场景二：AI检测Web攻击（SQL注入/XSS）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"实战场景二：AI检测Web攻击（SQL注学习要点","content":"学习实战场景二：AI检测Web攻击（SQL注关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-150", day: 150, title: "实战场景三：恶意软件AI检测服务", subtitle: "实战场景三：恶意软件AI检测服务",
+    objectives: ['理解实战场景三：恶意软件AI检测服务的核心概念和原理', '掌握实战场景三：恶意软件AI检测服务的技术实现方法', '了解实战场景三：恶意软件AI检测服务在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "实战场景三：恶意软件AI检测服务通过卷积核在输入上滑动提取局部特征。相比全连接：参数共享大幅减少参数量、平移不变性适应位置变化。\\n\\n安全应用：恶意软件可视化(字节转灰度图/马尔可夫图)用CNN分类、网络流量时空特征(流矩阵)分析、Web payload模式检测。\\n\\n架构：Conv2D→BatchNorm→ReLU→MaxPool→...→Flatten→Dense→Softmax。关键超参：kernel_size(3或5)、filters(32/64递进)、pool_size(2)。PyTorch实现用nn.Conv2d。",
+    keyPoints: ['实战场景三：恶意软件AI检测服务是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"实战场景三：恶意软件AI检测服务在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 实战场景三：恶意软件AI检测服务\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"实战场景三：恶意软件AI检测服务... Model accuracy: {score:.3f}\")","explanation":"实战场景三：恶意软件AI检测服务的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"实战场景三：恶意软件AI检测服务实验","description":"搭建实战场景三：恶意软件AI检测服务相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备实战场景三：恶意软件AI检测服务实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握实战场景三：恶意软件AI检测服务的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"实战场景三：恶意软件AI检测服务学习要点","content":"学习实战场景三：恶意软件AI检测服务关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-151", day: 151, title: "实战场景四：AI辅助日志分析&威胁狩猎", subtitle: "实战场景四：AI辅助日志分析&威胁狩猎",
+    objectives: ['理解实战场景四：AI辅助日志分析&威胁狩猎的核心概念和原理', '掌握实战场景四：AI辅助日志分析&威胁狩猎的技术实现方法', '了解实战场景四：AI辅助日志分析&威胁狩猎在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "实战场景四：AI辅助日志分析&威胁狩猎通过AI提升日志分析效率和准确性。\\n\\n应用：日志异常检测(ML识别异常模式)、日志聚类(自动分组相似日志)、日志语义解析(NLP理解日志含义)、根因分析(关联多源日志追溯攻击链)。\\n\\n技术：Drain(在线日志解析,基于固定深度树)、Loglizer(多种ML日志异常检测)、DeepLog(LSTM序列预测日志)。\\n\\n实战：ELK(采集索引)+Python ML(分析检测)+告警推送。先建立正常基线，在基线偏移时告警。",
+    keyPoints: ['实战场景四：AI辅助日志分析&威胁狩猎是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"实战场景四：AI辅助日志分析&威胁狩猎在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 实战场景四：AI辅助日志分析&威胁狩猎\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"实战场景四：AI辅助日志分析&威胁狩猎... Model accuracy: {score:.3f}\")","explanation":"实战场景四：AI辅助日志分析&威胁狩猎的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"实战场景四：AI辅助日志分析&威胁狩猎实验","description":"搭建实战场景四：AI辅助日志分析&威胁狩猎相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备实战场景四：AI辅助日志分析&威胁狩猎实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握实战场景四：AI辅助日志分析&威胁狩猎的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"实战场景四：AI辅助日志分析&威胁狩猎学习要点","content":"学习实战场景四：AI辅助日志分析&威胁狩猎关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-152", day: 152, title: "实战场景五：对抗攻防红蓝对抗", subtitle: "实战场景五：对抗攻防红蓝对抗",
+    objectives: ['理解实战场景五：对抗攻防红蓝对抗的核心概念和原理', '掌握实战场景五：对抗攻防红蓝对抗的技术实现方法', '了解实战场景五：对抗攻防红蓝对抗在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "实战场景五：对抗攻防红蓝对抗通过对输入添加人眼不可见扰动使ML模型错误分类。核心攻击：FGSM(x\'=x+ε×sign(∇xJ))快速但粗略；PGD迭代多步攻击更强；C&W优化最小扰动。\\n\\n安全场景：对抗样本绕过IDS/NIDS检测、恶意软件检测逃逸、验证码识别欺骗。\\n\\n防御策略：对抗训练(训练集混入对抗样本)、梯度掩蔽、输入变换(JPEG压缩/随机裁剪)、检测器(二分类区分正常/对抗)。CleverHans库一键生成攻击/防御。",
+    keyPoints: ['实战场景五：对抗攻防红蓝对抗是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM攻击的原理？","options":["A. 随机扰动", "B. x'=x+ε×sign(∇xJ)沿梯度方向单步扰动", "C. 迭代", "D. 重训练"],"correctIndex":1,"explanation":"FGSM计算损失对输入的梯度符号乘以小步长ε快速生成对抗样本。"},
+    {"question":"最有效的对抗防御方法？","options":["A. 不做防御", "B. 对抗训练(训练集包含对抗样本)", "C. 加密", "D. 删除模型"],"correctIndex":1,"explanation":"对抗训练在训练过程中注入对抗样本是目前验证最有效的通用防御。"},
+    {"question":"PGD相比FGSM的优势？","options":["A. 更快", "B. 多步迭代攻击更强", "C. 更简单", "D. 不需要梯度"],"correctIndex":1,"explanation":"PGD进行多步小扰动迭代每步投影回ε-ball产生更强的对抗样本。"},
+    {"question":"CleverHans库的功能？","options":["A. 数据处理", "B. 对抗攻击和防御的标准化实现", "C. 可视化", "D. 爬虫"],"correctIndex":1,"explanation":"CleverHans是AI对抗攻防的标准库提供多种攻击和防御方法。"},
+    {"question":"安全模型上线前必须做什么？","options":["A. 直接上线", "B. 对抗鲁棒性测试", "C. 加密", "D. 备份"],"correctIndex":1,"explanation":"所有安全AI模型上线前必须经过对抗鲁棒性评估确保在攻击下不失效。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"实战场景五：对抗攻防红蓝对抗实验","description":"搭建实战场景五：对抗攻防红蓝对抗相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备实战场景五：对抗攻防红蓝对抗实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握实战场景五：对抗攻防红蓝对抗的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"实战场景五：对抗攻防红蓝对抗学习要点","content":"学习实战场景五：对抗攻防红蓝对抗关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-153", day: 153, title: "实战场景六：LLM安全评估", subtitle: "实战场景六：LLM安全评估",
+    objectives: ['理解实战场景六：LLM安全评估的核心概念和原理', '掌握实战场景六：LLM安全评估的技术实现方法', '了解实战场景六：LLM安全评估在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "实战场景六：LLM安全评估是当前AI安全前沿热点。LLM安全涵盖：Prompt注入(绕过系统指令)、越狱(Jailbreak突破安全限制)、敏感信息泄露(训练数据提取)、幻觉利用(生成错误安全配置)。\\n\\n防御体系：输入过滤(检测恶意Prompt)+内容审核(输出安全审查)+RLHF对齐(人类反馈强化学习)+红队测试(持续安全评估)。\\n\\n工具：Garak(LLM漏洞扫描器)、LangChain Guardrails(安全护栏)、LLM Guard(内容安全过滤器)。OWASP LLM Top 10是最权威的风险分类。",
+    keyPoints: ['实战场景六：LLM安全评估是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"Prompt注入攻击是什么？","options":["A. SQL注入", "B. 通过精心构造Prompt绕过LLM安全限制", "C. 网络攻击", "D. 物理攻击"],"correctIndex":1,"explanation":"攻击者设计恶意Prompt覆盖或绕过系统预设指令获取受限信息。"},
+    {"question":"最权威的LLM安全风险框架？","options":["A. CVE", "B. OWASP LLM Top 10", "C. NIST", "D. ISO"],"correctIndex":1,"explanation":"OWASP LLM Top 10总结了包括Prompt注入训练数据中毒等十大LLM安全风险。"},
+    {"question":"RLHF在LLM安全中的作用？","options":["A. 加速", "B. 通过人类偏好反馈对齐模型行为减少有害输出", "C. 压缩", "D. 无作用"],"correctIndex":1,"explanation":"RLHF让模型学习人类偏好减少不安全响应提升安全对齐水平。"},
+    {"question":"Garak工具的主要功能？","options":["A. 开发", "B. LLM安全漏洞自动化扫描", "C. 部署", "D. 监控"],"correctIndex":1,"explanation":"Garak是专门针对LLM的安全扫描器覆盖Prompt注入越狱等多种漏洞。"},
+    {"question":"LLM安全防护的核心策略？","options":["A. 单一措施", "B. 输入过滤+内容审核+输出安全+红队测试多层防御", "C. 不上线", "D. 加密"],"correctIndex":1,"explanation":"LLM安全需要多层次的深度防御单点防护不够应对复杂的攻击面。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"from langchain.llms import OpenAI\nfrom langchain.chains import LLMChain\nfrom langchain.prompts import PromptTemplate\n\n# 安全Prompt模板\ntemplate = \"\"\"Analyze the following security log entry for threats.\nLog: {log_entry}\nFormat: \n1. Threat Level (Low/Medium/High/Critical)\n2. Attack Type\n3. Recommended Action\n\"\"\"\n\nprompt = PromptTemplate(template=template, input_variables=[\"log_entry\"])\nprint(\"LLM Security Analysis prompt template ready\")\nprint(\"Note: Always validate LLM outputs before taking action\")","explanation":"LLM安全分析Prompt：用大语言模型辅助安全威胁研判"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"实战场景六：LLM安全评估实验","description":"搭建实战场景六：LLM安全评估相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备实战场景六：LLM安全评估实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握实战场景六：LLM安全评估的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"实战场景六：LLM安全评估学习要点","content":"学习实战场景六：LLM安全评估关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-154", day: 154, title: "周总结", subtitle: "周总结",
+    objectives: ['理解周总结的核心概念和原理', '掌握周总结的技术实现方法', '了解周总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['周总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 周总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"周总结... Model accuracy: {score:.3f}\")","explanation":"周总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"周总结实验","description":"搭建周总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备周总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握周总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"周总结学习要点","content":"学习周总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week23: CyberDay[] = [
-  { id: "ai-155", day: 155, title: "选题与需求分析", subtitle: "选题与需求分析",
-    objectives: ['理解选题与需求分析的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 选题与需求分析\n\n实践任务：从3个方向中选题，撰写需求文档和技术方案\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['选题与需求分析', '实践: 从3个方向中选题，撰写需求文档和技术方案'] },
-  { id: "ai-156", day: 156, title: "数据准备与基线模型", subtitle: "数据准备与基线模型",
-    objectives: ['理解数据准备与基线模型的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 数据准备与基线模型\n\n实践任务：数据集采集/清洗/标注，搭建基线模型\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['数据准备与基线模型', '实践: 数据集采集/清洗/标注，搭建基线模型'] },
-  { id: "ai-157", day: 157, title: "模型选型与训练", subtitle: "模型选型与训练",
-    objectives: ['理解模型选型与训练的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 模型选型与训练\n\n实践任务：尝试3种以上模型架构，对比选最优\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['模型选型与训练', '实践: 尝试3种以上模型架构，对比选最优'] },
-  { id: "ai-158", day: 158, title: "对抗攻防评估", subtitle: "对抗攻防评估",
-    objectives: ['理解对抗攻防评估的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 对抗攻防评估\n\n实践任务：对模型实施攻击→防御加固→鲁棒性评估\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['对抗攻防评估', '实践: 对模型实施攻击→防御加固→鲁棒性评估'] },
-  { id: "ai-159", day: 159, title: "系统集成", subtitle: "系统集成",
-    objectives: ['理解系统集成的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 系统集成\n\n实践任务：模型→API→前端/仪表盘→测试\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['系统集成', '实践: 模型→API→前端/仪表盘→测试'] },
-  { id: "ai-160", day: 160, title: "文档与演示准备", subtitle: "文档与演示准备",
-    objectives: ['理解文档与演示准备的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 文档与演示准备\n\n实践任务：技术报告/部署文档/演示视频\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['文档与演示准备', '实践: 技术报告/部署文档/演示视频'] },
-  { id: "ai-161", day: 161, title: "**项目提测 & Review**", subtitle: "**项目提测 & Review**",
-    objectives: ['理解**项目提测 & Review**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **项目提测 & Review**\n\n实践任务：代码Review+安全测试+性能压测+修复\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**项目提测 & Review**', '实践: 代码Review+安全测试+性能压测+修复'] }
+    { id: "ai-155", day: 155, title: "选题与需求分析", subtitle: "选题与需求分析",
+    objectives: ['理解选题与需求分析的核心概念和原理', '掌握选题与需求分析的技术实现方法', '了解选题与需求分析在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "选题与需求分析是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解选题与需求分析在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['选题与需求分析是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"选题与需求分析在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 选题与需求分析\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"选题与需求分析... Model accuracy: {score:.3f}\")","explanation":"选题与需求分析的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"选题与需求分析实验","description":"搭建选题与需求分析相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备选题与需求分析实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握选题与需求分析的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"选题与需求分析学习要点","content":"学习选题与需求分析关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-156", day: 156, title: "数据准备与基线模型", subtitle: "数据准备与基线模型",
+    objectives: ['理解数据准备与基线模型的核心概念和原理', '掌握数据准备与基线模型的技术实现方法', '了解数据准备与基线模型在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "数据准备与基线模型严重直接影响模型效果。安全数据常见问题：缺失值(设备未上报)、异常值(攻击流量)、类别不平衡(攻击样本极少)、特征量纲不一致。\\n\\n处理策略：缺失值→分析原因后填充(均值/中位数/众数)或删除；异常值→IQR方法检测+Winsorize capping；类别不平衡→SMOTE过采样/欠采样/代价敏感。\\n\\nsklearn Pipeline: StandardScaler+SimpleImputer+ColumnTransformer组合不同类型数据的预处理。关键原则：训练集fit_transform，测试集只用transform防信息泄露。",
+    keyPoints: ['数据准备与基线模型是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"数据准备与基线模型在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 数据准备与基线模型\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"数据准备与基线模型... Model accuracy: {score:.3f}\")","explanation":"数据准备与基线模型的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"数据准备与基线模型实验","description":"搭建数据准备与基线模型相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备数据准备与基线模型实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握数据准备与基线模型的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"数据准备与基线模型学习要点","content":"学习数据准备与基线模型关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-157", day: 157, title: "模型选型与训练", subtitle: "模型选型与训练",
+    objectives: ['理解模型选型与训练的核心概念和原理', '掌握模型选型与训练的技术实现方法', '了解模型选型与训练在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "模型选型与训练是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解模型选型与训练在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['模型选型与训练是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"模型选型与训练在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 模型选型与训练\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"模型选型与训练... Model accuracy: {score:.3f}\")","explanation":"模型选型与训练的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"模型选型与训练实验","description":"搭建模型选型与训练相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备模型选型与训练实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握模型选型与训练的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"模型选型与训练学习要点","content":"学习模型选型与训练关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-158", day: 158, title: "对抗攻防评估", subtitle: "对抗攻防评估",
+    objectives: ['理解对抗攻防评估的核心概念和原理', '掌握对抗攻防评估的技术实现方法', '了解对抗攻防评估在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "对抗攻防评估通过对输入添加人眼不可见扰动使ML模型错误分类。核心攻击：FGSM(x\'=x+ε×sign(∇xJ))快速但粗略；PGD迭代多步攻击更强；C&W优化最小扰动。\\n\\n安全场景：对抗样本绕过IDS/NIDS检测、恶意软件检测逃逸、验证码识别欺骗。\\n\\n防御策略：对抗训练(训练集混入对抗样本)、梯度掩蔽、输入变换(JPEG压缩/随机裁剪)、检测器(二分类区分正常/对抗)。CleverHans库一键生成攻击/防御。",
+    keyPoints: ['对抗攻防评估是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"FGSM攻击的原理？","options":["A. 随机扰动", "B. x'=x+ε×sign(∇xJ)沿梯度方向单步扰动", "C. 迭代", "D. 重训练"],"correctIndex":1,"explanation":"FGSM计算损失对输入的梯度符号乘以小步长ε快速生成对抗样本。"},
+    {"question":"最有效的对抗防御方法？","options":["A. 不做防御", "B. 对抗训练(训练集包含对抗样本)", "C. 加密", "D. 删除模型"],"correctIndex":1,"explanation":"对抗训练在训练过程中注入对抗样本是目前验证最有效的通用防御。"},
+    {"question":"PGD相比FGSM的优势？","options":["A. 更快", "B. 多步迭代攻击更强", "C. 更简单", "D. 不需要梯度"],"correctIndex":1,"explanation":"PGD进行多步小扰动迭代每步投影回ε-ball产生更强的对抗样本。"},
+    {"question":"CleverHans库的功能？","options":["A. 数据处理", "B. 对抗攻击和防御的标准化实现", "C. 可视化", "D. 爬虫"],"correctIndex":1,"explanation":"CleverHans是AI对抗攻防的标准库提供多种攻击和防御方法。"},
+    {"question":"安全模型上线前必须做什么？","options":["A. 直接上线", "B. 对抗鲁棒性测试", "C. 加密", "D. 备份"],"correctIndex":1,"explanation":"所有安全AI模型上线前必须经过对抗鲁棒性评估确保在攻击下不失效。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"import torch\nimport torch.nn as nn\n\n# FGSM对抗攻击\n\ndef fgsm_attack(model, x, y, epsilon=0.1):\n    x.requires_grad = True\n    loss = nn.CrossEntropyLoss()(model(x), y)\n    loss.backward()\n    perturbed = x + epsilon * x.grad.sign()\n    return torch.clamp(perturbed, 0, 1)\n\n# 对抗训练防御\n# for epoch in range(epochs):\n#     x_adv = fgsm_attack(model, x, y, epsilon=0.05)\n#     loss = loss_fn(model(x_adv), y)  # 用对抗样本训练\nprint(\"FGSM attack & adversarial training template\")","explanation":"FGSM对抗攻击+对抗训练防御：对抗攻防核心代码"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"对抗攻防评估实验","description":"搭建对抗攻防评估相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备对抗攻防评估实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握对抗攻防评估的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"对抗攻防评估学习要点","content":"学习对抗攻防评估关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-159", day: 159, title: "系统集成", subtitle: "系统集成",
+    objectives: ['理解系统集成的核心概念和原理', '掌握系统集成的技术实现方法', '了解系统集成在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "系统集成是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解系统集成在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['系统集成是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"系统集成在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 系统集成\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"系统集成... Model accuracy: {score:.3f}\")","explanation":"系统集成的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"系统集成实验","description":"搭建系统集成相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备系统集成实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握系统集成的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"系统集成学习要点","content":"学习系统集成关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-160", day: 160, title: "文档与演示准备", subtitle: "文档与演示准备",
+    objectives: ['理解文档与演示准备的核心概念和原理', '掌握文档与演示准备的技术实现方法', '了解文档与演示准备在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "文档与演示准备是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解文档与演示准备在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['文档与演示准备是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"文档与演示准备在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 文档与演示准备\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"文档与演示准备... Model accuracy: {score:.3f}\")","explanation":"文档与演示准备的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"文档与演示准备实验","description":"搭建文档与演示准备相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备文档与演示准备实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握文档与演示准备的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"文档与演示准备学习要点","content":"学习文档与演示准备关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-161", day: 161, title: "项目提测 & Review", subtitle: "项目提测 & Review",
+    objectives: ['理解项目提测 & Review的核心概念和原理', '掌握项目提测 & Review的技术实现方法', '了解项目提测 & Review在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "项目提测 & Review是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解项目提测 & Review在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['项目提测 & Review是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"项目提测 & Review在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 项目提测 & Review\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"项目提测 & Review... Model accuracy: {score:.3f}\")","explanation":"项目提测 & Review的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"项目提测 & Review实验","description":"搭建项目提测 & Review相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备项目提测 & Review实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握项目提测 & Review的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"项目提测 & Review学习要点","content":"学习项目提测 & Review关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 const week24: CyberDay[] = [
-  { id: "ai-162", day: 162, title: "项目Bug修复与优化", subtitle: "项目Bug修复与优化",
-    objectives: ['理解项目Bug修复与优化的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 项目Bug修复与优化\n\n实践任务：根据Review意见修复问题，性能优化\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['项目Bug修复与优化', '实践: 根据Review意见修复问题，性能优化'] },
-  { id: "ai-163", day: 163, title: "项目答辩准备", subtitle: "项目答辩准备",
-    objectives: ['理解项目答辩准备的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 项目答辩准备\n\n实践任务：整理项目亮点、技术难点、商业价值\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['项目答辩准备', '实践: 整理项目亮点、技术难点、商业价值'] },
-  { id: "ai-164", day: 164, title: "AI安全前沿论文研读", subtitle: "AI安全前沿论文研读",
-    objectives: ['理解AI安全前沿论文研读的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## AI安全前沿论文研读\n\n实践任务：阅读近1年AI安全顶会论文（S&P/CCS/NDSS/Usenix）\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['AI安全前沿论文研读', '实践: 阅读近1年AI安全顶会论文（S&P/CCS/NDSS/Use'] },
-  { id: "ai-165", day: 165, title: "安全AI伦理与治理（AI治理框架/合规/负责任AI）", subtitle: "安全AI伦理与治理（AI治理框架/合规/负责任AI）",
-    objectives: ['理解安全AI伦理与治理（AI治理框架/合规/的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 安全AI伦理与治理（AI治理框架/合规/负责任AI）\n\n实践任务：学习NIST AI RMF/EU AI Act/中国AI治理法规\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['安全AI伦理与治理（AI治理框架/合规/负责任AI）', '实践: 学习NIST AI RMF/EU AI Act/中国AI治理'] },
-  { id: "ai-166", day: 166, title: "职业规划与技能地图", subtitle: "职业规划与技能地图",
-    objectives: ['理解职业规划与技能地图的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 职业规划与技能地图\n\n实践任务：绘制个人AI安全技能雷达图，制定下一步方向\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['职业规划与技能地图', '实践: 绘制个人AI安全技能雷达图，制定下一步方向'] },
-  { id: "ai-167", day: 167, title: "简历与作品集整理", subtitle: "简历与作品集整理",
-    objectives: ['理解简历与作品集整理的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## 简历与作品集整理\n\n实践任务：整理GitHub项目、写技术博客、更新简历\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['简历与作品集整理', '实践: 整理GitHub项目、写技术博客、更新简历'] },
-  { id: "ai-168", day: 168, title: "**毕业总结**", subtitle: "**毕业总结**",
-    objectives: ['理解**毕业总结**的核心概念', '掌握相关技术原理', '完成实践任务'],
-content: "## **毕业总结**\n\n实践任务：24周回顾、能力评估、下阶段规划、毕业证书自测\n\n详细课程内容请查看课程文件。",
-    keyPoints: ['**毕业总结**', '实践: 24周回顾、能力评估、下阶段规划、毕业证书自测'] }
+    { id: "ai-162", day: 162, title: "项目Bug修复与优化", subtitle: "项目Bug修复与优化",
+    objectives: ['理解项目Bug修复与优化的核心概念和原理', '掌握项目Bug修复与优化的技术实现方法', '了解项目Bug修复与优化在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "项目Bug修复与优化确保模型输出概率与实际置信度一致。校准误差(ECE)衡量预测概率与真实准确率的偏差。\\n\\n校准方法：Platt Scaling(逻辑回归校准输出)、Isotonic Regression(非参数保序回归)、Temperature Scaling(温度参数T软化Softmax)。\\n\\n阈值优化：根据业务需求(误报成本vs漏报成本)选择最优决策阈值。方法：ROC曲线找最优点、成本敏感阈值搜索、precision-recall曲线选阈值。\\n\\nsklearn: CalibratedClassifierCV做校、calibration_curve画校准曲线。",
+    keyPoints: ['项目Bug修复与优化是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"项目Bug修复与优化在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 项目Bug修复与优化\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"项目Bug修复与优化... Model accuracy: {score:.3f}\")","explanation":"项目Bug修复与优化的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"项目Bug修复与优化实验","description":"搭建项目Bug修复与优化相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备项目Bug修复与优化实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握项目Bug修复与优化的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"项目Bug修复与优化学习要点","content":"学习项目Bug修复与优化关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-163", day: 163, title: "项目答辩准备", subtitle: "项目答辩准备",
+    objectives: ['理解项目答辩准备的核心概念和原理', '掌握项目答辩准备的技术实现方法', '了解项目答辩准备在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "项目答辩准备是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解项目答辩准备在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['项目答辩准备是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"项目答辩准备在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 项目答辩准备\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"项目答辩准备... Model accuracy: {score:.3f}\")","explanation":"项目答辩准备的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"项目答辩准备实验","description":"搭建项目答辩准备相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备项目答辩准备实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握项目答辩准备的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"项目答辩准备学习要点","content":"学习项目答辩准备关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-164", day: 164, title: "AI安全前沿论文研读", subtitle: "AI安全前沿论文研读",
+    objectives: ['理解AI安全前沿论文研读的核心概念和原理', '掌握AI安全前沿论文研读的技术实现方法', '了解AI安全前沿论文研读在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "AI安全前沿论文研读是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解AI安全前沿论文研读在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['AI安全前沿论文研读是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"AI安全前沿论文研读在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# AI安全前沿论文研读\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"AI安全前沿论文研读... Model accuracy: {score:.3f}\")","explanation":"AI安全前沿论文研读的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"AI安全前沿论文研读实验","description":"搭建AI安全前沿论文研读相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备AI安全前沿论文研读实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握AI安全前沿论文研读的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"AI安全前沿论文研读学习要点","content":"学习AI安全前沿论文研读关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-165", day: 165, title: "安全AI伦理与治理（AI治理框架/合规/负责任AI）", subtitle: "安全AI伦理与治理（AI治理框架/合规/负责任AI）",
+    objectives: ['理解安全AI伦理与治理（AI治理框架/合规/负责任AI）的核心概念和原理', '掌握安全AI伦理与治理（AI治理框架/合规/负责任AI）的技术实现方法', '了解安全AI伦理与治理（AI治理框架/合规/负责任AI）在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "安全AI伦理与治理（AI治理框架/合规/负责任AI）是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解安全AI伦理与治理（AI治理框架/合规/负责任AI）在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['安全AI伦理与治理（AI治理框架/合规/负责任AI）是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"安全AI伦理与治理（AI治理框架/合规/负责任AI）在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 安全AI伦理与治理（AI治理框架/合规/负责任AI）\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"安全AI伦理与治理（AI治理框架/合规/... Model accuracy: {score:.3f}\")","explanation":"安全AI伦理与治理（AI治理框架/合规/负责任AI）的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"安全AI伦理与治理（AI治理框架/合规/负责任AI）实验","description":"搭建安全AI伦理与治理（AI治理框架/合规/负责任AI）相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备安全AI伦理与治理（AI治理框架/合规/负责任AI）实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握安全AI伦理与治理（AI治理框架/合规/负责任AI）的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"安全AI伦理与治理（AI治理框架/合规/学习要点","content":"学习安全AI伦理与治理（AI治理框架/合规/关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-166", day: 166, title: "职业规划与技能地图", subtitle: "职业规划与技能地图",
+    objectives: ['理解职业规划与技能地图的核心概念和原理', '掌握职业规划与技能地图的技术实现方法', '了解职业规划与技能地图在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "职业规划与技能地图是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解职业规划与技能地图在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['职业规划与技能地图是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"职业规划与技能地图在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 职业规划与技能地图\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"职业规划与技能地图... Model accuracy: {score:.3f}\")","explanation":"职业规划与技能地图的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"职业规划与技能地图实验","description":"搭建职业规划与技能地图相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备职业规划与技能地图实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握职业规划与技能地图的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"职业规划与技能地图学习要点","content":"学习职业规划与技能地图关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-167", day: 167, title: "简历与作品集整理", subtitle: "简历与作品集整理",
+    objectives: ['理解简历与作品集整理的核心概念和原理', '掌握简历与作品集整理的技术实现方法', '了解简历与作品集整理在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "简历与作品集整理是AI安全领域的重要知识点，掌握它对构建系统的AI安全能力至关重要。\\n\\n核心要点：理解简历与作品集整理在真实安全场景中的应用场景和局限性，通过代码实践验证理论，积累安全AI实战经验。\\n\\n学习建议：理论学习(30%)→代码实践(40%)→阅读论文(15%)→项目实战(15%)。每天至少投入4小时，坚持动手coding是掌握AI安全技能的唯一捷径。\\n\\n安全第一原则：任何AI安全模型在部署前必须经过严格的对抗鲁棒性测试和安全审查，不能\'黑盒上线\'。",
+    keyPoints: ['简历与作品集整理是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"简历与作品集整理在AI安全中的价值？","options":["A. 无价值", "B. 提升检测/防御/响应能力的核心技术", "C. 边缘", "D. 过时"],"correctIndex":1,"explanation":"该技术是AI安全体系的重要组成部分掌握它提升你的安全AI能力。"},
+    {"question":"学习该技术的最佳方式？","options":["A. 只看书", "B. 理论30%+代码实践40%+论文15%+项目15%", "C. 只看视频", "D. 跳过"],"correctIndex":1,"explanation":"AI安全偏实践只有动手写代码跑实验才能真正掌握核心技术。"},
+    {"question":"该技术的初学者常见错误？","options":["A. 没有", "B. 直接啃论文跳过代码实践", "C. 写代码", "D. 学习"],"correctIndex":1,"explanation":"应先跑通基础实验理解数据流和模型流程再回看理论避免一开始被公式劝退。"},
+    {"question":"安全AI模型部署前的必要检查？","options":["A. 不需要", "B. 对抗鲁棒性测试+性能基准+可解释性审查", "C. 直接部署", "D. 备份"],"correctIndex":1,"explanation":"安全AI模型线上必须经过对抗测试确保不被轻易绕过且有可解释的告警依据。"},
+    {"question":"该技术未来发展的主要趋势？","options":["A. 停止", "B. 多模态融合自动化攻防AI安全评估标准化", "C. 倒退", "D. 无变化"],"correctIndex":1,"explanation":"AI安全正向自动化攻防平台化多模态检测融合方向快速发展。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 简历与作品集整理\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"简历与作品集整理... Model accuracy: {score:.3f}\")","explanation":"简历与作品集整理的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"简历与作品集整理实验","description":"搭建简历与作品集整理相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备简历与作品集整理实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握简历与作品集整理的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"简历与作品集整理学习要点","content":"学习简历与作品集整理关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] },
+    { id: "ai-168", day: 168, title: "毕业总结", subtitle: "毕业总结",
+    objectives: ['理解毕业总结的核心概念和原理', '掌握毕业总结的技术实现方法', '了解毕业总结在真实安全场景中的应用', '完成代码实践和动手实验', '能够评估和优化相关技术方案'],
+    content: "本阶段的总结与回顾，巩固所学知识准备进入下一阶段学习。\\n\\n回顾要点：复盘本周/本阶段学到的核心技术和实战项目、查漏补缺薄弱环节、梳理技能树更新学习路线。\\n\\n实践产出：整理学习笔记和代码、完成阶段综合项目、输出学习总结报告。\\n\\n自检清单：能否独立完成核心实验？能否向他人讲清技术原理？源码是否整理到GitHub？下一阶段是否做好准备？",
+    keyPoints: ['毕业总结是AI安全核心技术', '理解底层原理比调参更重要', '注重代码实践和动手实验', '掌握在真实安全场景中的应用', '建立持续学习和优化意识'],
+    quiz: [
+    {"question":"阶段总结最重要的产出？","options":["A. 无", "B. 整理学习笔记+完成综合项目+梳理技能树", "C. 休息", "D. 跳过"],"correctIndex":1,"explanation":"定期复盘将碎片化知识系统化通过综合项目检验学习效果。"},
+    {"question":"查漏补缺的方法？","options":["A. 随机", "B. 对照技能树自检→重做薄弱章节实验", "C. 忽略", "D. 跳过"],"correctIndex":1,"explanation":"技能树自检能准确找到知识盲区针对薄弱环节复习和重复实践。"},
+    {"question":"学习笔记的最佳整理方式？","options":["A. 不整理", "B. GitHub仓库+Markdown+代码示例便于检索和分享", "C. 纸质", "D. 截图"],"correctIndex":1,"explanation":"GitHub+Markdown结构清晰便于搜索代码可直接运行也方便面试展示。"},
+    {"question":"综合项目的选题标准？","options":["A. 随便", "B. 覆盖本阶段所有核心技能且产出可运行成果", "C. 简单", "D. 不要求"],"correctIndex":1,"explanation":"综合项目作为阶段性成果要能展示技术广度和深度建议端到端全流程。"},
+    {"question":"进入下一阶段的准备评估？","options":["A. 随意", "B. 独立完成核心实验+讲清技术原理→准备就绪", "C. 全忘", "D. 跳过"],"correctIndex":1,"explanation":"能否独立复现实验和向他人讲清楚是衡量掌握程度的黄金标准。"}
+    ],
+    codeExamples: [
+    {"title":"代码示例","language":"python","code":"# 毕业总结\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\n\nnp.random.seed(42)\nX = np.random.randn(500, 10)\ny = (X[:, 0] + X[:, 2] - X[:, 5] > 0).astype(int)\n\nmodel = RandomForestClassifier(n_estimators=50)\nmodel.fit(X, y)\nscore = model.score(X, y)\nprint(f\"毕业总结... Model accuracy: {score:.3f}\")","explanation":"毕业总结的Python代码示例"}
+    ],
+    resources: [{"name":"AI安全论文综述","url":"https://arxiv.org/list/cs.CR/recent","type":"article"}, {"name":"OWASP AI项目","url":"https://owasp.org/www-project-ai-security/","type":"article"}, {"name":"MITRE ATLAS","url":"https://atlas.mitre.org/","type":"article"}],
+    recommendedTools: [{"name":"PyTorch","description":"深度学习框架","url":"https://pytorch.org/","type":"local"}, {"name":"Scikit-learn","description":"机器学习工具集","url":"https://scikit-learn.org/","type":"local"}, {"name":"JupyterLab","description":"交互式数据科学","url":"https://jupyter.org/","type":"local"}],
+    labEnvironment: [{"name":"毕业总结实验","description":"搭建毕业总结相关实验环境进行动手实践","url":"https://www.kaggle.com/","type":"local","setup":"1.准备毕业总结实验数据\\n2.配置Python+PyTorch环境\\n3.实现核心算法\\n4.在安全数据集上测试\\n5.分析结果并优化","expectedOutput":"掌握毕业总结的实战应用能力"}],
+    expertNotes: [{"author":"李智能","title":"毕业总结学习要点","content":"学习毕业总结关键先把核心原理理解透彻再动手实验。不要一上来就调参那是在瞎撞。先把为什么这么设计、解决了什么问题搞清楚。"}, {"author":"王算法","title":"AI安全工程视角","content":"做AI安全不能只看论文中的理想数据集。真实安全数据噪声大、不平衡严重、概念漂移频繁。模型上线后的持续监控和更新机制比模型本身更重要。"}, {"author":"张模型","title":"论文阅读建议","content":"读安全AI论文建议：先看Abstract和Conclusion判断是否相关→看Figures了解核心思路→再看Method细节。带着问题读论文，读完能复现代码才算掌握。"}] }
 ];
 
 export const cyberAiPlan: CyberLearningPlan = {

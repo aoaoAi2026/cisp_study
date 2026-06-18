@@ -16,7 +16,9 @@ import {
   Shield,
   Clock,
   Brain,
-  Award
+  Award,
+  MessageSquare,
+  Library,
 } from 'lucide-react';
 import { useUserStore, useLearningStore, useAchievementStore, getLevel } from '../store';
 import { learningData, weekThemes } from '../data/learningData';
@@ -194,7 +196,7 @@ export const Dashboard: React.FC = () => {
                 className="w-full bg-cyber-gold/20 hover:bg-cyber-gold/30 border-cyber-gold/30"
                 onClick={() => {
                   if (todayChallenge.title.includes('测验')) navigate('/quiz');
-                  else if (todayChallenge.title.includes('闪卡')) navigate('/flashcards');
+                  else if (todayChallenge.title.includes('闪卡')) navigate('/question-bank/past-papers');
                   else if (todayChallenge.title.includes('工具')) navigate('/tools');
                   else if (todayChallenge.title.includes('社区')) navigate('/community');
                   else if (todayChallenge.title.includes('实验')) navigate('/lab');
@@ -373,49 +375,67 @@ export const Dashboard: React.FC = () => {
         {/* Quick Actions */}
         <motion.div variants={itemVariants}>
           <h2 className="font-orbitron text-lg text-cyber-green mb-4">快捷入口</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
             <Card
               className="text-center cursor-pointer group"
               onClick={() => navigate('/cyber-learning')}
               glow
             >
-              <BookOpen size={32} className="mx-auto mb-2 text-cyber-green group-hover:scale-110 transition-transform" />
-              <p className="text-sm font-medium text-white">学习路径</p>
-              <p className="text-xs text-gray-500">90天计划</p>
+              <BookOpen size={28} className="mx-auto mb-2 text-cyber-green group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">学习路径</p>
+              <p className="text-[10px] text-gray-500">5大专项</p>
+            </Card>
+            <Card
+              className="text-center cursor-pointer group"
+              onClick={() => navigate('/interview-learning')}
+              glow
+            >
+              <MessageSquare size={28} className="mx-auto mb-2 text-cyber-gold group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">面试突击</p>
+              <p className="text-[10px] text-gray-500">5大方向</p>
             </Card>
             <Card
               className="text-center cursor-pointer group"
               onClick={() => navigate('/lab')}
               glow
             >
-              <Code size={32} className="mx-auto mb-2 text-cyber-blue group-hover:scale-110 transition-transform" />
-              <p className="text-sm font-medium text-white">代码实验室</p>
-              <p className="text-xs text-gray-500">安全实验</p>
+              <Code size={28} className="mx-auto mb-2 text-cyber-blue group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">代码实验室</p>
+              <p className="text-[10px] text-gray-500">安全实验</p>
             </Card>
             <Card
               className="text-center cursor-pointer group"
-              onClick={() => navigate('/quiz')}
+              onClick={() => navigate('/question-bank/quiz')}
               glow
             >
-              <FileQuestion size={32} className="mx-auto mb-2 text-cyber-gold group-hover:scale-110 transition-transform" />
-              <p className="text-sm font-medium text-white">测验中心</p>
-              <p className="text-xs text-gray-500">章节测验</p>
+              <FileQuestion size={28} className="mx-auto mb-2 text-cyber-gold group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">测验中心</p>
+              <p className="text-[10px] text-gray-500">章节测验</p>
+            </Card>
+            <Card
+              className="text-center cursor-pointer group"
+              onClick={() => navigate('/resources')}
+              glow
+            >
+              <Library size={28} className="mx-auto mb-2 text-purple-400 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">资源库</p>
+              <p className="text-[10px] text-gray-500">文档工具</p>
             </Card>
             <Card
               className="text-center cursor-pointer group"
               onClick={() => navigate('/community')}
               glow
             >
-              <Users size={32} className="mx-auto mb-2 text-cyber-red group-hover:scale-110 transition-transform" />
-              <p className="text-sm font-medium text-white">社区交流</p>
-              <p className="text-xs text-gray-500">学习笔记</p>
+              <Users size={28} className="mx-auto mb-2 text-cyber-red group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">社区交流</p>
+              <p className="text-[10px] text-gray-500">学习笔记</p>
             </Card>
           </div>
         </motion.div>
 
         {/* Week Overview */}
         <motion.div variants={itemVariants}>
-          <h2 className="font-orbitron text-lg text-cyber-green mb-4">学习路径总览</h2>
+          <h2 className="font-orbitron text-lg text-cyber-green mb-4">CISP 学习路径总览</h2>
           <Card>
             <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-12 gap-2">
               {weekThemes.map((week, i) => (
@@ -447,6 +467,31 @@ export const Dashboard: React.FC = () => {
               ))}
             </div>
           </Card>
+        </motion.div>
+
+        {/* 专项学习计划 */}
+        <motion.div variants={itemVariants}>
+          <h2 className="font-orbitron text-lg text-cyber-green mb-4">专项学习计划</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[
+              { id: 'cisp', name: 'CISP备考', desc: '90天', color: '#00ff88', icon: '📚' },
+              { id: 'basic', name: '基础入门', desc: '30天', color: '#00d4ff', icon: '🔰' },
+              { id: 'penetration', name: '渗透测试', desc: '30天', color: '#ff6b6b', icon: '🎯' },
+              { id: 'defense', name: '防御运营', desc: '30天', color: '#ffd700', icon: '🛡️' },
+              { id: 'ai', name: 'AI安全', desc: '168天', color: '#a855f7', icon: '🤖' },
+              { id: 'hw', name: '护网行动', desc: '120天', color: '#f97316', icon: '🔴' },
+            ].map((plan) => (
+              <Card
+                key={plan.id}
+                className="text-center cursor-pointer group transition-all hover:scale-[1.02]"
+                onClick={() => navigate(plan.id === 'cisp' ? '/cyber-learning' : `/cyber-learning/${plan.id}`)}
+              >
+                <span className="text-2xl block mb-1">{plan.icon}</span>
+                <p className="text-xs font-medium text-white">{plan.name}</p>
+                <p className="text-[10px] text-gray-500">{plan.desc}</p>
+              </Card>
+            ))}
+          </div>
         </motion.div>
 
         {/* 学习数据统计 */}
@@ -488,7 +533,7 @@ export const Dashboard: React.FC = () => {
                   style={{ width: `${extraStats.flashAnswered > 0 ? Math.round((extraStats.flashCorrect / extraStats.flashAnswered) * 100) : 0}%` }}
                 />
               </div>
-              <Button size="sm" className="mt-3" onClick={() => navigate('/flashcards')}>
+              <Button size="sm" className="mt-3" onClick={() => navigate('/question-bank/past-papers')}>
                 继续练习
               </Button>
             </Card>

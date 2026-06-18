@@ -40,7 +40,6 @@ const defaultLabel = (i: number) => String.fromCharCode(65 + i);
 const OPTION_CLASS =
   'p-3.5 rounded-lg border-2 border-gray-700 cursor-pointer transition-all duration-300';
 const OPTION_BG = 'rgba(26, 26, 46, 0.4)';
-const OPTION_HOVER = 'rgba(0, 255, 136, 0.05)';
 const OPTION_SELECTED_BG = 'rgba(0, 255, 136, 0.1)';
 const OPTION_CORRECT_BG = 'rgba(34, 197, 94, 0.1)';
 const OPTION_INCORRECT_BG = 'rgba(239, 68, 68, 0.1)';

@@ -1,0 +1,5606 @@
+{
+  "basic": [
+    {
+      "plan": "cyber/basic",
+      "day": 1,
+      "title": "网络安全概述",
+      "keyPoints": [
+        "CIA是信息安全核心目标",
+        "保密性-完整性-可用性",
+        "威胁分外部和内部",
+        "社会工程利用人性弱点",
+        "网络安全已上升为国家战略"
+      ],
+      "objectives": [
+        "理解网络安全定义",
+        "了解行业发展",
+        "认识就业方向"
+      ],
+      "newId": "basic-read-001"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 3,
+      "title": "常见端口与服务",
+      "keyPoints": [
+        "HTTP=80, HTTPS=443",
+        "SSH=22, FTP=21",
+        "MySQL=3306, Redis=6379",
+        "RDP=3389远程桌面",
+        "端口1-1023为系统端口"
+      ],
+      "objectives": [
+        "记忆常用端口",
+        "了解服务用途",
+        "掌握端口扫描基础"
+      ],
+      "newId": "basic-read-002"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 4,
+      "title": "常见端口扫描",
+      "keyPoints": [
+        "端口扫描是渗透测试第一步",
+        "Nmap是最常用工具",
+        "-sS是SYN半开扫描",
+        "-sV识别服务版本",
+        "443=HTTP, 80=HTTP, 22=SSH"
+      ],
+      "objectives": [
+        "掌握Nmap使用",
+        "理解扫描类型",
+        "学习结果分析"
+      ],
+      "newId": "basic-read-003"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 6,
+      "title": "哈希算法与数字签名",
+      "keyPoints": [
+        "哈希函数单向不可逆",
+        "MD5已被破解",
+        "SHA-256是推荐算法",
+        "bcrypt用于密码存储",
+        "数字签名验证来源"
+      ],
+      "objectives": [
+        "理解哈希特性",
+        "掌握常见算法",
+        "了解数字签名"
+      ],
+      "newId": "basic-read-004"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 8,
+      "title": "XSS跨站脚本攻击",
+      "keyPoints": [
+        "XSS注入恶意脚本到页面",
+        "存储型XSS最危险",
+        "HTML转义是基础防护",
+        "CSP可限制脚本",
+        "HttpOnly防Cookie被JS读取"
+      ],
+      "objectives": [
+        "理解XSS原理",
+        "掌握三种类型",
+        "学习防护措施"
+      ],
+      "newId": "basic-read-005"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 10,
+      "title": "文件上传漏洞",
+      "keyPoints": [
+        "上传恶意文件并执行",
+        "WebShell是最常见的恶意文件",
+        "白名单比黑名单安全",
+        "文件应存储在Web根目录外",
+        "内容检测比扩展名检测安全"
+      ],
+      "objectives": [
+        "理解漏洞原理",
+        "掌握绕过方法",
+        "学习防护措施"
+      ],
+      "newId": "basic-read-006"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 11,
+      "title": "SSRF服务器端请求伪造",
+      "keyPoints": [
+        "SSRF让服务器代替发起请求",
+        "可访问内网资源",
+        "可读取本地文件",
+        "协议限制是重要防护",
+        "URL白名单最有效"
+      ],
+      "objectives": [
+        "理解SSRF原理",
+        "掌握攻击方式",
+        "学习防护措施"
+      ],
+      "newId": "basic-read-007"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 12,
+      "title": "密码学总结与PKI体系",
+      "keyPoints": [
+        "PKI是公钥基础设施",
+        "CA是证书颁发机构",
+        "X.509是证书标准",
+        "TLS握手建立加密通道",
+        "证书链验证是重要环节"
+      ],
+      "objectives": [
+        "理解PKI体系",
+        "掌握数字证书",
+        "了解TLS握手"
+      ],
+      "newId": "basic-read-008"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 13,
+      "title": "身份认证与授权",
+      "keyPoints": [
+        "身份认证三因素",
+        "多因素比单因素安全",
+        "JWT是令牌格式",
+        "Session存储服务端",
+        "OAuth是授权框架"
+      ],
+      "objectives": [
+        "掌握认证因素",
+        "了解多因素认证",
+        "理解OAuth/JWT"
+      ],
+      "newId": "basic-read-009"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 15,
+      "title": "中间件安全配置",
+      "keyPoints": [
+        "隐藏版本号信息",
+        "禁止目录浏览",
+        "修改默认端口",
+        "及时打补丁",
+        "以低权限运行"
+      ],
+      "objectives": [
+        "掌握Apache安全配置",
+        "掌握Nginx安全配置",
+        "了解Tomcat加固"
+      ],
+      "newId": "basic-read-010"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 16,
+      "title": "漏洞扫描与评估",
+      "keyPoints": [
+        "端口扫描是漏洞扫描第一步",
+        "Nessus是商业扫描器",
+        "OpenVAS是开源方案",
+        "CVSS用于评级漏洞",
+        "结果需人工验证"
+      ],
+      "objectives": [
+        "理解扫描原理",
+        "掌握Nessus使用",
+        "学习结果分析"
+      ],
+      "newId": "basic-read-011"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 17,
+      "title": "SQLMap进阶使用",
+      "keyPoints": [
+        "-u指定URL",
+        "--dbs列数据库",
+        "--dump导出数据",
+        "多种注入技术支持",
+        "os-shell可执行命令"
+      ],
+      "objectives": [
+        "掌握基本用法",
+        "理解注入技术",
+        "学习结果解读"
+      ],
+      "newId": "basic-read-012"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 18,
+      "title": "命令注入与代码注入",
+      "keyPoints": [
+        "system/exec/eval是危险函数",
+        "命令注入执行系统命令",
+        "代码注入执行任意代码",
+        "escapeshellarg是PHP防护",
+        "白名单最安全"
+      ],
+      "objectives": [
+        "理解命令注入",
+        "理解代码注入",
+        "掌握防护措施"
+      ],
+      "newId": "basic-read-013"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 20,
+      "title": "OWASP Top 10 概览",
+      "keyPoints": [
+        "OWASP Top 10是Web安全最重要标准",
+        "A01访问控制失效排名第一",
+        "A03注入包括SQL/XSS等",
+        "A06易损组件越来越重要",
+        "A10 SSRF是新增类别"
+      ],
+      "objectives": [
+        "掌握OWASP Top 10",
+        "理解最新变化",
+        "学习防护要点"
+      ],
+      "newId": "basic-read-014"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 21,
+      "title": "CVE与漏洞管理",
+      "keyPoints": [
+        "CVE提供唯一漏洞标识",
+        "CVE-年份-编号格式",
+        "NVD/CNNVD是漏洞库",
+        "漏洞有生命周期管理",
+        "CVSS用于优先级排序"
+      ],
+      "objectives": [
+        "掌握CVE系统",
+        "理解CVE编号",
+        "学习漏洞管理"
+      ],
+      "newId": "basic-read-015"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 23,
+      "title": "应急响应流程",
+      "keyPoints": [
+        "PDCERF是应急响应标准",
+        "准备是基础",
+        "遏制防止扩大",
+        "根除彻底清除威胁",
+        "总结防止再次发生"
+      ],
+      "objectives": [
+        "掌握PDCERF模型",
+        "理解响应流程",
+        "学习文档编写"
+      ],
+      "newId": "basic-read-016"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 24,
+      "title": "防火墙基础配置",
+      "keyPoints": [
+        "防火墙控制网络访问",
+        "iptables是Linux防火墙",
+        "INPUT控制入站",
+        "DROP丢弃无响应",
+        "规则从上到下匹配"
+      ],
+      "objectives": [
+        "理解防火墙原理",
+        "掌握iptables",
+        "学习规则编写"
+      ],
+      "newId": "basic-read-017"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 25,
+      "title": "WAF与Web防护",
+      "keyPoints": [
+        "WAF专门防护Web攻击",
+        "ModSecurity是开源WAF",
+        "OWASP CRS提供全面规则",
+        "旁路部署不影响业务",
+        "规则需根据业务调优"
+      ],
+      "objectives": [
+        "理解WAF原理",
+        "掌握WAF规则",
+        "学习绕过与防护"
+      ],
+      "newId": "basic-read-018"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 26,
+      "title": "等级保护2.0概述",
+      "keyPoints": [
+        "等保2.0分五级",
+        "第三级是重要系统",
+        "定级-备案-建设-测评-监督",
+        "技术+管理双重保护",
+        "是网络安全基本制度"
+      ],
+      "objectives": [
+        "理解等级保护",
+        "掌握等保流程",
+        "了解测评要求"
+      ],
+      "newId": "basic-read-019"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 27,
+      "title": "入侵检测与防御",
+      "keyPoints": [
+        "IDS旁路检测",
+        "IPS串联阻断",
+        "Snort是开源IDS",
+        "签名检测已知威胁",
+        "异常检测发现未知威胁"
+      ],
+      "objectives": [
+        "理解IDS/IPS原理",
+        "掌握Snort使用",
+        "了解签名编写"
+      ],
+      "newId": "basic-read-020"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 28,
+      "title": "蜜罐与诱捕技术",
+      "keyPoints": [
+        "蜜罐是诱饵系统",
+        "低交互风险低",
+        "高交互信息全",
+        "蜂蜜文件追踪泄露",
+        "T-Pot是综合蜜罐平台"
+      ],
+      "objectives": [
+        "理解蜜罐原理",
+        "掌握蜜罐类型",
+        "学习部署应用"
+      ],
+      "newId": "basic-read-021"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 29,
+      "title": "威胁情报概述",
+      "keyPoints": [
+        "威胁情报是证据型知识",
+        "IOC是妥协指标",
+        "VirusTotal是最知名查询平台",
+        "战略-战术-运营-技术四级",
+        "情报共享很重要"
+      ],
+      "objectives": [
+        "理解威胁情报",
+        "掌握IOC提取",
+        "学习情报应用"
+      ],
+      "newId": "basic-read-022"
+    },
+    {
+      "plan": "cyber/basic",
+      "day": 30,
+      "title": "安全开发与总结",
+      "keyPoints": [
+        "SDL将安全融入开发全生命周期",
+        "STRIDE是威胁建模方法",
+        "安全编码是根本",
+        "安全测试很重要",
+        "持续学习是安全人员素养"
+      ],
+      "objectives": [
+        "理解SDL流程",
+        "掌握安全编码",
+        "总结基础知识点"
+      ],
+      "newId": "basic-read-023"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 28,
+      "title": "操作系统与计算机基础",
+      "keyPoints": [
+        "进程vs线程",
+        "死锁4条件",
+        "虚拟内存",
+        "Linux权限",
+        "CPU调度"
+      ],
+      "objectives": [
+        "操作系统核心概念速答"
+      ],
+      "newId": "basic-read-024"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 29,
+      "title": "网络安全核心概念",
+      "keyPoints": [
+        "CIA三元组",
+        "AAA认证",
+        "PDRR模型",
+        "纵深防御",
+        "零信任",
+        "SDL",
+        "威胁建模"
+      ],
+      "objectives": [
+        "安全基础理论速答"
+      ],
+      "newId": "basic-read-025"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 30,
+      "title": "OWASP Top 10 详解",
+      "keyPoints": [
+        "注入",
+        "失效认证",
+        "敏感数据泄露",
+        "XXE",
+        "失效访问控制",
+        "安全配置错误",
+        "XSS",
+        "不安全反序列化",
+        "已知漏洞组件",
+        "日志监控不足"
+      ],
+      "objectives": [
+        "OWASP Top10每类都能说清"
+      ],
+      "newId": "basic-read-026"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 31,
+      "title": "Web安全深度",
+      "keyPoints": [
+        "SQLi盲注",
+        "二次注入",
+        "CSP绕过",
+        "HttpOnly",
+        "SSRF",
+        "文件上传绕过"
+      ],
+      "objectives": [
+        "常见Web漏洞原理利用防御精通"
+      ],
+      "newId": "basic-read-027"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 32,
+      "title": "密码学与认证授权",
+      "keyPoints": [
+        "AES/RSA/ECC",
+        "Diffie-Hellman",
+        "TLS1.3",
+        "证书链",
+        "JWT安全",
+        "OAuth2.0"
+      ],
+      "objectives": [
+        "密码学核心概念面试必答"
+      ],
+      "newId": "basic-read-028"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 33,
+      "title": "内网安全与域渗透基础",
+      "keyPoints": [
+        "AD域结构",
+        "Kerberos攻击",
+        "黄金票据",
+        "NTLM",
+        "哈希传递",
+        "横向移动"
+      ],
+      "objectives": [
+        "内网基础概念掌握"
+      ],
+      "newId": "basic-read-029"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 37,
+      "title": "场景模拟 Day 1",
+      "keyPoints": [
+        "结构化表达",
+        "STAR法则",
+        "连环答",
+        "反问环节"
+      ],
+      "objectives": [
+        "应对面试官连环追问"
+      ],
+      "newId": "basic-read-030"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 38,
+      "title": "简历包装与自我介绍",
+      "keyPoints": [
+        "三要素自我介绍",
+        "简历硬伤检查",
+        "项目描述公式"
+      ],
+      "objectives": [
+        "自我介绍亮点突出",
+        "简历无硬伤"
+      ],
+      "newId": "basic-read-031"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 39,
+      "title": "安全岗位全景与职业规划",
+      "keyPoints": [
+        "红蓝紫队",
+        "甲方vs乙方",
+        "产品安全vs企业安全",
+        "攻防研究vs安全开发",
+        "职业发展路径"
+      ],
+      "objectives": [
+        "理解安全行业全景和岗位选择"
+      ],
+      "newId": "basic-read-032"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 40,
+      "title": "全真模拟面试",
+      "keyPoints": [
+        "限时作答",
+        "结构化表达",
+        "自评纠错"
+      ],
+      "objectives": [
+        "模拟真实面试·查漏补缺"
+      ],
+      "newId": "basic-read-033"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 41,
+      "title": "全真模拟面试（一）",
+      "keyPoints": [
+        "自我介绍",
+        "技术问答链式追问",
+        "场景设计",
+        "抗压测试"
+      ],
+      "objectives": [
+        "完成一次30分钟全真模拟面试"
+      ],
+      "newId": "basic-read-034"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 42,
+      "title": "全真模拟面试（二）",
+      "keyPoints": [
+        "协议分析",
+        "漏洞原理",
+        "工具实操",
+        "防御方案"
+      ],
+      "objectives": [
+        "深度技术面试模拟"
+      ],
+      "newId": "basic-read-035"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 43,
+      "title": "全真模拟面试（三）",
+      "keyPoints": [
+        "项目STAR讲述",
+        "冲突解决",
+        "团队协作",
+        "失败案例"
+      ],
+      "objectives": [
+        "项目讲述与行为面试"
+      ],
+      "newId": "basic-read-036"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 44,
+      "title": "全真模拟面试（四）",
+      "keyPoints": [
+        "职业规划",
+        "薪资谈判",
+        "企业文化",
+        "反问技巧"
+      ],
+      "objectives": [
+        "HR面试与谈薪"
+      ],
+      "newId": "basic-read-037"
+    },
+    {
+      "plan": "interview/basic",
+      "day": 45,
+      "title": "全真模拟面试（五）",
+      "keyPoints": [
+        "综合评分卡",
+        "知识盲区盘点",
+        "面试话术打磨",
+        "最终自测"
+      ],
+      "objectives": [
+        "全方位面试自评与查漏补缺"
+      ],
+      "newId": "basic-read-038"
+    }
+  ],
+  "penetration": [
+    {
+      "plan": "cyber/penetration",
+      "day": 1,
+      "title": "渗透测试概述",
+      "keyPoints": [
+        "渗透测试模拟黑客攻击",
+        "黑盒/白盒/灰盒三种类型",
+        "PTES是渗透测试标准",
+        "授权是法律前提",
+        "明确范围避免风险"
+      ],
+      "objectives": [
+        "理解渗透测试定义",
+        "掌握测试方法论",
+        "了解法律边界"
+      ],
+      "newId": "pentest-read-001"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 2,
+      "title": "被动信息收集",
+      "keyPoints": [
+        "被动收集不直接接触目标",
+        "WHOIS查注册信息",
+        "Google Hacking用搜索引擎收集",
+        "site:限制域名",
+        "备案信息可查主办单位"
+      ],
+      "objectives": [
+        "掌握WHOIS查询",
+        "使用搜索引擎",
+        "收集公开信息"
+      ],
+      "newId": "pentest-read-002"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 3,
+      "title": "DNS信息收集",
+      "keyPoints": [
+        "DNS解析域名到IP",
+        "A记录是最基本的DNS记录",
+        "子域名可通过字典枚举",
+        "DNS区域传送漏洞可获取全部记录",
+        "amass是强大的子域名枚举工具"
+      ],
+      "objectives": [
+        "掌握DNS记录查询",
+        "子域名枚举",
+        "DNS区域传送"
+      ],
+      "newId": "pentest-read-003"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 4,
+      "title": "Nmap主机扫描",
+      "keyPoints": [
+        "Nmap是最重要的扫描工具",
+        "-sn只做主机发现",
+        "-sS是SYN半开扫描",
+        "-sV检测服务版本",
+        "-O检测操作系统"
+      ],
+      "objectives": [
+        "掌握Nmap主机发现",
+        "端口扫描技术",
+        "服务版本识别"
+      ],
+      "newId": "pentest-read-004"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 5,
+      "title": "Nmap高级扫描",
+      "keyPoints": [
+        "NSE是Nmap脚本引擎",
+        "vuln脚本检测已知漏洞",
+        "-f分片躲避防火墙",
+        "-T4是快速扫描",
+        "可自定义脚本扩展功能"
+      ],
+      "objectives": [
+        "掌握Nmap脚本",
+        "防火墙规避",
+        "性能优化"
+      ],
+      "newId": "pentest-read-005"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 6,
+      "title": "Web目录扫描",
+      "keyPoints": [
+        "Dirb是目录扫描工具",
+        "Gobuster速度更快",
+        "-x参数指定扩展名",
+        "敏感文件需重点关注",
+        "WhatWeb可识别CMS"
+      ],
+      "objectives": [
+        "掌握Dirb/Gobuster",
+        "御剑扫描工具",
+        "CMS识别"
+      ],
+      "newId": "pentest-read-006"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 7,
+      "title": "社工信息收集",
+      "keyPoints": [
+        "社工利用人性弱点",
+        "theHarvester收集邮箱",
+        "Sherlock搜社交媒体",
+        "Maltego绘制关系图",
+        "安全培训是最好的防御"
+      ],
+      "objectives": [
+        "理解社工原理",
+        "掌握OSINT工具",
+        "学习情报整合"
+      ],
+      "newId": "pentest-read-007"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 8,
+      "title": "Burp Suite核心功能",
+      "keyPoints": [
+        "Burp Suite是Web测试神器",
+        "Proxy拦截HTTP请求",
+        "Intruder用于暴力破解",
+        "Repeater重放请求",
+        "安装证书才能抓HTTPS"
+      ],
+      "objectives": [
+        "掌握代理配置",
+        "使用Repeater",
+        "Intruder爆破"
+      ],
+      "newId": "pentest-read-008"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 9,
+      "title": "SQL注入深度利用",
+      "keyPoints": [
+        "SQL注入利用未过滤的用户输入",
+        "Union注入需字段数匹配",
+        "盲注根据页面响应判断",
+        "时间盲注用SLEEP函数",
+        "SQLMap可自动化注入",
+        "information_schema查数据库结构"
+      ],
+      "objectives": [
+        "掌握Union注入",
+        "布尔盲注",
+        "时间盲注"
+      ],
+      "newId": "pentest-read-009"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 10,
+      "title": "XSS深度利用",
+      "keyPoints": [
+        "XSS在用户浏览器执行JS代码",
+        "反射型、存储型、DOM型三种类型",
+        "大小写混淆绕过",
+        "事件处理器绕过",
+        "Cookie可被XSS窃取",
+        "document.cookie获取Cookie"
+      ],
+      "objectives": [
+        "掌握XSS绕过",
+        "Cookie窃取",
+        "XSS平台使用"
+      ],
+      "newId": "pentest-read-010"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 12,
+      "title": "文件包含漏洞",
+      "keyPoints": [
+        "LFI包含服务器本地文件",
+        "RFI可执行远程代码",
+        "php://filter可读源码",
+        "日志文件可被包含执行",
+        "Session文件可被利用",
+        "allow_url_include需开启才能RFI"
+      ],
+      "objectives": [
+        "掌握LFI/RFI原理",
+        "伪协议利用",
+        "日志投毒Getshell"
+      ],
+      "newId": "pentest-read-011"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 13,
+      "title": "文件上传绕过",
+      "keyPoints": [
+        "Webshell是最危险的上传后果",
+        "MIME类型可抓包修改",
+        "00截断是经典绕过",
+        "竞争上传利用时间差",
+        ".htaccess可修改配置",
+        "图片头+PHP代码可绕过检测"
+      ],
+      "objectives": [
+        "掌握MIME绕过",
+        "扩展名绕过",
+        "竞争条件上传"
+      ],
+      "newId": "pentest-read-012"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 14,
+      "title": "缓冲区溢出基础",
+      "keyPoints": [
+        "缓冲区溢出覆盖返回地址",
+        "栈从高地址向低地址生长",
+        "strcpy无边界检查导致溢出",
+        "JMP ESP跳转到shellcode",
+        "DEP禁止执行栈上代码",
+        "ASLR随机化内存地址"
+      ],
+      "objectives": [
+        "理解溢出原理",
+        "掌握栈结构",
+        "简单利用演示"
+      ],
+      "newId": "pentest-read-013"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 16,
+      "title": "本地密码哈希破解",
+      "keyPoints": [
+        "Windows用NTLM哈希存储密码",
+        "Mimikatz是密码提取神器",
+        "SAM数据库存储密码哈希",
+        "彩虹表快速破解弱密码",
+        "Hashcat支持多种哈希破解",
+        "密码喷洒用弱密码撞多个账户"
+      ],
+      "objectives": [
+        "理解密码存储",
+        "掌握哈希提取",
+        "学习破解技术"
+      ],
+      "newId": "pentest-read-014"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 17,
+      "title": "令牌窃取与Rotten Potato",
+      "keyPoints": [
+        "令牌代表用户身份权限",
+        "SeImpersonatePrivilege是前提",
+        "Rotten Potato利用NTLM中继",
+        "需要本地NBIO服务",
+        "Juicy Potato是改进版",
+        "服务账户常被利用"
+      ],
+      "objectives": [
+        "理解令牌窃取原理",
+        "掌握Rotten Potato",
+        "学习NTLM中继攻击"
+      ],
+      "newId": "pentest-read-015"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 18,
+      "title": "Linux权限提升",
+      "keyPoints": [
+        "SUID文件可提权",
+        "find / -perm -u=s找SUID文件",
+        "定时任务可被劫持",
+        "内核漏洞需版本匹配",
+        "配置文件常有密码",
+        "nmap/vim/less等工具可利用"
+      ],
+      "objectives": [
+        "掌握Linux信息收集",
+        "SUID提权",
+        "定时任务提权"
+      ],
+      "newId": "pentest-read-016"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 19,
+      "title": "隐藏通信隧道",
+      "keyPoints": [
+        "隧道穿过防火墙",
+        "ICMP隧道用ping传输数据",
+        "DNS隧道利用DNS协议",
+        "SSH隧道最常用",
+        "动态端口转发做代理",
+        "反向隧道从内网连出"
+      ],
+      "objectives": [
+        "理解隧道原理",
+        "掌握ICMP/DNS隧道",
+        "学习SSH/HTTP隧道"
+      ],
+      "newId": "pentest-read-017"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 20,
+      "title": "权限维持",
+      "keyPoints": [
+        "权限维持保持长期访问",
+        "Webshell是最常见的Web后门",
+        "注册表可藏后门",
+        "计划任务可定期执行",
+        "sethc.exe粘滞键后门",
+        "SSH公钥可免密码登录"
+      ],
+      "objectives": [
+        "掌握后门植入",
+        "注册表后门",
+        "计划任务后门"
+      ],
+      "newId": "pentest-read-018"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 21,
+      "title": "痕迹清理",
+      "keyPoints": [
+        "清理日志掩盖入侵痕迹",
+        "Linux日志在/var/log",
+        "Windows用wevtutil清日志",
+        "历史命令也需清理",
+        "时间戳修改避免发现",
+        "clearev可清除Meterpreter日志"
+      ],
+      "objectives": [
+        "掌握日志清理",
+        "文件清除",
+        "时间戳修改"
+      ],
+      "newId": "pentest-read-019"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 22,
+      "title": "内网渗透基础",
+      "keyPoints": [
+        "域环境统一管理是核心",
+        "DNS SRV记录定位域控",
+        "net view查看域内主机",
+        "CrackMapExec批量扫描内网",
+        "BloodHound分析域内关系"
+      ],
+      "objectives": [
+        "理解域环境架构",
+        "掌握内网信息收集",
+        "学会定位域控制器",
+        "了解BloodHound使用"
+      ],
+      "newId": "pentest-read-020"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 23,
+      "title": "Pass The Hash",
+      "keyPoints": [
+        "PTH用哈希代替密码认证",
+        "Mimikatz是PTH神器",
+        "privilege::debug必须先执行",
+        "Impacket提供多种PTH工具",
+        "Credential Guard可防御PTH"
+      ],
+      "objectives": [
+        "理解PTH攻击原理",
+        "掌握Mimikatz利用",
+        "学会Impacket工具",
+        "了解防御措施"
+      ],
+      "newId": "pentest-read-021"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 24,
+      "title": "横向移动",
+      "keyPoints": [
+        "WMI只需135端口即可横向",
+        "计划任务可定时执行代码",
+        "PsExec是最经典的横向工具",
+        "RDP需要有效凭据",
+        "DCOM可绕过某些防火墙"
+      ],
+      "objectives": [
+        "掌握WMI横向技术",
+        "学习计划任务横向",
+        "掌握服务利用方法",
+        "了解RDP横向"
+      ],
+      "newId": "pentest-read-022"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 25,
+      "title": "Metasploit高级用法",
+      "keyPoints": [
+        "Meterpreter是功能强大的后渗透shell",
+        "migrate迁移进程躲避检测",
+        "portfwd做端口转发",
+        "run运行后渗透模块",
+        "MSFVenom生成各种平台木马"
+      ],
+      "objectives": [
+        "掌握Meterpreter进阶",
+        "学会路由与代理配置",
+        "掌握后渗透模块",
+        "学习MSFVenom高级用法"
+      ],
+      "newId": "pentest-read-023"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 26,
+      "title": "免杀技术基础",
+      "keyPoints": [
+        "杀软用特征码和行为检测",
+        "编码器可改变文件特征",
+        "分离加载最可靠",
+        "PowerShell是天然免杀平台",
+        "行为检测比特征码难绕过"
+      ],
+      "objectives": [
+        "理解杀软检测原理",
+        "掌握编码混淆技术",
+        "学习分离加载技术",
+        "了解行为检测规避"
+      ],
+      "newId": "pentest-read-024"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 27,
+      "title": "无线网络安全",
+      "keyPoints": [
+        "WEP已不安全可秒破",
+        "WPA需要抓握手包字典破解",
+        "aireplay-ng强制解除认证",
+        "aircrack-ng用字典破解",
+        "WPA3使用SAE抗字典攻击"
+      ],
+      "objectives": [
+        "理解无线协议原理",
+        "掌握WEP/WPA破解",
+        "学习 WPA2PSK破解",
+        "了解无线防御措施"
+      ],
+      "newId": "pentest-read-025"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 28,
+      "title": "缓冲区溢出利用开发",
+      "keyPoints": [
+        "溢出覆盖返回地址",
+        "Immunity Debugger是Windows调试器",
+        "Mona.py辅助漏洞开发",
+        "ROP链绕过DEP",
+        "信息泄露绕过ASLR"
+      ],
+      "objectives": [
+        "掌握漏洞分析方法",
+        "学会编写exploit",
+        "掌握ROP绕过DEP",
+        "理解ASLR绕过"
+      ],
+      "newId": "pentest-read-026"
+    },
+    {
+      "plan": "cyber/penetration",
+      "day": 29,
+      "title": "综合靶机渗透演练",
+      "keyPoints": [
+        "Vulnhub提供真实漏洞靶机",
+        "完整流程：侦察→利用→提权→维持",
+        "记录每个步骤和发现",
+        "截图是重要证据",
+        "靶机练习是最佳学习方式"
+      ],
+      "objectives": [
+        "掌握完整渗透流程",
+        "综合运用所有技术",
+        "培养解题思路",
+        "记录渗透过程"
+      ],
+      "newId": "pentest-read-027"
+    },
+    {
+      "plan": "interview/penetration",
+      "day": 28,
+      "title": "Web漏洞利用进阶",
+      "keyPoints": [
+        "SQL注入进阶",
+        "命令注入",
+        "代码注入",
+        "文件包含",
+        "SSRF进阶",
+        "XXE进阶"
+      ],
+      "objectives": [
+        "主流Web漏洞深入理解"
+      ],
+      "newId": "pentest-read-028"
+    },
+    {
+      "plan": "interview/penetration",
+      "day": 33,
+      "title": "渗透测试报告与沟通",
+      "keyPoints": [
+        "报告结构",
+        "CVSS",
+        "修复建议",
+        "漏洞分级",
+        "客户沟通"
+      ],
+      "objectives": [
+        "写出专业渗透报告"
+      ],
+      "newId": "pentest-read-029"
+    },
+    {
+      "plan": "interview/penetration",
+      "day": 37,
+      "title": "场景模拟 Day 1",
+      "keyPoints": [
+        "渗透流程表达",
+        "具体案例STAR",
+        "遇到问题怎么解决"
+      ],
+      "objectives": [
+        "应对渗透测试面试"
+      ],
+      "newId": "pentest-read-030"
+    },
+    {
+      "plan": "interview/penetration",
+      "day": 38,
+      "title": "渗透测试工具链速查",
+      "keyPoints": [
+        "工具速查表",
+        "场景匹配",
+        "效率提升"
+      ],
+      "objectives": [
+        "工具场景匹配"
+      ],
+      "newId": "pentest-read-031"
+    },
+    {
+      "plan": "interview/penetration",
+      "day": 40,
+      "title": "全真模拟面试 — 渗透篇",
+      "keyPoints": [
+        "渗透全流程",
+        "工具链",
+        "漏洞实战"
+      ],
+      "objectives": [
+        "模拟渗透面试·查漏补缺"
+      ],
+      "newId": "pentest-read-032"
+    },
+    {
+      "plan": "interview/penetration",
+      "day": 41,
+      "title": "全真模拟面试（一）",
+      "keyPoints": [
+        "自我介绍",
+        "技术问答链式追问",
+        "场景设计",
+        "抗压测试"
+      ],
+      "objectives": [
+        "完成一次30分钟全真模拟面试"
+      ],
+      "newId": "pentest-read-033"
+    },
+    {
+      "plan": "interview/penetration",
+      "day": 42,
+      "title": "全真模拟面试（二）",
+      "keyPoints": [
+        "漏洞利用链",
+        "内网渗透",
+        "提权",
+        "免杀技术",
+        "红队工具"
+      ],
+      "objectives": [
+        "深度技术面试模拟"
+      ],
+      "newId": "pentest-read-034"
+    },
+    {
+      "plan": "interview/penetration",
+      "day": 43,
+      "title": "全真模拟面试（三）",
+      "keyPoints": [
+        "项目STAR讲述",
+        "渗透报告",
+        "冲突解决",
+        "团队协作"
+      ],
+      "objectives": [
+        "项目讲述与行为面试"
+      ],
+      "newId": "pentest-read-035"
+    },
+    {
+      "plan": "interview/penetration",
+      "day": 44,
+      "title": "全真模拟面试（四）",
+      "keyPoints": [
+        "职业规划",
+        "薪资谈判",
+        "企业文化",
+        "反问技巧"
+      ],
+      "objectives": [
+        "HR面试与谈薪"
+      ],
+      "newId": "pentest-read-036"
+    },
+    {
+      "plan": "interview/penetration",
+      "day": 45,
+      "title": "全真模拟面试（五）",
+      "keyPoints": [
+        "综合评分卡",
+        "知识盲区盘点",
+        "面试话术打磨",
+        "最终自测"
+      ],
+      "objectives": [
+        "全方位面试自评与查漏补缺"
+      ],
+      "newId": "pentest-read-037"
+    }
+  ],
+  "defense": [
+    {
+      "plan": "cyber/defense",
+      "day": 1,
+      "title": "安全运营中心概述",
+      "keyPoints": [
+        "SOC是安全监控和响应中心",
+        "7×24小时监控是基本要求",
+        "分析师分L1/L2/L3级别",
+        "SIEM是SOC核心平台",
+        "MSSP是外包安全服务"
+      ],
+      "objectives": [
+        "理解SOC定义",
+        "掌握核心职能",
+        "了解组织架构"
+      ],
+      "newId": "defense-read-001"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 2,
+      "title": "日志收集与管理",
+      "keyPoints": [
+        "日志是安全分析的基础",
+        "Windows有Security/System/Application日志",
+        "Linux日志在/var/log",
+        "Agent和Syslog是主要收集方式",
+        "集中日志便于分析"
+      ],
+      "objectives": [
+        "掌握日志来源",
+        "理解日志格式",
+        "掌握收集方法"
+      ],
+      "newId": "defense-read-002"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 3,
+      "title": "SIEM系统部署",
+      "keyPoints": [
+        "ELK是开源SIEM方案",
+        "Elasticsearch存储日志",
+        "Kibana提供可视化",
+        "Beats负责日志采集",
+        "告警规则触发通知"
+      ],
+      "objectives": [
+        "理解SIEM原理",
+        "掌握ELK部署",
+        "学习规则配置"
+      ],
+      "newId": "defense-read-003"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 4,
+      "title": "入侵检测与防御",
+      "keyPoints": [
+        "Snort是开源IDS",
+        "告警规则检测已知攻击",
+        "content匹配数据包内容",
+        "告警需人工分析确认",
+        "规则需持续更新"
+      ],
+      "objectives": [
+        "理解Snort规则",
+        "掌握Suricata",
+        "学习告警分析"
+      ],
+      "newId": "defense-read-004"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 5,
+      "title": "异常行为分析",
+      "keyPoints": [
+        "异常检测发现未知威胁",
+        "建立正常行为基线",
+        "UEBA分析用户行为",
+        "关联规则发现复杂攻击",
+        "机器学习提高检测准确率"
+      ],
+      "objectives": [
+        "理解异常检测",
+        "掌握统计模型",
+        "学习机器学习应用"
+      ],
+      "newId": "defense-read-005"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 6,
+      "title": "事件分类与分级",
+      "keyPoints": [
+        "事件分级决定响应优先级",
+        "紧急事件需立即响应",
+        "分级标准需与业务结合",
+        "完整报告便于复盘",
+        "事件分类有多种维度"
+      ],
+      "objectives": [
+        "掌握事件分类",
+        "理解分级标准",
+        "学习报告要求"
+      ],
+      "newId": "defense-read-006"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 7,
+      "title": "应急响应PDCERF",
+      "keyPoints": [
+        "PDCERF是应急响应标准",
+        "准备是基础",
+        "遏制防止扩大",
+        "根除彻底清除威胁",
+        "总结防止再次发生"
+      ],
+      "objectives": [
+        "掌握PDCERF模型",
+        "理解各阶段任务",
+        "学习响应文档"
+      ],
+      "newId": "defense-read-007"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 8,
+      "title": "防火墙技术",
+      "keyPoints": [
+        "iptables是Linux防火墙",
+        "链：INPUT/OUTPUT/FORWARD",
+        "状态跟踪：ESTABLISHED",
+        "-P设置默认策略",
+        "NAT用于端口映射"
+      ],
+      "objectives": [
+        "掌握iptables",
+        "理解nftables",
+        "学习防火墙架构"
+      ],
+      "newId": "defense-read-008"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 9,
+      "title": "WAF部署与配置",
+      "keyPoints": [
+        "WAF专门防护Web攻击",
+        "ModSecurity是开源WAF",
+        "OWASP CRS提供全面规则",
+        "旁路部署不影响业务",
+        "规则需根据业务调优"
+      ],
+      "objectives": [
+        "理解WAF原理",
+        "掌握ModSecurity",
+        "学习规则调优"
+      ],
+      "newId": "defense-read-009"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 10,
+      "title": "VPN与网络隔离",
+      "keyPoints": [
+        "VPN建立加密隧道",
+        "SSL VPN适合远程办公",
+        "网络分段限制攻击面",
+        "DMZ隔离公共服务",
+        "零信任是新一代安全架构"
+      ],
+      "objectives": [
+        "理解VPN原理",
+        "掌握IPSec/OpenVPN",
+        "学习网络分段"
+      ],
+      "newId": "defense-read-010"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 11,
+      "title": "IDS/IPS调优",
+      "keyPoints": [
+        "误报多影响运营效率",
+        "排除可信IP减少误报",
+        "阈值调整避免告警风暴",
+        "定期规则更新",
+        "性能监控很重要"
+      ],
+      "objectives": [
+        "理解告警过滤",
+        "掌握规则优化",
+        "学习性能调优"
+      ],
+      "newId": "defense-read-011"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 12,
+      "title": "DDoS防护",
+      "keyPoints": [
+        "DDoS消耗目标带宽资源",
+        "SYN Flood是常见协议攻击",
+        "CDN稀释攻击流量",
+        "清洗中心过滤恶意流量",
+        "DDoS防护需要应急预案"
+      ],
+      "objectives": [
+        "理解DDoS原理",
+        "掌握防护策略",
+        "学习清洗中心"
+      ],
+      "newId": "defense-read-012"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 14,
+      "title": "CDN与抗攻击",
+      "keyPoints": [
+        "CDN隐藏源站IP",
+        "Anycast提高抗DDoS能力",
+        "边缘节点就近访问",
+        "多节点消除单点故障",
+        "定期演练验证预案"
+      ],
+      "objectives": [
+        "理解CDN原理",
+        "掌握CDN安全配置",
+        "学习高可用架构"
+      ],
+      "newId": "defense-read-013"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 15,
+      "title": "Linux系统安全加固",
+      "keyPoints": [
+        "锁定不需要的系统账户",
+        "SSH禁用密码登录",
+        "敏感文件600权限",
+        "定期系统更新打补丁",
+        "最小权限原则"
+      ],
+      "objectives": [
+        "掌握账户管理",
+        "理解权限控制",
+        "学习日志审计"
+      ],
+      "newId": "defense-read-014"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 17,
+      "title": "数据库安全",
+      "keyPoints": [
+        "最小权限原则数据库安全基础",
+        "参数化查询防注入",
+        "审计追踪数据库操作",
+        "备份加密防数据泄露",
+        "定期改密降低风险"
+      ],
+      "objectives": [
+        "掌握MySQL加固",
+        "理解Oracle安全",
+        "学习数据库审计"
+      ],
+      "newId": "defense-read-015"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 18,
+      "title": "Docker容器安全",
+      "keyPoints": [
+        "容器使用非root用户",
+        "只读文件系统限制写入",
+        "Trivy扫描镜像漏洞",
+        "最小化镜像减少攻击面",
+        "资源限制防止DoS"
+      ],
+      "objectives": [
+        "掌握容器加固",
+        "理解镜像安全",
+        "学习运行时保护"
+      ],
+      "newId": "defense-read-016"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 20,
+      "title": "API安全防护",
+      "keyPoints": [
+        "API是重要攻击面",
+        "OAuth 2.0是标准授权框架",
+        "限流防API滥用",
+        "API网关统一安全管理",
+        "完整日志审计追溯"
+      ],
+      "objectives": [
+        "理解API风险",
+        "掌握API安全措施",
+        "学习API网关"
+      ],
+      "newId": "defense-read-017"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 21,
+      "title": "安全开发生命周期",
+      "keyPoints": [
+        "SDL将安全融入开发全流程",
+        "STRIDE是威胁建模方法",
+        "SAST扫描源代码",
+        "OWASP Top 10是开发安全重点",
+        "依赖漏洞需定期检查"
+      ],
+      "objectives": [
+        "掌握SDL阶段",
+        "理解威胁建模",
+        "学习代码审计"
+      ],
+      "newId": "defense-read-018"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 22,
+      "title": "等级保护2.0概述",
+      "keyPoints": [
+        "等保分五级从低到高",
+        "第三级是关键信息系统",
+        "通用要求+扩展要求",
+        "技术+管理双重保障",
+        "定级-备案-测评-监督"
+      ],
+      "objectives": [
+        "理解等保制度",
+        "掌握保护对象",
+        "了解定级标准"
+      ],
+      "newId": "defense-read-019"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 23,
+      "title": "等级保护建设流程",
+      "keyPoints": [
+        "定级是等保第一步",
+        "备案到公安机关",
+        "差距分析对标要求",
+        "整改分技术和管理",
+        "测评验证安全水平"
+      ],
+      "objectives": [
+        "掌握定级备案",
+        "理解差距分析",
+        "学习建设整改"
+      ],
+      "newId": "defense-read-020"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 24,
+      "title": "风险评估方法",
+      "keyPoints": [
+        "风险=资产×威胁×脆弱性",
+        "FRAP是风险评估方法论",
+        "风险矩阵直观展示风险",
+        "处置策略：规避转移缓解接受",
+        "风险残余需管理层批准"
+      ],
+      "objectives": [
+        "理解风险公式",
+        "掌握FRAP方法",
+        "学习风险处置"
+      ],
+      "newId": "defense-read-021"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 25,
+      "title": "灾难恢复与业务连续性",
+      "keyPoints": [
+        "RPO是数据丢失可接受量",
+        "RTO是恢复所需时间",
+        "RTO越小成本越高",
+        "异地备份防区域性灾难",
+        "定期演练验证DR方案"
+      ],
+      "objectives": [
+        "理解DR/BCP",
+        "掌握RPO/RTO",
+        "学习恢复策略"
+      ],
+      "newId": "defense-read-022"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 26,
+      "title": "安全策略与制度",
+      "keyPoints": [
+        "策略从高层到操作层层递进",
+        "制度需明确奖惩",
+        "策略需定期评审",
+        "培训促进制度落地",
+        "技术控制保证执行"
+      ],
+      "objectives": [
+        "理解策略体系",
+        "掌握制度编写",
+        "学习落地执行"
+      ],
+      "newId": "defense-read-023"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 28,
+      "title": "红蓝对抗",
+      "keyPoints": [
+        "红队模拟真实攻击",
+        "蓝队负责检测防御",
+        "红蓝对抗检验防御体系",
+        "CTF/AWD是演练形式",
+        "复盘总结提升能力"
+      ],
+      "objectives": [
+        "理解对抗原理",
+        "掌握红队技术",
+        "学习蓝队防御"
+      ],
+      "newId": "defense-read-024"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 29,
+      "title": "威胁情报收集",
+      "keyPoints": [
+        "IOC是妥协指标",
+        "威胁情报分级应用",
+        "VirusTotal是最常用查询平台",
+        "MISP用于情报共享",
+        "SIEM集成自动化响应"
+      ],
+      "objectives": [
+        "理解威胁情报",
+        "掌握IOC提取",
+        "学习情报应用"
+      ],
+      "newId": "defense-read-025"
+    },
+    {
+      "plan": "cyber/defense",
+      "day": 30,
+      "title": "安全运营体系建设",
+      "keyPoints": [
+        "安全运营需技术+管理+人员",
+        "SIEM是数据汇聚核心",
+        "SOAR自动化响应",
+        "能力成熟度持续提升",
+        "指标量化运营效果"
+      ],
+      "objectives": [
+        "理解体系建设",
+        "掌握技术架构",
+        "学习持续优化"
+      ],
+      "newId": "defense-read-026"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 27,
+      "title": "安全运营中心SOC",
+      "keyPoints": [
+        "SOC架构",
+        "告警分级",
+        "研判流程",
+        "MTTD/MTTR",
+        "排班轮值"
+      ],
+      "objectives": [
+        "SOC运营全流程掌握"
+      ],
+      "newId": "defense-read-027"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 29,
+      "title": "EDR/XDR/NDR",
+      "keyPoints": [
+        "EDR工作原理",
+        "XDR",
+        "NDR",
+        "端点遥测",
+        "检测方法"
+      ],
+      "objectives": [
+        "端点检测技术掌握"
+      ],
+      "newId": "defense-read-028"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 30,
+      "title": "应急响应实战",
+      "keyPoints": [
+        "PDCERF",
+        "入侵排查",
+        "取证",
+        "内存分析",
+        "日志时间线"
+      ],
+      "objectives": [
+        "应急响应全流程实战"
+      ],
+      "newId": "defense-read-029"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 33,
+      "title": "云安全基础",
+      "keyPoints": [
+        "共享责任模型",
+        "IAM",
+        "容器安全",
+        "K8S安全",
+        "云WAF"
+      ],
+      "objectives": [
+        "云安全基本概念"
+      ],
+      "newId": "defense-read-030"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 35,
+      "title": "邮件安全",
+      "keyPoints": [
+        "邮件安全协议",
+        "SPF",
+        "DKIM",
+        "DMARC",
+        "邮件头分析",
+        "钓鱼邮件"
+      ],
+      "objectives": [
+        "邮件安全技术栈"
+      ],
+      "newId": "defense-read-031"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 36,
+      "title": "攻击模拟与BAS",
+      "keyPoints": [
+        "BAS",
+        "Breach Attack Simulation",
+        "紫队",
+        "假设入侵",
+        "自动化攻击模拟"
+      ],
+      "objectives": [
+        "攻击模拟技术"
+      ],
+      "newId": "defense-read-032"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 37,
+      "title": "场景模拟 Day 1",
+      "keyPoints": [
+        "蓝队面试",
+        "应急响应场景",
+        "告警研判场景",
+        "威胁狩猎场景"
+      ],
+      "objectives": [
+        "蓝队面试场景应对"
+      ],
+      "newId": "defense-read-033"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 40,
+      "title": "全真模拟面试 — 防守篇",
+      "keyPoints": [
+        "SOC·SIEM·EDR·应急响应·合规"
+      ],
+      "objectives": [
+        "模拟安全防御面试·查漏补缺"
+      ],
+      "newId": "defense-read-034"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 41,
+      "title": "全真模拟面试（一）",
+      "keyPoints": [
+        "自我介绍",
+        "技术问答链式追问",
+        "场景设计",
+        "抗压测试"
+      ],
+      "objectives": [
+        "完成一次30分钟全真模拟面试"
+      ],
+      "newId": "defense-read-035"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 42,
+      "title": "全真模拟面试（二）",
+      "keyPoints": [
+        "SOC运营",
+        "应急响应",
+        "日志分析",
+        "安全架构",
+        "合规实践"
+      ],
+      "objectives": [
+        "深度技术面试模拟"
+      ],
+      "newId": "defense-read-036"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 43,
+      "title": "全真模拟面试（三）",
+      "keyPoints": [
+        "项目STAR讲述",
+        "安全建设",
+        "冲突解决",
+        "团队协作"
+      ],
+      "objectives": [
+        "项目讲述与行为面试"
+      ],
+      "newId": "defense-read-037"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 44,
+      "title": "全真模拟面试（四）",
+      "keyPoints": [
+        "职业规划",
+        "薪资谈判",
+        "企业文化",
+        "反问技巧"
+      ],
+      "objectives": [
+        "HR面试与谈薪"
+      ],
+      "newId": "defense-read-038"
+    },
+    {
+      "plan": "interview/defense",
+      "day": 45,
+      "title": "全真模拟面试（五）",
+      "keyPoints": [
+        "综合评分卡",
+        "知识盲区盘点",
+        "面试话术打磨",
+        "最终自测"
+      ],
+      "objectives": [
+        "全方位面试自评与查漏补缺"
+      ],
+      "newId": "defense-read-039"
+    }
+  ],
+  "hw": [
+    {
+      "plan": "cyber/hw",
+      "day": 2,
+      "title": "OSI七层模型与TCP/IP协议栈——蓝队视角的网络基础",
+      "keyPoints": [
+        "完整类比：你从北京给上海的朋友寄一箱苹果",
+        "核心理解——每一层只干自己的事：",
+        "蓝队为什么主要关注第3、4、7层？",
+        "图解三次握手：",
+        "三个关键标志位——永远记住：",
+        "为什么必须是三次，不是两次也不是四次？",
+        "蓝队视角：三次握手的三个重要检测场景",
+        "场景一：SYN Flood 攻击检测"
+      ],
+      "objectives": [
+        "彻底理解 OSI 七层模型——用「寄快递」的比喻保证你一辈子忘不了",
+        "重点掌握 TCP 三次握手和四次挥手——90% 的攻击检测都与此相关",
+        "记住 16 个最常见端口号及对应服务——看到一个端口立刻知道是什么",
+        "理解为什么蓝队必须懂协议——不懂协议就像保安不认识进出的人",
+        "学会用 Wireshark 实地抓包验证 TCP 握手过程"
+      ],
+      "newId": "hw-read-001"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 4,
+      "title": "Linux系统基础（上）",
+      "keyPoints": [
+        "免费选择：",
+        "VirtualBox",
+        "VMware Workstation Player",
+        "安装步骤概览（以VirtualBox为例）：",
+        "命令的基本格式：",
+        "记住今天的核心：",
+        "Q1：Linux文件权限 `rwxr-xr--` 是什么意思？怎么用数字表示？",
+        "Q2：/var/log 目录下有哪些蓝队必须关注的日志文件？"
+      ],
+      "objectives": [
+        "理解为什么蓝队必须会Linux",
+        "了解虚拟机概念，完成VirtualBox/VMware+Linux系统安装",
+        "理解Linux文件系统目录结构（每个目录是干什么的）",
+        "熟练使用15个以上Linux基础命令",
+        "能够在Linux中完成目录和文件的基本操作"
+      ],
+      "newId": "hw-read-002"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 5,
+      "title": "Linux系统基础（下）",
+      "keyPoints": [
+        "基本用法：",
+        "蓝队最常用的grep选项：",
+        "实战例子（重点掌握！）：",
+        "这个功能被称为Linux哲学：\"小工具组合成大能力\"",
+        "蓝队日常中的管道组合：",
+        "基本概念： `awk` 默认用空格/Tab把每行切成多个字段（列），`$1` 是第1列，`$2` 是第2列，`$0` 是整行。",
+        "记住今天的核心：",
+        "Q1：grep、awk、sed 三者的分工是什么？"
+      ],
+      "objectives": [
+        "掌握grep命令，能从日志中筛选出目标信息",
+        "初步了解awk和sed的文本处理能力",
+        "学会查看进程（ps/top）和端口（netstat/ss）",
+        "理解管道符 `|` 的威力——把多个命令串联起来",
+        "实现\"从海量日志中找到攻击IP\"的完整操作"
+      ],
+      "newId": "hw-read-003"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 6,
+      "title": "Windows系统与事件日志",
+      "keyPoints": [
+        "打开方式：",
+        "三大核心日志：",
+        "登录类型代码含义：",
+        "分析步骤：",
+        "事件ID 1102",
+        "事件ID 104",
+        "记住今天的核心：",
+        "Q1：Windows安全日志中，事件ID 4624 和 4625 分别代表什么？"
+      ],
+      "objectives": [
+        "理解Windows在企业环境中的安全角色",
+        "掌握Windows事件查看器的使用方法",
+        "记住蓝队最关注的5个关键事件ID",
+        "能筛选和分析登录成功/失败日志",
+        "理解安全日志、系统日志、应用日志的区别"
+      ],
+      "newId": "hw-read-004"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 7,
+      "title": "周复盘+基础考核",
+      "keyPoints": [
+        "Day 1 - 护网行动与蓝队职责：",
+        "Day 2 - OSI七层与TCP/IP：",
+        "Day 3 - HTTP/HTTPS：",
+        "Day 4 - Linux基础（上）：",
+        "Day 5 - Linux基础（下）：",
+        "Day 6 - Windows事件日志：",
+        "1. TCP三次握手中，第二次握手服务器发送的是什么包？",
+        "2. HTTP状态码403表示什么？"
+      ],
+      "objectives": [
+        "系统梳理第一周所有知识点，查漏补缺",
+        "完成网络+系统基础自测题，检验掌握情况",
+        "搭建个人笔记知识库框架",
+        "对6天来未达标的内容进行补课",
+        "为第二周工具学习做好准备"
+      ],
+      "newId": "hw-read-005"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 9,
+      "title": "Web访问日志分析",
+      "keyPoints": [
+        "识别特征：",
+        "用grep快速排查：",
+        "排查方法：",
+        "记住今天的核心口诀：",
+        "Q1：Nginx access log 的每一列代表什么？",
+        "Q2：从access.log中如何快速发现SQL注入攻击？",
+        "Q3：如何区分\"正常爬虫\"和\"恶意扫描\"？",
+        "日志分析的三个层次："
+      ],
+      "objectives": [
+        "理解Nginx/Apache访问日志的每个字段含义",
+        "能够用Linux命令对日志进行统计分析",
+        "能从日志中识别SQL注入、目录扫描等攻击特征",
+        "掌握\"找出异常\"的核心思路：先看整体统计，再看异常个案",
+        "学会编写简单的日志分析脚本思路"
+      ],
+      "newId": "hw-read-006"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 10,
+      "title": "系统日志综合分析",
+      "keyPoints": [
+        "一条典型的secure日志：",
+        "secure日志中的关键事件识别：",
+        "可疑特征：",
+        "模拟场景： 你是某公司安全运营人员，接到通知\"服务器可能被入侵了\"。请按以下步骤排查：",
+        "记住今天的核心：",
+        "Q1：Linux系统日志中，如何判断一次SSH登录是正常登录还是攻击登录？",
+        "Q2：Windows Event ID 4624（登录成功）中的Logon Type字段代表什么？",
+        "Q3：如何综合使用多源日志还原攻击全貌？"
+      ],
+      "objectives": [
+        "掌握Linux系统核心日志文件的位置和作用",
+        "能分析secure日志中的登录行为，识别异常登录",
+        "会查看cron日志，发现攻击者添加的定时任务",
+        "学会从messages/syslog中排查系统异常",
+        "能够独立完成一份模拟攻击场景的日志排查"
+      ],
+      "newId": "hw-read-007"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 11,
+      "title": "漏洞与威胁基础概念",
+      "keyPoints": [
+        "通俗理解：",
+        "危害： 绕过登录、拖库（偷走整个数据库）、篡改数据",
+        "蓝队识别： URL中有SQL关键字（SELECT、UNION、--、\\",
+        "1\\",
+        "1）",
+        "危害： 窃取用户Cookie、钓鱼、篡改网页",
+        "蓝队识别： URL/日志中有`<script>`、`javascript:`、`onerror=`等标签",
+        "危害： 远程控制服务器、挂马、挖矿",
+        "蓝队识别： 日志中出现了`.php`、`.jsp`、`.asp`文件的上传请求",
+        "危害： 执行任意系统命令，完全控制服务器"
+      ],
+      "objectives": [
+        "理解漏洞、威胁、风险三者的区别和关系",
+        "掌握OWASP Top 10的核心内容（用通俗语言）",
+        "了解CVE漏洞编号体系",
+        "能说出5种以上常见Web漏洞的名称和基本危害",
+        "能够用\"小明的房子\"模型理解安全概念"
+      ],
+      "newId": "hw-read-008"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 12,
+      "title": "蓝队常用扫描工具Nmap",
+      "keyPoints": [
+        "蓝队解读： 这台服务器开了SSH、Web(80/443)、MySQL、还有一个8080上跑着Web服务。如果这是一台只应该跑Web的服务器，那3306（MySQL对外暴露）就是风险点。",
+        "蓝队解读： OpenSSH 6.6.1是2014年的老版本，Apache 2.2.15更老（2010年）。这些版本可能有严重漏洞，需要升级或加固。",
+        "蓝队解读： 发现了一台不该存在的设备（192.168.1.200），可能是有人私自接入的设备，也可能是攻击者的跳板机。",
+        "判断标准：",
+        "记住今天的核心：",
+        "Q1：Nmap -sS 和 -sT 扫描有什么区别？蓝队怎么检测？",
+        "Q2：Nmap扫描结果的\"open\"\"closed\"\"filtered\"分别代表什么？",
+        "Q3：Nmap除了端口扫描还能做什么？"
+      ],
+      "objectives": [
+        "理解端口扫描的原理（用敲门比喻）",
+        "掌握Nmap的安装和基本使用方法",
+        "熟练使用3种以上Nmap扫描参数",
+        "能够解读Nmap的扫描结果",
+        "理解蓝队使用Nmap的场景（资产发现/安全巡检）"
+      ],
+      "newId": "hw-read-009"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 14,
+      "title": "周复盘+工具实操考核",
+      "keyPoints": [
+        "Day 8 - Wireshark：",
+        "Day 9 - Web日志分析：",
+        "Day 10 - 系统日志：",
+        "Day 11 - 漏洞基础：",
+        "Day 12 - Nmap：",
+        "Day 13 - 威胁情报：",
+        "任务1答案：",
+        "Q: 第二周应该掌握的核心技能清单是什么？"
+      ],
+      "objectives": [
+        "系统梳理第二周知识，查漏补缺",
+        "完成混合日志分析+流量分析综合任务",
+        "检验Wireshark、Linux分析命令、情报工具的掌握程度",
+        "未达标项目补课"
+      ],
+      "newId": "hw-read-010"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 16,
+      "title": "IDS/IPS入侵检测",
+      "keyPoints": [
+        "实际工作中的部署组合：",
+        "优点： 准确率高，误报低",
+        "缺点： 新攻击（没在名单上）检测不到",
+        "优点： 能发现未知攻击",
+        "缺点： 误报率高（加班到凌晨也会报警）",
+        "Snort的工作模式：",
+        "一条Snort规则长什么样？",
+        "记住今天的核心："
+      ],
+      "objectives": [
+        "理解IDS和IPS的工作原理和核心区别",
+        "了解Snort开源IDS的基本架构",
+        "能区分3种以上的IDS告警类型",
+        "理解检测规则的编写思路",
+        "知道IDS/IPS在护网防护体系中的位置"
+      ],
+      "newId": "hw-read-011"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 18,
+      "title": "告警研判标准流程",
+      "keyPoints": [
+        "核查清单（逐条过）：",
+        "误报常见原因：",
+        "判断攻击是否成功的核心方法：",
+        "典型处置动作：",
+        "一条合格的研判记录应该包含：",
+        "告警编号：ALERT-20260610-001",
+        "告警时间：2026-06-10 03:15:22",
+        "告警来源：IDS设备"
+      ],
+      "objectives": [
+        "掌握告警研判的\"核查-研判-处置-闭环\"四步法",
+        "能够独立进行单条告警的完整研判",
+        "学会区分误报和真实攻击",
+        "掌握研判报告的写作要点",
+        "整理一份自己的《告警研判操作SOP》"
+      ],
+      "newId": "hw-read-012"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 19,
+      "title": "常见攻击识别-探测类",
+      "keyPoints": [
+        "Nmap SYN扫描的特征：",
+        "在Wireshark中看到的样子：",
+        "Nmap的特征签名：",
+        "记住今天的核心：",
+        "Q1：如何从流量/日志中识别Nmap端口扫描？",
+        "Q2：目录扫描和端口扫描的日志特征有什么区别？",
+        "Q3：资产测绘和端口扫描有什么区别？",
+        "Q: 端口扫描在流量中有哪些可识别的特征？"
+      ],
+      "objectives": [
+        "能够从流量/日志中识别端口扫描行为",
+        "能够识别目录扫描和资产测绘行为",
+        "理解扫描攻击的流量特征和日志特征",
+        "能判断扫描行为的威胁等级",
+        "知道常见的扫描工具特征（Nmap、Dirb、Goby）"
+      ],
+      "newId": "hw-read-013"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 20,
+      "title": "常见攻击识别-入侵类",
+      "keyPoints": [
+        "记住今天的核心：",
+        "Q1：暴力破解的日志特征是什么？",
+        "Q2：SQL注入的告警/日志特征是什么？",
+        "Q3：XSS的告警/日志特征是什么？",
+        "Q: 暴力破解在日志和流量中如何识别？",
+        "Q: SQL注入在日志和流量中的典型特征是什么？",
+        "Q: XSS攻击怎么识别？",
+        "Q: 文件上传攻击如何识别？"
+      ],
+      "objectives": [
+        "能准确识别暴力破解的日志/告警特征",
+        "能识别SQL注入攻击在日志中的表现",
+        "能识别XSS和文件上传攻击的日志特征",
+        "学会从模拟告警中筛选真实入侵、排除误报",
+        "综合运用情报+日志+流量多维判断"
+      ],
+      "newId": "hw-read-014"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 21,
+      "title": "周复盘+告警研判考核",
+      "keyPoints": [
+        "Day 15 - 防火墙/WAF：",
+        "Day 16 - IDS/IPS：",
+        "Day 17 - SOC：",
+        "Day 18 - 告警研判：",
+        "Day 19 - 探测识别：",
+        "Day 20 - 入侵识别：",
+        "Q: 第三周（安全设备+告警研判）的核心技能清单是什么？",
+        "Q: 告警研判准确率80%是什么意思？如何考核？"
+      ],
+      "objectives": [
+        "系统梳理第三周安全设备与告警研判知识点",
+        "完成20条混合告警的研判实操（准确率≥80%）",
+        "查漏补缺，确保核心能力达标"
+      ],
+      "newId": "hw-read-015"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 22,
+      "title": "应急响应基础流程",
+      "keyPoints": [
+        "检测来源：",
+        "确认事件的步骤：",
+        "遏制策略等级：",
+        "⚠️ 一个重要原则：取证前要不要关机？",
+        "一般做法：先断网（保留内存证据），取证后再关机/重装",
+        "恢复原则： 宁可慢一点、确保干净，也不要急着恢复结果二次沦陷。",
+        "模拟场景： 你是某公司的安全运营人员，凌晨2点收到SOC告警：内网Web服务器被检测到webshell文件，同一IP在执行大量数据查询操作。",
+        "记住今天的核心："
+      ],
+      "objectives": [
+        "掌握PDCERF应急响应模型的6个阶段",
+        "理解事件分级的标准",
+        "知道每个阶段的核心动作",
+        "能编写一份《安全事件应急处置流程清单》",
+        "理解应急响应中\"先止损再查因\"的原则"
+      ],
+      "newId": "hw-read-016"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 25,
+      "title": "护网全流程详解",
+      "keyPoints": [
+        "为什么重要？ 你都不知道自己有哪些服务器、开了哪些端口，怎么防守？",
+        "常见问题（护网前就被蓝队发现的问题）：",
+        "日报模板：",
+        "日期：2026年6月12日",
+        "班次：白班（08:00-20:00）",
+        "值班人员：张三（组长）、李四、王五",
+        "复盘要回答的问题：",
+        "整改清单示例："
+      ],
+      "objectives": [
+        "掌握护网前、护网中、护网后三个阶段的核心工作",
+        "理解资产梳理和风险排查的重要性",
+        "了解值守排班、情报联动、日报编写",
+        "能独立编写一份护网值守日报模板",
+        "理解护网复盘的意义和流程"
+      ],
+      "newId": "hw-read-017"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 27,
+      "title": "模拟7×24值守演练",
+      "keyPoints": [
+        "模拟值守设置：",
+        "时间：2026-06-13 09:15",
+        "设备：IDS",
+        "类型：SQL注入",
+        "来源IP：45.33.32.156",
+        "目标：192.168.1.100:80",
+        "研判过程：",
+        "等级：P1 高危"
+      ],
+      "objectives": [
+        "模拟真实护网值守场景，完成4小时模拟值守",
+        "批量处理各种类型的告警",
+        "独立完成告警研判→处置→记录的全流程",
+        "学会处理同一来源的多条关联告警",
+        "体验真实值守的工作节奏"
+      ],
+      "newId": "hw-read-018"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 28,
+      "title": "面试准备+终极考核",
+      "keyPoints": [
+        "Q1：护网行动是什么？红蓝紫三队分别做什么？",
+        "Q2：说说OSI七层模型，蓝队最关注哪几层？",
+        "Q3：TCP三次握手和四次挥手的过程？",
+        "Q4：HTTP状态码200/301/403/404/500分别表示什么？",
+        "Q5：漏洞、威胁、风险的区别？",
+        "Q6：你用过哪些安全工具？分别用来做什么？",
+        "Q7：Wireshark怎么过滤特定IP的流量？怎么看TCP流？",
+        "Q8：在Linux中如何统计Web日志中最活跃的TOP10 IP？"
+      ],
+      "objectives": [
+        "掌握初级蓝队高频面试题的回答思路",
+        "完成上岗能力自测，评估自己是否达到上岗标准",
+        "了解简历优化方向",
+        "制定后续学习计划（30天→120天路径选择）",
+        "**技能列表要具体**，不要只说\"熟悉Linux\""
+      ],
+      "newId": "hw-read-019"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 30,
+      "title": "SQL注入原理与绕过逻辑——蓝队检测实战",
+      "keyPoints": [
+        "类型1：数字型注入",
+        "类型2：字符型注入",
+        "类型3：搜索型注入",
+        "三种类型的核心区别速查：",
+        "1. 大小写混写",
+        "2. 双写绕过",
+        "3. 注释填充",
+        "4. 编码绕过"
+      ],
+      "objectives": [
+        "深入理解SQL注入的三种类型（数字型/字符型/搜索型）及其注入原理",
+        "掌握攻击者绕过WAF的8种经典手法，理解为什么仅靠WAF不够",
+        "建立SQL注入的三层纵深检测体系（WAF→Web日志→数据库审计）",
+        "能够识别SQLMap等自动化SQL注入工具的流量特征并与其他攻击区分",
+        "学会从代码层面推动SQL注入漏洞的彻底修复（参数化查询）"
+      ],
+      "newId": "hw-read-020"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 31,
+      "title": "XSS、CSRF、SSRF漏洞原理与蓝队检测特征",
+      "keyPoints": [
+        "类型1：反射型XSS（非持久型）",
+        "类型2：存储型XSS（持久型）",
+        "类型3：DOM型XSS",
+        "检测命令：",
+        "攻击必要条件：",
+        "典型攻击场景：",
+        "蓝队检测思路：",
+        "防御方案："
+      ],
+      "objectives": [
+        "深入理解XSS三种类型（反射型/存储型/DOM型）的原理和检测特征",
+        "掌握CSRF攻击的原理、必要条件以及蓝队检测方法",
+        "理解SSRF攻击的原理及其在内网探测中的危害",
+        "能分别从Web日志中识别XSS/CSRF/SSRF攻击行为",
+        "建立针对这三种漏洞的三层检测思路（WAF→日志→行为）"
+      ],
+      "newId": "hw-read-021"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 33,
+      "title": "BurpSuite基础使用（蓝队视角）",
+      "keyPoints": [
+        "明日预告"
+      ],
+      "objectives": [
+        "理解 BurpSuite 是什么以及它在蓝队工作中的位置",
+        "完成 BurpSuite 社区版的下载、安装和基础配置",
+        "掌握 Proxy 抓包：能拦截和查看 HTTP/HTTPS 请求",
+        "掌握 Repeater 重放：能修改参数并观察服务器响应变化",
+        "掌握 Decoder 解码：能解码攻击 Payload 的编码内容"
+      ],
+      "newId": "hw-read-022"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 34,
+      "title": "SQLMap基础使用（蓝队视角：识别自动化注入攻击）",
+      "keyPoints": [
+        "/ | UNION SELECT | UNION/",
+        "明日预告"
+      ],
+      "objectives": [
+        "理解 SQLMap 是什么以及为什么攻击者如此钟爱它",
+        "掌握 SQLMap 的六种注入技术（B/E/U/S/T/Q）及其流量特征",
+        "能从 Web 日志中准确识别 SQLMap 的攻击流量",
+        "理解 SQLMap 的探测序列和攻击阶段",
+        "学会在测试环境中使用 SQLMap 验证防护效果"
+      ],
+      "newId": "hw-read-023"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 35,
+      "title": "漏洞扫描器进阶（OpenVAS部署与使用）",
+      "keyPoints": [
+        "明日预告"
+      ],
+      "objectives": [
+        "理解漏洞扫描在蓝队工作中的地位和作用",
+        "掌握 OpenVAS 的架构（GSA/GVMD/Scanner/NVT）",
+        "完成 OpenVAS 的 Docker 部署和基础配置",
+        "学会创建扫描任务并解读扫描报告",
+        "理解 CVSS 评分体系和漏洞定级标准"
+      ],
+      "newId": "hw-read-024"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 36,
+      "title": "ELK Stack部署与基础使用",
+      "keyPoints": [
+        "明日预告",
+        "采集安全相关的日志，建立安全视图"
+      ],
+      "objectives": [
+        "理解 ELK（Elasticsearch + Logstash + Kibana）的核心概念和各自角色",
+        "使用 Docker Compose 快速部署 ELK 单节点环境",
+        "掌握 Filebeat 日志采集配置",
+        "学会在 Kibana 中创建索引模式并搜索日志",
+        "能编写简单的 Kibana 查询语句（KQL）来发现安全事件"
+      ],
+      "newId": "hw-read-025"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 37,
+      "title": "弱口令与端口暴露风险排查实操",
+      "keyPoints": [
+        "明日预告"
+      ],
+      "objectives": [
+        "理解弱口令为什么是蓝队最需要关注的基础安全问题",
+        "掌握常用的弱口令检测工具（Hydra、Medusa、John the Ripper）",
+        "能通过 Nmap 扫描资产暴露的端口和服务",
+        "学会编写和使用安全基线检查脚本",
+        "能发现并整改常见的弱口令和端口暴露风险"
+      ],
+      "newId": "hw-read-026"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 38,
+      "title": "\"Day 38: DVWA靶场通关（蓝队视角）\"",
+      "keyPoints": [
+        "方式一：Docker 安装（推荐，最快）",
+        "方式二：XAMPP/WAMP 本地安装",
+        "方式三：在线靶场",
+        "Q: DVWA的四个安全等级分别代表什么？",
+        "Q: 蓝队为什么要用DVWA？",
+        "方法一：5秒判断法",
+        "方法二：攻击路径推演法",
+        "方法三：误报记忆库法"
+      ],
+      "objectives": [
+        "完成DVWA靶场环境搭建，理解每个漏洞模块的攻击与防御两面性",
+        "掌握蓝队视角下的漏洞检测特征识别，不是学攻击而是学\"攻击长什么样\"",
+        "在日志/WAF/IDS层面理解每种漏洞的痕迹",
+        "0.0.1; cat /etc/passwd    -> 检测点: 分号 + cat",
+        "0.0.1 | whoami             -> 检测点: 管道符 + 系统命令"
+      ],
+      "newId": "hw-read-027"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 39,
+      "title": "\"Day 39: 常见告警误报原因分析与优化思路\"",
+      "keyPoints": [
+        "1. 正常业务流量被误判为攻击",
+        "2. 自动化工具/爬虫触发的告警",
+        "3. 安全扫描器/内部安全测试触发的告警",
+        "4. 边界场景的误判",
+        "5. 规则过于宽泛",
+        "Q: 告警量很大怎么办？",
+        "Q: 如何平衡误报和漏报？",
+        "方法一：5秒判断法"
+      ],
+      "objectives": [
+        "理解误报产生的根本原因——为什么\"看起来像攻击\"不一定是攻击",
+        "掌握5种最常见的告警误报场景及其判断方法",
+        "学会告警规则的优化思路——从\"报得多\"到\"报得准\"",
+        "看请求类型：是GET搜索还是POST表单？表单更可疑",
+        "看参数位置：URL参数比请求体参数更需关注"
+      ],
+      "newId": "hw-read-028"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 40,
+      "title": "\"Day 40: 阶段复盘+实操考核（第29-39天）\"",
+      "keyPoints": [
+        "方法一：5秒判断法",
+        "方法二：攻击路径推演法",
+        "方法三：误报记忆库法",
+        "这个案例的教训：告警多不等于危害大。关键看两点：",
+        "场景一：收到IDS告警 -> 告警研判全流程",
+        "场景二：周期性安全评估",
+        "1. 请描述一次完整的Web攻击检测流程",
+        "2. SQL注入和XSS的区别是什么？"
+      ],
+      "objectives": [
+        "系统回顾 Day 29-39 的全部知识点",
+        "完成实操考核（靶场检测 + 工具使用 + 告警研判）",
+        "评估自己的\"初级蓝队工程师\"能力级别",
+        "用BurpSuite抓取一个HTTP请求，展示请求和响应（截图或记录）",
+        "用Nmap扫描本机开放的端口，列出结果"
+      ],
+      "newId": "hw-read-029"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 41,
+      "title": "\"Day 41: VulHub环境搭建入门\"",
+      "keyPoints": [
+        "Ubuntu/Debian：",
+        "CentOS/RHEL：",
+        "Windows：",
+        "第一阶段（Day 41-45）：Web中间件漏洞",
+        "第二阶段（进阶）：Web应用框架漏洞",
+        "第三阶段（高级）：系统服务漏洞",
+        "方法一：5秒判断法",
+        "方法二：攻击路径推演法"
+      ],
+      "objectives": [
+        "理解VulHub是什么以及为什么它是漏洞复现的最佳环境",
+        "完成VulHub环境的搭建（Docker版本）",
+        "在VulHub中启动第一个漏洞环境并理解其结构",
+        "从 docker.com 下载 Docker Desktop",
+        "安装后重启电脑"
+      ],
+      "newId": "hw-read-030"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 42,
+      "title": "\"Day 42: Tomcat漏洞复现与检测（CVE-2017-12615）\"",
+      "keyPoints": [
+        "方法一：5秒判断法",
+        "方法二：攻击路径推演法",
+        "方法三：误报记忆库法",
+        "1. 请描述一次完整的Web攻击检测流程",
+        "2. 什么是IDS/IPS？区别是什么？",
+        "3. ATT&CK框架对蓝队有什么用？",
+        "4. 告警很多怎么处理？",
+        "瓶颈一：学了后面的忘了前面的"
+      ],
+      "objectives": [
+        "理解Tomcat任意文件写入漏洞（CVE-2017-12615）的原理",
+        "亲手复现漏洞，体会攻击者的操作过程",
+        "掌握该漏洞的蓝队检测特征与防御方法",
+        "升级Tomcat到7.0.82以上版本（官方已修复）",
+        "在Tomcat的web.xml中禁用PUT/DELETE方法"
+      ],
+      "newId": "hw-read-031"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 43,
+      "title": "\"Day 43: Weblogic漏洞复现与检测（CVE-2017-10271）\"",
+      "keyPoints": [
+        "类比：你收到一个包裹（XML请求），拆开时里面有个纸条写着\"去银行转100万到某个账户\"，",
+        "方法一：5秒判断法",
+        "方法二：攻击路径推演法",
+        "方法三：误报记忆库法",
+        "1. 请描述一次完整的Web攻击检测流程",
+        "2. 什么是IDS/IPS？区别是什么？",
+        "3. ATT&CK框架对蓝队有什么用？",
+        "4. 告警很多怎么处理？"
+      ],
+      "objectives": [
+        "理解Weblogic反序列化漏洞（CVE-2017-10271）的原理",
+        "学会在VulHub中复现该漏洞",
+        "掌握Weblogic漏洞的蓝队检测方法",
+        "升级Weblogic版本（Oracle已发布补丁）",
+        "删除不需要的组件（wls-wsat等）"
+      ],
+      "newId": "hw-read-032"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 44,
+      "title": "\"Day 44: Redis未授权访问复现与检测\"",
+      "keyPoints": [
+        "方式一：写入SSH公钥（获取SSH登录权限）",
+        "方式二：写入计划任务（反弹Shell）",
+        "方式三：写入Webshell（如果Redis和Web部署同一台机器）",
+        "方法一：5秒判断法",
+        "方法二：攻击路径推演法",
+        "方法三：误报记忆库法",
+        "1. 请描述一次完整的Web攻击检测流程",
+        "2. 什么是IDS/IPS？区别是什么？"
+      ],
+      "objectives": [
+        "理解Redis未授权访问漏洞的原理与危害",
+        "复现三种Redis未授权访问的攻击方式",
+        "掌握Redis安全的蓝队检测与加固方法",
+        "0.0.1:6379> INFO server",
+        "0.0.1:6379> CONFIG SET dir /root/.ssh/"
+      ],
+      "newId": "hw-read-033"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 45,
+      "title": "\"Day 45: 综合漏洞复现与检测报告撰写\"",
+      "keyPoints": [
+        "第一步：环境准备",
+        "第二步：漏洞验证",
+        "第三步：攻击复现",
+        "第四步：蓝队分析",
+        "漏洞等级",
+        "CVE编号",
+        "漏洞描述",
+        "影响资产"
+      ],
+      "objectives": [
+        "回顾Day 42-44的三种漏洞，建立漏洞复现的方法论",
+        "学习安全检测报告的标准格式与撰写方法",
+        "完成一份完整的漏洞检测报告",
+        "理解PoC的原理（不只是复制粘贴）",
+        "护网期间：每日需要写值守报告"
+      ],
+      "newId": "hw-read-034"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 46,
+      "title": "\"Day 46: 公开攻击流量样本分析（Day 1）——流量分析四步法\"",
+      "keyPoints": [
+        "Q1: 描述一次完整的Web攻击检测流程",
+        "Q2: IDS和IPS的区别？",
+        "Q3: ATT&CK框架对蓝队的价值？",
+        "Q4: 告警太多怎么处理？",
+        "Q1: 给你一个PCAP文件，你怎么分析？",
+        "Q2: 怎么区分正常扫描和恶意扫描？",
+        "Q3: C2通信有哪些检测方法？",
+        "Q4: 遇到HTTPS加密流量怎么分析？"
+      ],
+      "objectives": [
+        "理解什么是PCAP流量样本以及为什么要分析它",
+        "学会用Wireshark打开和分析PCAP文件",
+        "从真实攻击流量中提取攻击特征和IOC",
+        "Statistics -> Summary：查看文件基本信息（大小、包数、时间范围）",
+        "Statistics -> Protocol Hierarchy：看协议分布（HTTP最多？DNS最多？TCP连接异常多？）"
+      ],
+      "newId": "hw-read-035"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 47,
+      "title": "\"Day 47: 公开攻击流量样本分析（Day 2）——Webshell与C2流量\"",
+      "keyPoints": [
+        "模式1：HTTP Beacon（信标模式）",
+        "模式2：DNS隧道",
+        "模式3：HTTPS加密隧道",
+        "Base64编码",
+        "URL编码",
+        "Hex编码",
+        "Q1: 描述一次完整的Web攻击检测流程",
+        "Q2: IDS和IPS的区别？"
+      ],
+      "objectives": [
+        "深入分析真实Webshell上传流量的完整过程",
+        "学会识别C2（命令与控制）通信的流量特征",
+        "掌握流量中的加密/编码Payload识别方法",
+        "流量特征：POST multipart/form-data + 文件名含脚本后缀 + Content-Type可能伪造",
+        "按时间排序HTTP请求，寻找周期性模式"
+      ],
+      "newId": "hw-read-036"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 48,
+      "title": "\"Day 48: 公开攻击流量样本分析（Day 3）——攻击链还原\"",
+      "keyPoints": [
+        "1. 样本基本信息",
+        "2. 攻击时间线",
+        "3. 攻击技术分析",
+        "4. IOC提取",
+        "5. 检测建议",
+        "6. 防御建议",
+        "Q1: 描述一次完整的Web攻击检测流程",
+        "Q2: IDS和IPS的区别？"
+      ],
+      "objectives": [
+        "学会分析完整的攻击链流量（从扫描到获取权限）",
+        "掌握从流量中还原攻击路径的方法",
+        "练习写一份完整的流量分析报告",
+        "**侦察阶段（Reconnaissance）**",
+        "**武器化/投递阶段（Weaponization/Delivery）**"
+      ],
+      "newId": "hw-read-037"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 49,
+      "title": "\"Day 49: 等保2.0基础认知与初级合规要求\"",
+      "keyPoints": [
+        "第一级（自主保护级）：一般信息系统，损害后对公民/组织有轻微损害。",
+        "第二级（指导保护级）：一般重要系统，损害后对公民/组织有严重损害。",
+        "第三级（监督保护级）：重要系统，损害后对社会/国家有严重损害。",
+        "第四级（强制保护级）：特别重要系统，损害后对国家有特别严重损害。",
+        "第五级（专控保护级）：极端重要系统，损害后对国家有毁灭性损害。",
+        "Q1: 描述一次完整的Web攻击检测流程",
+        "Q2: IDS和IPS的区别？",
+        "Q3: ATT&CK框架对蓝队的价值？"
+      ],
+      "objectives": [
+        "理解等保2.0的基本概念和五大等级",
+        "掌握等保八大类安全要求的核心要点",
+        "理解等保与蓝队日常工作的关系",
+        "等保是你日常工作的\"圣经\"——等保要求你做什么，你就需要落地执行",
+        "等保检查是蓝队的重要工作之一——很多蓝队岗位需要配合或主导等保测评"
+      ],
+      "newId": "hw-read-038"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 50,
+      "title": "\"Day 50: 护网前资产梳理与风险排查实操\"",
+      "keyPoints": [
+        "第一步：端口暴露检查",
+        "第二步：漏洞扫描",
+        "第三步：弱口令检查",
+        "第四步：配置基线检查",
+        "第五步：生成风险清单",
+        "Q1: 描述一次完整的Web攻击检测流程",
+        "Q2: IDS和IPS的区别？",
+        "Q3: ATT&CK框架对蓝队的价值？"
+      ],
+      "objectives": [
+        "掌握资产梳理的四大维度和方法",
+        "学会用Nmap等工具进行资产发现",
+        "能输出一份完整的资产台账和风险清单",
+        "用Nmap对内网IP段做全端口扫描：nmap -p- 10.0.0.0/24",
+        "用子域名爆破工具发现遗漏的子域名"
+      ],
+      "newId": "hw-read-039"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 51,
+      "title": "\"Day 51: 7x24小时模拟值守进阶（Day 1）——值守体系建立\"",
+      "keyPoints": [
+        "P0（紧急）：确认正在发生的攻击，且攻击已成功或即将成功。",
+        "P1（高危）：攻击正在发生，但尚未确认成功。",
+        "P2（中危）：可疑行为，需要持续关注。",
+        "P3（低危）：信息记录，不需要立即处置。",
+        "Q1: 描述一次完整的Web攻击检测流程",
+        "Q2: IDS和IPS的区别？",
+        "Q3: ATT&CK框架对蓝队的价值？",
+        "Q4: 告警太多怎么处理？"
+      ],
+      "objectives": [
+        "搭建完整的值守环境和工位",
+        "理解值守团队的四种角色",
+        "掌握告警分级标准和值守日报模板"
+      ],
+      "newId": "hw-read-040"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 52,
+      "title": "\"Day 52: 7x24小时模拟值守进阶（Day 2）——告警研判实战\"",
+      "keyPoints": [
+        "场景描述：凌晨3点，WAF突然弹出30+条SQL注入告警。",
+        "研判流程：",
+        "核心教训：告警多不等于危害大，关键看攻击有没有成功。",
+        "场景描述：下午，WAF告警显示某IP成功上传了一个JSP文件到Tomcat服务器。",
+        "核心教训：PUT + 201 + 后续GET = 典型的Webshell上传-执行模式。",
+        "场景描述：IDS告警：内网IP 192.168.1.50 在扫描同网段其他服务器的",
+        "核心教训：内网异常告警 = 最严重的告警。不要纠结是不是误报，先隔离再说。",
+        "A（Asset，资产）：受影响的资产重要吗？是核心业务服务器还是测试机？"
+      ],
+      "objectives": [
+        "通过三个真实场景理解告警研判流程",
+        "掌握ABC告警研判原则",
+        "能区分不同严重级别的告警并给出合理处置",
+        "先在ELK中搜索这些IP的所有历史请求——发现它们之前还有端口扫描行为",
+        "查看Payload：都是经典的 \\"
+      ],
+      "newId": "hw-read-041"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 53,
+      "title": "\"Day 53: 7x24小时模拟值守进阶（Day 3）——攻击识别与快速响应\"",
+      "keyPoints": [
+        "场景：确认有攻击者在进行漏洞利用",
+        "场景：发现内网异常行为",
+        "场景：收到安全设备宕机告警",
+        "对组长汇报（简洁）：\"P0告警：X服务器疑似被Webshell上传成功，",
+        "对运维沟通（精确）：\"请检查10.0.1.50的8080端口Tomcat，",
+        "写日报（规范）：按模板填写，别人看得到重点、看得懂来龙去脉。",
+        "不要做的事：大吼大叫、散布恐慌、在群里发未经确认的消息。",
+        "Q1: 描述一次完整的Web攻击检测流程"
+      ],
+      "objectives": [
+        "训练攻击类型的快速识别能力",
+        "掌握几种标准场景的快速响应SOP",
+        "学习护网期间的沟通规范",
+        "WAF: request contains \\"
+      ],
+      "newId": "hw-read-042"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 54,
+      "title": "\"Day 54: 7x24小时模拟值守进阶（Day 4）——值班交接与协同作战\"",
+      "keyPoints": [
+        "标准交接流程：",
+        "演练场景：监控组发现X服务器出现Webshell上传告警",
+        "Q1: 描述一次完整的Web攻击检测流程",
+        "Q2: IDS和IPS的区别？",
+        "Q3: ATT&CK框架对蓝队的价值？",
+        "Q4: 告警太多怎么处理？",
+        "Q5: WAF和IPS的区别？",
+        "这50天的努力已经让你超越了绝大多数网络安全初学者。"
+      ],
+      "objectives": [
+        "掌握护网值班交接的规范流程",
+        "理解护网团队的分工和协同机制",
+        "完成一次团队协同演练",
+        "交接时间：每班提前15分钟开始交接",
+        "交接内容："
+      ],
+      "newId": "hw-read-043"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 55,
+      "title": "\"Day 55: 7x24小时模拟值守进阶（Day 5）——综合演练与复盘\"",
+      "keyPoints": [
+        "第1小时（09:00-10:00）：平静的早晨",
+        "第2小时（10:00-11:00）：异常开始出现",
+        "第3小时（11:00-12:00）：攻击升级",
+        "第4小时（12:00-13:00）：危机！",
+        "第5小时（13:00-14:00）：善后与交接",
+        "Q1: 描述一次完整的Web攻击检测流程",
+        "Q2: IDS和IPS的区别？",
+        "Q3: ATT&CK框架对蓝队的价值？"
+      ],
+      "objectives": [
+        "完成5小时模拟护网综合演练",
+        "总结5天模拟值守的核心收获",
+        "评估自己的值守能力水平",
+        "值守中最容易犯的错误是什么？",
+        "哪种告警最难判断？为什么？"
+      ],
+      "newId": "hw-read-044"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 57,
+      "title": "\"Day 57: 护网情报联动与联防联控流程\"",
+      "keyPoints": [
+        "IOC（Indicators of Compromise，失陷指标）——\"已经确认的恶意痕迹\"",
+        "IOA（Indicators of Attack，攻击指标）——\"正在发生的攻击特征\"",
+        "第一步：发现与上报",
+        "第二步：验证与下发",
+        "第三步：落地与响应",
+        "第四步：反馈与闭环",
+        "操作一：准备阶段（护网前）",
+        "操作二：护网中"
+      ],
+      "objectives": [
+        "理解情报联动和联防联控的概念与价值",
+        "掌握IOC和IOA的区别和使用场景",
+        "了解联防联控的四步流程和具体操作",
+        "模拟一次情报上报：假设你发现了一个攻击IP，按标准格式写一条情报",
+        "模拟一次情报落地：给你一条情报（恶意IP+攻击Payload），写出你的落地动作"
+      ],
+      "newId": "hw-read-045"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 58,
+      "title": "\"Day 58: 初级面试题深化与简历优化（Day 1）\"",
+      "keyPoints": [
+        "维度一：基础知识（30%）",
+        "维度二：实操能力（40%）",
+        "维度三：综合素质（30%）",
+        "Q1: 请描述OSI七层模型，并说明蓝队在每一层关注什么？",
+        "Q2: 一次完整的Web请求经历了哪些过程？",
+        "Q3: SQL注入分哪几类？蓝队如何检测？",
+        "Q4: 你用过哪些安全工具？分别用来做什么？",
+        "1. 要突出实操经验"
+      ],
+      "objectives": [
+        "掌握蓝队面试的三大考察维度和应对策略",
+        "能流利回答4道经典蓝队面试题",
+        "了解简历优化的核心要点",
+        "沟通能力：能用通俗语言向非技术人员解释安全事件",
+        "学习能力：是否持续关注安全动态？关注哪些安全媒体？"
+      ],
+      "newId": "hw-read-046"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 59,
+      "title": "\"Day 59: 初级面试题深化与简历优化（Day 2）——模拟面试\"",
+      "keyPoints": [
+        "Q5: WAF的原理是什么？WAF有哪些绕过方式？蓝队如何应对？",
+        "Q6: 你如何看待告警疲劳(Alert Fatigue)？有什么解决方法？",
+        "Q7: 给你一段Web日志，如何找出攻击？",
+        "Q8: 护网中你印象最深的一次攻击是什么？你怎么处理的？",
+        "面试官：请做一下自我介绍。",
+        "面试官：你的弱点是什么？",
+        "面试官：你为什么选择蓝队而不是红队？",
+        "Q1: 描述完整的Web攻击检测流程"
+      ],
+      "objectives": [
+        "掌握更多蓝队面试高频题的回答要点",
+        "完成一次模拟面试演练",
+        "了解面试前中后的准备和注意事项",
+        "统计高频IP：sort | uniq -c | sort -nr，找出异常IP",
+        "搜索攻击关键字：grep -E \"UNION|<script>|../|cmd=\" access.log"
+      ],
+      "newId": "hw-read-047"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 60,
+      "title": "\"Day 60: 初级阶段综合考核与能力复盘\"",
+      "keyPoints": [
+        "Q1: 描述完整的Web攻击检测流程",
+        "Q2: IDS和IPS区别？",
+        "Q3: 告警太多怎么办？",
+        "Q4: 护网发现服务器被黑第一步？",
+        "Q5: 怎样区分自动化扫描和定向攻击？",
+        "Q1: 描述Web攻击检测流程",
+        "Q2: IDS和IPS区别？ A: IDS只检测(摄像头)，IPS检测+阻断(门禁)",
+        "Q3: 告警太多怎么办？ A: 分级(P0立即/P1今日/P2周汇总)，优化规则减少误报"
+      ],
+      "objectives": [
+        "完成阶段综合考核的四项测试",
+        "对第一阶段学习做全面能力自评",
+        "明确下一阶段的重点突破方向",
+        "OSI七层模型是哪七层？（5分）",
+        "ATT&CK框架有多少个战术（Tactics）？（3分）"
+      ],
+      "newId": "hw-read-048"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 61,
+      "title": "\"Day 61: SQL注入WAF绕过与检测规则优化\"",
+      "keyPoints": [
+        "Q1: 描述完整的Web攻击检测流程",
+        "Q2: IDS和IPS区别？",
+        "Q3: 告警太多怎么办？",
+        "Q4: 护网发现服务器被黑第一步？",
+        "Q5: 怎样区分自动化扫描和定向攻击？",
+        "Q1: 描述Web攻击检测流程",
+        "Q2: IDS和IPS区别？ A: IDS只检测(摄像头)，IPS检测+阻断(门禁)",
+        "Q3: 告警太多怎么办？ A: 分级(P0立即/P1今日/P2周汇总)，优化规则减少误报"
+      ],
+      "objectives": [
+        "理解SQL注入WAF绕过的常见手法",
+        "掌握绕过检测与规则优化的方法论",
+        "写出更精确的SQL注入检测规则",
+        "**大小写混写**：SeLeCt 代替 SELECT。应对：规则忽略大小写(/i)",
+        "**双写绕过**：SELSELECTECT 代替 SELECT。应对：递归替换直到不再变化"
+      ],
+      "newId": "hw-read-049"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 62,
+      "title": "\"Day 62: XSS平台与CSP绕过\"",
+      "keyPoints": [
+        "Q1: 描述完整的Web攻击检测流程",
+        "Q2: IDS和IPS区别？",
+        "Q3: 告警太多怎么办？",
+        "Q4: 护网发现服务器被黑第一步？",
+        "Q5: 怎样区分自动化扫描和定向攻击？",
+        "Q1: 描述Web攻击检测流程",
+        "Q2: IDS和IPS区别？ A: IDS只检测(摄像头)，IPS检测+阻断(门禁)",
+        "Q3: 告警太多怎么办？ A: 分级(P0立即/P1今日/P2周汇总)，优化规则减少误报"
+      ],
+      "objectives": [
+        "理解XSS的WAF绕过手法",
+        "了解CSP(内容安全策略)的基本原理",
+        "掌握XSS攻击的高级检测方法",
+        "标签替代：<img src=x onerror=alert(1)> 代替 <script>",
+        "事件处理器替代：onmouseover/onfocus/onload 代替 onerror"
+      ],
+      "newId": "hw-read-050"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 63,
+      "title": "\"Day 63: 文件上传全类型绕过与检测\"",
+      "keyPoints": [
+        "Q1: 描述完整的Web攻击检测流程",
+        "Q2: IDS和IPS区别？",
+        "Q3: 告警太多怎么办？",
+        "Q4: 护网发现服务器被黑第一步？",
+        "Q5: 怎样区分自动化扫描和定向攻击？",
+        "Q1: 描述Web攻击检测流程",
+        "Q2: IDS和IPS区别？ A: IDS只检测(摄像头)，IPS检测+阻断(门禁)",
+        "Q3: 告警太多怎么办？ A: 分级(P0立即/P1今日/P2周汇总)，优化规则减少误报"
+      ],
+      "objectives": [
+        "掌握文件上传漏洞的全面绕过手法",
+        "学会多层次的防御检测策略",
+        "能写出完整的文件上传安全检测方案",
+        "双扩展名：shell.php.jpg -> 某些配置下PHP仍然解析",
+        "MIME类型伪造：Content-Type: image/jpeg 但实际是PHP代码"
+      ],
+      "newId": "hw-read-051"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 64,
+      "title": "\"Day 64: 命令注入、代码注入高级利用与检测\"",
+      "keyPoints": [
+        "Q1: 描述完整的Web攻击检测流程",
+        "Q2: IDS和IPS区别？",
+        "Q3: 告警太多怎么办？",
+        "Q4: 护网发现服务器被黑第一步？",
+        "Q5: 怎样区分自动化扫描和定向攻击？",
+        "Q1: 描述Web攻击检测流程",
+        "Q2: IDS和IPS区别？ A: IDS只检测(摄像头)，IPS检测+阻断(门禁)",
+        "Q3: 告警太多怎么办？ A: 分级(P0立即/P1今日/P2周汇总)，优化规则减少误报"
+      ],
+      "objectives": [
+        "理解命令注入的高级绕过手法",
+        "掌握代码注入与命令注入的区别",
+        "学会多维度检测命令/代码注入",
+        "命令分隔符替代：\\\\n、%0a、$(cmd)、`cmd`",
+        "空格绕过：${IFS}、<、<>、{cmd,args}"
+      ],
+      "newId": "hw-read-052"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 65,
+      "title": "\"Day 65: SSRF、XXE漏洞深度利用与防御\"",
+      "keyPoints": [
+        "Q1: 描述完整的Web攻击检测流程",
+        "Q2: IDS和IPS区别？",
+        "Q3: 告警太多怎么办？",
+        "Q4: 护网发现服务器被黑第一步？",
+        "Q5: 怎样区分自动化扫描和定向攻击？",
+        "Q1: 描述Web攻击检测流程",
+        "Q2: IDS和IPS区别？ A: IDS只检测(摄像头)，IPS检测+阻断(门禁)",
+        "Q3: 告警太多怎么办？ A: 分级(P0立即/P1今日/P2周汇总)，优化规则减少误报"
+      ],
+      "objectives": [
+        "深入理解SSRF的攻击面与利用方式",
+        "掌握XXE漏洞的原理与蓝队检测方法",
+        "学会对这两种漏洞的全面防御策略",
+        "探测内网存活主机（http://192.168.1.1:80）",
+        "探测开放端口（http://192.168.1.1:22,3306,6379）"
+      ],
+      "newId": "hw-read-053"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 66,
+      "title": "Day 66",
+      "keyPoints": [
+        "应用程序信任了用户提供的数据来决定\"谁能看什么\"，而不是在服务端做严格校验。",
+        "定义：同权限级别的用户之间，通过修改资源ID访问了别人的数据。",
+        "典型场景：",
+        "定义：低权限用户执行了需要高权限才能做的操作。",
+        "方法一：代码审计",
+        "方法二：黑盒测试（手动）",
+        "方法三：日志分析（蓝队视角）",
+        "建立\"正常行为基线\"，找出偏离基线的行为。"
+      ],
+      "objectives": [
+        "深入理解水平越权和垂直越权的本质区别",
+        "掌握越权漏洞的常见业务场景和检测方法",
+        "学会设计基于业务逻辑的异常行为检测规则",
+        "能用日志分析发现越权攻击的蛛丝马迹",
+        "**ID遍历检测**：同一用户短时间内请求了超过N个不同资源ID → 告警"
+      ],
+      "newId": "hw-read-054"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 68,
+      "title": "Day 68",
+      "keyPoints": [
+        "步骤：",
+        "攻击类型（Attack Type）：",
+        "Sniper（狙击手）",
+        "Battering Ram（攻城锤）",
+        "Pitchfork（草叉）",
+        "Cluster Bomb（集束炸弹）",
+        "技巧1：Scope（范围）过滤",
+        "技巧2：Match and Replace（自动替换）"
+      ],
+      "objectives": [
+        "掌握Burp Suite的核心模块：Proxy/Repeater/Intruder/Scanner",
+        "学会使用Burp Extensions扩展功能",
+        "掌握Burp的宏(Macro)和会话处理规则",
+        "能用Burp进行高效的Web安全测试和分析",
+        "Burp默认监听 `127.0.0.1:8080`"
+      ],
+      "newId": "hw-read-055"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 69,
+      "title": "Day 69",
+      "keyPoints": [
+        "SQLMap发起的请求有一些\"指纹\"特征，可以用来检测：",
+        "1. 默认User-Agent",
+        "2. 请求参数特征",
+        "3. URI路径特征",
+        "4. 响应特征",
+        "多层检测策略：",
+        "第一层：WAF规则（实时拦截）",
+        "第二层：SIEM/SOC分析（近实时/准实时）"
+      ],
+      "objectives": [
+        "掌握SQLMap的高级参数和用法",
+        "能识别SQLMap的流量特征和User-Agent",
+        "学会针对SQLMap攻击的检测和阻断方法",
+        "理解SQLMap的工作原理以便更好地防御",
+        "在DVWA/Sqli-labs靶场中找一个注入点"
+      ],
+      "newId": "hw-read-056"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 70,
+      "title": "Day 70",
+      "keyPoints": [
+        "A1 访问控制失效 — 检测：",
+        "防御： 服务端强制验权、最小权限原则、拒绝优先",
+        "A2 加密机制失效 — 检测：",
+        "防御： 全站HTTPS、敏感数据加密存储、HSTS头",
+        "A3 注入 — 检测：",
+        "防御： 参数化查询、输入白名单校验、转义特殊字符",
+        "A4 不安全设计 — 检测：",
+        "防御： 安全设计评审(SDL)、威胁建模、安全需求文档"
+      ],
+      "objectives": [
+        "全面回顾OWASP Top 10（2021版）的每个漏洞类型",
+        "建立\"每个漏洞→检测方法→防御措施\"的完整知识映射",
+        "能快速判断一个安全事件属于OWASP Top 10中的哪一类",
+        "把前面的Web安全知识串联成一个完整的防御体系",
+        "**A1-A3**：应用层最直接的攻击 → WAF/IDS/代码审计覆盖"
+      ],
+      "newId": "hw-read-057"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 71,
+      "title": "Day 71",
+      "keyPoints": [
+        "安全基线 = 系统最基础的安全配置要求。",
+        "第一阶段：能识别 — 看到告警知道大概是什么攻击",
+        "第二阶段：能分析 — 能判断攻击的严重程度、攻击者的意图、攻击到了哪一步",
+        "第三阶段：能防御 — 不仅知道怎么检测，还知道怎么从根本上防御这类攻击",
+        "Linux一键安全检查脚本：",
+        "Windows一键安全检查（PowerShell）："
+      ],
+      "objectives": [
+        "掌握Windows和Linux系统的安全基线检查方法",
+        "理解安全基线的核心要素：账号/密码/权限/审计/服务",
+        "能对不符合基线的项目提出整改建议",
+        "学会使用自动化工具辅助基线核查",
+        "**评估**：用自动化工具+手工检查，得出当前基线的合规率"
+      ],
+      "newId": "hw-read-058"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 72,
+      "title": "Day 72",
+      "keyPoints": [
+        "Nginx安全要点：",
+        "Apache安全要点：",
+        "Tomcat安全要点：",
+        "第一阶段：能识别 — 看到告警知道大概是什么攻击",
+        "第二阶段：能分析 — 能判断攻击的严重程度、攻击者的意图、攻击到了哪一步",
+        "第三阶段：能防御 — 不仅知道怎么检测，还知道怎么从根本上防御这类攻击",
+        "根因分析：",
+        "解决思路："
+      ],
+      "objectives": [
+        "掌握MySQL、Redis等常见数据库/中间件的安全配置要点",
+        "学会检查数据库和中间件的安全基线",
+        "理解数据库在护网中的角色和被攻击的方式",
+        "能对数据库进行基本的安全加固",
+        "**Web应用SQL注入 → 数据库** （最常见）"
+      ],
+      "newId": "hw-read-059"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 73,
+      "title": "Day 73",
+      "keyPoints": [
+        "详细步骤：",
+        "战术(Tactic) = 攻击者想达到什么目的（如：初始访问、横向移动、数据窃取）",
+        "技术(Technique) = 攻击者用什么方法达到目的（如：T1078有效账号、T1059命令执行）",
+        "第一阶段：能识别 — 看到告警知道大概是什么攻击",
+        "第二阶段：能分析 — 能判断攻击的严重程度、攻击者的意图、攻击到了哪一步",
+        "第三阶段：能防御 — 不仅知道怎么检测，还知道怎么从根本上防御这类攻击",
+        "根因分析：",
+        "解决思路："
+      ],
+      "objectives": [
+        "理解内网渗透的典型攻击路径（杀伤链）",
+        "将每个攻击步骤映射到可检测的数据源",
+        "学会建立\"攻击阶段→检测方法\"的对应关系",
+        "能用ATT&CK框架来规划检测覆盖度",
+        "**信息收集**：端口扫描、服务版本、Web目录扫描、whois/子域名"
+      ],
+      "newId": "hw-read-060"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 74,
+      "title": "Day 74",
+      "keyPoints": [
+        "关键Event ID速查表：",
+        "PTH的日志特征：",
+        "Linux提权检测：",
+        "Windows提权检测：",
+        "第一阶段：能识别 — 看到告警知道大概是什么攻击",
+        "第二阶段：能分析 — 能判断攻击的严重程度、攻击者的意图、攻击到了哪一步",
+        "第三阶段：能防御 — 不仅知道怎么检测，还知道怎么从根本上防御这类攻击",
+        "根因分析："
+      ],
+      "objectives": [
+        "深入理解横向移动的常见技术（PTH/PTT/PsExec/WMI/WinRM）",
+        "学会检测横向移动在Windows日志中的痕迹",
+        "理解权限提升的检测思路",
+        "掌握PTH(Pass The Hash)检测的关键Event ID",
+        "事件4624（登录成功）+ 登录类型3（网络登录）"
+      ],
+      "newId": "hw-read-061"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 75,
+      "title": "Day 75",
+      "keyPoints": [
+        "第一层：流量检测（网络层）",
+        "第二层：文件检测（主机层）",
+        "第三层：行为检测（运行时）",
+        "第一阶段：能识别 — 看到告警知道大概是什么攻击",
+        "第二阶段：能分析 — 能判断攻击的严重程度、攻击者的意图、攻击到了哪一步",
+        "第三阶段：能防御 — 不仅知道怎么检测，还知道怎么从根本上防御这类攻击",
+        "根因分析：",
+        "解决思路："
+      ],
+      "objectives": [
+        "全面了解Webshell的常见隐藏手法",
+        "掌握多维度Webshell检测方法",
+        "能设计综合的Webshell检测方案",
+        "理解\"免杀Webshell\"的对抗思路",
+        "文件属性：上传Webshell的创建者/权限可能异常"
+      ],
+      "newId": "hw-read-062"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 76,
+      "title": "Day 76",
+      "keyPoints": [
+        "学习方法建议：",
+        "记住：蓝队的核心竞争力不是会多少工具，而是分析问题、解决问题的思维。",
+        "第一阶段：能识别 — 看到告警知道大概是什么攻击",
+        "第二阶段：能分析 — 能判断攻击的严重程度、攻击者的意图、攻击到了哪一步",
+        "第三阶段：能防御 — 不仅知道怎么检测，还知道怎么从根本上防御这类攻击",
+        "根因分析：",
+        "解决思路：",
+        "错误做法： 一台一台登上去手工改配置。（做完最后一台，第一台的配置可能已经漂移了）"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和原理",
+        "掌握相关的检测方法和防御手段",
+        "能够在实际环境中应用所学知识",
+        "建立\"攻击→检测→响应\"的完整思维链路",
+        "先理解\"为什么要学这个\"（业务价值/攻防意义）"
+      ],
+      "newId": "hw-read-063"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 77,
+      "title": "Day 77",
+      "keyPoints": [
+        "学习方法建议：",
+        "记住：蓝队的核心竞争力不是会多少工具，而是分析问题、解决问题的思维。",
+        "第一阶段：能识别 — 看到告警知道大概是什么攻击",
+        "第二阶段：能分析 — 能判断攻击的严重程度、攻击者的意图、攻击到了哪一步",
+        "第三阶段：能防御 — 不仅知道怎么检测，还知道怎么从根本上防御这类攻击",
+        "根因分析：",
+        "解决思路：",
+        "错误做法： 一台一台登上去手工改配置。（做完最后一台，第一台的配置可能已经漂移了）"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和原理",
+        "掌握相关的检测方法和防御手段",
+        "能够在实际环境中应用所学知识",
+        "建立\"攻击→检测→响应\"的完整思维链路",
+        "先理解\"为什么要学这个\"（业务价值/攻防意义）"
+      ],
+      "newId": "hw-read-064"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 78,
+      "title": "Day 78",
+      "keyPoints": [
+        "学习方法建议：",
+        "记住：蓝队的核心竞争力不是会多少工具，而是分析问题、解决问题的思维。",
+        "第一阶段：能识别 — 看到告警知道大概是什么攻击",
+        "第二阶段：能分析 — 能判断攻击的严重程度、攻击者的意图、攻击到了哪一步",
+        "第三阶段：能防御 — 不仅知道怎么检测，还知道怎么从根本上防御这类攻击",
+        "根因分析：",
+        "解决思路：",
+        "错误做法： 一台一台登上去手工改配置。（做完最后一台，第一台的配置可能已经漂移了）"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和原理",
+        "掌握相关的检测方法和防御手段",
+        "能够在实际环境中应用所学知识",
+        "建立\"攻击→检测→响应\"的完整思维链路",
+        "先理解\"为什么要学这个\"（业务价值/攻防意义）"
+      ],
+      "newId": "hw-read-065"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 79,
+      "title": "Day 79",
+      "keyPoints": [
+        "学习方法建议：",
+        "记住：蓝队的核心竞争力不是会多少工具，而是分析问题、解决问题的思维。",
+        "第一阶段：能识别 — 看到告警知道大概是什么攻击",
+        "第二阶段：能分析 — 能判断攻击的严重程度、攻击者的意图、攻击到了哪一步",
+        "第三阶段：能防御 — 不仅知道怎么检测，还知道怎么从根本上防御这类攻击",
+        "根因分析：",
+        "解决思路：",
+        "错误做法： 一台一台登上去手工改配置。（做完最后一台，第一台的配置可能已经漂移了）"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和原理",
+        "掌握相关的检测方法和防御手段",
+        "能够在实际环境中应用所学知识",
+        "建立\"攻击→检测→响应\"的完整思维链路",
+        "先理解\"为什么要学这个\"（业务价值/攻防意义）"
+      ],
+      "newId": "hw-read-066"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 80,
+      "title": "等保2.0二级/三级基线核查实操",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "二级",
+        "三级",
+        "PortSwigger Web Security Academy",
+        "TryHackMe"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-067"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 82,
+      "title": "Windows高级应急响应（内存取证+痕迹排查）",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-068"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 83,
+      "title": "Linux高级应急响应（rootkit检测+日志溯源）",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-069"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 84,
+      "title": "恶意软件静态/动态分析基础",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-070"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 85,
+      "title": "攻击路径完整还原与证据链固定",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "完整性",
+        "连续性",
+        "可追溯",
+        "PortSwigger Web Security Academy"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-071"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 86,
+      "title": "攻击者画像与溯源分析方法",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "IP/DNS/域名",
+        "样本特征",
+        "攻击手法",
+        "语言/时区"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-072"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 87,
+      "title": "磁盘取证与内存取证工具使用",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-073"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 88,
+      "title": "蜜罐部署与威胁情报联动",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-074"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 89,
+      "title": "云安全基础（云WAF+云日志审计+云主机安全）",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-075"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 90,
+      "title": "中级阶段综合考核与面试准备",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-076"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 91,
+      "title": "APT攻击生命周期与真实案例深度解析",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "各阶段蓝队检测重点：",
+        "侦察阶段",
+        "投递阶段",
+        "利用阶段"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-077"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 92,
+      "title": "供应链攻击原理检测与防御方案",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-078"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 93,
+      "title": "0day/Nday漏洞快速响应与临时防护方案",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-079"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 94,
+      "title": "AI辅助钓鱼与无文件攻击等新型攻击检测",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "检测方法：",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-080"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 95,
+      "title": "域渗透高级技术（DCSync等）与检测方案",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "检测方法：",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-081"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 96,
+      "title": "云环境渗透与容器逃逸检测与防御",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-082"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 97,
+      "title": "内存攻击无文件攻击的检测与处置",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-083"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 98,
+      "title": "全流量深度分析与异常行为检测",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-084"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 99,
+      "title": "多源日志关联分析与场景化规则编写",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "场景：一条SSH登录告警的背后",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-085"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 100,
+      "title": "UEBA用户行为分析与落地方法",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-086"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 101,
+      "title": "威胁狩猎方法论与实战落地",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-087"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 102,
+      "title": "隧道技术端口转发内网穿透的检测",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-088"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 103,
+      "title": "攻击痕迹清除与反取证技术对抗",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-089"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 104,
+      "title": "红蓝对抗实战复盘（蓝队视角）",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-090"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 105,
+      "title": "高级攻防技术综合复盘",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-091"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 106,
+      "title": "重大安全事件应急指挥与决策",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-092"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 107,
+      "title": "深度溯源与攻击链路完整复盘",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-093"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 108,
+      "title": "纵深防御体系设计与落地",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-094"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 109,
+      "title": "零信任架构在护网与企业安全中的应用",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-095"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 110,
+      "title": "场景化差异防护方案设计",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-096"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 111,
+      "title": "护网技战法体系构建与沉淀",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-097"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 112,
+      "title": "专项防御方案编写与验证",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-098"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 113,
+      "title": "等保2.0体系建设与合规落地",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-099"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 114,
+      "title": "安全运营体系搭建与优化",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-100"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 115,
+      "title": "防御演练与方案验证方法",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-101"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 116,
+      "title": "护网整体防守指挥模拟与排班调度",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-102"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 117,
+      "title": "高强度APT级攻击对抗实战",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-103"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 118,
+      "title": "完整攻防复盘报告输出",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-104"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 119,
+      "title": "蓝队技战法手册编制",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-105"
+    },
+    {
+      "plan": "cyber/hw",
+      "day": 120,
+      "title": "职业规划与认证建议",
+      "keyPoints": [
+        "第一步：理解原理（最重要）",
+        "第二步：识别攻击特征",
+        "第三步：动手验证",
+        "第四步：输出倒逼输入",
+        "PortSwigger Web Security Academy",
+        "TryHackMe",
+        "HackTheBox Academy",
+        "Cybrary"
+      ],
+      "objectives": [
+        "深入理解本主题的核心概念和技术原理",
+        "掌握从蓝队视角的检测与防御方法",
+        "能够在实际环境中识别和响应相关安全威胁",
+        "建立该技术的\"攻击→检测→响应\"完整思维链路",
+        "我能用大白话给一个不懂安全的人讲清楚这个技术吗？"
+      ],
+      "newId": "hw-read-106"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 27,
+      "title": "护网行动总览",
+      "keyPoints": [
+        "HW概念",
+        "红蓝紫",
+        "蓝队职责",
+        "护网时间线",
+        "评分规则"
+      ],
+      "objectives": [
+        "理解护网行动全貌"
+      ],
+      "newId": "hw-read-107"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 29,
+      "title": "护网工具链",
+      "keyPoints": [
+        "SIEM定制",
+        "EDR策略",
+        "全流量分析",
+        "HIDS",
+        "威胁情报",
+        "SOAR"
+      ],
+      "objectives": [
+        "蓝队工具精通"
+      ],
+      "newId": "hw-read-108"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 30,
+      "title": "KillChain与ATT&CK护网实战",
+      "keyPoints": [
+        "护网KillChain",
+        "ATT&CK实战",
+        "覆盖检测",
+        "攻击路径还原"
+      ],
+      "objectives": [
+        "攻击链思维"
+      ],
+      "newId": "hw-read-109"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 31,
+      "title": "日志分析与审计",
+      "keyPoints": [
+        "Windows事件日志",
+        "Linux syslog",
+        "Web日志",
+        "数据库日志",
+        "日志关联"
+      ],
+      "objectives": [
+        "日志分析精通"
+      ],
+      "newId": "hw-read-110"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 33,
+      "title": "安全加固实战",
+      "keyPoints": [
+        "系统基线",
+        "网络加固",
+        "应用加固",
+        "弱口令",
+        "补丁管理"
+      ],
+      "objectives": [
+        "安全加固能力"
+      ],
+      "newId": "hw-read-111"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 34,
+      "title": "策略与准入",
+      "keyPoints": [
+        "安全策略",
+        "NAC",
+        "态势感知",
+        "合规检查",
+        "策略推送"
+      ],
+      "objectives": [
+        "安全策略管理"
+      ],
+      "newId": "hw-read-112"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 35,
+      "title": "护网报告与战报",
+      "keyPoints": [
+        "日报",
+        "战报",
+        "总结报告",
+        "数据可视化",
+        "汇报技巧"
+      ],
+      "objectives": [
+        "护网报告写作"
+      ],
+      "newId": "hw-read-113"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 36,
+      "title": "护网团队与协作",
+      "keyPoints": [
+        "排班",
+        "团队分工",
+        "沟通机制",
+        "外部协作",
+        "压力管理"
+      ],
+      "objectives": [
+        "护网团队管理"
+      ],
+      "newId": "hw-read-114"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 37,
+      "title": "场景模拟 Day 1",
+      "keyPoints": [
+        "护网场景",
+        "面试话术",
+        "实际应答"
+      ],
+      "objectives": [
+        "护网面试场景应对"
+      ],
+      "newId": "hw-read-115"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 38,
+      "title": "护网快速参考",
+      "keyPoints": [
+        "速查表",
+        "常见攻击",
+        "防御对照",
+        "应急速查"
+      ],
+      "objectives": [
+        "护网知识速查"
+      ],
+      "newId": "hw-read-116"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 39,
+      "title": "护网与其他安全活动",
+      "keyPoints": [
+        "各种安全演习",
+        "护网vs常规安全",
+        "CISP护网",
+        "ISO27001护网"
+      ],
+      "objectives": [
+        "安全演习全貌"
+      ],
+      "newId": "hw-read-117"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 40,
+      "title": "全真模拟面试 — 护网篇",
+      "keyPoints": [
+        "18道护网面试模拟题",
+        "独立作答"
+      ],
+      "objectives": [
+        "护网面试全真模拟"
+      ],
+      "newId": "hw-read-118"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 41,
+      "title": "全真模拟面试（一）",
+      "keyPoints": [
+        "自我介绍",
+        "技术问答链式追问",
+        "场景设计",
+        "抗压测试"
+      ],
+      "objectives": [
+        "完成一次30分钟全真模拟面试"
+      ],
+      "newId": "hw-read-119"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 42,
+      "title": "全真模拟面试（二）",
+      "keyPoints": [
+        "流量分析",
+        "溯源反制",
+        "安全加固",
+        "护网指挥",
+        "防守策略"
+      ],
+      "objectives": [
+        "深度技术面试模拟"
+      ],
+      "newId": "hw-read-120"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 43,
+      "title": "全真模拟面试（三）",
+      "keyPoints": [
+        "项目STAR讲述",
+        "护网实战",
+        "冲突解决",
+        "团队协作"
+      ],
+      "objectives": [
+        "项目讲述与行为面试"
+      ],
+      "newId": "hw-read-121"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 44,
+      "title": "全真模拟面试（四）",
+      "keyPoints": [
+        "职业规划",
+        "薪资谈判",
+        "企业文化",
+        "反问技巧"
+      ],
+      "objectives": [
+        "HR面试与谈薪"
+      ],
+      "newId": "hw-read-122"
+    },
+    {
+      "plan": "interview/hw",
+      "day": 45,
+      "title": "全真模拟面试（五）",
+      "keyPoints": [
+        "综合评分卡",
+        "知识盲区盘点",
+        "面试话术打磨",
+        "最终自测"
+      ],
+      "objectives": [
+        "全方位面试自评与查漏补缺"
+      ],
+      "newId": "hw-read-123"
+    }
+  ],
+  "hw-express": [
+    {
+      "plan": "cyber/hw-express",
+      "day": 1,
+      "title": "护网认知 + 网络协议栈",
+      "keyPoints": [
+        "红蓝紫分工",
+        "5项值守日常",
+        "TCP/IP协议栈",
+        "SYN/ACK/FIN标志位",
+        "Wireshark基础使用"
+      ],
+      "objectives": [
+        "明确红蓝紫三类角色分工",
+        "掌握5项值守日常工作",
+        "理解TCP/IP协议栈基础",
+        "能抓包识别SYN/ACK/FIN"
+      ],
+      "newId": "hw-read-001"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 2,
+      "title": "HTTP协议 + 高频漏洞原理",
+      "keyPoints": [
+        "HTTP状态码",
+        "SQL注入",
+        "XSS跨站脚本",
+        "OWASP Top10",
+        "漏洞原理"
+      ],
+      "objectives": [
+        "说清5种HTTP状态码含义",
+        "理解SQL注入基础原理",
+        "理解XSS基础原理",
+        "了解OWASP Top10"
+      ],
+      "newId": "hw-read-002"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 4,
+      "title": "全类型日志分析（Web+系统）",
+      "keyPoints": [
+        "Web日志分析",
+        "Nginx日志",
+        "Windows事件日志",
+        "4624/4625登录事件",
+        "Syslog格式",
+        "grep日志筛选"
+      ],
+      "objectives": [
+        "能从日志中识别扫描特征",
+        "能从日志中发现暴力破解",
+        "找出异常登录事件",
+        "记住4624/4625事件ID含义"
+      ],
+      "newId": "hw-read-003"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 5,
+      "title": "告警研判SOP + 应急响应流程",
+      "keyPoints": [
+        "告警研判SOP",
+        "PDCERF模型",
+        "核查-研判-处置-闭环",
+        "应急响应6阶段",
+        "值班台账模板"
+      ],
+      "objectives": [
+        "独立完成单条告警全流程处理",
+        "说出应急响应6个阶段",
+        "掌握告警核查-研判-处置-闭环四步法"
+      ],
+      "newId": "hw-read-004"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 6,
+      "title": "值守工具（Linux命令+Nmap）",
+      "keyPoints": [
+        "Linux基础命令(cd/ls/cp/mv/rm/chmod等)",
+        "Nmap端口扫描",
+        "ps/netstat进程排查",
+        "Wireshark抓包"
+      ],
+      "objectives": [
+        "熟练使用15个以上Linux基础命令",
+        "能用3种Nmap扫描参数",
+        "会使用ps/netstat排查异常进程"
+      ],
+      "newId": "hw-read-005"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 7,
+      "title": "第一阶段验收考核",
+      "keyPoints": [
+        "OSI七层模型",
+        "HTTP协议",
+        "Linux基础命令",
+        "设备操作",
+        "日志分析",
+        "事件单填写"
+      ],
+      "objectives": [
+        "所有基础验收标准达标",
+        "理论笔试通过（OSI/HTTP/Linux命令）",
+        "完成设备操作考核",
+        "完成日志分析笔试",
+        "完成基础事件单填写"
+      ],
+      "newId": "hw-read-006"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 8,
+      "title": "高阶攻击链路与WAF绕过",
+      "keyPoints": [
+        "WAF绕过实战",
+        "内网横向移动",
+        "扫描vs入侵告警区分",
+        "攻击链路图绘制",
+        "边界突破"
+      ],
+      "objectives": [
+        "输出标准攻击链路全景图",
+        "能区分扫描类与入侵类告警",
+        "理解WAF绕过手法",
+        "理解内网横向移动"
+      ],
+      "newId": "hw-read-007"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 9,
+      "title": "设备策略调优与规则优化",
+      "keyPoints": [
+        "WAF自定义规则",
+        "NGAF策略优化",
+        "误报排查指南",
+        "规则白名单",
+        "策略收敛"
+      ],
+      "objectives": [
+        "掌握WAF误报排查方法论",
+        "能独立添加临时防护规则",
+        "理解误报排查逻辑（业务绕过vs真实攻击）"
+      ],
+      "newId": "hw-read-008"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 10,
+      "title": "多源日志关联分析",
+      "keyPoints": [
+        "Wireshark异常流量分析",
+        "Windows安全取证",
+        "三源日志关联",
+        "攻击时间线还原",
+        "PCAP分析"
+      ],
+      "objectives": [
+        "掌握系统日志+Web日志+流量包三源关联",
+        "还原攻击者完整入侵时间线",
+        "输出无断档的攻击事件时间线报告"
+      ],
+      "newId": "hw-read-009"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 11,
+      "title": "应急响应全流程（Webshell）",
+      "keyPoints": [
+        "PDCERF实战",
+        "Webshell入侵排查",
+        "应急5项核心动作(进程/服务/启动项/计划任务/日志)",
+        "遏制→清除→加固→报告"
+      ],
+      "objectives": [
+        "输出Webshell应急处置SOP",
+        "能独立排查可疑后门",
+        "掌握应急排查5项核心动作"
+      ],
+      "newId": "hw-read-010"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 12,
+      "title": "威胁情报联动与风险定级",
+      "keyPoints": [
+        "微步情报实战",
+        "隐蔽攻击识别",
+        "VirusTotal批量查询",
+        "IOC黑名单",
+        "攻击风险分级(高/中/低)"
+      ],
+      "objectives": [
+        "输出攻击风险分级研判标准",
+        "定级理由充分",
+        "掌握VirusTotal与微步批量IOC查询"
+      ],
+      "newId": "hw-read-011"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 13,
+      "title": "护网日报与标准化SOP撰写",
+      "keyPoints": [
+        "复盘报告撰写",
+        "SOP落地",
+        "攻击趋势",
+        "TOP事件",
+        "处置情况",
+        "暴力破解SOP",
+        "SQL注入SOP"
+      ],
+      "objectives": [
+        "日报结构完整（攻击趋势/TOP事件/处置情况）",
+        "SOP具备可操作性（含命令/截图占位）"
+      ],
+      "newId": "hw-read-012"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 14,
+      "title": "第二阶段验收考核",
+      "keyPoints": [
+        "误报优化实操",
+        "日志溯源",
+        "事件处置报告",
+        "告警深度研判",
+        "阶段总结"
+      ],
+      "objectives": [
+        "考核达标",
+        "能独立完成中级岗的告警深度研判",
+        "通过误报优化实操",
+        "通过日志溯源笔试",
+        "提交完整事件处置报告"
+      ],
+      "newId": "hw-read-013"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 15,
+      "title": "APT攻击与高阶隐蔽攻击",
+      "keyPoints": [
+        "微步APT全生命周期",
+        "定向钓鱼攻击",
+        "0day利用检测",
+        "流量+日志检测要点",
+        "国内APT组织"
+      ],
+      "objectives": [
+        "输出APT攻击检测要点对照表",
+        "理解APT全生命周期",
+        "掌握隐蔽攻击检测思路"
+      ],
+      "newId": "hw-read-014"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 16,
+      "title": "全网纵深防御架构设计",
+      "keyPoints": [
+        "企业纵深防御",
+        "分层防守（边界/内网/终端）",
+        "等保2.0",
+        "防御架构设计"
+      ],
+      "objectives": [
+        "输出企业护网整体防守策略方案",
+        "掌握分层防守策略设计（边界/内网/终端）",
+        "了解等保2.0要求"
+      ],
+      "newId": "hw-read-015"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 17,
+      "title": "重大事件深度溯源与5Why复盘",
+      "keyPoints": [
+        "奇安信溯源实战",
+        "电子取证规范",
+        "5Why根因分析法",
+        "整改方案输出"
+      ],
+      "objectives": [
+        "输出含根因分析的重大安全事件深度复盘报告",
+        "掌握5Why根因分析法",
+        "完成从告警到根因的深度溯源"
+      ],
+      "newId": "hw-read-016"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 18,
+      "title": "新型高危漏洞应急响应（0day）",
+      "keyPoints": [
+        "绿盟漏洞应急",
+        "Log4j2全流程复盘",
+        "0day/Nday应急",
+        "CNVD预警模板",
+        "漏洞处置方案"
+      ],
+      "objectives": [
+        "输出高危漏洞应急处置指南",
+        "掌握从发现到处置的完整方案编写",
+        "了解CNVD预警流程"
+      ],
+      "newId": "hw-read-017"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 19,
+      "title": "多设备深度联动与告警治理",
+      "keyPoints": [
+        "安全设备架构联动",
+        "SOC告警关联",
+        "防火墙+WAF+EDR联动",
+        "策略治理",
+        "告警去重"
+      ],
+      "objectives": [
+        "输出多安全设备协同联动方案",
+        "解决告警孤岛问题",
+        "减少误报轰炸"
+      ],
+      "newId": "hw-read-018"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 20,
+      "title": "攻防技战法提炼与体系化",
+      "keyPoints": [
+        "FreeBuf技战法编写",
+        "蓝队技战法模板",
+        "Webshell上传检测",
+        "内网横向检测",
+        "技战法体系化"
+      ],
+      "objectives": [
+        "输出护网攻防技战法手册",
+        "编写完整技战法（含检测规则与处置步骤）"
+      ],
+      "newId": "hw-read-019"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 21,
+      "title": "第三阶段验收考核",
+      "keyPoints": [
+        "防守方案答辩",
+        "复杂事件溯源",
+        "漏洞应急方案评审",
+        "高级岗能力评估"
+      ],
+      "objectives": [
+        "具备高级岗技术视野与方案设计能力",
+        "通过防守方案答辩",
+        "通过复杂事件溯源笔试",
+        "通过漏洞应急方案评审"
+      ],
+      "newId": "hw-read-020"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 23,
+      "title": "实战模拟·首日攻击高峰",
+      "keyPoints": [
+        "三班倒交接",
+        "批量告警处理",
+        "高频IP封禁",
+        "态势日报撰写",
+        "重点事件单"
+      ],
+      "objectives": [
+        "输出首日日报+3份重点事件单",
+        "交接班无遗漏",
+        "批量处理100+告警"
+      ],
+      "newId": "hw-read-021"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 24,
+      "title": "实战模拟·定向攻击与内网失陷",
+      "keyPoints": [
+        "钓鱼邮件投递",
+        "内网横向移动",
+        "应急启动",
+        "遏制措施",
+        "溯源分析",
+        "整改加固"
+      ],
+      "objectives": [
+        "输出专项事件复盘报告+整改加固方案",
+        "完成应急启动→遏制→溯源→整改加固全流程"
+      ],
+      "newId": "hw-read-022"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 25,
+      "title": "实战模拟·APT隐蔽攻击与收尾",
+      "keyPoints": [
+        "隐蔽隧道通信",
+        "数据外发检测",
+        "全域风险排查",
+        "攻击定性",
+        "MTTD/MTTR",
+        "防守成效统计"
+      ],
+      "objectives": [
+        "输出隐蔽攻击分析报告+防守数据统计表",
+        "完成全域风险排查",
+        "掌握MTTD/MTTR统计"
+      ],
+      "newId": "hw-read-023"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 26,
+      "title": "结项总结与成果归档",
+      "keyPoints": [
+        "结项报告撰写规范",
+        "技战法/SOP/报告统一归档",
+        "防守成果总结",
+        "封禁IP数/处置事件数/MTTD/MTTR",
+        "改进计划制定"
+      ],
+      "objectives": [
+        "输出完整结项报告（含防守成果、不足与改进计划）",
+        "统一归档全套技战法/SOP/报告"
+      ],
+      "newId": "hw-read-024"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 27,
+      "title": "甲方汇报演练与沟通技巧",
+      "keyPoints": [
+        "面向甲方的汇报技巧",
+        "10分钟汇报PPT结构",
+        "模拟问答（\"为什么没防住？\"\"投入产出比？\"）",
+        "标准问答库建设"
+      ],
+      "objectives": [
+        "输出汇报PPT+汇报稿+标准问答库",
+        "完成PPT演示+QA应答",
+        "准备常见尖锐问题的应答话术"
+      ],
+      "newId": "hw-read-025"
+    },
+    {
+      "plan": "cyber/hw-express",
+      "day": 28,
+      "title": "终极考核 + 面试实战验收",
+      "keyPoints": [
+        "全知识点笔试",
+        "应急场景现场操作",
+        "10分钟结项汇报",
+        "蓝队高频面试题",
+        "简历优化建议"
+      ],
+      "objectives": [
+        "完成4小时终极闯关考核",
+        "流畅回答80%蓝队面试题",
+        "输出全周期学习复盘报告和后续实战提升计划"
+      ],
+      "newId": "hw-read-026"
+    }
+  ],
+  "cisp": [
+    {
+      "plan": "interview/cisp",
+      "day": 27,
+      "title": "CISP 认证全景 20 问",
+      "keyPoints": [
+        "CISP十大知识域",
+        "考试形式",
+        "备考策略",
+        "认证价值",
+        "维持要求"
+      ],
+      "objectives": [
+        "全面了解CISP认证体系"
+      ],
+      "newId": "cisp-read-001"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 29,
+      "title": "风险管理专题",
+      "keyPoints": [
+        "风险评估",
+        "ALE/SLE/ARO",
+        "定性与定量",
+        "风险处置",
+        "残余风险"
+      ],
+      "objectives": [
+        "风险管理核心概念"
+      ],
+      "newId": "cisp-read-002"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 30,
+      "title": "安全工程与架构",
+      "keyPoints": [
+        "Bell-LaPadula",
+        "Biba",
+        "Clark-Wilson",
+        "SDL",
+        "安全架构设计"
+      ],
+      "objectives": [
+        "安全工程核心考点"
+      ],
+      "newId": "cisp-read-003"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 31,
+      "title": "资产安全与数据保护",
+      "keyPoints": [
+        "数据分类分级",
+        "DLP",
+        "数据脱敏",
+        "数据生命周期",
+        "数据销毁"
+      ],
+      "objectives": [
+        "资产安全和数据保护"
+      ],
+      "newId": "cisp-read-004"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 32,
+      "title": "网络安全与通信安全",
+      "keyPoints": [
+        "防火墙类型",
+        "IDS vs IPS",
+        "VPN技术",
+        "网络分段",
+        "OSI模型"
+      ],
+      "objectives": [
+        "网络安全核心概念"
+      ],
+      "newId": "cisp-read-005"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 36,
+      "title": "软件开发安全",
+      "keyPoints": [
+        "OWASP Top10",
+        "安全编码",
+        "输入验证",
+        "参数化查询",
+        "SDL"
+      ],
+      "objectives": [
+        "安全开发核心考点"
+      ],
+      "newId": "cisp-read-006"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 37,
+      "title": "BCP/DRP 业务连续性",
+      "keyPoints": [
+        "BCP",
+        "DRP",
+        "BIA",
+        "RTO",
+        "RPO",
+        "容灾方案"
+      ],
+      "objectives": [
+        "业务连续性管理"
+      ],
+      "newId": "cisp-read-007"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 38,
+      "title": "密码学关键考点",
+      "keyPoints": [
+        "对称加密",
+        "非对称加密",
+        "哈希",
+        "数字签名",
+        "PKI",
+        "TLS握手"
+      ],
+      "objectives": [
+        "密码学面试高频考点"
+      ],
+      "newId": "cisp-read-008"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 39,
+      "title": "物理安全与环境安全",
+      "keyPoints": [
+        "物理访问控制",
+        "环境安全",
+        "消防",
+        "电源",
+        "数据中心"
+      ],
+      "objectives": [
+        "物理安全要点"
+      ],
+      "newId": "cisp-read-009"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 40,
+      "title": "全真模拟面试 — CISP 篇",
+      "keyPoints": [
+        "十大知识域",
+        "综合面试",
+        "自评打分"
+      ],
+      "objectives": [
+        "模拟CISP面试·查漏补缺"
+      ],
+      "newId": "cisp-read-010"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 41,
+      "title": "全真模拟面试（一）",
+      "keyPoints": [
+        "自我介绍",
+        "技术问答链式追问",
+        "场景设计",
+        "抗压测试"
+      ],
+      "objectives": [
+        "完成一次30分钟全真模拟面试"
+      ],
+      "newId": "cisp-read-011"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 42,
+      "title": "全真模拟面试（二）",
+      "keyPoints": [
+        "风险管理",
+        "安全架构",
+        "等保合规",
+        "ISO27001",
+        "安全策略"
+      ],
+      "objectives": [
+        "深度技术面试模拟"
+      ],
+      "newId": "cisp-read-012"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 43,
+      "title": "全真模拟面试（三）",
+      "keyPoints": [
+        "SOC运营",
+        "应急响应",
+        "安全评估",
+        "渗透测试管理",
+        "安全意识"
+      ],
+      "objectives": [
+        "安全运营深度面试"
+      ],
+      "newId": "cisp-read-013"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 44,
+      "title": "全真模拟面试（四）",
+      "keyPoints": [
+        "职业规划",
+        "薪资谈判",
+        "企业文化",
+        "反问技巧"
+      ],
+      "objectives": [
+        "HR面试与谈薪"
+      ],
+      "newId": "cisp-read-014"
+    },
+    {
+      "plan": "interview/cisp",
+      "day": 45,
+      "title": "全真模拟面试（五）",
+      "keyPoints": [
+        "综合评分卡",
+        "知识盲区盘点",
+        "面试话术打磨",
+        "最终自测"
+      ],
+      "objectives": [
+        "全方位面试自评与查漏补缺"
+      ],
+      "newId": "cisp-read-015"
+    }
+  ],
+  "ai": [
+    {
+      "plan": "interview/ai",
+      "day": 27,
+      "title": "AI安全总览",
+      "keyPoints": [
+        "对抗攻击",
+        "模型窃取",
+        "数据投毒",
+        "模型逆向",
+        "联邦学习安全",
+        "LLM安全"
+      ],
+      "objectives": [
+        "AI安全领域全貌"
+      ],
+      "newId": "ai-read-001"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 28,
+      "title": "对抗攻击与防御",
+      "keyPoints": [
+        "FGSM",
+        "PGD",
+        "对抗训练",
+        "梯度混淆",
+        "检测方法"
+      ],
+      "objectives": [
+        "对抗攻防基础"
+      ],
+      "newId": "ai-read-002"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 31,
+      "title": "AI安全工具与框架",
+      "keyPoints": [
+        "CleverHans",
+        "ART",
+        "Foolbox",
+        "AugLy",
+        "Garak(LLM)",
+        "Counterfit"
+      ],
+      "objectives": [
+        "AI安全工具掌握"
+      ],
+      "newId": "ai-read-003"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 33,
+      "title": "AI红队与安全评测",
+      "keyPoints": [
+        "AI红队",
+        "模型安全评测",
+        "红队LLM",
+        "安全benchmark",
+        "LLM安全报告"
+      ],
+      "objectives": [
+        "AI红队实战"
+      ],
+      "newId": "ai-read-004"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 34,
+      "title": "AI安全前沿趋势",
+      "keyPoints": [
+        "AGI安全",
+        "AI治理",
+        "AI法案",
+        "前沿趋势"
+      ],
+      "objectives": [
+        "AI安全前沿认知"
+      ],
+      "newId": "ai-read-005"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 35,
+      "title": "场景模拟 Day 1",
+      "keyPoints": [
+        "AI安全场景",
+        "跨领域表达",
+        "沟通方法"
+      ],
+      "objectives": [
+        "AI安全面试实战"
+      ],
+      "newId": "ai-read-006"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 36,
+      "title": "代码安全与AI安全工具开发",
+      "keyPoints": [
+        "安全测试自动化",
+        "CI/CD安全",
+        "模型监控",
+        "异常检测"
+      ],
+      "objectives": [
+        "AI安全工程化"
+      ],
+      "newId": "ai-read-007"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 37,
+      "title": "AI安全快速参考",
+      "keyPoints": [
+        "攻击速查",
+        "防御速查",
+        "公式速查"
+      ],
+      "objectives": [
+        "AI安全知识点速查"
+      ],
+      "newId": "ai-read-008"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 38,
+      "title": "AI安全面试高频题集",
+      "keyPoints": [
+        "高频问题",
+        "标准答案",
+        "追问预判"
+      ],
+      "objectives": [
+        "AI安全面试速答"
+      ],
+      "newId": "ai-read-009"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 39,
+      "title": "AI安全职业发展",
+      "keyPoints": [
+        "岗位类型",
+        "技能要求",
+        "面试准备",
+        "发展建议"
+      ],
+      "objectives": [
+        "AI安全职业规划"
+      ],
+      "newId": "ai-read-010"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 40,
+      "title": "全真模拟面试 — AI安全篇",
+      "keyPoints": [
+        "16道模拟面试题",
+        "独立作答"
+      ],
+      "objectives": [
+        "AI安全面试全真模拟"
+      ],
+      "newId": "ai-read-011"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 41,
+      "title": "全真模拟面试（一）",
+      "keyPoints": [
+        "自我介绍",
+        "技术问答链式追问",
+        "场景设计",
+        "抗压测试"
+      ],
+      "objectives": [
+        "完成一次30分钟全真模拟面试"
+      ],
+      "newId": "ai-read-012"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 42,
+      "title": "全真模拟面试（二）",
+      "keyPoints": [
+        "算法推导",
+        "代码审计",
+        "安全方案设计",
+        "系统设计"
+      ],
+      "objectives": [
+        "深度技术面试模拟"
+      ],
+      "newId": "ai-read-013"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 43,
+      "title": "全真模拟面试（三）",
+      "keyPoints": [
+        "项目STAR讲述",
+        "冲突解决",
+        "团队协作",
+        "失败案例"
+      ],
+      "objectives": [
+        "项目讲述与行为面试"
+      ],
+      "newId": "ai-read-014"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 44,
+      "title": "全真模拟面试（四）",
+      "keyPoints": [
+        "职业规划",
+        "薪资谈判",
+        "企业文化",
+        "反问技巧"
+      ],
+      "objectives": [
+        "HR面试与谈薪"
+      ],
+      "newId": "ai-read-015"
+    },
+    {
+      "plan": "interview/ai",
+      "day": 45,
+      "title": "全真模拟面试（五）",
+      "keyPoints": [
+        "综合评分卡",
+        "知识盲区盘点",
+        "面试话术打磨",
+        "最终自测"
+      ],
+      "objectives": [
+        "全方位面试自评与查漏补缺"
+      ],
+      "newId": "ai-read-016"
+    }
+  ]
+}

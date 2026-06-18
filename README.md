@@ -49,7 +49,6 @@ cisp/
 │   └── .env / .env.example     # 环境变量
 ├── android/                    # Capacitor Android 工程
 ├── scripts/                    # 辅助脚本
-│   ├── start-app.bat           # Windows 一键启动
 │   └── build-apk.bat           # APK 构建
 ├── docs/                       # 项目文档
 │   ├── README.md               # 文档导航
@@ -111,14 +110,6 @@ npm run dev
 
 - 前端开发地址：`http://localhost:5173`
 - 后端健康检查：`http://localhost:3003/api/health`
-
-### 4. Windows 一键启动
-
-```bat
-scripts\start-app.bat
-```
-
-脚本会自动检查 Node.js、安装缺失依赖、依次启动后端和前端。
 
 ## 靶场容器
 

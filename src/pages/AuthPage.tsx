@@ -22,7 +22,6 @@ export default function AuthPage() {
         ? await api.login(username.trim(), password)
         : await api.register(username.trim(), password, email.trim() || undefined);
       login({ id: result.user.id, name: result.user.username, email: result.user.email || '', joinDate: new Date().toISOString().split('T')[0] });
-      console.log(`${mode === 'login' ? '登录' : '注册'}成功:`, result.user);
       navigate('/');
     } catch (err: any) {
       setError(err.message || '请求失败');

@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Play, Square, RotateCcw, Code, Copy, Check, Loader2,
-  ChevronDown, Clock, Zap, Terminal, Trash2, History, Maximize2,
-  Minimize2, AlertTriangle, Info, FileCode, PanelLeftClose, PanelLeftOpen,
-  BookOpen, X, Keyboard, Search, Brush, FileDown, Eraser,
-  Shield, Gauge, GitCompare, Save, FolderOpen, Plus, Pencil, Columns2, ArrowRightLeft,
+  Play, Square, RotateCcw, Copy, Check, Loader2,
+  Clock, Terminal, Trash2, Maximize2,
+  Minimize2, AlertTriangle, Info, PanelLeftClose, PanelLeftOpen,
+  BookOpen, X, Keyboard, FileDown, Eraser, Brush,
+  Shield, Gauge, GitCompare, Save, FolderOpen, Plus, Columns2,
 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 
-import type { Runtime, Snippet, ExecutionResult, HistoryEntry, Tab, SavedProject, ProjectSummary, AuditResult, BenchmarkResult, DiffLine } from './CodeRunner/types';
+import type { Runtime, Snippet, HistoryEntry, Tab, SavedProject, ProjectSummary, AuditResult, BenchmarkResult } from './CodeRunner/types';
 import { SNIPPETS, SNIPPET_CATEGORIES, API_BASE } from './CodeRunner/snippets';
 import { genId, computeDiff, isTabular, parseTable, parseErrorLines, stats } from './CodeRunner/utils';
 import { SecurityAudit } from './CodeRunner/SecurityAudit';
