@@ -528,31 +528,33 @@ export const DailyLearning: React.FC = () => {
         </div>
 
         {/* Tabs */}
-        <motion.div variants={itemVariants} className="flex gap-2 mt-6">
-          {[
-            { id: 'content', label: '课程内容', icon: BookOpen },
-            { id: 'video', label: '视频教程', icon: Video },
-            { id: 'code', label: '代码示例', icon: Code },
-            { id: 'quiz', label: '练习题', icon: FileQuestion },
-            ...(currentDay.expertNotes && currentDay.expertNotes.length > 0
-              ? [{ id: 'expert', label: '大神笔记', icon: Award }]
-              : []),
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`
-                flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all
-                ${activeTab === tab.id
-                  ? 'bg-cyber-green/20 text-cyber-green border border-cyber-green/30'
-                  : 'text-gray-400 hover:text-white hover:bg-cyber-purple/40'
-                }
-              `}
-            >
-              <tab.icon size={16} />
-              {tab.label}
-            </button>
-          ))}
+        <motion.div variants={itemVariants} className="overflow-x-auto scrollbar-hide mt-6">
+          <div className="flex gap-2 min-w-max">
+            {[
+              { id: 'content', label: '课程内容', icon: BookOpen },
+              { id: 'video', label: '视频教程', icon: Video },
+              { id: 'code', label: '代码示例', icon: Code },
+              { id: 'quiz', label: '练习题', icon: FileQuestion },
+              ...(currentDay.expertNotes && currentDay.expertNotes.length > 0
+                ? [{ id: 'expert', label: '大神笔记', icon: Award }]
+                : []),
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`
+                  flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap
+                  ${activeTab === tab.id
+                    ? 'bg-cyber-green/20 text-cyber-green border border-cyber-green/30'
+                    : 'text-gray-400 hover:text-white hover:bg-cyber-purple/40'
+                  }
+                `}
+              >
+                <tab.icon size={16} />
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </motion.div>
 
         {/* Content */}
