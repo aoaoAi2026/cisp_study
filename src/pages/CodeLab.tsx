@@ -46,21 +46,23 @@ export const CodeLab: React.FC = () => {
       </div>
 
       {/* Tab Switcher */}
-      <div className="flex gap-4 border-b border-cyber-green/20">
-        {tabDefs.map(({ id, Icon, label }) => (
-          <button
-            key={id}
-            onClick={() => setActiveTab(id)}
-            className={`pb-3 px-4 font-medium transition-colors ${
-              activeTab === id ? 'text-cyber-green border-b-2 border-cyber-green' : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <Icon size={18} />
-              {label}
-            </div>
-          </button>
-        ))}
+      <div className="border-b border-cyber-green/20 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-4 min-w-max">
+          {tabDefs.map(({ id, Icon, label }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`pb-3 px-4 font-medium transition-colors whitespace-nowrap ${
+                activeTab === id ? 'text-cyber-green border-b-2 border-cyber-green' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <Icon size={18} />
+                {label}
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Tab Content */}

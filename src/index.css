@@ -92,6 +92,16 @@ body {
   background-size: 50px 50px;
 }
 
+/* Hide scrollbar for horizontal scrolling tabs */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Gradient Background */
 .gradient-cyber {
   background: linear-gradient(135deg, var(--cyber-black) 0%, var(--cyber-purple) 100%);

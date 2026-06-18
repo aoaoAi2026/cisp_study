@@ -28,12 +28,24 @@ export const Layout: React.FC = () => {
     <div className="min-h-screen bg-cyber-black grid-bg">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} onToggle={() => setSidebarOpen(!sidebarOpen)} />
 
-      <div className="lg:ml-64">
-        <TopNav />
+      {/* 主内容区域 */}
+      <div className={`transition-all duration-300 ${sidebarOpen ? 'fixed inset-0 z-40 lg:relative lg:inset-auto' : ''}`}>
+        {/* 移动端遮罩层（当侧边栏打开时） */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        
+        {/* 实际内容 */}
+        <div className="min-h-screen lg:ml-64 relative z-10">
+          <TopNav />
 
-        <main className="p-3 sm:p-4 lg:p-6">
-          <Outlet />
-        </main>
+          <main className="p-3 sm:p-4 lg:p-6">
+            <Outlet />
+          </main>
+        </div>
       </div>
     </div>
   );
