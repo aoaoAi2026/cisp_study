@@ -1,3 +1,11 @@
+/*
+ * @Author: aoaoAi2026 aoaoAi2026@example.com
+ * @Date: 2026-06-11 22:49:06
+ * @LastEditors: aoaoAi2026 aoaoAi2026@example.com
+ * @LastEditTime: 2026-06-19 02:34:32
+ * @FilePath: \cisp\src\components\Layout\Layout.tsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
@@ -42,8 +50,10 @@ export const Layout: React.FC = () => {
         <div className="min-h-screen lg:ml-64 relative z-10">
           <TopNav />
 
-          <main className="p-3 sm:p-4 lg:p-6">
-            <Outlet />
+          <main className="p-3 sm:p-4 lg:p-6 w-full">
+            <div className="w-full">
+              <Outlet />
+            </div>
           </main>
         </div>
       </div>

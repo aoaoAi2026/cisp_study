@@ -874,8 +874,8 @@ export const CyberDailyLearning: React.FC = () => {
       </motion.div>
 
       {/* Gamification Stats Panel */}
-      <motion.div variants={itemVariants}>
-        <Card className={`${color.cardBorder} overflow-hidden`}>
+      <div className="w-full" style={{width: '100%', minWidth: '100%', maxWidth: '100%'}}>
+        <Card className={`${color.cardBorder} overflow-hidden w-full !min-w-full`}>
           <div className="flex items-center justify-between mb-3">
             <h3 className={`text-sm font-medium ${color.main} flex items-center gap-2`}>
               <TrendingUp size={16} /> 学习统计
@@ -886,9 +886,9 @@ export const CyberDailyLearning: React.FC = () => {
             </button>
           </div>
           {showStats && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 w-full !min-w-full" style={{width: '100%'}}>
               {/* XP Bar */}
-              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
+              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center w-full" style={{width: '100%'}}>
                 <Zap size={20} className="mx-auto mb-1 text-cyber-gold" />
                 <p className="text-lg font-bold text-white">{xp}</p>
                 <p className="text-xs text-gray-400">经验值 XP</p>
@@ -897,25 +897,25 @@ export const CyberDailyLearning: React.FC = () => {
                 </div>
               </div>
               {/* Level */}
-              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
+              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center w-full" style={{width: '100%'}}>
                 <Trophy size={20} className="mx-auto mb-1 text-cyber-gold" />
                 <p className="text-lg font-bold text-white">Lv.{userLevel}</p>
                 <p className="text-xs text-gray-400">当前等级</p>
               </div>
               {/* Streak */}
-              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
+              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center w-full" style={{width: '100%'}}>
                 <Flame size={20} className="mx-auto mb-1 text-cyber-red" />
                 <p className="text-lg font-bold text-white">{completedDays.size}</p>
                 <p className="text-xs text-gray-400">完成天数</p>
               </div>
               {/* Quiz Average */}
-              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
+              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center w-full" style={{width: '100%'}}>
                 <Target size={20} className="mx-auto mb-1 text-cyber-blue" />
                 <p className="text-lg font-bold text-white">{quizAvg}%</p>
                 <p className="text-xs text-gray-400">测验均分</p>
               </div>
               {/* Badges */}
-              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center">
+              <div className="p-3 rounded-lg bg-cyber-purple/10 text-center w-full" style={{width: '100%'}}>
                 <Medal size={20} className="mx-auto mb-1 text-cyber-purple" />
                 <p className="text-lg font-bold text-white">{Math.floor(xp/100)}</p>
                 <p className="text-xs text-gray-400">徽章数</p>
@@ -941,7 +941,7 @@ export const CyberDailyLearning: React.FC = () => {
             </div>
           )}
         </Card>
-      </motion.div>
+      </div>
 
       {/* Confetti Effect */}
       {showConfetti && (
@@ -982,7 +982,7 @@ export const CyberDailyLearning: React.FC = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="space-y-6"
+          className="space-y-6 w-full"
         >
           {/* 课程标题 */}
           <motion.div variants={itemVariants}>
