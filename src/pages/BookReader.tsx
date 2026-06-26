@@ -151,9 +151,9 @@ const BookReader: React.FC<BookReaderProps> = ({ book, onBack, onProgressUpdate 
   };
 
   return (
-    <div className={`min-h-screen ${themeStyles.bg} transition-colors duration-300`}>
+    <div className={`min-h-screen w-full ${themeStyles.bg} transition-colors duration-300`}>
       {/* Reading Progress Bar */}
-      <div className="fixed top-0 left-0 right-0 h-1 z-50">
+      <div className="fixed top-0 left-0 right-0 h-1 z-50 w-full">
         <motion.div
           className="h-full bg-gradient-to-r from-cyber-purple to-cyber-blue"
           style={{ width: `${scrollProgress}%` }}
@@ -162,7 +162,7 @@ const BookReader: React.FC<BookReaderProps> = ({ book, onBack, onProgressUpdate 
 
       {/* Top Navigation */}
       <div className={`sticky top-0 z-40 ${themeStyles.bg} border-b ${themeStyles.border} backdrop-blur-xl bg-opacity-90`}>
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="w-full px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={onBack}
@@ -226,9 +226,9 @@ const BookReader: React.FC<BookReaderProps> = ({ book, onBack, onProgressUpdate 
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto flex">
+      <div className="w-full flex">
         {/* Desktop Sidebar - Table of Contents */}
-        <aside className="hidden lg:block w-64 shrink-0">
+        <aside className="hidden xl:block w-64 shrink-0">
           <div className="sticky top-20 p-4">
             <div className={`rounded-xl ${themeStyles.card} border ${themeStyles.border} p-4`}>
               <h3 className={`font-medium ${themeStyles.text} mb-3 flex items-center gap-2`}>
@@ -339,8 +339,8 @@ const BookReader: React.FC<BookReaderProps> = ({ book, onBack, onProgressUpdate 
         </AnimatePresence>
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0">
-          <div className="px-4 py-8 md:px-8">
+        <main className="flex-1 min-w-0 w-full">
+          <div className="px-4 py-8 md:px-8 w-full max-w-3xl mx-auto">
             {/* Chapter Title */}
             <motion.div
               key={currentChapter.id}
