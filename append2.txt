@@ -1,0 +1,176 @@
+﻿## 10.9 PostgreSQL高级安全配置
+
+### 10.9.1 PostgreSQL行级安全策略
+
+PostgreSQL的行级安全策略（Row-Level Security，RLS）允许在数据库层面控制用户只能访问特定行的数据。这对于多租户应用和数据隔离场景特别有用。
+
+```bash
+# 启用RLS
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+# 创建策略
+CREATE POLICY user_orders_policy ON orders
+    FOR SELECT
+    USING (user_id = current_user_id());
+
+CREATE POLICY user_orders_insert ON orders
+    FOR INSERT
+    WITH CHECK (user_id = current_user_id());
+
+CREATE POLICY user_orders_update ON orders
+    FOR UPDATE
+    USING (user_id = current_user_id())
+    WITH CHECK (user_id = current_user_id());
+
+CREATE POLICY user_orders_delete ON orders
+    FOR DELETE
+    USING (user_id = current_user_id());
+
+# 管理员策略
+CREATE POLICY admin_orders_policy ON orders
+    FOR ALL
+    USING (current_user_id() = admin_user)
+    WITH CHECK (current_user_id() = admin_user);
+
+# 查看策略
+SELECT schemaname, tablename, policyname, cmd
+FROM pg_policies WHERE tablename = orders;
+
+# 测试
+SET ROLE app_user;
+SELECT * FROM orders;
+INSERT INTO orders (order_id, user_id, amount) VALUES (100, other_user, 100);
+
+SET ROLE admin_user;
+SELECT * FROM orders;
+
+ALTER TABLE orders DISABLE ROW LEVEL SECURITY;
+DROP POLICY user_orders_policy ON orders;
+```
+
+### 10.9.2 PostgreSQL角色继承与权限组
+
+PostgreSQL使用角色系统管理权限，角色可以继承其他角色的权限，简化权限管理。
+
+```bash
+CREATE ROLE developer_group;
+CREATE ROLE analyst_group;
+CREATE ROLE dba_group;
+
+GRANT CONNECT ON DATABASE app_db TO developer_group;
+GRANT CONNECT ON DATABASE app_db TO analyst_group;
+GRANT ALL PRIVILEGES ON DATABASE app_db TO dba_group;
+
+CREATE ROLE alice LOGIN PASSWORD Alice@P@ss!;
+CREATE ROLE bob LOGIN PASSWORD Bob@P@ss!;
+GRANT developer_group TO alice;
+GRANT developer_group TO bob;
+GRANT analyst_group TO charlie;
+
+CREATE ROLE data_analyst;
+GRANT CONNECT ON DATABASE app_db TO data_analyst;
+GRANT USAGE ON SCHEMA public TO data_analyst;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO data_analyst;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO developer_group;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT USAGE, SELECT ON SEQUENCES TO developer_group;
+
+SELECT r.rolname AS role_name, m.rolname AS member
+FROM pg_auth_members am
+JOIN pg_authid r ON am.roleid = r.oid
+JOIN pg_authid m ON am.member = m.oid;
+
+REVOKE developer_group FROM alice;
+
+CREATE ROLE temp_contractor LOGIN PASSWORD Temp@P@ss! VALID UNTIL 2024-12-31;
+```
+
+### 10.9.3 PostgreSQL安全扩展
+
+PostgreSQL提供了一系列安全扩展，包括pgcrypto（加密函数）、sslinfo、auth_delay等。
+
+```bash
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS sslinfo;
+CREATE EXTENSION IF NOT EXISTS auth_delay;
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL
+);
+
+INSERT INTO users (username, password_hash)
+VALUES (alice, crypt(AliceP@ss!, gen_salt(bf)));
+
+SELECT id FROM users
+WHERE username = alice
+AND password_hash = crypt(AliceP@ss!, password_hash);
+
+CREATE TABLE sensitive_data (
+    id SERIAL PRIMARY KEY,
+    data_type VARCHAR(50),
+    encrypted_data BYTEA
+);
+
+CREATE OR REPLACE FUNCTION encrypt_data(data TEXT, key TEXT)
+RETURNS BYTEA AS $$
+BEGIN
+    RETURN pgp_sym_encrypt(data, key, compress-algo=1, cipher-algo=aes256);
+END;
+$$ LANGUAGE plpgsql STRICT SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION decrypt_data(encrypted BYTEA, key TEXT)
+RETURNS TEXT AS $$
+BEGIN
+    RETURN pgp_sym_decrypt(encrypted, key);
+END;
+$$ LANGUAGE plpgsql STRICT SECURITY DEFINER;
+
+shared_preload_libraries = auth_delay
+auth_delay.milliseconds = 500
+
+SELECT client_cert, client_dn, client_serial
+FROM pg_stat_ssl WHERE pid = pg_backend_pid();
+
+CREATE VIEW safe_user_data WITH (security_barrier) AS
+SELECT username, email, phone
+FROM user_profiles WHERE is_public = true;
+```
+
+### 10.9.4 PostgreSQL数据加密配置
+
+PostgreSQL支持多种数据加密方式，包括SSL/TLS、表空间加密、pgcrypto列级加密等。
+
+```bash
+CREATE TABLE credit_cards (
+    id SERIAL PRIMARY KEY,
+    owner VARCHAR(100),
+    card_number_encrypted BYTEA,
+    card_last4 VARCHAR(4)
+);
+
+CREATE FUNCTION encrypt_card(data TEXT, key TEXT)
+RETURNS BYTEA AS $$
+BEGIN
+    RETURN pgp_sym_encrypt(data, key);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE FUNCTION decrypt_card(data BYTEA, key TEXT)
+RETURNS TEXT AS $$
+BEGIN
+    RETURN pgp_sym_decrypt(data, key);
+END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO credit_cards (owner, card_number_encrypted, card_last4)
+VALUES (张三, encrypt_card(4111111111111111, encryption_key_here), 1111);
+
+SELECT owner, decrypt_card(card_number_encrypted, encryption_key_here) FROM credit_cards;
+
+pg_dump -U postgres app_db | gpg --symmetric --cipher-algo AES256 -o /backup/app_db_$(date +%Y%m%d).pgdmp.gpg
+```

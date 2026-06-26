@@ -1,0 +1,118 @@
+﻿## 10.8 MySQL/MariaDB高级安全配置
+
+### 10.8.1 MariaDB审计插件配置
+
+MariaDB企业版提供了功能强大的审计插件，可以记录所有数据库访问活动，包括连接、查询、修改等操作。审计日志对于安全合规和数据泄露调查至关重要。审计插件支持多种输出格式，包括JSON、CSV和纯文本。
+
+```bash
+# 安装MariaDB审计插件
+yum install -y mariadb-server mariadb-backup
+
+# 检查审计插件
+mysql -u root -p -e "SHOW PLUGINS;"
+
+# 动态安装
+INSTALL SONAME 'audit';
+
+# 配置文件
+[mariadb]
+plugin_load_add = server_audit
+server_audit_file_path = /var/log/mysql/mariadb_audit.log
+server_audit_file_rotate_size = 100MB
+server_audit_file_rotations = 10
+server_audit_logging = ON
+server_audit_events = CONNECT,QUERY,TABLE
+server_audit_include_db = app_db
+server_audit_exclude_db = performance_schema,mysql
+
+# 查看审计变量
+mysql -u root -p -e "SHOW GLOBAL VARIABLES LIKE server_audit%;"
+
+# 重启
+systemctl restart mariadb
+
+# 查看审计日志
+cat /var/log/mysql/mariadb_audit.log
+```
+
+### 10.8.2 MySQL密码安全策略
+
+MySQL 8.0引入了更强大的密码管理功能，包括密码历史、密码复杂度要求、密码过期策略、双密码等。
+
+```bash
+# 安装密码验证组件
+INSTALL COMPONENT file://component_validate_password;
+
+# 检查密码策略
+SHOW VARIABLES LIKE validate_password%;
+
+# 配置密码策略
+SET GLOBAL validate_password.policy = STRONG;
+SET GLOBAL validate_password.length = 12;
+SET GLOBAL validate_password.mixed_case_count = 2;
+SET GLOBAL validate_password.number_count = 2;
+SET GLOBAL validate_password.special_char_count = 2;
+
+# 创建用户
+CREATE USER secure_user@localhost IDENTIFIED BY Str0ng@P@ssw0rd!;
+
+# 密码过期
+ALTER USER app_user@localhost PASSWORD EXPIRE INTERVAL 90 DAY;
+ALTER USER new_employee@localhost PASSWORD EXPIRE;
+
+# 双密码
+ALTER USER app_user@localhost IDENTIFIED BY NewP@ssw0rd! RETAIN CURRENT PASSWORD;
+
+# 密码历史
+SET GLOBAL password_history = 6;
+SET GLOBAL password_reuse_interval = 365;
+
+# 锁定账户
+ALTER USER suspended_user@localhost ACCOUNT LOCK;
+ALTER USER suspended_user@localhost ACCOUNT UNLOCK;
+```
+
+### 10.8.3 MySQL资源限制配置
+
+防止单个用户消耗过多服务器资源导致拒绝服务。
+
+```bash
+# 用户资源限制
+CREATE USER limited_user@localhost
+IDENTIFIED BY Lim1t3d@P@ss
+WITH MAX_QUERIES_PER_HOUR 1000
+     MAX_UPDATES_PER_HOUR 100
+     MAX_CONNECTIONS_PER_HOUR 100
+     MAX_USER_CONNECTIONS 10;
+
+# 全局配置
+[mysqld]
+max_connections = 200
+max_connect_errors = 100
+wait_timeout = 600
+interactive_timeout = 600
+
+# 查看连接
+SELECT user, host, count(*) FROM information_schema.processlist GROUP BY user, host;
+```
+
+### 10.8.4 MySQL表级和列级安全
+
+MySQL支持在表级和列级设置权限，实现更精细的访问控制。
+
+```bash
+CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10,2),
+    ssn VARCHAR(20)
+);
+
+CREATE USER finance_user@localhost IDENTIFIED BY Fin@nc3P@ss!;
+GRANT SELECT (id, name, salary) ON app_db.employees TO finance_user@localhost;
+
+SHOW GRANTS FOR finance_user@localhost;
+
+CREATE VIEW employee_public AS SELECT id, name, email FROM employees;
+GRANT SELECT ON app_db.employee_public TO app_user@localhost;
+```

@@ -38,6 +38,7 @@ import { useQuizExam, useWrongQuestionBook, useGamification, useCodeExecutor } f
 import { learningData, weekThemes } from '../data/learningData';
 import { Card, Badge, Button } from '../components/UI';
 import { Pomodoro } from '../components/Pomodoro';
+import TextToSpeechPlayer from '../components/TextToSpeechPlayer';
 
 export const DailyLearning: React.FC = () => {
   const { dayId } = useParams<{ dayId: string }>();
@@ -562,6 +563,7 @@ export const DailyLearning: React.FC = () => {
           <Card className="mt-4">
             {activeTab === 'content' && (
               <div className="prose prose-invert max-w-none">
+                <TextToSpeechPlayer text={mdContent || currentDay.content || ''} isDark={true} />
                 <div className="text-gray-300 leading-relaxed">
                   {mdLoading ? (
                     <div className="py-8 text-center text-gray-500">正在加载课程内容...</div>

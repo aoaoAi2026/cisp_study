@@ -13,6 +13,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Card, Badge, Button } from '../components/UI';
+import TextToSpeechPlayer from '../components/TextToSpeechPlayer';
 import { Resource, categoryNames } from '../types/resource';
 import { getResourceById, loadMarkdownContent } from '../data/resourceData';
 
@@ -238,6 +239,7 @@ export const ResourceDetail: React.FC = () => {
         transition={{ delay: 0.2 }}
       >
         <Card className={bgCard}>
+          <TextToSpeechPlayer text={content} isDark={isDark} />
           <MarkdownRenderer content={content} isDark={isDark} />
         </Card>
       </motion.div>

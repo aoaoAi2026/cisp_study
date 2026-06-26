@@ -109,6 +109,19 @@ export const planColor = (planId: string): PlanColor => {
     btnDefault: 'bg-[#14b8a6] text-white font-semibold hover:bg-[#2dd4bf] shadow-[0_0_12px_rgba(20,184,166,0.35)] hover:shadow-[0_0_18px_rgba(20,184,166,0.5)]',
     tabActive: 'bg-cyber-teal/20 text-cyber-teal border border-cyber-teal/30',
   };
+  if (planId === 'shoot-range') return {
+    main: 'text-orange-500', bg: 'bg-orange-500', border: 'border-orange-500',
+    bgLight: 'bg-orange-500/20', borderLight: 'border-orange-500/40',
+    borderFaint: 'border-orange-500/50', borderSoft: 'border-orange-500/50',
+    borderStrong: 'border-orange-500/70', cardBorder: 'border-orange-500/30',
+    textColor: 'text-orange-500',
+    optionDefault: 'border-orange-500/40 bg-white/5 hover:border-orange-500/70 hover:bg-orange-500/15',
+    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
+    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
+    optionDim: 'border-orange-500/20 bg-transparent opacity-40',
+    btnDefault: 'bg-[#f97316] text-white font-semibold hover:bg-[#fb923c] shadow-[0_0_12px_rgba(249,115,22,0.35)] hover:shadow-[0_0_18px_rgba(249,115,22,0.5)]',
+    tabActive: 'bg-orange-500/20 text-orange-500 border border-orange-500/30',
+  };
   return {
     main: 'text-cyber-blue', bg: 'bg-cyber-blue', border: 'border-cyber-blue',
     bgLight: 'bg-cyber-blue/20', borderLight: 'border-cyber-blue/40',

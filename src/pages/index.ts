@@ -21,3 +21,4 @@ export { InterviewDailyLearning } from './InterviewDailyLearning';
 export { ResourceLibrary } from './ResourceLibrary';
 export { ResourceDetail } from './ResourceDetail';
 export { QuestionBank, QuestionBankTabs } from './QuestionBank';
+export { BookLibrary } from './BookLibrary';

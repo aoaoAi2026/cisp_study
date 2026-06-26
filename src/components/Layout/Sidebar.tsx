@@ -14,6 +14,7 @@ import {
   Globe,
   Library,
   Wrench,
+  BookMarked,
 } from 'lucide-react';
 import { SearchBox } from './SearchBox';
 
@@ -28,6 +29,7 @@ const navItems = [
   { path: '/cyber-learning', icon: Globe, label: '网络安全学习' },
   { path: '/interview-learning', icon: Globe, label: '面试突击学习' },
   { path: '/resources', icon: Library, label: '安全资源库' },
+  { path: '/books', icon: BookMarked, label: '安全书库' },
   { path: '/outline', icon: FileText, label: '考试大纲' },
   { path: '/question-bank', icon: Library, label: '习题库' },
   { path: '/study-tips', icon: Lightbulb, label: '学习技巧' },

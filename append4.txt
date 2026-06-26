@@ -1,0 +1,158 @@
+﻿## 10.10 SQL注入防护
+
+### 10.10.1 SQL注入攻击原理与类型
+
+SQL注入是一种代码注入技术，攻击者通过在应用程序输入中插入恶意SQL语句，从而欺骗数据库执行未授权的操作。常见的SQL注入类型包括：带内注入（基于错误的SQL注入、基于联合的SQL注入）、推理注入（布尔盲注、时间盲注）和带外注入（DNS通道、HTTP通道）。
+
+理解SQL注入的原理对于有效防护至关重要。Web应用程序通常使用用户输入来构建SQL查询，如果输入未经适当过滤或转义，攻击者可以注入额外的SQL语句。
+
+```bash
+# 经典SQL注入示例
+# 原始查询
+# SELECT * FROM users WHERE username =  + username +  AND password =  + password + 
+
+# 攻击者输入
+username: admin --
+
+# 实际执行的SQL
+SELECT * FROM users WHERE username = admin -- AND password = anything
+
+# UNION注入
+username:  UNION SELECT null,username,password,null FROM mysql.user --
+
+# 布尔盲注
+username: admin AND ASCII(SUBSTRING((SELECT password FROM users),1,1)) > 64 --
+
+# 时间盲注
+username: admin AND IF((SELECT COUNT(*) FROM users) > 0, SLEEP(5), 0) --
+```
+
+### 10.10.2 参数化查询与预编译语句
+
+参数化查询（也称为预编译语句）是防止SQL注入的最有效方法。参数化查询将SQL语句的结构和数据分开处理，确保用户输入只能作为数据值而不能改变查询结构。
+
+```bash
+# Java/JDBC - 使用PreparedStatement
+String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+PreparedStatement pstmt = connection.prepareStatement(sql);
+pstmt.setString(1, username);
+pstmt.setString(2, password);
+ResultSet rs = pstmt.executeQuery();
+
+# Python - 使用psycopg2
+cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", 
+                (username, password))
+
+# PHP - 使用PDO
+$stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username AND password = :password");
+$stmt->execute([username => $username, password => $password]);
+
+# Node.js - 使用mysql2
+const [rows] = await connection.execute(
+    SELECT * FROM users WHERE username = ? AND password = ?,
+    [username, password]
+);
+
+# C# - 使用ADO.NET
+string sql = "SELECT * FROM users WHERE username = @username AND password = @password";
+SqlCommand cmd = new SqlCommand(sql, connection);
+cmd.Parameters.AddWithValue("@username", username);
+cmd.Parameters.AddWithValue("@password", password);
+```
+
+### 10.10.3 Web应用防火墙（WAF）配置
+
+ModSecurity是开源的WAF引擎，可以与Apache、Nginx等Web服务器集成。WAF不能替代安全编码，但可以有效防御已知攻击模式。
+
+```bash
+# 安装ModSecurity
+yum install -y nginx mod_security mod_security_crs
+
+# Nginx配置
+server {
+    listen 80;
+    server_name example.com;
+    modsecurity on;
+    modsecurity_rules_file /etc/nginx/modsecurity.d/modsecurity.conf;
+    location / {
+        proxy_pass http://backend;
+    }
+}
+
+# modsecurity.conf
+SecRuleEngine On
+SecRequestBodyAccess On
+SecResponseBodyAccess Off
+
+SecRule REQUEST_URI|REQUEST_HEADERS|REQUEST_BODY \
+    "@rx (?i)(\b(union|select|insert|update|delete|drop|create|alter|exec|execute)\b)" \
+    "id:1001,phase:2,deny,status:403,msg:SQL Injection Attempt"
+
+SecRule REQUEST_BODY "@rx (?i)(union\s+all\s+select|union\s+select)" \
+    "id:1002,phase:2,deny,status:403,msg:SQL Injection Pattern"
+
+SecRule REQUEST_BODY "@rx (?i)(\bor\b\s+1\s*=\s*1)" \
+    "id:1003,phase:2,deny,status:403,msg:Classic SQL Injection"
+
+SecRule REQUEST_BODY "@rx (?i)\b(benchmark|sleep|waitfor|load_file)\b" \
+    "id:1005,phase:2,deny,status:403,msg:Dangerous SQL Function"
+
+Include /etc/nginx/modsecurity.d/crs/crs-setup.conf
+Include /etc/nginx/modsecurity.d/crs/rules/*.conf
+
+# 测试
+curl -i "http://example.com/login?username=admin OR 1=1&password=anything"
+```
+
+### 10.10.4 数据库层SQL注入防护
+
+数据库本身也可以配置来防止SQL注入。
+
+```bash
+# PostgreSQL准备语句
+PREPARE check_login(text, text) AS
+SELECT * FROM users WHERE username = $1 AND password = $2;
+EXECUTE check_login(admin, password123);
+
+# MySQL准备语句
+PREPARE stmt FROM SELECT * FROM users WHERE username = ? AND password = ?;
+SET @username = admin;
+SET @password = password123;
+EXECUTE stmt USING @username, @password;
+DEALLOCATE PREPARE stmt;
+
+# PostgreSQL防止滥用
+# postgresql.conf
+statement_timeout = 60000
+lock_timeout = 10000
+idle_in_transaction_session_timeout = 60000
+
+# MySQL查询超时
+[mysqld]
+max_statement_time = 10
+
+# PostgreSQL审计触发器
+CREATE TABLE audit_log (
+    id SERIAL PRIMARY KEY,
+    query_text TEXT,
+    query_time TIMESTAMP,
+    client_addr INET
+);
+
+CREATE OR REPLACE FUNCTION audit_query()
+RETURNS trigger AS $$
+BEGIN
+    INSERT INTO audit_log (query_text, query_time, client_addr)
+    VALUES (current_query(), NOW(), inet_client_addr());
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+# 监控可疑查询
+SELECT query_text, count(*) as attempts
+FROM audit_log
+WHERE query_text LIKE %OR%1%=%1%
+   OR query_text LIKE %UNION%SELECT%
+   OR query_text LIKE %DROP%TABLE%
+GROUP BY query_text ORDER BY attempts DESC;
+```

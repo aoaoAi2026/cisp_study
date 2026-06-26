@@ -25,6 +25,7 @@ import {
   ResourceDetail,
   QuestionBank,
   QuestionBankTabs,
+  BookLibrary,
 } from "./pages";
 import AuthPage from "./pages/AuthPage";
 import { useUserStore } from "./store/userStore";
@@ -109,6 +110,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="resources" element={<ResourceLibrary />} />
           <Route path="resources/:resourceId" element={<ResourceDetail />} />
+          <Route path="books" element={<BookLibrary />} />
         </Route>
 
         {/* 未登录时访问其他路径也重定向到登录页 */}

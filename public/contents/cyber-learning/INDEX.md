@@ -1,8 +1,8 @@
 # 网络安全学习中心 — 内容索引
 
-> **更新时间**：2026-06-18  
-> **总课程数**：408+ 天  
-> **涵盖方向**：基础入门、渗透测试、防御运营、AI安全、护网蓝队
+> **更新时间**：2026-06-26
+> **总课程数**：440+ 天
+> **涵盖方向**：基础入门、渗透测试、防御运营、AI安全、护网蓝队、靶场实战
 
 ---
 
@@ -17,13 +17,14 @@ cyber-learning/
 ├── ai/                   # AI安全专项（168天/24周）
 ├── hw/                   # 护网蓝队实战（120天）
 │   └── plan-overview.md  # 护网计划完整目录
+├── shoot-range/          # 靶机搭建与实战（32天）
 └── to-work/              # 快速上岗精简版
     └── hw-sg/            # 护网28天速通版
 ```
 
 ---
 
-## 🗺️ 五大学习计划
+## 🗺️ 六大学习计划
 
 ### 1. 网络安全基础入门（30天）— `basic/`
 - **难度**：⭐ 初级
@@ -56,13 +57,23 @@ cyber-learning/
 - **格式**：YAML frontmatter + Markdown（大白话+实操导向）
 - **详见**：[hw/plan-overview.md](./hw/plan-overview.md)
 
+### 6. 靶机搭建与实战（32天）— `shoot-range/`
+- **难度**：⭐→⭐⭐⭐ 入门→高级
+- **目标**：从零搭建各类靶场并完成全部通关实战
+- **适合**：网络安全初学者、想动手实践的学员
+- **格式**：手把手实战教程，每个靶场从搭建到通关
+- **涵盖靶场**：DVWA、SQLi-Labs、Upload-Labs、Pikachu、VulnHub、Vulhub
+
 ---
 
 ## 🚀 推荐学习路径
 
 ```
 零基础学员：
-  basic(30天) → penetration(30天) → defense(30天) → hw(120天)
+  basic(30天) → shoot-range(32天) → penetration(30天) → defense(30天) → hw(120天)
+
+想动手练靶场：
+  basic(快速过) → shoot-range(重点) → penetration(深入)
 
 安全运维转蓝队：
   basic(快速过) → defense(精读) → hw(重点)
@@ -85,6 +96,7 @@ AI安全方向：
 | defense/ | 30 | 38,000+ | ~48KB/文件 |
 | ai/ | 169 | 150,000+ | ~28KB/文件 |
 | hw/ | 121 | 60,000+ | ~18KB/文件 |
+| shoot-range/ | 32 | 45,000+ | ~45KB/文件 |
 | to-work/hw-sg/ | 28 | 8,000+ | ~10KB/文件 |
 
 ---
@@ -97,3 +109,4 @@ AI安全方向：
 - [渗透测试 Day 1](./penetration/day-1.md)
 - [防御运营 Day 1](./defense/day-1.md)
 - [AI安全 Day 1](./ai/day-1.md)
+- [靶机搭建与实战 Day 1](./shoot-range/day-1.md)

@@ -1,0 +1,79 @@
+﻿### 10.9.5 PostgreSQL日志管理与分析
+
+PostgreSQL提供了丰富的日志功能，可以记录连接、查询、语句执行时间、锁等待等信息。
+
+```bash
+# postgresql.conf配置
+
+logging_collector = on
+log_directory = log
+log_filename = postgresql-%Y-%m-%d_%H%M%S.log
+log_file_mode = 0600
+log_rotation_age = 1d
+log_rotation_size = 100MB
+
+log_connections = on
+log_disconnections = on
+log_hostname = on
+log_duration = off
+log_line_prefix = %t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h
+
+log_statement = ddl
+log_min_duration_statement = 1000
+log_min_duration_sample = 500
+log_statement_sample_rate = 0.1
+
+log_min_messages = warning
+log_min_error_statement = error
+
+log_lock_waits = on
+deadlock_timeout = 1s
+log_checkpoints = on
+log_autovacuum_min_duration = 0
+
+CREATE EXTENSION pg_stat_statements;
+
+SELECT query, calls, total_exec_time, mean_exec_time, rows
+FROM pg_stat_statements
+ORDER BY mean_exec_time DESC LIMIT 10;
+
+SELECT query, calls, total_exec_time, rows
+FROM pg_stat_statements ORDER BY calls DESC LIMIT 10;
+
+SELECT pg_stat_statements_reset();
+```
+
+### 10.9.6 PostgreSQL安全加固检查清单
+
+```bash
+# PostgreSQL安全加固检查清单
+
+# 1. 认证与访问控制
+# [ ] 使用scram-sha-256或证书认证
+# [ ] 配置pg_hba.conf限制访问来源
+# [ ] 禁止postgres用户远程登录
+# [ ] 使用强密码策略
+# [ ] 配置密码过期策略
+
+# 2. 网络安全
+# [ ] listen_addresses只监听必要地址
+# [ ] 启用SSL/TLS加密
+# [ ] 配置防火墙规则
+
+# 3. 权限管理
+# [ ] 遵循最小权限原则
+# [ ] 定期审查用户和角色权限
+# [ ] 使用角色组简化权限管理
+# [ ] 启用行级安全策略
+
+# 4. 数据保护
+# [ ] 对敏感数据使用列级加密
+# [ ] 定期备份并验证恢复流程
+# [ ] 加密备份文件
+
+# 5. 日志与审计
+# [ ] 启用审计日志
+# [ ] 记录DDL语句
+# [ ] 设置慢查询阈值
+# [ ] 定期分析日志
+```

@@ -39,6 +39,7 @@ import {
 import { Card, Badge, Button } from '../components/UI';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import TextToSpeechPlayer from '../components/TextToSpeechPlayer';
 import Editor from '@monaco-editor/react';
 import { QuizQuestion } from '../data/cyberBasic';
 import { Pomodoro } from '../components/Pomodoro';
@@ -687,20 +688,23 @@ export const InterviewDailyLearning: React.FC = () => {
                 {expanded === 'content' ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
               </button>
               {expanded === 'content' && (
-                <div className="prose prose-invert prose-sm max-w-none text-gray-300 leading-relaxed">
-                  {mdLoading && (
-                    <div className="text-sm text-gray-400 italic">正在加载课程内容...</div>
-                  )}
-                  {!mdLoading && mdContent && (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{mdContent}</ReactMarkdown>
-                  )}
-                  {!mdLoading && !mdContent && (
-                    <div
-                      className="prose prose-invert prose-sm max-w-none text-gray-300 whitespace-pre-wrap leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: day.content.replace(/\n/g, '<br/>').replace(/### /g, '<h4 class="text-cyber-purple font-medium mt-3 mb-2">').replace(/## /g, '<h3 class="text-white font-medium mt-4 mb-2">').replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyber-green">$1</strong>').replace(/`([^`]+)`/g, '<code class="bg-cyber-purple/20 text-cyber-green px-1 py-0.5 rounded text-xs">$1</code>').replace(/```[\s\S]*?```/g, (m) => '<pre class="bg-cyber-black/50 border border-cyber-purple/20 rounded p-3 text-xs overflow-x-auto my-2"><code>' + m.replace(/```\w*\n?/g, '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>') }}
-                    />
-                  )}
-                </div>
+                <>
+                  <TextToSpeechPlayer text={mdContent || day.content || ''} isDark={true} />
+                  <div className="prose prose-invert prose-sm max-w-none text-gray-300 leading-relaxed">
+                    {mdLoading && (
+                      <div className="text-sm text-gray-400 italic">正在加载课程内容...</div>
+                    )}
+                    {!mdLoading && mdContent && (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{mdContent}</ReactMarkdown>
+                    )}
+                    {!mdLoading && !mdContent && (
+                      <div
+                        className="prose prose-invert prose-sm max-w-none text-gray-300 whitespace-pre-wrap leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: day.content.replace(/\n/g, '<br/>').replace(/### /g, '<h4 class="text-cyber-purple font-medium mt-3 mb-2">').replace(/## /g, '<h3 class="text-white font-medium mt-4 mb-2">').replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyber-green">$1</strong>').replace(/`([^`]+)`/g, '<code class="bg-cyber-purple/20 text-cyber-green px-1 py-0.5 rounded text-xs">$1</code>').replace(/```[\s\S]*?```/g, (m) => '<pre class="bg-cyber-black/50 border border-cyber-purple/20 rounded p-3 text-xs overflow-x-auto my-2"><code>' + m.replace(/```\w*\n?/g, '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>') }}
+                      />
+                    )}
+                  </div>
+                </>
               )}
               {expanded !== 'content' && (
                 <div className="text-xs text-gray-500 italic">点击展开查看课程内容</div>
