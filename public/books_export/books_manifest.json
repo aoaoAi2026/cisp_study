@@ -1,0 +1,4825 @@
+{
+  "books": [
+    {
+      "folder": "C++黑客编程揭秘与防范（第2版）",
+      "title": "C++黑客编程揭秘与防范（第2版）",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 C++与黑客编程",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 木马开发",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 病毒技术",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 注入技术",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 逆向分析",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 软件破解",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 免杀技术",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 安全防范",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "C++黑客编程揭秘与防范（第2版）",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "Kali Linux渗透测试全流程详解",
+      "title": "Kali Linux渗透测试全流程详解",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "《Kali Linux渗透测试全流程详解》章节规划",
+          "fileName": "章节规划.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第一章 第一次接触Kali Linux——从安装到第一次扫描",
+          "fileName": "ch01-第一次接触KaliLinux.md",
+          "pageCount": 19
+        },
+        {
+          "id": "ch3",
+          "title": "第一章 什么是Kali Linux？ —— 渗透测试者的瑞士军刀",
+          "fileName": "ch01-什么是Kali Linux.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch4",
+          "title": "第一章 渗透测试系统",
+          "fileName": "ch01-渗透测试系统.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch5",
+          "title": "第一章 渗透测试系统",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第二章 信息收集——当一名优秀的\"网络侦探\"",
+          "fileName": "ch02-信息收集-网络侦探.md",
+          "pageCount": 24
+        },
+        {
+          "id": "ch7",
+          "title": "第二章 信息收集",
+          "fileName": "ch02-信息收集.md",
+          "pageCount": 10
+        },
+        {
+          "id": "ch8",
+          "title": "第二章 Kali Linux环境搭建 —— 磨刀不误砍柴工",
+          "fileName": "ch02-Kali Linux环境搭建.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch9",
+          "title": "第二章 信息收集",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第三章 信息收集——侦察的艺术",
+          "fileName": "ch03-信息收集-侦察的艺术.md",
+          "pageCount": 17
+        },
+        {
+          "id": "ch11",
+          "title": "第三章 Web渗透测试",
+          "fileName": "ch03-Web渗透测试.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch12",
+          "title": "第三章 Web渗透测试——从入门到上手实战",
+          "fileName": "ch03-Web渗透实战.md",
+          "pageCount": 26
+        },
+        {
+          "id": "ch13",
+          "title": "第三章 漏洞扫描",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch14",
+          "title": "第四章 漏洞利用与提权——从普通用户到管理员",
+          "fileName": "ch04-漏洞利用与提权.md",
+          "pageCount": 22
+        },
+        {
+          "id": "ch15",
+          "title": "第四章 漏洞扫描——找出系统的弱点",
+          "fileName": "ch04-漏洞扫描-找出弱点.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch16",
+          "title": "第四章 漏洞利用",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch17",
+          "title": "第五章 后渗透与内网渗透——进去之后干啥",
+          "fileName": "ch05-后渗透与内网渗透.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch18",
+          "title": "第五章 Web应用渗透测试（上） —— 最常见的攻击面",
+          "fileName": "ch05-Web应用渗透测试-上.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch19",
+          "title": "第五章 提权",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch20",
+          "title": "第六章 密码破解——让密码现出原形",
+          "fileName": "ch06-密码破解.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch21",
+          "title": "第六章 Web应用渗透测试（下） —— 更多攻击面",
+          "fileName": "ch06-Web应用渗透测试-下.md",
+          "pageCount": 19
+        },
+        {
+          "id": "ch22",
+          "title": "第六章 持久化",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch23",
+          "title": "第七章 无线渗透测试——WiFi也不安全",
+          "fileName": "ch07-无线渗透测试.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch24",
+          "title": "第七章 系统漏洞利用 —— Metasploit 从入门到精通",
+          "fileName": "ch07-系统漏洞利用与Metasploit.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch25",
+          "title": "第七章 内网横向渗透",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch26",
+          "title": "第八章 密码攻击 —— 从爆破到哈希破解",
+          "fileName": "ch08-密码攻击.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch27",
+          "title": "第八章 社会工程学——人才是最大的漏洞",
+          "fileName": "ch08-社会工程学.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch28",
+          "title": "第八章 暴力破解",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch29",
+          "title": "第九章 后渗透阶段 —— 信息收集与提权",
+          "fileName": "ch09-后渗透-信息收集与提权.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch30",
+          "title": "第九章 应急响应与数字取证——出事了怎么办",
+          "fileName": "ch09-应急响应与取证.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch31",
+          "title": "第九章 无线攻击",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch32",
+          "title": "第十章 内网渗透 —— 横向移动",
+          "fileName": "ch10-内网渗透-横向移动.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch33",
+          "title": "第十章 渗透测试报告编写——说得清才收得到钱",
+          "fileName": "ch10-渗透测试报告编写.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch34",
+          "title": "第十章 中间人攻击",
+          "fileName": "ch10.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch35",
+          "title": "第十一章 权限维持 —— 怎么留住你的Shell",
+          "fileName": "ch11-权限维持与持久化.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch36",
+          "title": "第十一章 综合实战案例——从信息收集到拿下域控",
+          "fileName": "ch11-综合实战案例.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch37",
+          "title": "第十一章 社会工程学",
+          "fileName": "ch11.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch38",
+          "title": "第十二章 痕迹清理与反取证 —— 怎么擦干净屁股",
+          "fileName": "ch12-痕迹清理与反取证.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch39",
+          "title": "第十三章 社会工程学攻击 —— 最容易被忽略的杀器",
+          "fileName": "ch13-社会工程学攻击.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch40",
+          "title": "第十四章 无线网络渗透测试 —— WiFi 安全那点事",
+          "fileName": "ch14-无线网络渗透测试.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch41",
+          "title": "第十五章 渗透测试报告撰写 —— 好的报告才是最终交付",
+          "fileName": "ch15-渗透测试报告撰写.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch42",
+          "title": "第十六章 综合实战案例 —— 一次完整的渗透测试",
+          "fileName": "ch16-综合实战案例.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch43",
+          "title": "Kali Linux渗透测试全流程详解",
+          "fileName": "README.md",
+          "pageCount": 4
+        }
+      ],
+      "pages": 494,
+      "chapterCount": 43
+    },
+    {
+      "folder": "Linux安全加固实战",
+      "title": "Linux安全加固实战",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "/etc/rsyslog.d/10-advanced-filter.conf",
+          "fileName": "append_part1.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch2",
+          "title": "第1章 Linux系统安全概述",
+          "fileName": "ch01-Linux系统安全概述.md",
+          "pageCount": 29
+        },
+        {
+          "id": "ch3",
+          "title": "/etc/audit/auditd.conf 高级配置详解",
+          "fileName": "append_part2.md",
+          "pageCount": 31
+        },
+        {
+          "id": "ch4",
+          "title": "第2章 用户账户与权限安全",
+          "fileName": "ch02-用户账户与权限安全.md",
+          "pageCount": 33
+        },
+        {
+          "id": "ch5",
+          "title": "append_part3",
+          "fileName": "append_part3.md",
+          "pageCount": 34
+        },
+        {
+          "id": "ch6",
+          "title": "第3章 文件系统安全",
+          "fileName": "ch03-文件系统安全.md",
+          "pageCount": 34
+        },
+        {
+          "id": "ch7",
+          "title": "========== 方案1: rsync定时远程备份 ==========",
+          "fileName": "append_part4.md",
+          "pageCount": 25
+        },
+        {
+          "id": "ch8",
+          "title": "第4章 日志与审计",
+          "fileName": "ch04-日志与审计.md",
+          "pageCount": 131
+        },
+        {
+          "id": "ch9",
+          "title": "/etc/systemd/system/mywebapp.service",
+          "fileName": "ch05-系统服务加固.md",
+          "pageCount": 65
+        },
+        {
+          "id": "ch10",
+          "title": "不同类型密钥生成对比",
+          "fileName": "ch06-SSH安全配置.md",
+          "pageCount": 74
+        },
+        {
+          "id": "ch11",
+          "title": "查看当前内核加载的netfilter模块",
+          "fileName": "ch07-防火墙配置.md",
+          "pageCount": 52
+        },
+        {
+          "id": "ch12",
+          "title": "第8章 SELinux与AppArmor",
+          "fileName": "ch08-SELinux与AppArmor.md",
+          "pageCount": 33
+        },
+        {
+          "id": "ch13",
+          "title": "第9章 Web服务器安全加固",
+          "fileName": "ch09-Web服务器安全加固.md",
+          "pageCount": 27
+        },
+        {
+          "id": "ch14",
+          "title": "/etc/my.cnf - 生产环境安全配置完整示例",
+          "fileName": "ch10-数据库安全加固.md",
+          "pageCount": 74
+        },
+        {
+          "id": "ch15",
+          "title": "第11章 缓存服务安全加固",
+          "fileName": "ch11-缓存服务安全加固.md",
+          "pageCount": 26
+        },
+        {
+          "id": "ch16",
+          "title": "第12章 邮件服务安全加固",
+          "fileName": "ch12-邮件服务安全加固.md",
+          "pageCount": 27
+        },
+        {
+          "id": "ch17",
+          "title": "第13章 容器安全",
+          "fileName": "ch13-容器安全.md",
+          "pageCount": 29
+        },
+        {
+          "id": "ch18",
+          "title": "第14章 自动化安全加固脚本",
+          "fileName": "ch14-自动化安全加固脚本.md",
+          "pageCount": 64
+        },
+        {
+          "id": "ch19",
+          "title": "第15章 安全扫描与漏洞修复",
+          "fileName": "ch15-安全扫描与漏洞修复.md",
+          "pageCount": 33
+        },
+        {
+          "id": "ch20",
+          "title": "第十六章 应急响应与安全监控",
+          "fileName": "ch16-应急响应与安全监控.md",
+          "pageCount": 27
+        },
+        {
+          "id": "ch21",
+          "title": "第十七章 VPN与网络隧道安全",
+          "fileName": "ch17-VPN与网络隧道安全.md",
+          "pageCount": 10
+        },
+        {
+          "id": "ch22",
+          "title": "第十八章 DNS服务器安全",
+          "fileName": "ch18-DNS服务器安全.md",
+          "pageCount": 8
+        },
+        {
+          "id": "ch23",
+          "title": "第十九章 负载均衡器安全",
+          "fileName": "ch19-负载均衡器安全.md",
+          "pageCount": 10
+        },
+        {
+          "id": "ch24",
+          "title": "第二十章 代理服务器安全",
+          "fileName": "ch20-代理服务器安全.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch25",
+          "title": "第二十一章 证书管理与PKI安全",
+          "fileName": "ch21-证书管理与PKI安全.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch26",
+          "title": "第二十二章 备份与灾难恢复",
+          "fileName": "ch22-备份与灾难恢复.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch27",
+          "title": "第二十三章 等级保护合规实践",
+          "fileName": "ch23-等级保护合规实践.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch28",
+          "title": "Linux安全加固实战",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 948,
+      "chapterCount": 28
+    },
+    {
+      "folder": "Python灰帽子：黑客与逆向工程师的Python编程之道",
+      "title": "Python灰帽子：黑客与逆向工程师的Python编程之道",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 准备工作",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 调试器原理",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 自己写调试器",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 Immunity Debugger",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 IDA Python",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 模糊测试",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 漏洞利用",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 网络工具",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "Python灰帽子：黑客与逆向工程师的Python编程之道",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "SOC安全运营实战",
+      "title": "SOC安全运营实战",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 SOC概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 SIEM安全信息与事件管理",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 威胁检测",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 威胁情报",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 安全事件响应",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 SOAR安全编排自动化",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 SOC运营管理",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 实战案例",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "SOC安全运营实战",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "SRC漏洞挖掘实战",
+      "title": "SRC漏洞挖掘实战",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 认识SRC漏洞挖掘",
+          "fileName": "ch01-认识SRC漏洞挖掘.md",
+          "pageCount": 80
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 SRC平台与规则解读",
+          "fileName": "ch02-SRC平台与规则解读.md",
+          "pageCount": 50
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 信息收集与资产发现",
+          "fileName": "ch03-信息收集与资产发现.md",
+          "pageCount": 59
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 漏洞挖掘工具箱",
+          "fileName": "ch04-漏洞挖掘工具箱.md",
+          "pageCount": 53
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 SQL注入漏洞挖掘",
+          "fileName": "ch05-SQL注入漏洞挖掘.md",
+          "pageCount": 44
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 XSS跨站脚本漏洞挖掘",
+          "fileName": "ch06-XSS跨站脚本漏洞挖掘.md",
+          "pageCount": 60
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 文件上传与包含漏洞",
+          "fileName": "ch07-文件上传与包含漏洞.md",
+          "pageCount": 34
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 CSRF与SSRF漏洞挖掘",
+          "fileName": "ch08-CSRF与SSRF漏洞挖掘.md",
+          "pageCount": 55
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 逻辑漏洞挖掘",
+          "fileName": "ch09-逻辑漏洞挖掘.md",
+          "pageCount": 67
+        },
+        {
+          "id": "ch10",
+          "title": "第十章 越权漏洞挖掘",
+          "fileName": "ch10-越权漏洞挖掘.md",
+          "pageCount": 66
+        },
+        {
+          "id": "ch11",
+          "title": "第12章 JWT与认证漏洞挖掘",
+          "fileName": "ch12-JWT与认证漏洞挖掘.md",
+          "pageCount": 52
+        },
+        {
+          "id": "ch12",
+          "title": "第13章 反序列化漏洞挖掘",
+          "fileName": "ch13-反序列化漏洞挖掘.md",
+          "pageCount": 44
+        },
+        {
+          "id": "ch13",
+          "title": "第14章 云安全与配置错误",
+          "fileName": "ch14-云安全与配置错误.md",
+          "pageCount": 139
+        },
+        {
+          "id": "ch14",
+          "title": "第十五章 漏洞报告编写与沟通",
+          "fileName": "ch15-漏洞报告编写与沟通.md",
+          "pageCount": 74
+        },
+        {
+          "id": "ch15",
+          "title": "第十六章 SRC排名提升与成长之路",
+          "fileName": "ch16-SRC排名提升与成长之路.md",
+          "pageCount": 59
+        },
+        {
+          "id": "ch16",
+          "title": "SRC漏洞挖掘实战",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 939,
+      "chapterCount": 16
+    },
+    {
+      "folder": "Web前端黑客技术揭秘",
+      "title": "Web前端黑客技术揭秘",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 信任与信任关系",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 跨站脚本（XSS）",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 跨站请求伪造（CSRF）",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 界面操作劫持",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 Cookie安全",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 Flash安全",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 高级钓鱼",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 Web蠕虫",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "Web前端黑客技术揭秘",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "Web安全深度剖析",
+      "title": "Web安全深度剖析",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 HTTP协议安全",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 浏览器安全",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 SQL注入深度解析",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 XSS跨站脚本攻击",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 SSRF与文件上传",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 业务逻辑漏洞",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 现代Web安全",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 Web安全防御体系",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "Web安全深度剖析",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "Windows黑客编程技术详解",
+      "title": "Windows黑客编程技术详解",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 Windows编程基础",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 用户层钩子",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 进程注入",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 后门技术",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 内核编程基础",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 Rootkit技术",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 内核隐藏技术",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 反调试与免杀",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "Windows黑客编程技术详解",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "云安全实战指南",
+      "title": "云安全实战指南",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 云安全概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 IAM身份与访问管理",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 网络安全",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 数据安全",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 容器安全",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 云安全监控",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 云安全合规",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 云安全最佳实践",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "云安全实战指南",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "企业级安全加固实战指南",
+      "title": "企业级安全加固实战指南",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 安全加固概述与方法论",
+          "fileName": "ch01-安全加固概述与方法论.md",
+          "pageCount": 8
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 安全基线与评估标准",
+          "fileName": "ch02-安全基线与评估标准.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 Linux系统安全加固",
+          "fileName": "ch03-Linux系统安全加固.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 Windows系统安全加固",
+          "fileName": "ch04-Windows系统安全加固.md",
+          "pageCount": 20
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 交换机与路由器安全加固",
+          "fileName": "ch05-交换机与路由器安全加固.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 防火墙与WAF安全配置",
+          "fileName": "ch06-防火墙与WAF安全配置.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 Web服务器安全加固",
+          "fileName": "ch07-Web服务器安全加固.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 数据库安全加固",
+          "fileName": "ch08-数据库安全加固.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 中间件安全加固",
+          "fileName": "ch09-中间件安全加固.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch10",
+          "title": "第十章 负载均衡与高可用安全",
+          "fileName": "ch10-负载均衡与高可用安全.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch11",
+          "title": "第十一章 Docker容器安全加固",
+          "fileName": "ch11-Docker容器安全加固.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch12",
+          "title": "第十二章 Kubernetes集群安全加固",
+          "fileName": "ch12-Kubernetes集群安全加固.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch13",
+          "title": "第十三章 云主机与云服务安全加固",
+          "fileName": "ch13-云主机与云服务安全加固.md",
+          "pageCount": 10
+        },
+        {
+          "id": "ch14",
+          "title": "第十四章 应用安全加固与代码安全",
+          "fileName": "ch14-应用安全加固与代码安全.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch15",
+          "title": "第十五章 数据安全与加密防护",
+          "fileName": "ch15-数据安全与加密防护.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch16",
+          "title": "第十六章 等级保护2.0合规实践",
+          "fileName": "ch16-等级保护2.0合规实践.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch17",
+          "title": "第十七章 应急响应与安全加固实战",
+          "fileName": "ch17-应急响应与安全加固实战.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch18",
+          "title": "第十八章 自动化安全加固实践",
+          "fileName": "ch18-自动化安全加固实践.md",
+          "pageCount": 20
+        },
+        {
+          "id": "ch19",
+          "title": "第十九章 红蓝对抗与安全加固验证",
+          "fileName": "ch19-红蓝对抗与安全加固验证.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch20",
+          "title": "第二十章 安全运营与持续改进",
+          "fileName": "ch20-安全运营与持续改进.md",
+          "pageCount": 17
+        },
+        {
+          "id": "ch21",
+          "title": "第二十一章 灾备基础与策略规划",
+          "fileName": "ch21-灾备基础与策略规划.md",
+          "pageCount": 19
+        },
+        {
+          "id": "ch22",
+          "title": "第二十二章 主流厂商灾备方案详解",
+          "fileName": "ch22-主流厂商灾备方案详解.md",
+          "pageCount": 32
+        },
+        {
+          "id": "ch23",
+          "title": "第二十三章 灾备实战演练与验证",
+          "fileName": "ch23-灾备实战演练与验证.md",
+          "pageCount": 33
+        }
+      ],
+      "pages": 360,
+      "chapterCount": 23
+    },
+    {
+      "folder": "入侵检测与防御技术详解",
+      "title": "入侵检测与防御技术详解",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 入侵检测概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 基于网络的入侵检测（NIDS）",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 Suricata规则编写实战",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 常见攻击检测规则",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 误报与漏报优化",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 基于主机的入侵检测（HIDS）",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 入侵防御系统（IPS）",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 高级检测技术",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "入侵检测与防御技术详解",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "反入侵的艺术",
+      "title": "反入侵的艺术",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 闯入银行",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 入侵五角大楼",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 网络窃贼",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 硅谷窃贼",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 系统分析师",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 入侵欧洲",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 防御策略",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 未来展望",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "反入侵的艺术",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "反欺骗的艺术：世界传奇黑客的经历分享",
+      "title": "反欺骗的艺术：世界传奇黑客的经历分享",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 攻击者的技术",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 内线的诱惑",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 攻击计算机",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 经典骗局",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 流程和安全",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 保卫企业王国",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 员工的角色",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 下一次攻击浪潮",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "反欺骗的艺术：世界传奇黑客的经历分享",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "威胁情报分析实战指南",
+      "title": "威胁情报分析实战指南",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 威胁情报概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 威胁情报收集",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 IOC管理与应用",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 MITRE ATT&CK框架",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 APT组织与追踪",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 威胁狩猎实战",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 威胁情报平台建设",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "威胁情报分析实战指南",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 24,
+      "chapterCount": 8
+    },
+    {
+      "folder": "学习笔记",
+      "title": "学习笔记",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "零基础超通俗完整版｜命令注入（专门适配DVWA第二关Medium）",
+          "fileName": "命令注入学习.md",
+          "pageCount": 19
+        },
+        {
+          "id": "ch2",
+          "title": "\\*\\*主题\\*\\*：新版 Burp Suite 2024.7 + DVWA Brute Force 全难度超详细对照教程，包括前置通用准备（如浏览器代理、DVWA 切换等级等）、各阶段的宏配置（如 Cookie 冲突隔离配置、user\\_token 自动提取规则、宏配置最终保存等）、新建会话处理规则并绑定 Macro5、Intruder 爆破硬性配置以及爆破报错对照等内容",
+          "fileName": "ch1-dvwa第一关burp暴力破解.md",
+          "pageCount": 1167
+        },
+        {
+          "id": "ch3",
+          "title": "DVWA Brute Force High 难度 6 套通关方法 超极致详细完整版",
+          "fileName": "ch2-dvwa第一关burp暴力破解-high.md",
+          "pageCount": 20
+        },
+        {
+          "id": "ch4",
+          "title": "方法一（Burp 原生宏 + Session 会话规则）VS 方法三（Burp CSRF Token 插件）超详细对比",
+          "fileName": "ch3-方法一（Burp 原生宏 + Session 会话规则）VS 方法三（Burp CSRF Token 插件）超详细对比.md",
+          "pageCount": 9
+        },
+        {
+          "id": "ch5",
+          "title": "我的新笔记测试：SQL注入入门速记",
+          "fileName": "ch10-我新加入的测试笔记SQL注入入门.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "DVWA Brute Force High 完整 6 套通关方案（含 Burp 手动、宏、Python 脚本、Hydra 局限、源码审计、Impossible 对比）",
+          "fileName": "DVWA 暴力破解通关方案.md",
+          "pageCount": 4
+        },
+        {
+          "id": "ch7",
+          "title": "DVWA Command Injection 命令注入 全三关保姆级通关教程（零基础超通俗版）",
+          "fileName": "DVWA Command Injection 命令注入 全三关保姆级通关教程（零基础超通俗版）.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch8",
+          "title": "DVWA Cross Site Request Forgery \\(CSRF\\) 跨站请求伪造 全三关保姆级通关教程（零基础超通俗版）",
+          "fileName": "DVWA Cross Site Request Forgery (CSRF) 跨站请求伪造 全三关保姆级通关教程（零基础超通俗版）.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch9",
+          "title": "方案一 Burp Suite 带 Token 爆破 完整分步通关方案",
+          "fileName": "DVWA第一关暴力破解.md",
+          "pageCount": 29
+        },
+        {
+          "id": "ch10",
+          "title": "Kali Linux DVWA 部署与排障全记录（2026-06-28）",
+          "fileName": "Kali Linux DVWA 部署与排障全记录.md",
+          "pageCount": 4
+        }
+      ],
+      "pages": 1281,
+      "chapterCount": 10
+    },
+    {
+      "folder": "安全运营中心（SOC）建设实战",
+      "title": "安全运营中心（SOC）建设实战",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 SOC概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 SOC技术架构",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 SIEM部署与规则优化",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 SOAR安全编排自动化响应",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 SOC团队建设",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 安全运营流程制度",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 安全运营度量指标",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "安全运营中心（SOC）建设实战",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 24,
+      "chapterCount": 8
+    },
+    {
+      "folder": "密码学与网络安全（第3版）",
+      "title": "密码学与网络安全（第3版）",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 计算机攻击与计算机安全",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 密码技术",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 对称密钥算法与AES",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 基于计算机的非对称密钥算法",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 公钥基础设施",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 Internet安全协议",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 用户认证机制",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 加密与安全实现",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 网络安全、防火墙与VPN",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "密码学与网络安全（第3版）",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 30,
+      "chapterCount": 10
+    },
+    {
+      "folder": "密码学实战",
+      "title": "密码学实战",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 密码学概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 古典密码",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 对称加密",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 非对称加密",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 哈希函数",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 数字签名与认证",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 密码学应用",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "密码学实战",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 24,
+      "chapterCount": 8
+    },
+    {
+      "folder": "恶意代码分析实战",
+      "title": "恶意代码分析实战",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第0章 恶意代码分析技术入门",
+          "fileName": "ch0.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第1章 静态分析基础技术",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第2章 在虚拟机中分析恶意代码",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第3章 动态分析基础技术",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第4章 x86反汇编速成班",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第5章 IDA Pro",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第6章 识别汇编中的C代码结构",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第7章 分析恶意Windows程序",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "第8章 动态调试",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第9章 使用OllyDbg",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch11",
+          "title": "第10章 使用WinDbg调试内核",
+          "fileName": "ch10.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch12",
+          "title": "第11章 恶意代码行为",
+          "fileName": "ch11.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch13",
+          "title": "第12章 隐蔽的恶意代码启动",
+          "fileName": "ch12.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch14",
+          "title": "第13章 数据加密",
+          "fileName": "ch13.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch15",
+          "title": "第14章 恶意代码的网络特征",
+          "fileName": "ch14.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch16",
+          "title": "第15章 对抗反汇编",
+          "fileName": "ch15.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch17",
+          "title": "第16章 反调试技术",
+          "fileName": "ch16.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch18",
+          "title": "第17章 反虚拟机技术",
+          "fileName": "ch17.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch19",
+          "title": "第18章 加壳与脱壳",
+          "fileName": "ch18.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch20",
+          "title": "第19章 shellcode分析",
+          "fileName": "ch19.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch21",
+          "title": "第20章 C++代码分析",
+          "fileName": "ch20.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch22",
+          "title": "第21章 64位恶意代码",
+          "fileName": "ch21.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch23",
+          "title": "恶意代码分析实战",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 69,
+      "chapterCount": 23
+    },
+    {
+      "folder": "我的护网红队实战笔记",
+      "title": "我的护网红队实战笔记",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 外网打点：从资产收集到 Getshell",
+          "fileName": "ch01-外网打点流程.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 内网横向：从一台机器打穿整个域",
+          "fileName": "ch02-内网横向三件套.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "我的护网红队实战笔记：序言",
+          "fileName": "README-前言.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 9,
+      "chapterCount": 3
+    },
+    {
+      "folder": "护网紫队实战",
+      "title": "护网紫队实战",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 紫队概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 红蓝对抗设计",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 对抗过程管理",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 效果评估",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 漏洞验证与复测",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 安全度量体系",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 报告与复盘",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "护网紫队实战",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 24,
+      "chapterCount": 8
+    },
+    {
+      "folder": "护网红队实战指南",
+      "title": "护网红队实战指南",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 什么是红队？—— 红队不是黑客",
+          "fileName": "ch01-什么是红队.md",
+          "pageCount": 24
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 红队作战地图—— 打仗先画地图",
+          "fileName": "ch02-红队作战地图.md",
+          "pageCount": 27
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 前期侦察—— 不打无准备之仗",
+          "fileName": "ch03-前期侦察.md",
+          "pageCount": 22
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 C2基础设施搭建—— 先建好根据地",
+          "fileName": "ch04-C2基础设施搭建.md",
+          "pageCount": 20
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 外网打点—— 找到突破口",
+          "fileName": "ch05-外网打点.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 钓鱼实战—— 最有效的入口",
+          "fileName": "ch06-钓鱼实战.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 初次访问控制—— 进去之后先稳住",
+          "fileName": "ch07-初次访问控制.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 内网信息收集—— 摸清家底",
+          "fileName": "ch08-内网信息收集.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 横向移动—— 一路打穿内网",
+          "fileName": "ch09-横向移动.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch10",
+          "title": "第十章 域渗透实战—— 拿下域控",
+          "fileName": "ch10-域渗透实战.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch11",
+          "title": "第十一章 权限维持—— 进来了就不想走",
+          "fileName": "ch11-权限维持.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch12",
+          "title": "第十二章 近源渗透—— 打进大楼里面",
+          "fileName": "ch12-近源渗透.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch13",
+          "title": "第十三章 免杀与痕迹清理—— 别被发现",
+          "fileName": "ch13-免杀与痕迹清理.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch14",
+          "title": "第十四章 蓝队视角—— 知己知彼",
+          "fileName": "ch14-蓝队视角.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch15",
+          "title": "第十五章 红队报告与复盘—— 打完仗写总结",
+          "fileName": "ch15-红队报告与复盘.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch16",
+          "title": "第十六章 综合实战案例—— 完整红队全流程",
+          "fileName": "ch16-综合实战案例.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch17",
+          "title": "护网红队实战指南",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 248,
+      "chapterCount": 17
+    },
+    {
+      "folder": "护网蓝队防守指南",
+      "title": "护网蓝队防守指南",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "护网蓝队防守指南 —— 章节规划",
+          "fileName": "章节规划.md",
+          "pageCount": 4
+        },
+        {
+          "id": "ch2",
+          "title": "第一章 什么是蓝队？—— 蓝队不是救火队",
+          "fileName": "ch01-什么是蓝队.md",
+          "pageCount": 20
+        },
+        {
+          "id": "ch3",
+          "title": "第二章 蓝队作战地图 —— 防守方法论",
+          "fileName": "ch02-蓝队作战地图.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch4",
+          "title": "第三章 护网前准备 —— 不打无准备之仗",
+          "fileName": "ch03-护网前准备.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch5",
+          "title": "第四章 资产梳理与风险评估 —— 知己知彼",
+          "fileName": "ch04-资产梳理与风险评估.md",
+          "pageCount": 17
+        },
+        {
+          "id": "ch6",
+          "title": "第五章 防守体系建设 —— 构建纵深防御",
+          "fileName": "ch05-防守体系建设.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch7",
+          "title": "第六章 监测预警体系 —— 千里眼顺风耳",
+          "fileName": "ch06-监测预警体系.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch8",
+          "title": "第七章 日志与流量分析 —— 从海量数据中找线索",
+          "fileName": "ch07-日志与流量分析.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch9",
+          "title": "第八章 SIEM与关联分析 —— 把零散的告警串起来",
+          "fileName": "ch08-SIEM与关联分析.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch10",
+          "title": "第九章 Web攻击检测与防护 —— 守住国门",
+          "fileName": "ch09-Web攻击检测与防护.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch11",
+          "title": "第十章 内网攻击检测 —— 严防死守内部",
+          "fileName": "ch10-内网攻击检测.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch12",
+          "title": "第十一章 恶意代码检测与处置 —— 清道夫",
+          "fileName": "ch11-恶意代码检测与处置.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch13",
+          "title": "第十二章 应急响应实战 —— 兵来将挡",
+          "fileName": "ch12-应急响应实战.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch14",
+          "title": "第十三章 溯源分析技术 —— 挖出攻击者",
+          "fileName": "ch13-溯源分析技术.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch15",
+          "title": "第十四章 红队视角 —— 知己知彼",
+          "fileName": "ch14-红队视角.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch16",
+          "title": "第十五章 蓝队报告与复盘 —— 吃一堑长一智",
+          "fileName": "ch15-蓝队报告与复盘.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch17",
+          "title": "第十六章 蓝队成长之路 —— 路漫漫其修远兮",
+          "fileName": "ch16-蓝队成长之路.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch18",
+          "title": "护网蓝队防守指南",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 245,
+      "chapterCount": 18
+    },
+    {
+      "folder": "数字取证技术",
+      "title": "数字取证技术",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 数字取证概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 磁盘取证",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 内存取证",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 网络取证",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 Windows取证",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 移动设备取证",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 恶意代码取证",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 取证报告",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "数字取证技术",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "无线网络黑客攻防",
+      "title": "无线网络黑客攻防",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 无线网络基础",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 环境搭建",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 无线侦察",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 WEP破解",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 WPA/WPA2破解",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 WPS破解",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 无线攻击",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 蓝牙与RFID",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "无线网络黑客攻防",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "日志分析与数字取证实战",
+      "title": "日志分析与数字取证实战",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 数字取证概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 Windows系统日志分析",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 Linux系统日志分析",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 Web日志分析",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 磁盘取证",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 内存取证",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 网络取证",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "日志分析与数字取证实战",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 24,
+      "chapterCount": 8
+    },
+    {
+      "folder": "汽车黑客大曝光",
+      "title": "汽车黑客大曝光",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 汽车安全概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 CAN总线",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 车载系统",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 诊断接口",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 无线攻击",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 物理攻击",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 车联网安全",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 汽车安全防护",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "汽车黑客大曝光",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "渗透测试实战指南",
+      "title": "渗透测试实战指南",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 渗透测试概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 信息收集",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 Web应用渗透测试",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 漏洞利用基础",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 后渗透测试",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 无线渗透测试",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 渗透测试报告",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "渗透测试实战指南",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 24,
+      "chapterCount": 8
+    },
+    {
+      "folder": "灰帽黑客（第5版）",
+      "title": "灰帽黑客（第5版）",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 灰帽黑客概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章  footprinting",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 扫描技术",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 漏洞发现",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 漏洞利用",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 恶意代码",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 无线网络攻击",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 Web应用攻击",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 渗透测试方法论",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第十章 防御措施",
+          "fileName": "ch10.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch11",
+          "title": "灰帽黑客（第5版）",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 33,
+      "chapterCount": 11
+    },
+    {
+      "folder": "白帽子讲Web安全（纪念版）",
+      "title": "白帽子讲Web安全（纪念版）",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 我的安全世界观",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 浏览器安全",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 跨站脚本攻击（XSS）",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 跨站点请求伪造（CSRF）",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 点击劫持（ClickJacking）",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 HTML5安全",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 注入攻击",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 文件上传漏洞",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 认证与会话管理",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第十章 访问控制",
+          "fileName": "ch10.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch11",
+          "title": "第十一章 加密算法与随机数",
+          "fileName": "ch11.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch12",
+          "title": "第十二章 Web框架安全",
+          "fileName": "ch12.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch13",
+          "title": "第十三章 应用层拒绝服务攻击",
+          "fileName": "ch13.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch14",
+          "title": "第十四章 PHP安全",
+          "fileName": "ch14.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch15",
+          "title": "第十五章 Web Server配置安全",
+          "fileName": "ch15.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch16",
+          "title": "第十六章 互联网业务安全",
+          "fileName": "ch16.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch17",
+          "title": "第十七章 安全开发流程（SDL）",
+          "fileName": "ch17.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch18",
+          "title": "第十八章 安全运营",
+          "fileName": "ch18.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch19",
+          "title": "白帽子讲Web安全（纪念版）",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 57,
+      "chapterCount": 19
+    },
+    {
+      "folder": "白帽子讲Web扫描",
+      "title": "白帽子讲Web扫描",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 Web扫描器概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 爬虫技术",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 漏洞检测原理",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 SQL注入检测",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 XSS检测",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 扫描器插件开发",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 扫描器对抗",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 扫描器实战",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "白帽子讲Web扫描",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "白帽子讲浏览器安全",
+      "title": "白帽子讲浏览器安全",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 浏览器安全概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 同源策略",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 浏览器扩展安全",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 插件安全",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 浏览器漏洞挖掘",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 点击劫持与UI攻击",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 浏览器隐私安全",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 浏览器安全配置",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "白帽子讲浏览器安全",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "白话网络安全",
+      "title": "白话网络安全",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第1篇 病毒初现",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第2篇 魔道相长",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第3篇 正者无敌",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第4篇 新生安全",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第5篇 隐逸江湖",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "白话网络安全",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 18,
+      "chapterCount": 6
+    },
+    {
+      "folder": "红蓝攻防-构建实战化网络安全防御体系",
+      "title": "红蓝攻防-构建实战化网络安全防御体系",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "《红蓝攻防——构建实战化网络安全防御体系》章节规划",
+          "fileName": "章节规划.md",
+          "pageCount": 4
+        },
+        {
+          "id": "ch2",
+          "title": "第一章 认识红蓝紫",
+          "fileName": "ch01-认识红蓝紫.md",
+          "pageCount": 7
+        },
+        {
+          "id": "ch3",
+          "title": "第一章 什么是红蓝攻防？—— 矛与盾的较量",
+          "fileName": "ch01-什么是红蓝攻防.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch4",
+          "title": "第二章 蓝队攻击的4个阶段",
+          "fileName": "ch02-蓝队攻击的4个阶段.md",
+          "pageCount": 8
+        },
+        {
+          "id": "ch5",
+          "title": "第二章 实战化防御体系概述 —— 从\"合规\"到\"实战\"",
+          "fileName": "ch02-实战化防御体系概述.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch6",
+          "title": "第三章 蓝队常用的攻击手段",
+          "fileName": "ch03-蓝队常用的攻击手段.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch7",
+          "title": "第三章 ATT&CK框架与杀伤链 —— 读懂攻击者的语言",
+          "fileName": "ch03-ATTACK框架与杀伤链.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch8",
+          "title": "第四章 红蓝对抗的组织与流程 —— 一场对抗是怎么跑起来的",
+          "fileName": "ch04-红蓝对抗的组织与流程.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch9",
+          "title": "第五章 攻击者视角：外网打点 —— 找到城墙的缺口",
+          "fileName": "ch05-攻击者视角-外网打点.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch10",
+          "title": "第六章 攻击者视角：内网渗透 —— 进去之后横着走",
+          "fileName": "ch06-攻击者视角-内网渗透.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch11",
+          "title": "第七章 攻击者视角：权限维持 —— 打进来了，就得想办法常来",
+          "fileName": "ch07-攻击者视角-权限维持.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch12",
+          "title": "第八章 攻击者视角：数据窃取与痕迹清理 —— 偷完东西还要擦屁股",
+          "fileName": "ch08-攻击者视角-数据窃取与痕迹清理.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch13",
+          "title": "第九章 防御体系：资产与风险管理 —— 先搞清楚你有多少家底",
+          "fileName": "ch09-防御体系-资产与风险管理.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch14",
+          "title": "第十章 防御体系：监测与检测 —— 越早发现越好",
+          "fileName": "ch10-防御体系-监测与检测.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch15",
+          "title": "第十一章 防御体系：威胁狩猎 —— 主动出击，主动找坏人",
+          "fileName": "ch11-防御体系-威胁狩猎.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch16",
+          "title": "第十二章 防御体系：应急响应 —— 出事了怎么办？",
+          "fileName": "ch12-防御体系-应急响应.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch17",
+          "title": "第十三章 威胁情报与态势感知 —— 知己知彼，百战不殆",
+          "fileName": "ch13-威胁情报与态势感知.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch18",
+          "title": "第十四章 红蓝对抗实战演练 —— 是骡子是马，拉出来遛遛",
+          "fileName": "ch14-红蓝对抗实战演练.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch19",
+          "title": "第十五章 安全运营与人员能力 —— 技术是银，人是金",
+          "fileName": "ch15-安全运营与人员能力.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch20",
+          "title": "第十六章 实战化防御体系的落地之路 —— 路虽远，行则将至",
+          "fileName": "ch16-实战化防御体系的落地之路.md",
+          "pageCount": 17
+        }
+      ],
+      "pages": 259,
+      "chapterCount": 20
+    },
+    {
+      "folder": "红蓝攻防：构建实战化网络安全防御体系",
+      "title": "红蓝攻防：构建实战化网络安全防御体系",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 认识红蓝紫",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 蓝队攻击的4个阶段",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 蓝队常用的攻击手段",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 蓝队攻击的必备能力",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 蓝队经典攻击实例",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 红队防守的实施阶段",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 红队常用的防守策略",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 红队常用的防护手段",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 红队常用的关键安全设备",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第十章 红队经典防守实例",
+          "fileName": "ch10.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch11",
+          "title": "第十一章 如何组织一场实战攻防演练",
+          "fileName": "ch11.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch12",
+          "title": "第十二章 组织攻防演练的5个阶段",
+          "fileName": "ch12.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch13",
+          "title": "第十三章 组织沙盘推演的4个阶段",
+          "fileName": "ch13.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch14",
+          "title": "红蓝攻防：构建实战化网络安全防御体系",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 42,
+      "chapterCount": 14
+    },
+    {
+      "folder": "给安全工程师讲透Linux",
+      "title": "给安全工程师讲透Linux",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 Kali Linux简介",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 Linux系统基础",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 文件权限与用户管理",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 网络配置与安全",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 进程与服务管理",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 脚本编程基础",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 Python安全脚本",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 安全与匿名性",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 渗透测试工具",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第十章 应急响应",
+          "fileName": "ch10.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch11",
+          "title": "给安全工程师讲透Linux",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 33,
+      "chapterCount": 11
+    },
+    {
+      "folder": "网安工具使用教程",
+      "title": "网安工具使用教程",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章：Burp Suite - Web渗透测试利器",
+          "fileName": "ch01-BurpSuite.md",
+          "pageCount": 156
+        },
+        {
+          "id": "ch2",
+          "title": "第二章：Nmap - 网络扫描与探测",
+          "fileName": "ch02-Nmap.md",
+          "pageCount": 138
+        },
+        {
+          "id": "ch3",
+          "title": "第三章：Metasploit - 渗透测试框架",
+          "fileName": "ch03-Metasploit.md",
+          "pageCount": 134
+        },
+        {
+          "id": "ch4",
+          "title": "第四章：SQLMap - SQL注入自动化工具",
+          "fileName": "ch04-SQLMap.md",
+          "pageCount": 193
+        },
+        {
+          "id": "ch5",
+          "title": "第五章：Wireshark - 网络协议分析",
+          "fileName": "ch05-Wireshark.md",
+          "pageCount": 136
+        },
+        {
+          "id": "ch6",
+          "title": "第六章：Ncat/Netcat - 网络瑞士军刀",
+          "fileName": "ch06-Ncat-Netcat.md",
+          "pageCount": 5
+        },
+        {
+          "id": "ch7",
+          "title": "第七章：John the Ripper - 密码破解工具",
+          "fileName": "ch07-John-the-Ripper.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章：Hashcat - GPU密码破解神器",
+          "fileName": "ch08-Hashcat.md",
+          "pageCount": 4
+        },
+        {
+          "id": "ch9",
+          "title": "第九章：Hydra - 在线密码爆破工具",
+          "fileName": "ch09-Hydra.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第十章：DirBuster - 目录扫描工具",
+          "fileName": "ch10-DirBuster.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch11",
+          "title": "第十一章：Nikto - Web漏洞扫描工具",
+          "fileName": "ch11-Nikto.md",
+          "pageCount": 4
+        },
+        {
+          "id": "ch12",
+          "title": "第十二章：DirSearch - 现代目录扫描工具",
+          "fileName": "ch12-DirSearch.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch13",
+          "title": "第十三章：GoBuster - 高速目录爆破工具",
+          "fileName": "ch13-GoBuster.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch14",
+          "title": "第十四章：Nuclei - 模板化漏洞扫描器",
+          "fileName": "ch14-Nuclei.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch15",
+          "title": "第十五章：OWASP ZAP - Web应用安全扫描器",
+          "fileName": "ch15-OWASP-ZAP.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch16",
+          "title": "第十六章：Aircrack-ng - WiFi安全测试套件",
+          "fileName": "ch16-Aircrack-ng.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch17",
+          "title": "第十七章：Masscan - 高速端口扫描器",
+          "fileName": "ch17-Masscan.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch18",
+          "title": "第十八章：Cobalt Strike - 渗透测试平台",
+          "fileName": "ch18-Cobalt-Strike.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch19",
+          "title": "第十九章：Empire - PowerShell后渗透框架",
+          "fileName": "ch19-Empire.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch20",
+          "title": "第二十章：PowerSploit - PowerShell安全工具集",
+          "fileName": "ch20-PowerSploit.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch21",
+          "title": "第二十一章：Responder - LLMNR/NBT-NS欺骗工具",
+          "fileName": "ch21-Responder.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch22",
+          "title": "第二十二章：Mimikatz - Windows凭证提取工具",
+          "fileName": "ch22-Mimikatz.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch23",
+          "title": "第二十三章：BloodHound - 域环境分析工具",
+          "fileName": "ch23-BloodHound.md",
+          "pageCount": 9
+        },
+        {
+          "id": "ch24",
+          "title": "第二十四章：Evil-WinRM - Windows远程管理攻击工具",
+          "fileName": "ch24-Evil-WinRM.md",
+          "pageCount": 8
+        },
+        {
+          "id": "ch25",
+          "title": "第二十五章：CrackMapExec - 内网渗透工具",
+          "fileName": "ch25-CrackMapExec.md",
+          "pageCount": 8
+        },
+        {
+          "id": "ch26",
+          "title": "第二十六章：Impacket - Python网络工具包",
+          "fileName": "ch26-Impacket.md",
+          "pageCount": 10
+        },
+        {
+          "id": "ch27",
+          "title": "第二十七章：Amass - 域名枚举工具",
+          "fileName": "ch27-Amass.md",
+          "pageCount": 6
+        },
+        {
+          "id": "ch28",
+          "title": "第二十八章：Subfinder - 子域名发现工具",
+          "fileName": "ch28-Subfinder.md",
+          "pageCount": 6
+        },
+        {
+          "id": "ch29",
+          "title": "第二十九章：WhatWeb - 网站指纹识别工具",
+          "fileName": "ch29-WhatWeb.md",
+          "pageCount": 6
+        },
+        {
+          "id": "ch30",
+          "title": "第三十章：Wappalyzer - 技术栈识别工具",
+          "fileName": "ch30-Wappalyzer.md",
+          "pageCount": 7
+        },
+        {
+          "id": "ch31",
+          "title": "第三十一章：ffuf - Web模糊测试工具",
+          "fileName": "ch31-ffuf.md",
+          "pageCount": 11
+        },
+        {
+          "id": "ch32",
+          "title": "第三十二章：Arjun - 参数发现工具",
+          "fileName": "ch32-Arjun.md",
+          "pageCount": 9
+        },
+        {
+          "id": "ch33",
+          "title": "第三十三章：lazydocker - Docker终端UI",
+          "fileName": "ch33-lazydocker.md",
+          "pageCount": 9
+        },
+        {
+          "id": "ch34",
+          "title": "第三十四章：kubectl - Kubernetes命令行工具",
+          "fileName": "ch34-kubectl.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch35",
+          "title": "第三十五章：kube-hunter - Kubernetes安全扫描",
+          "fileName": "ch35-kube-hunter.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch36",
+          "title": "网安工具使用教程",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 946,
+      "chapterCount": 36
+    },
+    {
+      "folder": "网安环境搭建实战指南",
+      "title": "网安环境搭建实战指南",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 虚拟化环境搭建",
+          "fileName": "ch01-虚拟化环境搭建.md",
+          "pageCount": 43
+        },
+        {
+          "id": "ch2",
+          "title": "第2章 Kali Linux渗透测试系统",
+          "fileName": "ch02-Kali Linux渗透测试系统.md",
+          "pageCount": 23
+        },
+        {
+          "id": "ch3",
+          "title": "第3章 DVWA漏洞平台搭建",
+          "fileName": "ch03-DVWA漏洞平台搭建.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch4",
+          "title": "第4章 SQL注入环境SQLi-Labs搭建",
+          "fileName": "ch04-SQL注入环境SQLi-Labs搭建.md",
+          "pageCount": 17
+        },
+        {
+          "id": "ch5",
+          "title": "第5章 BWAPP漏洞平台搭建",
+          "fileName": "ch05-BWAPP漏洞平台搭建.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch6",
+          "title": "第6章 WebGoat与WebWolf搭建",
+          "fileName": "ch06-WebGoat与WebWolf搭建.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch7",
+          "title": "第7章 Vulhub漏洞环境搭建",
+          "fileName": "ch07-Vulhub漏洞环境搭建.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch8",
+          "title": "第8章 专项漏洞练习平台",
+          "fileName": "ch08-专项漏洞练习平台.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch9",
+          "title": "第9章 渗透测试工具集搭建",
+          "fileName": "ch09-渗透测试工具集搭建.md",
+          "pageCount": 24
+        },
+        {
+          "id": "ch10",
+          "title": "第10章 Metasploit渗透框架",
+          "fileName": "ch10-Metasploit渗透框架.md",
+          "pageCount": 25
+        },
+        {
+          "id": "ch11",
+          "title": "第11章 ATT&CK攻防靶场搭建",
+          "fileName": "ch11-ATT&CK攻防靶场搭建.md",
+          "pageCount": 21
+        },
+        {
+          "id": "ch12",
+          "title": "第12章 红队演练环境搭建",
+          "fileName": "ch12-红队演练环境搭建.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch13",
+          "title": "第十三章 蓝队SOC安全运营环境",
+          "fileName": "ch13-蓝队SOC安全运营环境.md",
+          "pageCount": 33
+        },
+        {
+          "id": "ch14",
+          "title": "第十四章 VulnHub靶场环境",
+          "fileName": "ch14-VulnHub靶场环境.md",
+          "pageCount": 21
+        },
+        {
+          "id": "ch15",
+          "title": "第十五章 CTF竞赛环境搭建",
+          "fileName": "ch15-CTF竞赛环境搭建.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch16",
+          "title": "第十六章 云安全实验环境",
+          "fileName": "ch16-云安全实验环境.md",
+          "pageCount": 25
+        },
+        {
+          "id": "ch17",
+          "title": "第17章 工控安全实验环境搭建",
+          "fileName": "ch17-工控安全实验环境.md",
+          "pageCount": 36
+        },
+        {
+          "id": "ch18",
+          "title": "第18章 逆向分析环境搭建",
+          "fileName": "ch18-逆向分析环境搭建.md",
+          "pageCount": 24
+        },
+        {
+          "id": "ch19",
+          "title": "第19章 电子取证分析环境搭建",
+          "fileName": "ch19-电子取证分析环境.md",
+          "pageCount": 30
+        },
+        {
+          "id": "ch20",
+          "title": "第20章 综合攻防靶场搭建",
+          "fileName": "ch20-综合攻防靶场搭建.md",
+          "pageCount": 23
+        },
+        {
+          "id": "ch21",
+          "title": "第21章 CMS漏洞环境搭建",
+          "fileName": "ch21-CMS漏洞环境搭建.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch22",
+          "title": "第22章 内网渗透环境搭建",
+          "fileName": "ch22-内网渗透环境搭建.md",
+          "pageCount": 23
+        },
+        {
+          "id": "ch23",
+          "title": "第23章 社会工程学与钓鱼环境",
+          "fileName": "ch23-社会工程学与钓鱼环境.md",
+          "pageCount": 19
+        },
+        {
+          "id": "ch24",
+          "title": "第24章 代码审计环境搭建",
+          "fileName": "ch24-代码审计环境搭建.md",
+          "pageCount": 42
+        },
+        {
+          "id": "ch25",
+          "title": "第25章 恶意代码分析环境",
+          "fileName": "ch25-恶意代码分析环境.md",
+          "pageCount": 37
+        },
+        {
+          "id": "ch26",
+          "title": "第26章 移动安全测试环境",
+          "fileName": "ch26-移动安全测试环境.md",
+          "pageCount": 40
+        },
+        {
+          "id": "ch27",
+          "title": "第27章 无线安全环境搭建",
+          "fileName": "ch27-无线安全环境搭建.md",
+          "pageCount": 38
+        },
+        {
+          "id": "ch28",
+          "title": "第28章 API安全测试环境",
+          "fileName": "ch28-API安全测试环境.md",
+          "pageCount": 32
+        },
+        {
+          "id": "ch29",
+          "title": "第29章 IoT物联网安全环境",
+          "fileName": "ch29-IoT物联网安全环境.md",
+          "pageCount": 37
+        },
+        {
+          "id": "ch30",
+          "title": "第30章 邮件安全测试环境",
+          "fileName": "ch30-邮件安全测试环境.md",
+          "pageCount": 37
+        }
+      ],
+      "pages": 773,
+      "chapterCount": 30
+    },
+    {
+      "folder": "网络安全基础",
+      "title": "网络安全基础",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "《网络安全基础》章节规划",
+          "fileName": "章节规划.md",
+          "pageCount": 5
+        },
+        {
+          "id": "ch2",
+          "title": "第一章 什么是网络安全？",
+          "fileName": "ch01-什么是网络安全.md",
+          "pageCount": 12
+        },
+        {
+          "id": "ch3",
+          "title": "第一章 网络安全概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第二章 网络基础（上） —— 从物理层到网络层",
+          "fileName": "ch02-网络基础-上.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch5",
+          "title": "第二章 网络基础与协议",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第三章 网络基础（下） —— 从传输层到应用层",
+          "fileName": "ch03-网络基础-下.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch7",
+          "title": "第三章 密码学基础",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第四章 密码学基础 —— 网络安全的数学基石",
+          "fileName": "ch04-密码学基础.md",
+          "pageCount": 19
+        },
+        {
+          "id": "ch9",
+          "title": "第四章 网络攻击技术",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第五章 安全模型与标准规范",
+          "fileName": "ch05-安全模型与标准规范.md",
+          "pageCount": 17
+        },
+        {
+          "id": "ch11",
+          "title": "第五章 网络防御技术",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch12",
+          "title": "第六章 信息收集与漏洞扫描",
+          "fileName": "ch06-信息收集与漏洞扫描.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch13",
+          "title": "第六章 安全管理与合规",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch14",
+          "title": "第七章 Web应用攻击",
+          "fileName": "ch07-Web应用攻击.md",
+          "pageCount": 22
+        },
+        {
+          "id": "ch15",
+          "title": "第七章 应急响应",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch16",
+          "title": "第八章 恶意代码与勒索软件",
+          "fileName": "ch08-恶意代码与勒索软件.md",
+          "pageCount": 19
+        },
+        {
+          "id": "ch17",
+          "title": "第八章 安全运维",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch18",
+          "title": "第九章 社会工程学与钓鱼攻击",
+          "fileName": "ch09-社会工程学与钓鱼攻击.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch19",
+          "title": "第十章 内网渗透与横向移动",
+          "fileName": "ch10-内网渗透与横向移动.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch20",
+          "title": "第十一章 防火墙与入侵检测系统",
+          "fileName": "ch11-防火墙与入侵检测系统.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch21",
+          "title": "第十二章 身份认证与访问控制",
+          "fileName": "ch12-身份认证与访问控制.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch22",
+          "title": "第十三章 数据安全与隐私保护",
+          "fileName": "ch13-数据安全与隐私保护.md",
+          "pageCount": 17
+        },
+        {
+          "id": "ch23",
+          "title": "第十四章 终端安全与主机加固",
+          "fileName": "ch14-终端安全与主机加固.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch24",
+          "title": "第十五章 安全运营与威胁检测",
+          "fileName": "ch15-安全运营与威胁检测.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch25",
+          "title": "第十六章 应急响应与事件处置",
+          "fileName": "ch16-应急响应与事件处置.md",
+          "pageCount": 15
+        },
+        {
+          "id": "ch26",
+          "title": "第十七章 灾难恢复与业务连续性",
+          "fileName": "ch17-灾难恢复与业务连续性.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch27",
+          "title": "第十八章 安全意识与人员管理",
+          "fileName": "ch18-安全意识与人员管理.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch28",
+          "title": "第十九章 法律法规与合规要求",
+          "fileName": "ch19-法律法规与合规要求.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch29",
+          "title": "第二十章 综合实战与未来展望",
+          "fileName": "ch20-综合实战与未来展望.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch30",
+          "title": "网络安全基础",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 355,
+      "chapterCount": 30
+    },
+    {
+      "folder": "网络安全应急响应实战指南",
+      "title": "网络安全应急响应实战指南",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 应急响应概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 应急准备工作",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 安全事件检测与研判",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 勒索病毒应急处置",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 数据泄露事件应急处置",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 DDoS攻击应急处置",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 内网入侵应急处置",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 应急响应溯源技术",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 应急响应报告与复盘",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "网络安全应急响应实战指南",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 30,
+      "chapterCount": 10
+    },
+    {
+      "folder": "逆向工程入门到精通",
+      "title": "逆向工程入门到精通",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 逆向工程概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 x86/x64汇编语言",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 PE文件格式",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 静态分析",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 动态调试",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 加壳与脱壳",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 恶意代码分析",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 漏洞挖掘",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "逆向工程入门到精通",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "阻击黑客：技术、策略与案例",
+      "title": "阻击黑客：技术、策略与案例",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 安全的视角",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 攻击方法",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 防御体系",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 检测技术",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 响应与恢复",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 Web攻防",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 实战案例",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 安全策略",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "阻击黑客：技术、策略与案例",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "靶场搭建与实战练习手册",
+      "title": "靶场搭建与实战练习手册",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 写在前面的话",
+          "fileName": "ch01-写在前面的话.md",
+          "pageCount": 4
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 环境准备—— 先把PHPStudy装好",
+          "fileName": "ch02-环境准备-PHPStudy安装.md",
+          "pageCount": 7
+        },
+        {
+          "id": "ch3",
+          "title": "第3章 必备工具安装与使用——新手的\"百宝箱\"",
+          "fileName": "ch03-必备工具安装与使用.md",
+          "pageCount": 29
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 第一个靶场——DVWA搭建全流程",
+          "fileName": "ch04-第一个靶场-DVWA搭建全流程.md",
+          "pageCount": 157
+        },
+        {
+          "id": "ch5",
+          "title": "第5章 DVWA实战：暴力破解（Brute Force）",
+          "fileName": "ch05-DVWA实战-暴力破解.md",
+          "pageCount": 55
+        },
+        {
+          "id": "ch6",
+          "title": "第6章 DVWA实战：命令注入漏洞（Command Injection）",
+          "fileName": "ch06-DVWA实战-命令注入漏洞.md",
+          "pageCount": 53
+        },
+        {
+          "id": "ch7",
+          "title": "第7章 DVWA实战：CSRF跨站请求伪造",
+          "fileName": "ch07-DVWA实战-CSRF跨站请求伪造.md",
+          "pageCount": 44
+        },
+        {
+          "id": "ch8",
+          "title": "第8章 DVWA实战：文件包含漏洞",
+          "fileName": "ch08-DVWA实战-文件包含漏洞.md",
+          "pageCount": 54
+        },
+        {
+          "id": "ch9",
+          "title": "第9章 DVWA实战-文件上传漏洞 📁",
+          "fileName": "ch09-DVWA实战-文件上传漏洞.md",
+          "pageCount": 42
+        },
+        {
+          "id": "ch10",
+          "title": "第10章 DVWA实战 - SQL注入入门 🎯",
+          "fileName": "ch10-DVWA实战-SQL注入入门.md",
+          "pageCount": 55
+        },
+        {
+          "id": "ch11",
+          "title": "第11章 DVWA实战 - XSS跨站脚本攻击 🎯",
+          "fileName": "ch11-DVWA实战-XSS跨站脚本攻击.md",
+          "pageCount": 52
+        },
+        {
+          "id": "ch12",
+          "title": "第12章 DVWA其他模块与通关总结 🎯",
+          "fileName": "ch12-DVWA其他模块与通关总结.md",
+          "pageCount": 45
+        },
+        {
+          "id": "ch13",
+          "title": "第13章 SQLi-Labs搭建与基础注入（Less1-10）🎯",
+          "fileName": "ch13-SQLi-Labs搭建与基础注入Less1-10.md",
+          "pageCount": 39
+        },
+        {
+          "id": "ch14",
+          "title": "第14章 SQLi-Labs进阶注入（Less11-25）",
+          "fileName": "ch14-SQLi-Labs进阶注入Less11-25.md",
+          "pageCount": 26
+        },
+        {
+          "id": "ch15",
+          "title": "第15章 SQLi-Labs盲注与绕过（Less26-40）",
+          "fileName": "ch15-SQLi-Labs盲注与绕过Less26-40.md",
+          "pageCount": 27
+        },
+        {
+          "id": "ch16",
+          "title": "第16章 SQLi-Labs高级注入（Less41-55）🎯",
+          "fileName": "ch16-SQLi-Labs高级注入Less41-55.md",
+          "pageCount": 22
+        },
+        {
+          "id": "ch17",
+          "title": "第17章 SQLi-Labs终极挑战（Less56-75）🏆",
+          "fileName": "ch17-SQLi-Labs终极挑战Less56-75.md",
+          "pageCount": 25
+        },
+        {
+          "id": "ch18",
+          "title": "第18章 SQL注入神器sqlmap使用指南 🎯",
+          "fileName": "ch18-SQL注入神器sqlmap使用指南.md",
+          "pageCount": 24
+        },
+        {
+          "id": "ch19",
+          "title": "第19章 Upload-Labs搭建与前端绕过（Pass1-7）🎯",
+          "fileName": "ch19-Upload-Labs搭建与前端绕过Pass1-7.md",
+          "pageCount": 42
+        },
+        {
+          "id": "ch20",
+          "title": "第20章 Upload-Labs后缀绕过与解析漏洞（Pass8-15）",
+          "fileName": "ch20-Upload-Labs后缀绕过与解析漏洞Pass8-15.md",
+          "pageCount": 28
+        },
+        {
+          "id": "ch21",
+          "title": "第21章 Upload-Labs图片马与高级绕过（Pass16-21）",
+          "fileName": "ch21-Upload-Labs图片马与高级绕过Pass16-21.md",
+          "pageCount": 35
+        },
+        {
+          "id": "ch22",
+          "title": "第22章 Pikachu靶场搭建与XSS全关卡 ⚡",
+          "fileName": "ch22-Pikachu靶场搭建与XSS全关卡.md",
+          "pageCount": 47
+        },
+        {
+          "id": "ch23",
+          "title": "第23章 Pikachu靶场-SQL注入与文件上传 🎯",
+          "fileName": "ch23-Pikachu靶场SQL注入与文件上传.md",
+          "pageCount": 23
+        },
+        {
+          "id": "ch24",
+          "title": "第24章 Pikachu其他漏洞与靶场总结 🎉",
+          "fileName": "ch24-Pikachu其他漏洞与靶场总结.md",
+          "pageCount": 28
+        },
+        {
+          "id": "ch25",
+          "title": "第25章 VMware与Kali配置优化",
+          "fileName": "ch25-VMware与Kali配置优化.md",
+          "pageCount": 25
+        },
+        {
+          "id": "ch26",
+          "title": "第26章 Jangow 1.0.1靶机搭建与信息收集",
+          "fileName": "ch26-Jangow-1.0.1靶机搭建与信息收集.md",
+          "pageCount": 20
+        },
+        {
+          "id": "ch27",
+          "title": "第27章 Jangow 1.0.1完整渗透通关教程",
+          "fileName": "ch27-Jangow-1.0.1完整渗透通关教程.md",
+          "pageCount": 35
+        },
+        {
+          "id": "ch28",
+          "title": "第28章 Kioptrix Level 1 完整渗透流程",
+          "fileName": "ch28-Kioptrix-Level-1完整渗透流程.md",
+          "pageCount": 25
+        },
+        {
+          "id": "ch29",
+          "title": "第29章 Docker安装与Vulhub环境搭建",
+          "fileName": "ch29-Docker安装与Vulhub环境搭建.md",
+          "pageCount": 28
+        },
+        {
+          "id": "ch30",
+          "title": "第30章 Web框架漏洞复现（ThinkPHP、S2等）🚀",
+          "fileName": "ch30-Web框架漏洞复现ThinkPHP-S2等.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch31",
+          "title": "第31章 中间件漏洞复现（Apache、Nginx、Tomcat）🏗️",
+          "fileName": "ch31-中间件漏洞复现Apache-Nginx-Tomcat.md",
+          "pageCount": 25
+        },
+        {
+          "id": "ch32",
+          "title": "第32章 DC-1靶机实战与学习路线总结",
+          "fileName": "ch32-DC-1靶机实战与学习路线总结.md",
+          "pageCount": 44
+        }
+      ],
+      "pages": 1183,
+      "chapterCount": 32
+    },
+    {
+      "folder": "黑客之道（第2版）：漏洞发掘的艺术",
+      "title": "黑客之道（第2版）：漏洞发掘的艺术",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 编程概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 网络技术",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 漏洞挖掘",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 破解技术",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 Shellcode",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 高级漏洞",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 密码学",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 网络攻击",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "黑客之道（第2版）：漏洞发掘的艺术",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "黑客免杀攻防",
+      "title": "黑客免杀攻防",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 免杀技术概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 杀毒软件原理",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 文件免杀",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 内存免杀",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 加壳技术",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 花指令与混淆",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 反虚拟机与反调试",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 反病毒实战",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "黑客免杀攻防",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "黑客大揭秘：近源渗透测试",
+      "title": "黑客大揭秘：近源渗透测试",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 近源渗透概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 物理侦察",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 Wi-Fi近源攻击",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 物理接口攻击",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 智能设备攻击",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 社会工程学",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 内网接入",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 近源渗透工具",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "黑客大揭秘：近源渗透测试",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "黑客大曝光：恶意软件和Rootkit安全",
+      "title": "黑客大曝光：恶意软件和Rootkit安全",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 传染方法",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 恶意软件功能",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 用户模式Rootkit",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 内核模式Rootkit",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 虚拟Rootkit",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 Rootkit的未来",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 防病毒",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 主机保护系统",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 基于主机的入侵预防",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第十章 Rootkit检测",
+          "fileName": "ch10.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch11",
+          "title": "第十一章 常规安全实践",
+          "fileName": "ch11.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch12",
+          "title": "黑客大曝光：恶意软件和Rootkit安全",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 36,
+      "chapterCount": 12
+    },
+    {
+      "folder": "黑客大曝光：网络安全机密与解决方案（第7版）",
+      "title": "黑客大曝光：网络安全机密与解决方案（第7版）",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 踩点",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 扫描",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 查点",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 攻击Windows",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 攻击Unix",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 网络犯罪和高级持续威胁",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 远程连接和VoIP攻击",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 无线攻击",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 硬件攻击",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第十章 攻击网页和数据库",
+          "fileName": "ch10.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch11",
+          "title": "第十一章 攻击移动设备",
+          "fileName": "ch11.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch12",
+          "title": "第十二章 防范对策手册",
+          "fileName": "ch12.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch13",
+          "title": "黑客大曝光：网络安全机密与解决方案（第7版）",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 39,
+      "chapterCount": 13
+    },
+    {
+      "folder": "黑客心理学——社会工程学原理",
+      "title": "黑客心理学——社会工程学原理",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 人因安全",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 社会工程心理学",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 信任与欺骗",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 密码心理学",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 网络行为心理",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 安全意识",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 社工攻击防范",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 安全文化",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "黑客心理学——社会工程学原理",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "黑客攻防技术宝典：Web实战篇（第2版）",
+      "title": "黑客攻防技术宝典：Web实战篇（第2版）",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 Web应用程序安全与风险",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 核心防御机制",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 Web应用程序技术",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 解析应用程序",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 避开客户端控件",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 攻击验证机制",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 攻击会话管理",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 攻击访问控制",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "第九章 攻击数据存储区",
+          "fileName": "ch9.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
+          "title": "第十章 测试后端组件",
+          "fileName": "ch10.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch11",
+          "title": "第十一章 攻击应用程序逻辑",
+          "fileName": "ch11.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch12",
+          "title": "第十二章 攻击其他用户",
+          "fileName": "ch12.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch13",
+          "title": "第十三章 攻击用户：其他技巧",
+          "fileName": "ch13.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch14",
+          "title": "第十四章 定制攻击自动化",
+          "fileName": "ch14.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch15",
+          "title": "第十五章 利用信息泄露",
+          "fileName": "ch15.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch16",
+          "title": "第十六章 攻击本地编译型应用程序",
+          "fileName": "ch16.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch17",
+          "title": "第十七章 攻击应用程序架构",
+          "fileName": "ch17.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch18",
+          "title": "第十八章 攻击Web服务器",
+          "fileName": "ch18.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch19",
+          "title": "第十九章 查找源代码中的漏洞",
+          "fileName": "ch19.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch20",
+          "title": "第二十章 Web应用程序黑客工具包",
+          "fileName": "ch20.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch21",
+          "title": "第二十一章 Web应用程序渗透测试方法论",
+          "fileName": "ch21.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch22",
+          "title": "黑客攻防技术宝典：Web实战篇（第2版）",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 66,
+      "chapterCount": 22
+    },
+    {
+      "folder": "黑客攻防技术宝典：系统实战篇（第2版）",
+      "title": "黑客攻防技术宝典：系统实战篇（第2版）",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 操作系统安全",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 认证攻击",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 权限提升",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 应用程序安全",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 恶意软件",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 数据库安全",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 加密解密",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 安全加固",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "黑客攻防技术宝典：系统实战篇（第2版）",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "黑客攻防：实战加密与解密",
+      "title": "黑客攻防：实战加密与解密",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 密码概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 Web密码获取",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 Hash破解",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 在线密码破解",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 加密算法分析",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 密码分析工具",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 无线密码破解",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 密码保护",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "黑客攻防：实战加密与解密",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "黑客社会工程学攻击2",
+      "title": "黑客社会工程学攻击2",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 社会工程学概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 信息收集",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 钓鱼攻击",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 电话社工",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 物理社工",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 心理操纵",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 社工工具",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 防范与意识培训",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "黑客社会工程学攻击2",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    },
+    {
+      "folder": "黑客秘笈：渗透测试实用指南（第2版）",
+      "title": "黑客秘笈：渗透测试实用指南（第2版）",
+      "chapters": [
+        {
+          "id": "ch1",
+          "title": "第一章 准备阶段",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch2",
+          "title": "第二章 情报收集",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch3",
+          "title": "第三章 漏洞扫描",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
+          "title": "第四章 漏洞利用",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch5",
+          "title": "第五章 后渗透",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch6",
+          "title": "第六章 Web应用测试",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
+          "title": "第七章 无线网络",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch8",
+          "title": "第八章 报告与总结",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch9",
+          "title": "黑客秘笈：渗透测试实用指南（第2版）",
+          "fileName": "README.md",
+          "pageCount": 3
+        }
+      ],
+      "pages": 27,
+      "chapterCount": 9
+    }
+  ],
+  "scannedAt": "2026-06-28T14:42:32.497Z"
+}

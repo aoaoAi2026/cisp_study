@@ -18,6 +18,288 @@
 
 ---
 
+### 📍 全模块 · 三平台访问地址总表（一张表存好，以后随查随用 📚）
+
+下面这张表把前面 10 个模块 + 本章 5 个小模块的 **Windows PHPStudy / Kali LAMP / Docker 三平台 URL** 一次性汇总，存进收藏夹，下次学其他靶场（Pikachu、Upload-Labs）还能对比参照：
+
+| 章节 模块名 | 菜单路径 | 🪟 Windows PHPStudy | 🐧 **Kali LAMP（你在用 ✅）** | 🐳 Docker（端口 4280 · 拉不动换 ch04 §4.5/§4.7 ✅） |
+|---|---|---|---|---|
+| ⑤ 暴力破解 Brute Force | Left Menu | `http://localhost/dvwa/vulnerabilities/brute/` | `http://KALI_IP/dvwa/vulnerabilities/brute/` | `http://KALI_IP:4280/vulnerabilities/brute/` |
+| ⑥ 命令注入 Command Inject | Left Menu | `http://localhost/dvwa/vulnerabilities/exec/` | `http://KALI_IP/dvwa/vulnerabilities/exec/` | `http://KALI_IP:4280/vulnerabilities/exec/` |
+| ⑦ CSRF 跨站请求伪造 | Left Menu | `http://localhost/dvwa/vulnerabilities/csrf/` | `http://KALI_IP/dvwa/vulnerabilities/csrf/` | `http://KALI_IP:4280/vulnerabilities/csrf/` |
+| ⑧ 文件包含 File Inclusion | Left Menu | `http://localhost/dvwa/vulnerabilities/fi/` | `http://KALI_IP/dvwa/vulnerabilities/fi/` | `http://KALI_IP:4280/vulnerabilities/fi/` |
+| ⑨ 文件上传 File Upload | Left Menu | `http://localhost/dvwa/vulnerabilities/upload/` | `http://KALI_IP/dvwa/vulnerabilities/upload/` | `http://KALI_IP:4280/vulnerabilities/upload/` |
+| ⑩ SQL 注入 (显注) | Left Menu | `http://localhost/dvwa/vulnerabilities/sqli/` | `http://KALI_IP/dvwa/vulnerabilities/sqli/` | `http://KALI_IP:4280/vulnerabilities/sqli/` |
+| ⑩+ SQL 盲注 Blind | Left Menu | `http://localhost/dvwa/vulnerabilities/sqli_blind/` | `http://KALI_IP/dvwa/vulnerabilities/sqli_blind/` | `http://KALI_IP:4280/vulnerabilities/sqli_blind/` |
+| ⑪ 反射型 XSS (R) | Left Menu | `http://localhost/dvwa/vulnerabilities/xss_r/` | `http://KALI_IP/dvwa/vulnerabilities/xss_r/` | `http://KALI_IP:4280/vulnerabilities/xss_r/` |
+| ⑪ 存储型 XSS (S) | Left Menu | `http://localhost/dvwa/vulnerabilities/xss_s/` | `http://KALI_IP/dvwa/vulnerabilities/xss_s/` | `http://KALI_IP:4280/vulnerabilities/xss_s/` |
+| ⑪ DOM 型 XSS (D) | Left Menu | `http://localhost/dvwa/vulnerabilities/xss_d/` | `http://KALI_IP/dvwa/vulnerabilities/xss_d/` | `http://KALI_IP:4280/vulnerabilities/xss_d/` |
+| ⑫ CAPTCHA / CSP 等 | 剩余全部 | `http://localhost/dvwa/` → 左侧菜单 | `http://KALI_IP/dvwa/` → 左侧菜单 | `http://KALI_IP:4280/` → 左侧菜单 |
+| 难度切换 DVWA Security | 左下角 | `http://localhost/dvwa/security.php` | `http://KALI_IP/dvwa/security.php` | `http://KALI_IP:4280/security.php` |
+| 一键重置数据库 Setup | 左侧菜单 | `http://localhost/dvwa/setup.php` | `http://KALI_IP/dvwa/setup.php` | `http://KALI_IP:4280/setup.php` |
+
+> 💡 **Kali 同学专用一行 IP 查询：** `KALI_IP=$(ip -4 a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1) ; echo "你的Kali IP是: $KALI_IP"`
+
+---
+
+### 🗺️ 图 12-1 DVWA 学习总路线图（4 难度 × 16 模块 × 3 平台 · 闯关顺序推荐）
+
+这张图是你整个 DVWA 学习阶段的"高德地图导航"🗺️：**蓝色路径（入门 1 周）→ 黄色路径（进阶 2 周）→ 橙色路径（高级 2 周）→ 红色终点（源码审计）**。跟着箭头走，学完你对 Web 漏洞的理解就完整了。图里同时标出 **Kali LAMP 原生 / Docker 容器 / Windows PHPStudy** 三种环境各自最适合的阶段：
+
+<svg viewBox="0 0 1160 620" width="100%" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1020px;margin:18px auto;display:block;border:1px solid #2a2a3a;border-radius:14px;background:#0f1120;">
+
+  <defs>
+    <linearGradient id="road-blue" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1f6feb"/><stop offset="100%" stop-color="#0b3b8a"/></linearGradient>
+    <linearGradient id="road-yellow" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#e0a500"/><stop offset="100%" stop-color="#8a5a00"/></linearGradient>
+    <linearGradient id="road-orange" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#d24a00"/><stop offset="100%" stop-color="#802800"/></linearGradient>
+    <linearGradient id="road-red" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#a1003c"/><stop offset="100%" stop-color="#5c0020"/></linearGradient>
+    <linearGradient id="env-tag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a3556"/><stop offset="100%" stop-color="#151a30"/></linearGradient>
+    <marker id="road-ar" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ffe16b"/></marker>
+    <marker id="road-ar2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ffa36b"/></marker>
+    <marker id="road-ar3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ff6b8a"/></marker>
+  </defs>
+  <text x="580" y="34" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold" font-family="Arial">图 12-1  DVWA 闯关总路线图 · 从 Low 新手村 到 Impossible 源码审计 · 4 阶段 16 模块</text>
+  <!-- 顶部：三环境徽章 -->
+  <g font-family="Arial" font-size="13">
+    <rect x="40" y="54" width="260" height="44" rx="11" fill="url(#env-tag)" stroke="#4490ff" stroke-width="1.3"/>
+    <text x="170" y="82" text-anchor="middle" fill="#cfe1ff" font-weight="bold">🪟 Windows PHPStudy · 过渡用（推荐度 ⭐⭐⭐）</text>
+    <rect x="320" y="54" width="480" height="44" rx="11" fill="url(#env-tag)" stroke="#3fb950" stroke-width="1.6"/>
+    <text x="560" y="82" text-anchor="middle" fill="#c7f3d0" font-weight="bold">🐧 Kali Linux 原生 LAMP · 全程推荐 ✅ 你现在用的就是这个！（⭐⭐⭐⭐⭐）</text>
+    <rect x="820" y="54" width="300" height="44" rx="11" fill="url(#env-tag)" stroke="#a371f7" stroke-width="1.3"/>
+    <text x="970" y="82" text-anchor="middle" fill="#e3d0ff" font-weight="bold">🐳 Docker 一行拉起 · 临时复现最爱（⭐⭐⭐⭐）</text>
+  </g>
+  <!-- 阶段一：入门 蓝色 -->
+  <g font-family="Arial">
+    <rect x="20" y="118" width="1120" height="108" rx="14" fill="url(#road-blue)" stroke="#4490ff" stroke-width="1.5"/>
+    <text x="40" y="144" fill="#fff" font-weight="bold" font-size="15">🎓 阶段一：Low 难度 · 新手村（1 周 · 先把 8 个大模块各打一遍）</text>
+    <g font-size="12.5" fill="#e6efff">
+      <rect x="40"  y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="103" y="182" text-anchor="middle" font-weight="bold">⑤ Brute Force</text><text x="103" y="202" text-anchor="middle">hydra / burp · 字典爆破</text>
+      <line x1="166" y1="186" x2="190" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="192" y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="255" y="182" text-anchor="middle" font-weight="bold">⑥ Cmd Injection</text><text x="255" y="202" text-anchor="middle">; &#124; &amp;&amp; · 管道连符</text>
+      <line x1="318" y1="186" x2="342" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="344" y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="407" y="182" text-anchor="middle" font-weight="bold">⑦ CSRF</text><text x="407" y="202" text-anchor="middle">借刀杀人 · 改密码</text>
+      <line x1="470" y1="186" x2="494" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="496" y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="559" y="182" text-anchor="middle" font-weight="bold">⑧ File Include</text><text x="559" y="202" text-anchor="middle">php://filter · LFI/RFI</text>
+      <line x1="622" y1="186" x2="646" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="648" y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="711" y="182" text-anchor="middle" font-weight="bold">⑨ File Upload</text><text x="711" y="202" text-anchor="middle">图片马 · Weevely shell</text>
+      <line x1="774" y1="186" x2="798" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="800" y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="863" y="182" text-anchor="middle" font-weight="bold">⑩ SQL Inject</text><text x="863" y="202" text-anchor="middle">order by · union select</text>
+      <line x1="926" y1="186" x2="950" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="952" y="158" width="176" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="1040" y="182" text-anchor="middle" font-weight="bold">⑪ XSS (R+S+D) 三种</text><text x="1040" y="202" text-anchor="middle">img onerror · script · #锚点</text>
+    </g>
+  </g>
+  <!-- 阶段二：进阶 黄色 -->
+  <g font-family="Arial">
+    <rect x="20" y="244" width="1120" height="108" rx="14" fill="url(#road-yellow)" stroke="#ffe16b" stroke-width="1.5"/>
+    <text x="40" y="270" fill="#fff" font-weight="bold" font-size="15">🔐 阶段二：Medium 难度 · 第一次绕过（2 周 · 学会每种漏洞基础绕过姿势）</text>
+    <g font-size="12.5" fill="#fff3c2">
+      <rect x="40"  y="284" width="170" height="56" rx="8" fill="#3a2a00" stroke="#ffe16b"/><text x="125" y="308" text-anchor="middle" font-weight="bold">绕过1：strip_tags / str_replace</text><text x="125" y="328" text-anchor="middle">大小写 · 双写 · &lt;img&gt; 其他标签</text>
+      <line x1="210" y1="312" x2="240" y2="312" stroke="#ffe16b" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="242" y="284" width="170" height="56" rx="8" fill="#3a2a00" stroke="#ffe16b"/><text x="327" y="308" text-anchor="middle" font-weight="bold">绕过2：mysql_real_escape</text><text x="327" y="328" text-anchor="middle">宽字节 · 二次注入 · ORDER BY</text>
+      <line x1="412" y1="312" x2="442" y2="312" stroke="#ffe16b" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="444" y="284" width="170" height="56" rx="8" fill="#3a2a00" stroke="#ffe16b"/><text x="529" y="308" text-anchor="middle" font-weight="bold">绕过3：Content-Type</text><text x="529" y="328" text-anchor="middle">Burp 修改 Content-Type 头</text>
+      <line x1="614" y1="312" x2="644" y2="312" stroke="#ffe16b" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="646" y="284" width="170" height="56" rx="8" fill="#3a2a00" stroke="#ffe16b"/><text x="731" y="308" text-anchor="middle" font-weight="bold">绕过4：黑名单后缀</text><text x="731" y="328" text-anchor="middle">.php5 .phtml .htaccess %00截断</text>
+      <line x1="816" y1="312" x2="846" y2="312" stroke="#ffe16b" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="848" y="284" width="280" height="56" rx="8" fill="#3a2a00" stroke="#ffe16b"/><text x="988" y="308" text-anchor="middle" font-weight="bold">🔥 Kali 实操：Burp Intruder / sqlmap / Hydra</text><text x="988" y="328" text-anchor="middle">每个工具至少手动跑 3 次，烂熟于心</text>
+    </g>
+  </g>
+  <!-- 阶段三：高级 橙色 -->
+  <g font-family="Arial">
+    <rect x="20" y="370" width="1120" height="108" rx="14" fill="url(#road-orange)" stroke="#ffa36b" stroke-width="1.5"/>
+    <text x="40" y="396" fill="#fff" font-weight="bold" font-size="15">🚀 阶段三：High 难度 · 组合拳挑战（2 周 · 多步绕过 + Token + 文件内容检测）</text>
+    <g font-size="12.5" fill="#ffe6d0">
+      <rect x="40"  y="410" width="210" height="56" rx="8" fill="#4a1800" stroke="#ffa36b"/><text x="145" y="434" text-anchor="middle" font-weight="bold">High 1：user_token 机制</text><text x="145" y="454" text-anchor="middle">Burp Pitchfork + Grep-Extract</text>
+      <line x1="250" y1="438" x2="280" y2="438" stroke="#ffa36b" stroke-width="1.6" marker-end="url(#road-ar2)"/>
+      <rect x="282" y="410" width="210" height="56" rx="8" fill="#4a1800" stroke="#ffa36b"/><text x="387" y="434" text-anchor="middle" font-weight="bold">High 2：图片二次渲染</text><text x="387" y="454" text-anchor="middle">copy 命令 + php://filter + 文件包含上传</text>
+      <line x1="492" y1="438" x2="522" y2="438" stroke="#ffa36b" stroke-width="1.6" marker-end="url(#road-ar2)"/>
+      <rect x="524" y="410" width="210" height="56" rx="8" fill="#4a1800" stroke="#ffa36b"/><text x="629" y="434" text-anchor="middle" font-weight="bold">High 3：SQL 盲注 布尔/时间</text><text x="629" y="454" text-anchor="middle">substring(ascii(mid(...))) · sqlmap --level 3</text>
+      <line x1="734" y1="438" x2="764" y2="438" stroke="#ffa36b" stroke-width="1.6" marker-end="url(#road-ar2)"/>
+      <rect x="766" y="410" width="362" height="56" rx="8" fill="#4a1800" stroke="#ffa36b"/><text x="947" y="434" text-anchor="middle" font-weight="bold">🐧 Kali 全家桶联动：sqlmap -r request.txt + Burp + BeEF</text><text x="947" y="454" text-anchor="middle">请求保存为 txt，用 sqlmap 读包跑 / Beef 挂僵尸 XSS 组合</text>
+    </g>
+  </g>
+  <!-- 阶段四：终点 红色 -->
+  <g font-family="Arial">
+    <rect x="20" y="496" width="1120" height="108" rx="14" fill="url(#road-red)" stroke="#ff6b8a" stroke-width="1.5"/>
+    <text x="40" y="522" fill="#fff" font-weight="bold" font-size="15">🏆 阶段四：Impossible 难度 + 小模块扫尾 · 源码审计（1 周 · 学正确写法，彻底理解漏洞根因）</text>
+    <g font-size="12.5" fill="#ffd7df">
+      <rect x="40"  y="536" width="180" height="56" rx="8" fill="#400016" stroke="#ff6b8a"/><text x="130" y="560" text-anchor="middle" font-weight="bold">Imp 1：PDO / htmlspecialchars</text><text x="130" y="580" text-anchor="middle">白名单 · 输出编码 · 预编译</text>
+      <line x1="220" y1="564" x2="250" y2="564" stroke="#ff6b8a" stroke-width="1.6" marker-end="url(#road-ar3)"/>
+      <rect x="252" y="536" width="180" height="56" rx="8" fill="#400016" stroke="#ff6b8a"/><text x="342" y="560" text-anchor="middle" font-weight="bold">Imp 2：CSRF Token</text><text x="342" y="580" text-anchor="middle">checkToken · 生成-校验双保险</text>
+      <line x1="432" y1="564" x2="462" y2="564" stroke="#ff6b8a" stroke-width="1.6" marker-end="url(#road-ar3)"/>
+      <rect x="464" y="536" width="180" height="56" rx="8" fill="#400016" stroke="#ff6b8a"/><text x="554" y="560" text-anchor="middle" font-weight="bold">Imp 3：锁定/验证码/哈希</text><text x="554" y="580" text-anchor="middle">password_hash · 3次锁15分</text>
+      <line x1="644" y1="564" x2="674" y2="564" stroke="#ff6b8a" stroke-width="1.6" marker-end="url(#road-ar3)"/>
+      <rect x="676" y="536" width="180" height="56" rx="8" fill="#400016" stroke="#ff6b8a"/><text x="766" y="560" text-anchor="middle" font-weight="bold">其他小模块通关</text><text x="766" y="580" text-anchor="middle">CAPTCHA · CSP · SessionID · JS</text>
+      <line x1="856" y1="564" x2="886" y2="564" stroke="#ff6b8a" stroke-width="1.6" marker-end="url(#road-ar3)"/>
+      <rect x="888" y="536" width="240" height="56" rx="8" fill="#200" stroke="#3fb950" stroke-width="2"/>
+      <text x="1008" y="558" text-anchor="middle" fill="#9effa0" font-weight="bold" font-size="14">🎓✅ DVWA 通关！下一站：</text>
+      <text x="1008" y="580" text-anchor="middle" fill="#9effa0" font-size="13">SQLi-Labs → Upload-Labs → Pikachu → 靶机提权</text>
+    </g>
+  </g>
+# 第12章 DVWA其他模块与通关总结 🎯
+
+## 开篇引入：打完收工？先别急着走！🤗
+
+哈喽各位小伙伴！欢迎来到第12章！🎉
+
+不知不觉，我们已经把DVWA里最核心的几个大漏洞都学完了——从暴力破解、命令注入、CSRF，到文件包含、文件上传、SQL注入，再到上一章的XSS，是不是感觉收获满满？就像打游戏通关了一个又一个Boss一样，超有成就感对不对？😎
+
+但是呢，DVWA作为一个"专业靶场"，它的内容可不止这些！在左侧的菜单栏里，你可能还注意到了一些奇奇怪怪的模块，比如什么CAPTCHA、CSP、JavaScript之类的。这些模块虽然不如前面那几个"大牌"，但也是Web安全里非常重要的知识点，咱们可不能错过！
+
+打个比方 🍔：
+
+你去吃汉堡套餐，前面的大漏洞就像汉堡、薯条、可乐这些"主菜"，必须得吃。但是套餐里还有番茄酱、餐巾纸、小玩具这些"小东西"，虽然不是主食，但也很有用——番茄酱能让薯条更好吃，餐巾纸能擦手，小玩具能让你开心。
+
+这一章里，我们就把DVWA里剩下的这些"小模块"快速过一遍，每个都给你讲明白是干啥的、怎么玩的。然后呢，我们再一起做个"通关总结"，聊聊从Low级别一路打到High级别，我们到底学到了啥，以后该怎么继续学习。
+
+准备好了吗？让我们开始最后的"扫尾工作"，然后给DVWA之旅画上一个圆满的句号！💪
+
+---
+
+### 📍 全模块 · 三平台访问地址总表（一张表存好，以后随查随用 📚）
+
+下面这张表把前面 10 个模块 + 本章 5 个小模块的 **Windows PHPStudy / Kali LAMP / Docker 三平台 URL** 一次性汇总，存进收藏夹，下次学其他靶场（Pikachu、Upload-Labs）还能对比参照：
+
+| 章节 模块名 | 菜单路径 | 🪟 Windows PHPStudy | 🐧 **Kali LAMP（你在用 ✅）** | 🐳 Docker（端口 4280 · 拉不动换 ch04 §4.5/§4.7 ✅） |
+|---|---|---|---|---|
+| ⑤ 暴力破解 Brute Force | Left Menu | `http://localhost/dvwa/vulnerabilities/brute/` | `http://KALI_IP/dvwa/vulnerabilities/brute/` | `http://KALI_IP:4280/vulnerabilities/brute/` |
+| ⑥ 命令注入 Command Inject | Left Menu | `http://localhost/dvwa/vulnerabilities/exec/` | `http://KALI_IP/dvwa/vulnerabilities/exec/` | `http://KALI_IP:4280/vulnerabilities/exec/` |
+| ⑦ CSRF 跨站请求伪造 | Left Menu | `http://localhost/dvwa/vulnerabilities/csrf/` | `http://KALI_IP/dvwa/vulnerabilities/csrf/` | `http://KALI_IP:4280/vulnerabilities/csrf/` |
+| ⑧ 文件包含 File Inclusion | Left Menu | `http://localhost/dvwa/vulnerabilities/fi/` | `http://KALI_IP/dvwa/vulnerabilities/fi/` | `http://KALI_IP:4280/vulnerabilities/fi/` |
+| ⑨ 文件上传 File Upload | Left Menu | `http://localhost/dvwa/vulnerabilities/upload/` | `http://KALI_IP/dvwa/vulnerabilities/upload/` | `http://KALI_IP:4280/vulnerabilities/upload/` |
+| ⑩ SQL 注入 (显注) | Left Menu | `http://localhost/dvwa/vulnerabilities/sqli/` | `http://KALI_IP/dvwa/vulnerabilities/sqli/` | `http://KALI_IP:4280/vulnerabilities/sqli/` |
+| ⑩+ SQL 盲注 Blind | Left Menu | `http://localhost/dvwa/vulnerabilities/sqli_blind/` | `http://KALI_IP/dvwa/vulnerabilities/sqli_blind/` | `http://KALI_IP:4280/vulnerabilities/sqli_blind/` |
+| ⑪ 反射型 XSS (R) | Left Menu | `http://localhost/dvwa/vulnerabilities/xss_r/` | `http://KALI_IP/dvwa/vulnerabilities/xss_r/` | `http://KALI_IP:4280/vulnerabilities/xss_r/` |
+| ⑪ 存储型 XSS (S) | Left Menu | `http://localhost/dvwa/vulnerabilities/xss_s/` | `http://KALI_IP/dvwa/vulnerabilities/xss_s/` | `http://KALI_IP:4280/vulnerabilities/xss_s/` |
+| ⑪ DOM 型 XSS (D) | Left Menu | `http://localhost/dvwa/vulnerabilities/xss_d/` | `http://KALI_IP/dvwa/vulnerabilities/xss_d/` | `http://KALI_IP:4280/vulnerabilities/xss_d/` |
+| ⑫ CAPTCHA / CSP 等 | 剩余全部 | `http://localhost/dvwa/` → 左侧菜单 | `http://KALI_IP/dvwa/` → 左侧菜单 | `http://KALI_IP:4280/` → 左侧菜单 |
+| 难度切换 DVWA Security | 左下角 | `http://localhost/dvwa/security.php` | `http://KALI_IP/dvwa/security.php` | `http://KALI_IP:4280/security.php` |
+| 一键重置数据库 Setup | 左侧菜单 | `http://localhost/dvwa/setup.php` | `http://KALI_IP/dvwa/setup.php` | `http://KALI_IP:4280/setup.php` |
+
+> 💡 **Kali 同学专用一行 IP 查询：** `KALI_IP=$(ip -4 a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1) ; echo "你的Kali IP是: $KALI_IP"`
+
+---
+
+### 🗺️ 图 12-1 DVWA 学习总路线图（4 难度 × 16 模块 × 3 平台 · 闯关顺序推荐）
+
+这张图是你整个 DVWA 学习阶段的"高德地图导航"🗺️：**蓝色路径（入门 1 周）→ 黄色路径（进阶 2 周）→ 橙色路径（高级 2 周）→ 红色终点（源码审计）**。跟着箭头走，学完你对 Web 漏洞的理解就完整了。图里同时标出 **Kali LAMP 原生 / Docker 容器 / Windows PHPStudy** 三种环境各自最适合的阶段：
+
+<svg viewBox="0 0 1160 620" width="100%" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1020px;margin:18px auto;display:block;border:1px solid #2a2a3a;border-radius:14px;background:#0f1120;">
+
+  <defs>
+    <linearGradient id="road-blue" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1f6feb"/><stop offset="100%" stop-color="#0b3b8a"/></linearGradient>
+    <linearGradient id="road-yellow" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#e0a500"/><stop offset="100%" stop-color="#8a5a00"/></linearGradient>
+    <linearGradient id="road-orange" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#d24a00"/><stop offset="100%" stop-color="#802800"/></linearGradient>
+    <linearGradient id="road-red" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#a1003c"/><stop offset="100%" stop-color="#5c0020"/></linearGradient>
+    <linearGradient id="env-tag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a3556"/><stop offset="100%" stop-color="#151a30"/></linearGradient>
+    <marker id="road-ar" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ffe16b"/></marker>
+    <marker id="road-ar2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ffa36b"/></marker>
+    <marker id="road-ar3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ff6b8a"/></marker>
+  </defs>
+  <text x="580" y="34" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold" font-family="Arial">图 12-1  DVWA 闯关总路线图 · 从 Low 新手村 到 Impossible 源码审计 · 4 阶段 16 模块</text>
+  <!-- 顶部：三环境徽章 -->
+  <g font-family="Arial" font-size="13">
+    <rect x="40" y="54" width="260" height="44" rx="11" fill="url(#env-tag)" stroke="#4490ff" stroke-width="1.3"/>
+    <text x="170" y="82" text-anchor="middle" fill="#cfe1ff" font-weight="bold">🪟 Windows PHPStudy · 过渡用（推荐度 ⭐⭐⭐）</text>
+    <rect x="320" y="54" width="480" height="44" rx="11" fill="url(#env-tag)" stroke="#3fb950" stroke-width="1.6"/>
+    <text x="560" y="82" text-anchor="middle" fill="#c7f3d0" font-weight="bold">🐧 Kali Linux 原生 LAMP · 全程推荐 ✅ 你现在用的就是这个！（⭐⭐⭐⭐⭐）</text>
+    <rect x="820" y="54" width="300" height="44" rx="11" fill="url(#env-tag)" stroke="#a371f7" stroke-width="1.3"/>
+    <text x="970" y="82" text-anchor="middle" fill="#e3d0ff" font-weight="bold">🐳 Docker 一行拉起 · 临时复现最爱（⭐⭐⭐⭐）</text>
+  </g>
+  <!-- 阶段一：入门 蓝色 -->
+  <g font-family="Arial">
+    <rect x="20" y="118" width="1120" height="108" rx="14" fill="url(#road-blue)" stroke="#4490ff" stroke-width="1.5"/>
+    <text x="40" y="144" fill="#fff" font-weight="bold" font-size="15">🎓 阶段一：Low 难度 · 新手村（1 周 · 先把 8 个大模块各打一遍）</text>
+    <g font-size="12.5" fill="#e6efff">
+      <rect x="40"  y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="103" y="182" text-anchor="middle" font-weight="bold">⑤ Brute Force</text><text x="103" y="202" text-anchor="middle">hydra / burp · 字典爆破</text>
+      <line x1="166" y1="186" x2="190" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="192" y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="255" y="182" text-anchor="middle" font-weight="bold">⑥ Cmd Injection</text><text x="255" y="202" text-anchor="middle">; &#124; &amp;&amp; · 管道连符</text>
+      <line x1="318" y1="186" x2="342" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="344" y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="407" y="182" text-anchor="middle" font-weight="bold">⑦ CSRF</text><text x="407" y="202" text-anchor="middle">借刀杀人 · 改密码</text>
+      <line x1="470" y1="186" x2="494" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="496" y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="559" y="182" text-anchor="middle" font-weight="bold">⑧ File Include</text><text x="559" y="202" text-anchor="middle">php://filter · LFI/RFI</text>
+      <line x1="622" y1="186" x2="646" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="648" y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="711" y="182" text-anchor="middle" font-weight="bold">⑨ File Upload</text><text x="711" y="202" text-anchor="middle">图片马 · Weevely shell</text>
+      <line x1="774" y1="186" x2="798" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="800" y="158" width="126" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="863" y="182" text-anchor="middle" font-weight="bold">⑩ SQL Inject</text><text x="863" y="202" text-anchor="middle">order by · union select</text>
+      <line x1="926" y1="186" x2="950" y2="186" stroke="#4490ff" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="952" y="158" width="176" height="56" rx="8" fill="#001c4a" stroke="#4490ff"/><text x="1040" y="182" text-anchor="middle" font-weight="bold">⑪ XSS (R+S+D) 三种</text><text x="1040" y="202" text-anchor="middle">img onerror · script · #锚点</text>
+    </g>
+  </g>
+  <!-- 阶段二：进阶 黄色 -->
+  <g font-family="Arial">
+    <rect x="20" y="244" width="1120" height="108" rx="14" fill="url(#road-yellow)" stroke="#ffe16b" stroke-width="1.5"/>
+    <text x="40" y="270" fill="#fff" font-weight="bold" font-size="15">🔐 阶段二：Medium 难度 · 第一次绕过（2 周 · 学会每种漏洞基础绕过姿势）</text>
+    <g font-size="12.5" fill="#fff3c2">
+      <rect x="40"  y="284" width="170" height="56" rx="8" fill="#3a2a00" stroke="#ffe16b"/><text x="125" y="308" text-anchor="middle" font-weight="bold">绕过1：strip_tags / str_replace</text><text x="125" y="328" text-anchor="middle">大小写 · 双写 · &lt;img&gt; 其他标签</text>
+      <line x1="210" y1="312" x2="240" y2="312" stroke="#ffe16b" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="242" y="284" width="170" height="56" rx="8" fill="#3a2a00" stroke="#ffe16b"/><text x="327" y="308" text-anchor="middle" font-weight="bold">绕过2：mysql_real_escape</text><text x="327" y="328" text-anchor="middle">宽字节 · 二次注入 · ORDER BY</text>
+      <line x1="412" y1="312" x2="442" y2="312" stroke="#ffe16b" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="444" y="284" width="170" height="56" rx="8" fill="#3a2a00" stroke="#ffe16b"/><text x="529" y="308" text-anchor="middle" font-weight="bold">绕过3：Content-Type</text><text x="529" y="328" text-anchor="middle">Burp 修改 Content-Type 头</text>
+      <line x1="614" y1="312" x2="644" y2="312" stroke="#ffe16b" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="646" y="284" width="170" height="56" rx="8" fill="#3a2a00" stroke="#ffe16b"/><text x="731" y="308" text-anchor="middle" font-weight="bold">绕过4：黑名单后缀</text><text x="731" y="328" text-anchor="middle">.php5 .phtml .htaccess %00截断</text>
+      <line x1="816" y1="312" x2="846" y2="312" stroke="#ffe16b" stroke-width="1.6" marker-end="url(#road-ar)"/>
+      <rect x="848" y="284" width="280" height="56" rx="8" fill="#3a2a00" stroke="#ffe16b"/><text x="988" y="308" text-anchor="middle" font-weight="bold">🔥 Kali 实操：Burp Intruder / sqlmap / Hydra</text><text x="988" y="328" text-anchor="middle">每个工具至少手动跑 3 次，烂熟于心</text>
+    </g>
+  </g>
+  <!-- 阶段三：高级 橙色 -->
+  <g font-family="Arial">
+    <rect x="20" y="370" width="1120" height="108" rx="14" fill="url(#road-orange)" stroke="#ffa36b" stroke-width="1.5"/>
+    <text x="40" y="396" fill="#fff" font-weight="bold" font-size="15">🚀 阶段三：High 难度 · 组合拳挑战（2 周 · 多步绕过 + Token + 文件内容检测）</text>
+    <g font-size="12.5" fill="#ffe6d0">
+      <rect x="40"  y="410" width="210" height="56" rx="8" fill="#4a1800" stroke="#ffa36b"/><text x="145" y="434" text-anchor="middle" font-weight="bold">High 1：user_token 机制</text><text x="145" y="454" text-anchor="middle">Burp Pitchfork + Grep-Extract</text>
+      <line x1="250" y1="438" x2="280" y2="438" stroke="#ffa36b" stroke-width="1.6" marker-end="url(#road-ar2)"/>
+      <rect x="282" y="410" width="210" height="56" rx="8" fill="#4a1800" stroke="#ffa36b"/><text x="387" y="434" text-anchor="middle" font-weight="bold">High 2：图片二次渲染</text><text x="387" y="454" text-anchor="middle">copy 命令 + php://filter + 文件包含上传</text>
+      <line x1="492" y1="438" x2="522" y2="438" stroke="#ffa36b" stroke-width="1.6" marker-end="url(#road-ar2)"/>
+      <rect x="524" y="410" width="210" height="56" rx="8" fill="#4a1800" stroke="#ffa36b"/><text x="629" y="434" text-anchor="middle" font-weight="bold">High 3：SQL 盲注 布尔/时间</text><text x="629" y="454" text-anchor="middle">substring(ascii(mid(...))) · sqlmap --level 3</text>
+      <line x1="734" y1="438" x2="764" y2="438" stroke="#ffa36b" stroke-width="1.6" marker-end="url(#road-ar2)"/>
+      <rect x="766" y="410" width="362" height="56" rx="8" fill="#4a1800" stroke="#ffa36b"/><text x="947" y="434" text-anchor="middle" font-weight="bold">🐧 Kali 全家桶联动：sqlmap -r request.txt + Burp + BeEF</text><text x="947" y="454" text-anchor="middle">请求保存为 txt，用 sqlmap 读包跑 / Beef 挂僵尸 XSS 组合</text>
+    </g>
+  </g>
+  <!-- 阶段四：终点 红色 -->
+  <g font-family="Arial">
+    <rect x="20" y="496" width="1120" height="108" rx="14" fill="url(#road-red)" stroke="#ff6b8a" stroke-width="1.5"/>
+    <text x="40" y="522" fill="#fff" font-weight="bold" font-size="15">🏆 阶段四：Impossible 难度 + 小模块扫尾 · 源码审计（1 周 · 学正确写法，彻底理解漏洞根因）</text>
+    <g font-size="12.5" fill="#ffd7df">
+      <rect x="40"  y="536" width="180" height="56" rx="8" fill="#400016" stroke="#ff6b8a"/><text x="130" y="560" text-anchor="middle" font-weight="bold">Imp 1：PDO / htmlspecialchars</text><text x="130" y="580" text-anchor="middle">白名单 · 输出编码 · 预编译</text>
+      <line x1="220" y1="564" x2="250" y2="564" stroke="#ff6b8a" stroke-width="1.6" marker-end="url(#road-ar3)"/>
+      <rect x="252" y="536" width="180" height="56" rx="8" fill="#400016" stroke="#ff6b8a"/><text x="342" y="560" text-anchor="middle" font-weight="bold">Imp 2：CSRF Token</text><text x="342" y="580" text-anchor="middle">checkToken · 生成-校验双保险</text>
+      <line x1="432" y1="564" x2="462" y2="564" stroke="#ff6b8a" stroke-width="1.6" marker-end="url(#road-ar3)"/>
+      <rect x="464" y="536" width="180" height="56" rx="8" fill="#400016" stroke="#ff6b8a"/><text x="554" y="560" text-anchor="middle" font-weight="bold">Imp 3：锁定/验证码/哈希</text><text x="554" y="580" text-anchor="middle">password_hash · 3次锁15分</text>
+      <line x1="644" y1="564" x2="674" y2="564" stroke="#ff6b8a" stroke-width="1.6" marker-end="url(#road-ar3)"/>
+      <rect x="676" y="536" width="180" height="56" rx="8" fill="#400016" stroke="#ff6b8a"/><text x="766" y="560" text-anchor="middle" font-weight="bold">其他小模块通关</text><text x="766" y="580" text-anchor="middle">CAPTCHA · CSP · SessionID · JS</text>
+      <line x1="856" y1="564" x2="886" y2="564" stroke="#ff6b8a" stroke-width="1.6" marker-end="url(#road-ar3)"/>
+      <rect x="888" y="536" width="240" height="56" rx="8" fill="#200" stroke="#3fb950" stroke-width="2"/>
+      <text x="1008" y="558" text-anchor="middle" fill="#9effa0" font-weight="bold" font-size="14">🎓✅ DVWA 通关！下一站：</text>
+      <text x="1008" y="580" text-anchor="middle" fill="#9effa0" font-size="13">SQLi-Labs → Upload-Labs → Pikachu → 靶机提权</text>
+    </g>
+  </g>
+</svg>
+
+---
+
+### 🔥 Kali / Docker 同学 · 通关后必做清单（6 条 checklist ✅ 勾完才算真毕业 🎓）
+
+1. **✅ 已用 Kali Hydra 爆破 Brute Force Low/Medium/High**（`hydra -l admin -P rockyou.txt ... http-form-get` 三条命令都跑过）
+2. **✅ 已用 Kali sqlmap 爆破 SQL 注入显注 + 盲注**（`sqlmap -u URL --cookie=... --dump -D dvwa -T users` + `--technique BST` 盲注都跑过）
+3. **✅ 已用 Weevely / 图片马 组合完成 File Upload + File Include Getshell**（`weevely generate / weevely http://KALI_IP/dvwa/hackable/uploads/xxx.php` 成功连接）
+4. **✅ 已用 BeEF 完成存储型 XSS 僵尸控制**（留言板注入 `<script src=hook.js>`，BeEF 面板能看到 victim 上线，做过截图 / Cookie 窃取）
+5. **✅ 已对比过三种环境：Windows PHPStudy、Kali LAMP、Docker web-dvwa**（知道各自优缺点；以后其他靶场 90% 用 Kali LAMP 或 Docker）
+6. **✅ 已完成 1 次 "环境搭坏了就重置" 演练**（`docker rm -f dvwa-test && docker run ...` 或 访问 `/setup.php` 一键重置 DB，不慌不忙）
+
+> 🐳 **Docker 版一键重置（就这 2 行）：**
+> ```bash
+> docker rm -f dvwa-test
+> docker run -d --name dvwa-test -p 4280:80 vulnerables/web-dvwa
+> ```
+> 🐧 **Kali LAMP 版一键重置数据库（2 行）：**
+> ```bash
+> mariadb -u root -ppassword -e "DROP DATABASE IF EXISTS dvwa;"
+> curl -sS "http://127.0.0.1/dvwa/setup.php" -d "create_db=Create+%2F+Reset+Database" | grep -E "Success|Failed"
+> ```
+
+---
+
 ## DVWA其他模块快速通关 ⚡
 
 前面的大模块我们都讲得很细，这一章的这些小模块我们就"快速通关"，每个都讲清楚原理，但不会像前面那样深入到每个级别的每一行代码。毕竟咱们的目标是"了解全貌"，而不是"死磕细节"。

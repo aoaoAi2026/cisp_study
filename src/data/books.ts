@@ -4071,7 +4071,290 @@ const books: Book[] = [
       { id: 'ch32', title: '第三十二章 DC-1靶机实战与学习路线总结', fileName: 'ch32-DC-1靶机实战与学习路线总结.md', pageCount: 80 },
     ]
   },
+  {
+    id: 'cybersecurity-tool-tutorials',
+    title: '网安工具使用教程',
+    author: 'CISP教程编写组',
+    category: '渗透测试',
+    subCategory: '安全工具',
+    cover: '实战',
+    description: '全网最通俗易懂的35款网络安全工具实战教程，从零讲解每一款工具的原理、安装、参数、攻防案例与防御方法。涵盖Web渗透核心四件套（Burp Suite、SQLMap、OWASP ZAP、Nuclei）、信息收集全家桶（Nmap、Masscan、Amass、Subfinder、WhatWeb、Wappalyzer）、漏洞扫描器（Nikto、DirBuster、DirSearch、GoBuster、ffuf、Arjun）、密码破解三板斧（John、Hashcat、Hydra）、内网渗透神器（Responder、Mimikatz、BloodHound、CrackMapExec、Impacket、Evil-WinRM）、红队框架三件套（Metasploit、Cobalt Strike、Empire、PowerSploit）、无线安全（Aircrack-ng）、云原生安全（kube-hunter、lazydocker）以及后门工具（Ncat/Netcat）。每章都配通俗比喻、原理图解、分步安装、参数速查、真实攻防场景与防御建议，新手友好，老手速查，即学即用。',
+    pages: 2200,
+    difficulty: '入门',
+    publishYear: 2026,
+    isbn: '978-7-111-66666-6',
+    tags: ['Burp Suite', 'Nmap', 'Metasploit', 'SQLMap', 'Wireshark', '内网渗透', '信息收集', '密码破解', '红队工具', '漏洞扫描', 'Web渗透', '无线安全', '云安全'],
+    rating: 4.95,
+    readers: 8800,
+    targetAudience: '网络安全零基础小白、渗透测试工程师、护网红队蓝队成员、CTF参赛选手、安全运维工程师',
+    prerequisites: ['会基本的Windows/Linux命令行即可，工具全部手把手教安装'],
+    folder: '网安工具使用教程',
+    highlights: [
+      '35章全彩图解教程，每款工具独立成章，从原理到实战一条线讲透',
+      '前5章核心工具（Burp/Nmap/MSF/SQLMap/Wireshark）超详细，每章破100页',
+      '通俗比喻贯穿全书：HTTPS中间人=快递开箱检查、哈希=单向榨汁机、端口扫描=上门敲门',
+      '每章标配：原理图解+分步安装+参数速查表+2~3个真实攻防场景+防御方法+常见坑点',
+      '从外网打点到内网横向，工具链完整衔接：资产→端口→漏洞→拿壳→提权→横向→持久化',
+      '新手村友好：环境变量、依赖安装、报错解决全部有截图步骤，零基础不迷路'
+    ],
+    chapters: [
+      { id: 'ch1', title: '第一章 Burp Suite — Web渗透第一神器', fileName: 'ch01-BurpSuite.md', pageCount: 130 },
+      { id: 'ch2', title: '第二章 Nmap — 端口扫描界的老大哥', fileName: 'ch02-Nmap.md', pageCount: 110 },
+      { id: 'ch3', title: '第三章 Metasploit — 渗透测试的瑞士军刀', fileName: 'ch03-Metasploit.md', pageCount: 120 },
+      { id: 'ch4', title: '第四章 SQLMap — 全自动SQL注入神器', fileName: 'ch04-SQLMap.md', pageCount: 100 },
+      { id: 'ch5', title: '第五章 Wireshark — 抓包分析界的福尔摩斯', fileName: 'ch05-Wireshark.md', pageCount: 105 },
+      { id: 'ch6', title: '第六章 Ncat/Netcat — 网络界的瑞士军刀', fileName: 'ch06-Ncat-Netcat.md', pageCount: 70 },
+      { id: 'ch7', title: '第七章 John the Ripper — 密码破解的开膛手', fileName: 'ch07-John-the-Ripper.md', pageCount: 75 },
+      { id: 'ch8', title: '第八章 Hashcat — GPU哈希破解之王', fileName: 'ch08-Hashcat.md', pageCount: 75 },
+      { id: 'ch9', title: '第九章 Hydra — 九头蛇暴力破解神器', fileName: 'ch09-Hydra.md', pageCount: 65 },
+      { id: 'ch10', title: '第十章 DirBuster — 目录爆破的开路先锋', fileName: 'ch10-DirBuster.md', pageCount: 60 },
+      { id: 'ch11', title: '第十一章 Nikto — Web漏洞扫描的老猎手', fileName: 'ch11-Nikto.md', pageCount: 60 },
+      { id: 'ch12', title: '第十二章 DirSearch — Python目录扫描利器', fileName: 'ch12-DirSearch.md', pageCount: 60 },
+      { id: 'ch13', title: '第十三章 GoBuster — 极速目录/DNS爆破手', fileName: 'ch13-GoBuster.md', pageCount: 60 },
+      { id: 'ch14', title: '第十四章 Nuclei — 新时代POC扫描引擎', fileName: 'ch14-Nuclei.md', pageCount: 80 },
+      { id: 'ch15', title: '第十五章 OWASP ZAP — 开源Web扫描旗舰', fileName: 'ch15-OWASP-ZAP.md', pageCount: 75 },
+      { id: 'ch16', title: '第十六章 Aircrack-ng — 无线网破解全能手', fileName: 'ch16-Aircrack-ng.md', pageCount: 75 },
+      { id: 'ch17', title: '第十七章 Masscan — 全网极速端口扫描火箭', fileName: 'ch17-Masscan.md', pageCount: 55 },
+      { id: 'ch18', title: '第十八章 Cobalt Strike — 红队协作作战平台', fileName: 'ch18-Cobalt-Strike.md', pageCount: 90 },
+      { id: 'ch19', title: '第十九章 Empire — PowerShell后渗透框架', fileName: 'ch19-Empire.md', pageCount: 70 },
+      { id: 'ch20', title: '第二十章 PowerSploit — Windows后渗透PowerShell军火库', fileName: 'ch20-PowerSploit.md', pageCount: 70 },
+      { id: 'ch21', title: '第二十一章 Responder — LLMNR/NBT-NS投毒钓鱼王', fileName: 'ch21-Responder.md', pageCount: 75 },
+      { id: 'ch22', title: '第二十二章 Mimikatz — 密码凭证窃取之王', fileName: 'ch22-Mimikatz.md', pageCount: 90 },
+      { id: 'ch23', title: '第二十三章 BloodHound — 内网AD关系可视化鹰眼', fileName: 'ch23-BloodHound.md', pageCount: 85 },
+      { id: 'ch24', title: '第二十四章 Evil-WinRM — Windows远程管理渗透利器', fileName: 'ch24-Evil-WinRM.md', pageCount: 60 },
+      { id: 'ch25', title: '第二十五章 CrackMapExec — 内网横向移动瑞士军刀', fileName: 'ch25-CrackMapExec.md', pageCount: 80 },
+      { id: 'ch26', title: '第二十六章 Impacket — 内网协议利用全家桶', fileName: 'ch26-Impacket.md', pageCount: 90 },
+      { id: 'ch27', title: '第二十七章 Amass — 子域名资产情报收割机', fileName: 'ch27-Amass.md', pageCount: 65 },
+      { id: 'ch28', title: '第二十八章 Subfinder — 极速子域名发现器', fileName: 'ch28-Subfinder.md', pageCount: 55 },
+      { id: 'ch29', title: '第二十九章 WhatWeb — 网站指纹识别小侦探', fileName: 'ch29-WhatWeb.md', pageCount: 50 },
+      { id: 'ch30', title: '第三十章 Wappalyzer — 技术栈透视放大镜', fileName: 'ch30-Wappalyzer.md', pageCount: 50 },
+      { id: 'ch31', title: '第三十一章 ffuf — 极速模糊测试火枪手', fileName: 'ch31-ffuf.md', pageCount: 60 },
+      { id: 'ch32', title: '第三十二章 Arjun — HTTP参数自动发现家', fileName: 'ch32-Arjun.md', pageCount: 55 },
+      { id: 'ch33', title: '第三十三章 lazydocker — Docker容器可视化管家', fileName: 'ch33-lazydocker.md', pageCount: 45 },
+      { id: 'ch34', title: '第三十四章 kubectl — Kubernetes集群司令部', fileName: 'ch34-kubectl.md', pageCount: 65 },
+      { id: 'ch35', title: '第三十五章 kube-hunter — K8s安全漏洞猎手', fileName: 'ch35-kube-hunter.md', pageCount: 55 },
+    ]
+  },
+  {
+    id: 'personal-study-notes',
+    title: '学习笔记',
+    author: '本人',
+    category: '学习笔记',
+    subCategory: '个人笔记',
+    cover: '笔记',
+    description: '个人学习过程中记录的实战笔记、通关教程、工具使用踩坑与心得总结。支持随时添加新的 Markdown 文章，放入 public/books_export/books_export/学习笔记/ 目录后重新构建或开发模式下保存即自动出现在书库与目录中。',
+    pages: 500,
+    difficulty: '入门',
+    publishYear: 2026,
+    tags: ['个人笔记', '实战记录', 'DVWA', 'Burp Suite', '命令注入', '暴力破解', 'CSRF'],
+    rating: 5.0,
+    readers: 1,
+    targetAudience: '本人日常学习记录、复习查阅、新手按笔记复现学习',
+    prerequisites: ['会基本的 Markdown 写作即可，新笔记直接按 .md 文件放入目录'],
+    folder: '学习笔记',
+    highlights: [
+      '新笔记自动收录：放入 学习笔记/ 文件夹即自动出现在书库（开发模式实时，构建模式自动扫描）',
+      '自动生成目录：每篇 .md 按文件名排序、首行 # 标题提取作为章节名',
+      '支持 SVG/Markdown/表格/代码块/任务清单 等 GFM 完整语法，含语音朗读按钮',
+      '零基础实战保姆级记录：DVWA Brute Force / Command Injection / CSRF 全三关方案'
+    ],
+    chapters: [
+      { id: 'ch1', title: '命令注入学习', fileName: '命令注入学习.md', pageCount: 20 },
+      { id: 'ch2', title: 'DVWA 暴力破解通关方案', fileName: 'DVWA 暴力破解通关方案.md', pageCount: 20 },
+      { id: 'ch3', title: 'DVWA第一关暴力破解', fileName: 'DVWA第一关暴力破解.md', pageCount: 30 },
+      { id: 'ch4', title: 'DVWA Command Injection 命令注入 全三关保姆级通关教程', fileName: 'DVWA Command Injection 命令注入 全三关保姆级通关教程（零基础超通俗版）.md', pageCount: 40 },
+      { id: 'ch5', title: 'DVWA CSRF 跨站请求伪造 全三关保姆级通关教程', fileName: 'DVWA Cross Site Request Forgery (CSRF) 跨站请求伪造 全三关保姆级通关教程（零基础超通俗版）.md', pageCount: 40 },
+      { id: 'ch6', title: 'Kali Linux DVWA 部署与排障全记录', fileName: 'Kali Linux DVWA 部署与排障全记录.md', pageCount: 30 },
+      { id: 'ch7', title: 'DVWA 暴力破解第一关 Burp 超详细对照教程', fileName: 'ch1-dvwa第一关burp暴力破解.md', pageCount: 1200 },
+      { id: 'ch8', title: 'DVWA Brute Force High 难度 6 套通关方法', fileName: 'ch2-dvwa第一关burp暴力破解-high.md', pageCount: 20 },
+      { id: 'ch9', title: 'Burp 原生宏 vs CSRF Token 插件 超详细对比', fileName: 'ch3-方法一（Burp 原生宏 + Session 会话规则）VS 方法三（Burp CSRF Token 插件）超详细对比.md', pageCount: 10 },
+    ]
+  },
 ];
+
+/* ============================================================
+ * 动态书籍加载：运行时合并 public/books_export/books_manifest.json
+ *   - 将文件夹扫描出来的书/章节合并到静态 books 数组
+ *   - 已注册书籍：用 manifest 的章节覆盖（实现"新笔记自动加入"）
+ *   - 未注册书籍：自动生成默认的《学习笔记》类 Book 对象
+ * ============================================================ */
+
+export interface ManifestBookEntry {
+  folder: string;
+  title: string;
+  chapters: BookChapter[];
+  pages: number;
+  chapterCount: number;
+}
+
+export interface BooksManifest {
+  books: ManifestBookEntry[];
+  scannedAt: string;
+}
+
+// 常见文件夹 -> 默认分类的自动猜测映射（仅用于新书首次创建）
+const folderCategoryHints: Array<[RegExp, Partial<Book> & { category: string }]> = [
+  [/笔记|note|my\s*book|个人|原创|草稿/i, { category: '学习笔记', subCategory: '个人笔记', difficulty: '入门' }],
+  [/靶场|dvwa|pikachu|upload|labs|sqli|webgoat|vulnhub|dc\-|红队|靶机|实战练习/i, { category: '系统安全', subCategory: '漏洞靶场', difficulty: '入门' }],
+  [/工具|tool|burp|nmap|sqlmap|msf|metasploit|wireshark|nuclei|zap|cobalt|hydra|hashcat|john|responder|mimikatz|bloodhound/i, { category: '渗透测试', subCategory: '安全工具', difficulty: '入门' }],
+  [/护网|hw|红队|apt|att&ck|cisp\s*红队/i, { category: '护网红队', subCategory: '红队攻击', difficulty: '进阶' }],
+  [/蓝队|soc|运营|应急|响应|日志|取证|加固|入侵|检测|防御/i, { category: '护网蓝队', subCategory: '蓝队防御', difficulty: '进阶' }],
+  [/web|owasp|xss|sql|注入|csrf|ssrf|文件上传|越权|rce/i, { category: 'Web安全', subCategory: 'Web漏洞', difficulty: '入门' }],
+  [/内网|横向|域|ad\s|活动目录|pass\-the\-hash|kerbero/i, { category: '渗透测试', subCategory: '内网渗透', difficulty: '高级' }],
+  [/二进制|逆向|pwn|exploit|漏洞挖掘|heap|stack|elf|pe\s/i, { category: '二进制安全', subCategory: '漏洞挖掘', difficulty: '高级' }],
+  [/密码|crypto|rsa|aes|hash|sm\d|国密|md5/i, { category: '密码学', subCategory: '密码学', difficulty: '进阶' }],
+  [/无线|wifi|aircrack|bluetooth|rfid/i, { category: '无线安全', subCategory: '无线渗透', difficulty: '进阶' }],
+  [/iot|物联网|车联网|工控|scada/i, { category: '物联网安全', subCategory: 'IoT安全', difficulty: '高级' }],
+  [/云|k8s|kubernetes|docker|容器|cloud|aws|aliyun/i, { category: '云安全', subCategory: '容器与云原生', difficulty: '高级' }],
+  [/linux|windows|操作系统|kernel|提权/i, { category: '系统安全', subCategory: '操作系统', difficulty: '进阶' }],
+  [/网络|tcp|ip|路由|交换|协议|wireshark/i, { category: '网络攻防', subCategory: '网络协议', difficulty: '入门' }],
+  [/社工|钓鱼|社会工程|phishing/i, { category: '社会工程', subCategory: '社工攻击', difficulty: '入门' }],
+];
+
+function guessBookDefaults(folderName: string): Partial<Book> & { category: string } {
+  for (const [re, info] of folderCategoryHints) {
+    if (re.test(folderName)) return info;
+  }
+  return { category: '学习笔记', subCategory: '个人笔记', difficulty: '入门' };
+}
+
+const slugChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+function folderToId(folder: string): string {
+  let slug = '';
+  const lower = folder.toLowerCase();
+  for (const ch of lower) {
+    const code = ch.charCodeAt(0);
+    if ((code >= 97 && code <= 122) || (code >= 48 && code <= 57)) slug += ch;
+    else if (ch === '-' || ch === '_' || ch === ' ') slug += '-';
+    else slug += slugChars[code % slugChars.length];
+  }
+  return 'auto-book-' + (slug || folder.replace(/\W+/g, '')).slice(0, 40);
+}
+
+function makeAutoBook(entry: ManifestBookEntry): Book {
+  const hint = guessBookDefaults(entry.folder);
+  return {
+    id: folderToId(entry.folder),
+    title: entry.title || entry.folder,
+    author: '本人',
+    category: hint.category,
+    subCategory: hint.subCategory,
+    cover: '笔记',
+    description: `由文件夹 "${entry.folder}" 自动收录的 Markdown 笔记集，共 ${entry.chapterCount} 篇。将新的 .md 文件放入该目录即可自动出现在目录中。`,
+    pages: entry.pages,
+    difficulty: hint.difficulty,
+    publishYear: new Date().getFullYear(),
+    tags: ['自动收录', entry.folder, 'Markdown笔记', ...(hint.subCategory ? [hint.subCategory] : [])],
+    rating: 5.0,
+    readers: 1,
+    targetAudience: '本人查阅与学习分享',
+    prerequisites: ['会 Markdown 语法即可，新增 .md 到该目录即自动加入本书'],
+    folder: entry.folder,
+    highlights: [
+      `📂 来源文件夹：${entry.folder}`,
+      `📝 自动收录：共 ${entry.chapterCount} 篇 Markdown 笔记`,
+      '🔄 新笔记自动加入：放入 .md 后重新加载即出现在目录',
+      '🎙️ 完整支持语音朗读、SVG 图片、代码块、表格等 Markdown 语法'
+    ],
+    chapters: entry.chapters,
+  };
+}
+
+/**
+ * 合并静态 books + 运行时 manifest（如果能加载到）。
+ * 合并规则：
+ *   1. 以静态 books 为基础（保证已有元数据完整）
+ *   2. 对每本静态书，若 manifest 里同 folder 存在章节 → 用 manifest 章节替换
+ *      （新增/删除 .md 后章节列表会自动变化）
+ *   3. manifest 中 folder 未在静态 books 出现 → 作为新书自动追加
+ */
+export function mergeStaticWithManifest(staticBooks: Book[], manifest: BooksManifest | null): Book[] {
+  if (!manifest || !Array.isArray(manifest.books)) return staticBooks;
+  const byFolder = new Map(manifest.books.map((e) => [e.folder, e]));
+  const staticFolders = new Set(staticBooks.map((b) => b.folder).filter(Boolean));
+
+  const merged = staticBooks.map((b) => {
+    if (!b.folder) return b;
+    const entry = byFolder.get(b.folder);
+    if (!entry || !entry.chapters || entry.chapters.length === 0) return b;
+    // 自动章节同步：章节列表替换为 manifest 扫描结果，但保留原静态章节若有 content 字段
+    const staticContentMap = new Map(
+      (b.chapters || []).filter((c) => c.content).map((c) => [c.fileName || c.id, c.content])
+    );
+    const newChapters: BookChapter[] = entry.chapters.map((c) => ({
+      ...c,
+      content: staticContentMap.get(c.fileName || c.id),
+    }));
+    const pages = entry.pages || b.pages;
+    return { ...b, chapters: newChapters, pages } as Book;
+  });
+
+  // 新增自动收录的书
+  for (const entry of manifest.books) {
+    if (staticFolders.has(entry.folder)) continue;
+    merged.push(makeAutoBook(entry));
+  }
+
+  return merged;
+}
+
+let _manifestPromise: Promise<BooksManifest | null> | null = null;
+function loadManifestOnce(): Promise<BooksManifest | null> {
+  if (_manifestPromise) return _manifestPromise;
+  _manifestPromise = (async () => {
+    try {
+      // vite base: './'，所以用绝对路径从站点根取（带时间戳防止 APK 包缓存）
+      const ts = typeof Date !== 'undefined' ? Date.now() : 0;
+      const resp = await fetch(`./books_export/books_manifest.json?t=${ts}`);
+      if (!resp.ok) return null;
+      const json = (await resp.json()) as BooksManifest;
+      if (!json || !Array.isArray(json.books)) return null;
+      return json;
+    } catch {
+      return null;
+    }
+  })();
+  return _manifestPromise;
+}
+
+/**
+ * 对外入口：获取最新书籍列表（已与 manifest 合并，新笔记自动收录）。
+ */
+export async function getAllBooks(): Promise<Book[]> {
+  const manifest = await loadManifestOnce();
+  return mergeStaticWithManifest(books, manifest);
+}
+
+/** 与 getAllBooks() 对应的分类（基于合并后的数据重新统计数量） */
+export function buildCategories(list: Book[]): BookCategory[] {
+  const names = [
+    '全部', '护网红队', '护网蓝队', '基础理论', 'Web安全', '渗透测试',
+    '二进制安全', '系统安全', '密码学', '网络攻防', '社会工程',
+    '无线安全', '物联网安全', '云安全', '安全运营', '学习笔记'
+  ];
+  const icons: Record<string, string> = {
+    '全部': '📚', '护网红队': '🔴', '护网蓝队': '🔵', '基础理论': '📖',
+    'Web安全': '🌐', '渗透测试': '🔓', '二进制安全': '💻', '系统安全': '🖥️',
+    '密码学': '🔐', '网络攻防': '🛡️', '社会工程': '👤', '无线安全': '📡',
+    '物联网安全': '🚗', '云安全': '☁️', '安全运营': '📊', '学习笔记': '📒'
+  };
+  const descs: Record<string, string> = {
+    '全部': '所有网络安全书籍', '护网红队': '护网红队攻击与APT攻击',
+    '护网蓝队': '护网蓝队防守与应急响应', '基础理论': '网络安全基础概念与理论',
+    'Web安全': 'Web应用安全与防护', '渗透测试': '渗透测试技术与实战',
+    '二进制安全': '逆向工程与漏洞挖掘', '系统安全': '操作系统安全加固',
+    '密码学': '密码学原理与应用', '网络攻防': '网络攻击与防御技术',
+    '社会工程': '社会工程学与社工攻击', '无线安全': '无线网络与Wi-Fi安全',
+    '物联网安全': 'IoT与车联网安全', '云安全': '云计算与容器安全',
+    '安全运营': 'SOC运营与应急响应', '学习笔记': '个人笔记与实战记录'
+  };
+  return names.map((name) => ({
+    name,
+    description: descs[name] || name,
+    icon: icons[name] || '📘',
+    count: name === '全部' ? list.length : list.filter((b) => b.category === name).length,
+  }));
+}
 
 export const bookCategories: BookCategory[] = [
   { name: '全部', description: '所有网络安全书籍', icon: '📚', count: books.length },

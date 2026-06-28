@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../components/UI';
-import books, { bookCategories, Book } from '../data/books';
+import booksData, { bookCategories as defaultBookCategories, BookCategory, Book, getAllBooks, buildCategories } from '../data/books';
 import BookReader from './BookReader';
 import {
   Search,
@@ -87,6 +87,8 @@ const toggleFavorite = (bookId: string): string[] => {
 };
 
 export const BookLibrary: React.FC = () => {
+  const [books, setBooks] = useState<Book[]>(booksData);
+  const [categories, setCategories] = useState<BookCategory[]>(defaultBookCategories);
   const [selectedCategory, setSelectedCategory] = useState<string>('全部');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
@@ -98,6 +100,14 @@ export const BookLibrary: React.FC = () => {
   useEffect(() => {
     setFavorites(getFavorites());
     setReadingProgress(getReadingProgress());
+    // 加载 manifest 合并后的动态书籍列表（新笔记自动收录）
+    (async () => {
+      try {
+        const merged = await getAllBooks();
+        setBooks(merged);
+        setCategories(buildCategories(merged));
+      } catch {}
+    })();
   }, []);
 
   const filteredBooks = books.filter(book => {
@@ -337,7 +347,7 @@ export const BookLibrary: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* 分类导航 */}
         <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6">
-          {bookCategories.map((cat) => (
+          {categories.map((cat) => (
             <motion.button
               key={cat.name}
               whileHover={{ scale: 1.02 }}

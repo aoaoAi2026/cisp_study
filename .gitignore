@@ -28,3 +28,29 @@ dist-ssr
 
 # CodeBuddy AI skills (don't commit to project repo)
 .codebuddy/skills
+
+# Python cache & temporary one-off scripts
+__pycache__/
+*.pyc
+_*.py
+_*.mjs
+
+# Capacitor / Android build artifacts (huge, never commit)
+android/.gradle/
+android/app/build/
+android/build/
+android/capacitor-cordova-android-plugins/build/
+*.apk
+*.aab
+
+# iOS build artifacts
+ios/App/build/
+ios/Pods/
+
+# Gradle
+.gradle/
+
+# Environment secrets
+.env
+.env.*
+!.env.example

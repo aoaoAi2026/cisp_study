@@ -4,6 +4,7 @@ import { Card } from '../components/UI';
 import { Book, BookChapter } from '../data/books';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import TextToSpeechPlayer from '../components/TextToSpeechPlayer';
 import {
   ArrowLeft,
@@ -382,7 +383,7 @@ const BookReader: React.FC<BookReaderProps> = ({ book, onBack, onProgressUpdate 
                 ) : chapterContent ? (
                   <>
                     <TextToSpeechPlayer text={chapterContent} isDark={theme === 'dark'} />
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                       {chapterContent}
                     </ReactMarkdown>
                   </>
