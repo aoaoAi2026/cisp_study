@@ -346,163 +346,211 @@
         },
         {
           "id": "ch3",
+          "title": "第一章 Linux安全概述",
+          "fileName": "ch1.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch4",
           "title": "/etc/audit/auditd.conf 高级配置详解",
           "fileName": "append_part2.md",
           "pageCount": 31
         },
         {
-          "id": "ch4",
+          "id": "ch5",
           "title": "第2章 用户账户与权限安全",
           "fileName": "ch02-用户账户与权限安全.md",
           "pageCount": 33
         },
         {
-          "id": "ch5",
+          "id": "ch6",
+          "title": "第二章 账户与权限安全",
+          "fileName": "ch2.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch7",
           "title": "append_part3",
           "fileName": "append_part3.md",
           "pageCount": 34
         },
         {
-          "id": "ch6",
+          "id": "ch8",
           "title": "第3章 文件系统安全",
           "fileName": "ch03-文件系统安全.md",
           "pageCount": 34
         },
         {
-          "id": "ch7",
+          "id": "ch9",
+          "title": "第三章 系统服务安全",
+          "fileName": "ch3.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch10",
           "title": "========== 方案1: rsync定时远程备份 ==========",
           "fileName": "append_part4.md",
           "pageCount": 25
         },
         {
-          "id": "ch8",
+          "id": "ch11",
           "title": "第4章 日志与审计",
           "fileName": "ch04-日志与审计.md",
           "pageCount": 131
         },
         {
-          "id": "ch9",
+          "id": "ch12",
+          "title": "第四章 文件系统安全",
+          "fileName": "ch4.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch13",
           "title": "/etc/systemd/system/mywebapp.service",
           "fileName": "ch05-系统服务加固.md",
           "pageCount": 65
         },
         {
-          "id": "ch10",
+          "id": "ch14",
+          "title": "第五章 日志与审计",
+          "fileName": "ch5.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch15",
           "title": "不同类型密钥生成对比",
           "fileName": "ch06-SSH安全配置.md",
           "pageCount": 74
         },
         {
-          "id": "ch11",
+          "id": "ch16",
+          "title": "第六章 入侵检测",
+          "fileName": "ch6.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch17",
           "title": "查看当前内核加载的netfilter模块",
           "fileName": "ch07-防火墙配置.md",
           "pageCount": 52
         },
         {
-          "id": "ch12",
+          "id": "ch18",
+          "title": "第七章 应用安全",
+          "fileName": "ch7.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch19",
           "title": "第8章 SELinux与AppArmor",
           "fileName": "ch08-SELinux与AppArmor.md",
           "pageCount": 33
         },
         {
-          "id": "ch13",
+          "id": "ch20",
+          "title": "第八章 安全运维",
+          "fileName": "ch8.md",
+          "pageCount": 3
+        },
+        {
+          "id": "ch21",
           "title": "第9章 Web服务器安全加固",
           "fileName": "ch09-Web服务器安全加固.md",
           "pageCount": 27
         },
         {
-          "id": "ch14",
+          "id": "ch22",
           "title": "/etc/my.cnf - 生产环境安全配置完整示例",
           "fileName": "ch10-数据库安全加固.md",
           "pageCount": 74
         },
         {
-          "id": "ch15",
+          "id": "ch23",
           "title": "第11章 缓存服务安全加固",
           "fileName": "ch11-缓存服务安全加固.md",
           "pageCount": 26
         },
         {
-          "id": "ch16",
+          "id": "ch24",
           "title": "第12章 邮件服务安全加固",
           "fileName": "ch12-邮件服务安全加固.md",
           "pageCount": 27
         },
         {
-          "id": "ch17",
+          "id": "ch25",
           "title": "第13章 容器安全",
           "fileName": "ch13-容器安全.md",
           "pageCount": 29
         },
         {
-          "id": "ch18",
+          "id": "ch26",
           "title": "第14章 自动化安全加固脚本",
           "fileName": "ch14-自动化安全加固脚本.md",
           "pageCount": 64
         },
         {
-          "id": "ch19",
+          "id": "ch27",
           "title": "第15章 安全扫描与漏洞修复",
           "fileName": "ch15-安全扫描与漏洞修复.md",
           "pageCount": 33
         },
         {
-          "id": "ch20",
+          "id": "ch28",
           "title": "第十六章 应急响应与安全监控",
           "fileName": "ch16-应急响应与安全监控.md",
           "pageCount": 27
         },
         {
-          "id": "ch21",
+          "id": "ch29",
           "title": "第十七章 VPN与网络隧道安全",
           "fileName": "ch17-VPN与网络隧道安全.md",
           "pageCount": 10
         },
         {
-          "id": "ch22",
+          "id": "ch30",
           "title": "第十八章 DNS服务器安全",
           "fileName": "ch18-DNS服务器安全.md",
           "pageCount": 8
         },
         {
-          "id": "ch23",
+          "id": "ch31",
           "title": "第十九章 负载均衡器安全",
           "fileName": "ch19-负载均衡器安全.md",
           "pageCount": 10
         },
         {
-          "id": "ch24",
+          "id": "ch32",
           "title": "第二十章 代理服务器安全",
           "fileName": "ch20-代理服务器安全.md",
           "pageCount": 11
         },
         {
-          "id": "ch25",
+          "id": "ch33",
           "title": "第二十一章 证书管理与PKI安全",
           "fileName": "ch21-证书管理与PKI安全.md",
           "pageCount": 14
         },
         {
-          "id": "ch26",
+          "id": "ch34",
           "title": "第二十二章 备份与灾难恢复",
           "fileName": "ch22-备份与灾难恢复.md",
           "pageCount": 12
         },
         {
-          "id": "ch27",
+          "id": "ch35",
           "title": "第二十三章 等级保护合规实践",
           "fileName": "ch23-等级保护合规实践.md",
           "pageCount": 14
         },
         {
-          "id": "ch28",
+          "id": "ch36",
           "title": "Linux安全加固实战",
           "fileName": "README.md",
           "pageCount": 3
         }
       ],
-      "pages": 948,
-      "chapterCount": 28
+      "pages": 972,
+      "chapterCount": 36
     },
     {
       "folder": "Python灰帽子：黑客与逆向工程师的Python编程之道",
@@ -658,79 +706,127 @@
         },
         {
           "id": "ch5",
-          "title": "第五章 SQL注入漏洞挖掘",
-          "fileName": "ch05-SQL注入漏洞挖掘.md",
-          "pageCount": 44
+          "title": "第四章B 第一次挖洞保姆级手把手教程（零基础 30 分钟挖出第一个洞）",
+          "fileName": "ch04b-第一次挖洞保姆级手把手教程.md",
+          "pageCount": 49
         },
         {
           "id": "ch6",
-          "title": "第六章 XSS跨站脚本漏洞挖掘",
-          "fileName": "ch06-XSS跨站脚本漏洞挖掘.md",
-          "pageCount": 60
+          "title": "第五章 SQL注入漏洞挖掘",
+          "fileName": "ch05-SQL注入漏洞挖掘.md",
+          "pageCount": 55
         },
         {
           "id": "ch7",
+          "title": "第六章 XSS跨站脚本漏洞挖掘",
+          "fileName": "ch06-XSS跨站脚本漏洞挖掘.md",
+          "pageCount": 76
+        },
+        {
+          "id": "ch8",
           "title": "第七章 文件上传与包含漏洞",
           "fileName": "ch07-文件上传与包含漏洞.md",
           "pageCount": 34
         },
         {
-          "id": "ch8",
+          "id": "ch9",
           "title": "第八章 CSRF与SSRF漏洞挖掘",
           "fileName": "ch08-CSRF与SSRF漏洞挖掘.md",
           "pageCount": 55
         },
         {
-          "id": "ch9",
+          "id": "ch10",
           "title": "第九章 逻辑漏洞挖掘",
           "fileName": "ch09-逻辑漏洞挖掘.md",
-          "pageCount": 67
-        },
-        {
-          "id": "ch10",
-          "title": "第十章 越权漏洞挖掘",
-          "fileName": "ch10-越权漏洞挖掘.md",
-          "pageCount": 66
+          "pageCount": 93
         },
         {
           "id": "ch11",
+          "title": "第十章 越权漏洞挖掘",
+          "fileName": "ch10-越权漏洞挖掘.md",
+          "pageCount": 102
+        },
+        {
+          "id": "ch12",
+          "title": "第十章B 逻辑与越权综合实战专题（4 个完整 SRC 真实案例，奖金累计 3.2 万）",
+          "fileName": "ch10b-逻辑与越权综合案例4个.md",
+          "pageCount": 25
+        },
+        {
+          "id": "ch13",
+          "title": "第十一章 API 接口漏洞挖掘（SRC 高分重灾区）",
+          "fileName": "ch11-API接口漏洞挖掘.md",
+          "pageCount": 54
+        },
+        {
+          "id": "ch14",
+          "title": "第十一章B 命令执行与代码注入漏洞挖掘（高危必杀技）",
+          "fileName": "ch11b-命令执行注入漏洞挖掘.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch15",
+          "title": "第十一章C Fastjson / Log4j2 / Shiro / Spring 组件级漏洞挖掘",
+          "fileName": "ch11c-Fastjson-Log4j组件漏洞挖掘.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch16",
           "title": "第12章 JWT与认证漏洞挖掘",
           "fileName": "ch12-JWT与认证漏洞挖掘.md",
           "pageCount": 52
         },
         {
-          "id": "ch12",
+          "id": "ch17",
           "title": "第13章 反序列化漏洞挖掘",
           "fileName": "ch13-反序列化漏洞挖掘.md",
           "pageCount": 44
         },
         {
-          "id": "ch13",
+          "id": "ch18",
           "title": "第14章 云安全与配置错误",
           "fileName": "ch14-云安全与配置错误.md",
           "pageCount": 139
         },
         {
-          "id": "ch14",
+          "id": "ch19",
+          "title": "第十四章B 信息泄露与指纹识别专题（SRC 白捡钱级漏洞，20 个真实案例速查清单）",
+          "fileName": "ch14b-信息泄露与指纹识别专题.md",
+          "pageCount": 21
+        },
+        {
+          "id": "ch20",
           "title": "第十五章 漏洞报告编写与沟通",
           "fileName": "ch15-漏洞报告编写与沟通.md",
           "pageCount": 74
         },
         {
-          "id": "ch15",
+          "id": "ch21",
           "title": "第十六章 SRC排名提升与成长之路",
           "fileName": "ch16-SRC排名提升与成长之路.md",
           "pageCount": 59
         },
         {
-          "id": "ch16",
+          "id": "ch22",
+          "title": "第十七章 SRC 平台实操与提交避坑指南（手把手教你把漏洞换成钱）",
+          "fileName": "ch17-SRC平台实操与提交避坑指南.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch23",
+          "title": "第十八章 通用漏洞 CVE 复现与批量挖掘（冲榜秘籍）",
+          "fileName": "ch18-通用漏洞CVE复现与批量挖掘.md",
+          "pageCount": 16
+        },
+        {
+          "id": "ch24",
           "title": "SRC漏洞挖掘实战",
           "fileName": "README.md",
-          "pageCount": 3
+          "pageCount": 4
         }
       ],
-      "pages": 939,
-      "chapterCount": 16
+      "pages": 1240,
+      "chapterCount": 24
     },
     {
       "folder": "Web前端黑客技术揭秘",
@@ -1410,31 +1506,61 @@
         },
         {
           "id": "ch7",
-          "title": "DVWA Command Injection 命令注入 全三关保姆级通关教程（零基础超通俗版）",
-          "fileName": "DVWA Command Injection 命令注入 全三关保姆级通关教程（零基础超通俗版）.md",
-          "pageCount": 12
+          "title": "DVWA Brute Force 暴力破解 终极超细精讲（含报错根治\\+底层原理\\+零失误实操）",
+          "fileName": "DVWA Brute Force 暴力破解 终极超细精讲（含报错根治+底层原理+零失误实操）.md",
+          "pageCount": 11
         },
         {
           "id": "ch8",
+          "title": "DVWA Command Injection 命令注入 全三关保姆级通关教程（零基础超通俗版）",
+          "fileName": "DVWA Command Injection 命令注入 全三关保姆级通关教程（零基础超通俗版）.md",
+          "pageCount": 14
+        },
+        {
+          "id": "ch9",
+          "title": "DVWA Command Injection 命令注入 终极超细精讲（含报错根治\\+底层原理\\+零失误实操\\+逐行源码解析\\+Windows/Linux双系统适配）",
+          "fileName": "DVWA Command Injection 命令注入 终极超细精讲（含报错根治+底层原理+零失误实操+逐行源码解析+Windows_Linux双系统适配）.md",
+          "pageCount": 20
+        },
+        {
+          "id": "ch10",
           "title": "DVWA Cross Site Request Forgery \\(CSRF\\) 跨站请求伪造 全三关保姆级通关教程（零基础超通俗版）",
           "fileName": "DVWA Cross Site Request Forgery (CSRF) 跨站请求伪造 全三关保姆级通关教程（零基础超通俗版）.md",
           "pageCount": 14
         },
         {
-          "id": "ch9",
+          "id": "ch11",
+          "title": "DVWA CSRF 跨站请求伪造 终极超细精讲（含报错根治\\+底层原理\\+零失误实操）",
+          "fileName": "DVWA CSRF 跨站请求伪造 终极超细精讲（含报错根治+底层原理+零失误实操）.md",
+          "pageCount": 13
+        },
+        {
+          "id": "ch12",
+          "title": "DVWA File Inclusion 文件包含 终极超细精讲（含报错根治\\+底层原理\\+零失误实操\\+逐行源码解析\\+本地/远程包含全覆盖）",
+          "fileName": "DVWA File Inclusion 文件包含 终极超细精讲（含报错根治+底层原理+零失误实操+逐行源码解析+本地_远程包含全覆盖）.md",
+          "pageCount": 18
+        },
+        {
+          "id": "ch13",
+          "title": "DVWA File Upload 文件上传 终极超细精讲（含报错根治\\+底层原理\\+零失误实操\\+逐行源码解析\\+全关卡绕过全覆盖）",
+          "fileName": "DVWA File Upload 文件上传 终极超细精讲（含报错根治+底层原理+零失误实操+逐行源码解析+全关卡绕过全覆盖）.md",
+          "pageCount": 20
+        },
+        {
+          "id": "ch14",
           "title": "方案一 Burp Suite 带 Token 爆破 完整分步通关方案",
           "fileName": "DVWA第一关暴力破解.md",
           "pageCount": 29
         },
         {
-          "id": "ch10",
+          "id": "ch15",
           "title": "Kali Linux DVWA 部署与排障全记录（2026-06-28）",
           "fileName": "Kali Linux DVWA 部署与排障全记录.md",
           "pageCount": 4
         }
       ],
-      "pages": 1281,
-      "chapterCount": 10
+      "pages": 1365,
+      "chapterCount": 15
     },
     {
       "folder": "安全运营中心（SOC）建设实战",
@@ -4821,5 +4947,5 @@
       "chapterCount": 9
     }
   ],
-  "scannedAt": "2026-06-28T14:42:32.497Z"
+  "scannedAt": "2026-07-02T15:53:43.740Z"
 }

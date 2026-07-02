@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const progressRoutes = require('./routes/progress');
 const labsRoutes = require('./routes/labs');
 const executeRoutes = require('./routes/execute');
+const vmLabsRoutes = require('./routes/vmLabs');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -24,6 +25,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/labs', labsRoutes);
 app.use('/api/execute', executeRoutes);
+app.use('/api/vm-labs', vmLabsRoutes);
 
 const distDir = path.join(__dirname, '..', 'dist');
 app.use(express.static(distDir));

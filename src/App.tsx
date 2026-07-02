@@ -26,6 +26,7 @@ import {
   QuestionBank,
   QuestionBankTabs,
   BookLibrary,
+  VmLabs,
 } from "./pages";
 import AuthPage from "./pages/AuthPage";
 import { useUserStore } from "./store/userStore";
@@ -87,6 +88,8 @@ function App() {
           <Route path="lab" element={<CodeLab />} />
           <Route path="lab/code-runner" element={<CodeRunner />} />
           <Route path="lab/environment" element={<LabEnvironment />} />
+          <Route path="lab/vm-labs" element={<VmLabs />} />
+          <Route path="vm-labs" element={<Navigate to="/lab/vm-labs" replace />} />
           <Route path="lab-environment" element={<Navigate to="/lab/environment" replace />} />
           <Route path="code-runner" element={<Navigate to="/lab/code-runner" replace />} />
           <Route path="flashcards" element={<Navigate to="/question-bank/past-papers" replace />} />

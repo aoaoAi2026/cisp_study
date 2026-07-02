@@ -122,6 +122,19 @@ export const planColor = (planId: string): PlanColor => {
     btnDefault: 'bg-[#f97316] text-white font-semibold hover:bg-[#fb923c] shadow-[0_0_12px_rgba(249,115,22,0.35)] hover:shadow-[0_0_18px_rgba(249,115,22,0.5)]',
     tabActive: 'bg-orange-500/20 text-orange-500 border border-orange-500/30',
   };
+  if (planId === 'redteam') return {
+    main: 'text-red-600', bg: 'bg-red-600', border: 'border-red-600',
+    bgLight: 'bg-red-600/20', borderLight: 'border-red-600/40',
+    borderFaint: 'border-red-600/50', borderSoft: 'border-red-600/50',
+    borderStrong: 'border-red-600/70', cardBorder: 'border-red-600/30',
+    textColor: 'text-red-600',
+    optionDefault: 'border-red-600/40 bg-white/5 hover:border-red-600/70 hover:bg-red-600/15',
+    optionCorrect: 'border-cyber-green/60 bg-cyber-green/20',
+    optionWrong: 'border-cyber-red/60 bg-cyber-red/20',
+    optionDim: 'border-red-600/20 bg-transparent opacity-40',
+    btnDefault: 'bg-[#dc2626] text-white font-semibold hover:bg-[#ef4444] shadow-[0_0_12px_rgba(220,38,38,0.35)] hover:shadow-[0_0_18px_rgba(220,38,38,0.5)]',
+    tabActive: 'bg-red-600/20 text-red-600 border border-red-600/30',
+  };
   return {
     main: 'text-cyber-blue', bg: 'bg-cyber-blue', border: 'border-cyber-blue',
     bgLight: 'bg-cyber-blue/20', borderLight: 'border-cyber-blue/40',

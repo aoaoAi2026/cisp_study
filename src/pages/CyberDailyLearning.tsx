@@ -36,7 +36,11 @@ import {
   FileQuestion,
   Eye,
   Library,
-  Shield
+  Shield,
+  BookMarked,
+  Lightbulb,
+  Info,
+  Globe2,
 } from 'lucide-react';
 import MilkdownEditor from '../components/MilkdownEditor';
 import TextToSpeechPlayer from '../components/TextToSpeechPlayer';
@@ -47,12 +51,88 @@ import Editor from '@monaco-editor/react';
 import type { QuizQuestion } from '../data/cyberBasic';
 import { Pomodoro } from '../components/Pomodoro';
 import { plans, planSupplements, planColor } from './CyberDailyLearning/constants';
+import { redteamFileMap } from '../data/cyberRedteam';
 import { saveData, loadData } from '../data/persistData';
 import { loadAllResources } from '../data/resourceData';
 import type { Resource } from '../types/resource';
 import { getReadingsForDay } from '../data/dayResourceMap';
 import { useQuizPractice, useWrongQuestionBook, checkQuizAnswer, useGamification, useCodeExecutor } from '../hooks';
 import type { QuizAnswer } from '../hooks';
+
+// ======== 学习路径图专用：颜色映射 + 7阶段成长路径（和 VmLabs.tsx 保持一致）========
+type LearningStageRangeLike = {
+  id?: string;
+  name?: string;
+  status?: string;
+  icon?: string;
+};
+const ROADMAP_COLOR_MAP: Record<string, string> = {
+  cyan: 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10',
+  indigo: 'text-indigo-400 border-indigo-500/30 bg-indigo-500/10',
+  rose: 'text-rose-400 border-rose-500/30 bg-rose-500/10',
+  amber: 'text-amber-400 border-amber-500/30 bg-amber-500/10',
+  emerald: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+  violet: 'text-violet-400 border-violet-500/30 bg-violet-500/10',
+  teal: 'text-teal-400 border-teal-500/30 bg-teal-500/10',
+  fuchsia: 'text-fuchsia-400 border-fuchsia-500/30 bg-fuchsia-500/10',
+  lime: 'text-lime-400 border-lime-500/30 bg-lime-500/10',
+  slate: 'text-slate-400 border-slate-500/30 bg-slate-500/10',
+  sky: 'text-sky-400 border-sky-500/30 bg-sky-500/10',
+  orange: 'text-orange-400 border-orange-500/30 bg-orange-500/10',
+};
+const ROADMAP_COLOR_HEX: Record<string, string> = {
+  cyan: '#22d3ee', indigo: '#818cf8', rose: '#fb7185', amber: '#fbbf24',
+  emerald: '#34d399', violet: '#a78bfa', teal: '#2dd4bf', fuchsia: '#e879f9',
+  lime: '#a3e635', slate: '#94a3b8', sky: '#38bdf8', orange: '#fb923c',
+};
+type RoadmapLearningStage = {
+  stageNo: string; levelTag: string; title: string; subtitle: string;
+  emoji: string; accent: string; accentHex: string; duration: string;
+  prereq: string; skills: string[]; rangeIds: string[];
+  challengeStars: 1 | 2 | 3 | 4 | 5;
+};
+// 22 个靶场（day085-day106）ID 静态占位数据（给 roadmap 查 status/icon/name，不依赖后端）
+const ROADMAP_TARGETS_FALLBACK: LearningStageRangeLike[] = [
+  { id: 'dvwa', name: 'DVWA', status: 'ready', icon: '🎯' },
+  { id: 'sqli-labs', name: 'SQLi-Labs', status: 'ready', icon: '💉' },
+  { id: 'xss-challenges', name: 'XSS-Challenges', status: 'ready', icon: '📝' },
+  { id: 'upload-labs', name: 'Upload-Labs', status: 'ready', icon: '📁' },
+  { id: 'pikachu', name: 'Pikachu', status: 'ready', icon: '🐭' },
+  { id: 'bwapp', name: 'bWAPP', status: 'ready', icon: '🐝' },
+  { id: 'tomcat', name: 'Tomcat CVE', status: 'ready', icon: '🐱' },
+  { id: 'struts2', name: 'Struts2 RCE', status: 'ready', icon: '🏗️' },
+  { id: 'thinkphp', name: 'ThinkPHP RCE', status: 'ready', icon: '🧠' },
+  { id: 'webgoat', name: 'WebGoat', status: 'ready', icon: '🐐' },
+  { id: 'vulhub-platform', name: 'Vulhub 平台', status: 'ready', icon: '📦' },
+  { id: 'fastjson', name: 'Fastjson', status: 'planned', icon: '⚡' },
+  { id: 'log4j2', name: 'Log4j2', status: 'planned', icon: '🌲' },
+  { id: 'shiro', name: 'Shiro', status: 'planned', icon: '🔒' },
+  { id: 'nginx', name: 'Nginx', status: 'planned', icon: '🚀' },
+  { id: 'websphere', name: 'WebSphere', status: 'planned', icon: '⚙️' },
+  { id: 'ithema-labs', name: 'iTheima靶场', status: 'unavailable', icon: '🏷️' },
+  { id: 'webbug', name: 'WebBug靶场', status: 'unavailable', icon: '🐞' },
+  { id: 'vulstack', name: 'VulStack红队', status: 'unavailable', icon: '🧱' },
+  { id: 'webforpentester', name: 'WebForPentester', status: 'unavailable', icon: '🔬' },
+  { id: 'redsun-domain', name: '红日域环境', status: 'unavailable', icon: '🌞' },
+  { id: 'enterprise-range', name: '企业级综合靶场', status: 'unavailable', icon: '🏢' },
+];
+const ROADMAP_LEARNING_PATH: RoadmapLearningStage[] = [
+  { stageNo: '01', levelTag: 'L0 · 新手启蒙', title: 'Web 安全入门 & 工具基础', subtitle: '先搭好工具链、摸清 HTTP 世界，再打靶不迟', emoji: '🌱', accent: 'cyan', accentHex: ROADMAP_COLOR_HEX.cyan, duration: '3 ~ 7 天 · 每天 2 小时', prereq: '零基础即可，了解 HTML/URL 基础加分', skills: ['HTTP/HTTPS 协议：请求方法 / Header / Cookie / Session', 'Burp Suite：抓包、Intruder 爆破、Repeater 改包', '浏览器 DevTools Network / Console / Application 面板', 'Nmap：TCP/UDP 端口扫描、服务识别、脚本扫描', 'Kali 常用命令：curl / wget / netstat / ss / grep'], rangeIds: ['dvwa'], challengeStars: 1 },
+  { stageNo: '02', levelTag: 'L1 · 专项突破 I', title: 'SQL 注入 & XSS 专项通关', subtitle: '两大最高频 Web 漏洞，77 + 4 关逐个攻破', emoji: '💉', accent: 'indigo', accentHex: ROADMAP_COLOR_HEX.indigo, duration: '7 ~ 14 天 · 至少每关手写一遍 Payload', prereq: '完成阶段 01，掌握 Burp Repeater 基本使用', skills: ['SQLi 基础：数字/字符/搜索型注入，UNION 查询', 'SQLi 高级：布尔盲注、时间盲注、报错注入、堆叠注入、二次注入', 'SQLi 进阶：Cookie/Header/User-Agent 注入、宽字节、WAF 绕过', 'XSS 反射型 / 存储型 / DOM 型三类型', 'XSS 绕过：标签过滤、事件过滤、CSP、编码绕过、JSFuck', 'Payload 编写：每个 Payload 手写一次，拒绝只靠工具一键梭'], rangeIds: ['sqli-labs', 'xss-challenges'], challengeStars: 2 },
+  { stageNo: '03', levelTag: 'L2 · 专项突破 II', title: 'OWASP Top 10 全面覆盖', subtitle: '上传 / 包含 / SSRF / XXE / CSRF / 越权 / 逻辑漏洞 全扫', emoji: '🌳', accent: 'rose', accentHex: ROADMAP_COLOR_HEX.rose, duration: '10 ~ 20 天 · 每漏洞类型至少 3 种利用方式', prereq: '通关 SQLi-Labs Less-1~30，XSS-Challenges 通关至少 3 关', skills: ['文件上传 21 关：前端 / MIME / 后缀黑名单 / .htaccess / .user.ini / %00 / 解析漏洞', '文件包含 LFI/RFI：php://filter / 日志包含 / Session / Pear 扩展', 'SSRF：curl/file_get_contents/dict/gopher 协议利用', 'XXE：有回显 / 无回显 OOB / DTD 实体注入 / PHP 伪协议', 'CSRF：GET / POST 两种场景、Token 缺失校验的利用', '反序列化：PHP 魔术方法 __wakeup / __destruct、POP 链构造', '越权 & 逻辑漏洞：水平越权、支付金额篡改、验证码复用'], rangeIds: ['upload-labs', 'pikachu', 'bwapp'], challengeStars: 3 },
+  { stageNo: '04', levelTag: 'L3 · 框架组件漏洞', title: '国内外 CMS + Java Web 综合训练', subtitle: 'ThinkPHP 国产 CMS RCE + WebGoat 40 章节系统训练', emoji: '🧠', accent: 'violet', accentHex: ROADMAP_COLOR_HEX.violet, duration: '10 ~ 20 天 · 看源码分析 + 漏洞复现 + 修复分析三步走', prereq: '阶段 03 通关，了解 PHP / Java Web 基础', skills: ['ThinkPHP 5.0.x / 5.1.x 多版本 RCE 链分析：__construct / invokefunction / method', 'CMS 漏洞通法：定位路由解析、参数提取、敏感函数接收处', 'Java Web 基础：Servlet / Filter / Spring MVC 接收请求方式', 'WebGoat：认证绕过 / JWT 四件套 / SQLi(高级) / XXE / SSRF / 反序列化', '配套 WebWolf：接收 OOB 外带 DNS/HTTP 请求，验证无回显漏洞'], rangeIds: ['thinkphp', 'webgoat'], challengeStars: 3 },
+  { stageNo: '05', levelTag: 'L4 · 中间件体系', title: '中间件 & 应用服务器 漏洞图谱', subtitle: 'Tomcat / Nginx / WebSphere 经典 CVE + 弱口令后台', emoji: '🧱', accent: 'emerald', accentHex: ROADMAP_COLOR_HEX.emerald, duration: '7 ~ 14 天 · 重点在 Banner 识别 + CVE 号匹配', prereq: '完成阶段 04，能独立根据版本号查 CVE 并复现', skills: ['Tomcat 系列：CVE-2017-12615 PUT、Manager 弱口令、WAR 部署', 'Nginx 解析漏洞：file.php/a.jpg、CVE-2013-4547 文件名逻辑、CRLF 注入、目录穿越', 'WebSphere 控制台：默认密码、CVE-2020-4450 / CVE-2021-2109 RCE', '中间件识别技巧：HTTP Server 头 / 默认错误页 / favicon.ico hash', 'Manager / Console 后台爆破字典 + 部署流程（WAR包提权）'], rangeIds: ['tomcat', 'nginx', 'websphere'], challengeStars: 4 },
+  { stageNo: '06', levelTag: 'L5 · Java 反序列化专家', title: 'Java 反序列化 RCE 全链条打通', subtitle: 'Struts2 / Fastjson / Shiro / Log4j2 四大金刚 + ysoserial', emoji: '☕', accent: 'orange', accentHex: ROADMAP_COLOR_HEX.orange, duration: '14 ~ 30 天 · 必须读 ysoserial 源码 + 动手写 Exploit', prereq: 'Java 基础语法，能读 Spring / Java Web 项目源码；完成阶段 04~05', skills: ['Struts2：OGNL 表达式 S2-045 / S2-016 / S2-007 DevMode RCE 原理', 'Fastjson：JdbcRowSetImpl JNDI、TemplatesImpl、BCEL ClassLoader、1.2.47 AutoType Bypass', 'Shiro：Shiro-550 默认 AES Key、CommonsBeanutils / CommonsCollections 利用链', 'Log4Shell：${jndi:ldap://} 经典 Payload、高版本 trustURLCodebase 绕过', 'ysoserial 使用 + 源码：CC1/CC6/CC7/CCK1/CB1 链 Gadget 分析', 'JNDI 注入利用：LDAP/RMI/JRMP 三种协议，marshalsec 工具配合'], rangeIds: ['struts2', 'fastjson', 'shiro', 'log4j2'], challengeStars: 5 },
+  { stageNo: '07', levelTag: 'L6 · 红队 / 企业级', title: '企业综合攻防 & AD 内网域渗透', subtitle: '从单个漏洞到 200+CVE 武器库 + 域环境 ATT&CK 全流程', emoji: '🏢', accent: 'fuchsia', accentHex: ROADMAP_COLOR_HEX.fuchsia, duration: '1 ~ 3 个月 · 长期实战，每周末一次完整靶场', prereq: '通关 11 个在线靶场，完整阶段 01~06；了解 Windows / Linux 基础', skills: ['Vulhub 200+ CVE：Fastjson / Shiro / Log4j / Nginx / Think / Spring 系列全过一遍', 'Cobalt Strike / MSF 基础：Web Delivery / Bind / Reverse Shell', '内网代理：frp / nps / EarthWorm / reGeorg 正向反向隧道', '横向移动：哈希传递 PtH、票据传递 PtT、WMI / SMBExec / PsExec / WinRM', 'AD 域渗透：SPN / Kerberoast / AS-REP Roast / 委派攻击 / DCSync / NoPac / ZeroLogon', '权限维持：启动项 / 服务 / WMI / SSP / 计划任务 / 黄金白银票据', '蓝队视角：流量 IDS 特征、WAF 绕过、反溯源'], rangeIds: ['vulhub-platform', 'ithema-labs', 'webbug', 'vulstack', 'webforpentester', 'redsun-domain', 'enterprise-range'], challengeStars: 5 },
+];
+// 把 ROADMAP 靶场 ID → 对应到 shoot-range 专题的 day 序号（day085=1, day086=2... day106=22），用于 roadmap 按钮跳转
+const ROADMAP_ID_TO_DAY: Record<string, number> = {
+  dvwa: 1, 'sqli-labs': 2, 'upload-labs': 3, 'xss-challenges': 4, pikachu: 5, bwapp: 6,
+  tomcat: 8, struts2: 10, thinkphp: 12, webgoat: 14, fastjson: 16, log4j2: 17, shiro: 18,
+  nginx: 19, websphere: 20, 'vulhub-platform': 11, 'ithema-labs': 21, webbug: 7, vulstack: 22,
+  webforpentester: 9, 'redsun-domain': 15, 'enterprise-range': 22,
+};
+// ROADMAP 数据 & 常量 End ========
 
 // 通过 fetch 动态加载 public/ 下的 .md 文件（Vite 不支持 glob 读取 public/）
 
@@ -645,21 +725,28 @@ export const CyberDailyLearning: React.FC = () => {
     if (!planId || !fetchPlanId) return;
     setMdLoading(true);
     setMdError(null);
-    fetch(`/contents/cyber-learning/${fetchPlanId}/day-${currentDay}.md`)
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.text();
-      })
-      .then(text => {
+
+    const fetchMdContent = async () => {
+      let filePath = `/contents/cyber-learning/${fetchPlanId}/day-${currentDay}.md`;
+      
+      if (fetchPlanId === 'redteam' && redteamFileMap[currentDay]) {
+        filePath = `/contents/cyber-learning/redteam/${redteamFileMap[currentDay]}`;
+      }
+
+      const response = await fetch(filePath);
+      
+      if (response.ok) {
+        const text = await response.text();
         setMdContent(text);
         setMdError(null);
-      })
-      .catch(() => {
-        // 文件不存在时静默 fallback 到 day.content
-        setMdContent(null);
-        setMdError(null);
-      })
-      .finally(() => setMdLoading(false));
+        return;
+      }
+
+      setMdContent(null);
+      setMdError(null);
+    };
+
+    fetchMdContent().finally(() => setMdLoading(false));
   }, [fetchPlanId, currentDay]);
 
   // 课内读物：按当天课程精确匹配
@@ -769,6 +856,32 @@ export const CyberDailyLearning: React.FC = () => {
     );
   }
 
+  /** 学习路径图点击靶场按钮：跳对应 day (shoot-range) 或真实靶场页 */
+  function scrollRoadmapToTarget(targetId: string) {
+    const dayN = ROADMAP_ID_TO_DAY[targetId];
+    // 1) 优先：切到对应 day，滚动到 day 导航按钮并高亮
+    if (typeof dayN === 'number') {
+      setCurrentDay(dayN);
+      setTimeout(() => {
+        const dayBtn = document.getElementById(`shoot-range-day-${dayN}`) ||
+                       document.querySelector(`[data-day="${dayN}"]`);
+        if (dayBtn) {
+          (dayBtn as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+          try {
+            const oldBg = (dayBtn as HTMLElement).style.boxShadow;
+            (dayBtn as HTMLElement).style.boxShadow = `0 0 0 2px ${ROADMAP_COLOR_HEX.cyan}, 0 0 20px ${ROADMAP_COLOR_HEX.cyan}55`;
+            setTimeout(() => { (dayBtn as HTMLElement).style.boxShadow = oldBg; }, 1400);
+          } catch { /* ignore */ }
+        } else {
+          window.scrollBy({ top: 200, behavior: 'smooth' });
+        }
+      }, 150);
+      return;
+    }
+    // 2) 否则：滚动到下方 day 内容区
+    window.scrollBy({ top: 400, behavior: 'smooth' });
+  }
+
   const color = planColor(planId!);
 
   const containerVariants = {
@@ -853,26 +966,198 @@ export const CyberDailyLearning: React.FC = () => {
         <Card className={color.cardBorder}>
           <div className="flex items-center gap-4 overflow-x-auto pb-2">
             {[...plan.days].sort((a, b) => a.day - b.day).map((d) => (
-              <button
-                key={d.day}
-                onClick={() => { setCurrentDay(d.day); }}
-                className={`
-                  flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-sm font-medium
-                  transition-all duration-200
-                  ${currentDay === d.day
-                    ? `${color.bgLight} ${color.main} border ${color.borderFaint}`
-                    : completedDays.has(d.day)
-                      ? 'bg-cyber-green/10 text-cyber-green border border-cyber-green/20'
-                      : 'bg-cyber-purple/10 text-gray-400 border border-cyber-purple/20 hover:bg-cyber-purple/20'
-                  }
-                `}
-              >
-                {completedDays.has(d.day) ? <CheckCircle size={16} /> : d.day}
-              </button>
+              <div key={d.day} id={`shoot-range-day-${d.day}`} data-day={d.day} className="shrink-0">
+                <button
+                  onClick={() => { setCurrentDay(d.day); }}
+                  className={`
+                    flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-sm font-medium
+                    transition-all duration-200
+                    ${currentDay === d.day
+                      ? `${color.bgLight} ${color.main} border ${color.borderFaint}`
+                      : completedDays.has(d.day)
+                        ? 'bg-cyber-green/10 text-cyber-green border border-cyber-green/20'
+                        : 'bg-cyber-purple/10 text-gray-400 border border-cyber-purple/20 hover:bg-cyber-purple/20'
+                    }
+                  `}
+                >
+                  {completedDays.has(d.day) ? <CheckCircle size={16} /> : d.day}
+                </button>
+              </div>
             ))}
           </div>
         </Card>
       </motion.div>
+
+      {/* 学习路径图（仅 shoot-range 靶场搭建专题显示） */}
+      {planId === 'shoot-range' && (
+        <motion.section variants={itemVariants} className="space-y-4" initial="hidden" animate="visible">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-bold text-white font-orbitron flex flex-wrap items-center gap-2">
+                <BookMarked size={22} className="text-orange-500" />
+                <span className="text-orange-500">专业学习路径图</span>
+                <span className="text-gray-400 text-base font-sans">· 7 阶段从新手到红队专家</span>
+                <span className="text-[11px] font-mono ml-2 px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-300/90">
+                  对齐 CISP-PTE / OSCP 训练大纲
+                </span>
+              </h2>
+              <p className="mt-1.5 text-sm text-gray-400 leading-relaxed max-w-3xl">
+                阶段 01~03 打基础（新手入门 → 专项通关），阶段 04~05 进阶框架/中间件，阶段 06~07 拔高到 Java 反序列化 &amp; 企业内网域实战。
+                <strong className="text-orange-300">点击任一靶场按钮 → 自动跳到对应 Day 课程</strong>，打开<a href="#/lab/vm-labs" className="text-orange-400 underline mx-1">真实靶场中心 VM Labs</a>进行实操验证。
+              </p>
+            </div>
+            {/* 总体进度 */}
+            {(function Progress() {
+              const lookup: Record<string, LearningStageRangeLike> = {};
+              ROADMAP_TARGETS_FALLBACK.forEach(x => { if (x.id) lookup[x.id] = x; });
+              const ready = ROADMAP_TARGETS_FALLBACK.filter(t => t.status === 'ready').length;
+              const total = ROADMAP_TARGETS_FALLBACK.length;
+              const pct = Math.min(100, Math.round((ready / total) * 100));
+              const planDays = plan?.days?.length || 22;
+              const doneDays = completedDays.size;
+              const dayPct = planDays ? Math.round((doneDays / planDays) * 100) : 0;
+              return (
+                <div className="min-w-[240px] space-y-2">
+                  <div>
+                    <div className="flex justify-between text-[11px] font-mono text-gray-400 mb-1">
+                      <span className="text-gray-300">靶场搭建进度</span>
+                      <span className="text-emerald-400">{ready} / {total} 已就绪 · {pct}%</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-white/[0.06] overflow-hidden border border-white/10">
+                      <div className="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400 rounded-full" style={{ width: `${pct}%`, boxShadow: '0 0 12px rgba(16,185,129,0.45)' }} />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-[11px] font-mono text-gray-400 mb-1">
+                      <span className="text-gray-300">学习进度（本专题）</span>
+                      <span className="text-orange-400">{doneDays} / {planDays} 天 · {dayPct}%</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-white/[0.06] overflow-hidden border border-white/10">
+                      <div className="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-400 rounded-full" style={{ width: `${dayPct}%`, boxShadow: '0 0 12px rgba(249,115,22,0.45)' }} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+            {ROADMAP_LEARNING_PATH.map((stage, idx) => {
+              const accentClass = ROADMAP_COLOR_MAP[stage.accent];
+              const lookup: Record<string, LearningStageRangeLike> = {};
+              ROADMAP_TARGETS_FALLBACK.forEach(x => { if (x.id) lookup[x.id] = x; });
+              const getT = (id: string): LearningStageRangeLike => lookup[id] || { id, name: id, status: 'unavailable', icon: '🎯' };
+              const star = '★'.repeat(stage.challengeStars) + '☆'.repeat(5 - stage.challengeStars);
+              const hasReady = stage.rangeIds.some(id => getT(id).status === 'ready');
+              const hasPlanned = stage.rangeIds.some(id => getT(id).status === 'planned');
+              return (
+                <div
+                  key={stage.stageNo}
+                  className="relative rounded-xl border p-4 overflow-hidden backdrop-blur-sm hover:-translate-y-0.5 transition-transform duration-300"
+                  style={{
+                    borderColor: `${stage.accentHex}33`,
+                    background: `linear-gradient(145deg, ${stage.accentHex}14 0%, rgba(15,23,42,0.6) 45%, rgba(15,23,42,0.85) 100%)`,
+                    boxShadow: hasReady ? `inset 0 0 0 1px ${stage.accentHex}22, 0 8px 32px -12px ${stage.accentHex}66` : undefined,
+                  }}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center justify-center w-11 h-11 rounded-lg text-lg font-bold font-orbitron shrink-0" style={{ background: `${stage.accentHex}22`, color: stage.accentHex, border: `1px solid ${stage.accentHex}55` }}>
+                      <span className="mr-1 text-base">{stage.emoji}</span>{stage.stageNo}
+                    </div>
+                    <div className="text-right flex flex-col items-end gap-1">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border" style={{ borderColor: `${stage.accentHex}55`, color: stage.accentHex, background: `${stage.accentHex}10` }}>
+                        {stage.levelTag}
+                      </span>
+                      <span className="text-[11px] font-mono text-amber-400/90 tracking-wider" title={`难度 ${stage.challengeStars}/5`}>{star}</span>
+                      <span className="text-[10px] font-mono text-gray-500 whitespace-nowrap">{stage.duration}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white leading-snug">{stage.title}</h3>
+                    <p className="mt-1 text-[12px] text-gray-400 leading-relaxed min-h-[32px]">{stage.subtitle}</p>
+                  </div>
+                  <details className="group mt-3 rounded-lg border border-white/5 bg-white/[0.02]">
+                    <summary className="cursor-pointer list-none px-2.5 py-1.5 text-[11px] text-gray-300 flex items-center justify-between gap-2 select-none hover:bg-white/[0.03]">
+                      <span className="flex items-center gap-1.5">
+                        <BookOpen size={13} style={{ color: stage.accentHex }} />
+                        <span style={{ color: stage.accentHex }} className="font-semibold">本阶段必掌握技能</span>
+                        <span className="text-gray-500">（{stage.skills.length} 个知识点）</span>
+                      </span>
+                      <ChevronDown size={14} className="text-gray-500 transition-transform group-open:rotate-180 shrink-0" />
+                    </summary>
+                    <ul className="px-2.5 pb-2.5 pt-1 space-y-1">
+                      {stage.skills.map((s, i) => (
+                        <li key={i} className="flex items-start gap-1.5 text-[11px] text-gray-300/90 leading-relaxed">
+                          <span style={{ color: stage.accentHex }} className="font-bold shrink-0 mt-[2px]">•</span>
+                          <span>{s}</span>
+                        </li>
+                      ))}
+                      <li className="mt-1.5 pt-1.5 border-t border-white/5 text-[10.5px] text-gray-500 flex items-start gap-1.5">
+                        <Info size={12} className="shrink-0 mt-[2px] text-gray-600" />
+                        <span><strong className="text-gray-400">前置条件：</strong>{stage.prereq}</span>
+                      </li>
+                    </ul>
+                  </details>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {stage.rangeIds.map((id) => {
+                      const t = getT(id);
+                      const status = t.status || 'unavailable';
+                      const badge =
+                        status === 'ready' ? { label: '就绪', cls: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' } :
+                        status === 'planned' ? { label: '待建', cls: 'bg-sky-500/15 border-sky-500/40 text-sky-300' } :
+                        { label: '停摆', cls: 'bg-slate-500/15 border-slate-500/30 text-slate-400' };
+                      const ico = t.icon || '🎯';
+                      const nm = t.name || id;
+                      const d = ROADMAP_ID_TO_DAY[id];
+                      return (
+                        <button
+                          key={id}
+                          onClick={() => scrollRoadmapToTarget(id)}
+                          title={`${nm} · 点击跳转到 Day${d || '(企业级/无 Day)'}`}
+                          className={`group flex items-center gap-1 px-2 py-1 rounded-md border text-[11px] font-mono transition-all
+                            ${status === 'ready'
+                              ? 'hover:border-emerald-400/60 hover:bg-emerald-500/10 active:scale-95 text-gray-200 border-white/10 bg-white/[0.03]'
+                              : status === 'planned'
+                              ? 'hover:border-sky-400/60 hover:bg-sky-500/10 active:scale-95 text-gray-300 border-white/10 bg-white/[0.02]'
+                              : 'hover:border-slate-500/50 active:scale-95 text-slate-400 border-white/5 bg-white/[0.01]'}
+                          `}
+                        >
+                          <span>{ico}</span>
+                          <span className="max-w-[120px] truncate">{nm}</span>
+                          <span className={`text-[9px] px-1 rounded border ${badge.cls}`}>{badge.label}</span>
+                          {typeof d === 'number' && <span className="text-[9px] text-gray-500 border border-gray-500/30 rounded px-1">Day{d}</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-[10px] font-mono">
+                    <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded`} style={{ borderLeft: `2px solid ${stage.accentHex}`, background: `${stage.accentHex}10`, color: stage.accentHex }}>
+                      {hasReady && <span className="text-emerald-400">●</span>}
+                      <span>{stage.rangeIds.length} 个靶场</span>
+                    </div>
+                    <div className="text-gray-500 flex items-center gap-2">
+                      {hasReady && <span className="text-emerald-400">Ready: {stage.rangeIds.filter(id => getT(id).status === 'ready').length}</span>}
+                      {hasPlanned && <span className="text-sky-400">Plan: {stage.rangeIds.filter(id => getT(id).status === 'planned').length}</span>}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="rounded-xl border border-orange-500/10 bg-orange-500/[0.03] px-4 py-3 flex flex-wrap items-start gap-3">
+            <div className="shrink-0 w-8 h-8 rounded-lg bg-orange-500/15 border border-orange-500/30 flex items-center justify-center">
+              <Lightbulb size={16} className="text-orange-400" />
+            </div>
+            <div className="flex-1 min-w-[260px] text-[12px] text-gray-300 leading-relaxed">
+              <strong className="text-orange-400">给新手的训练建议：</strong>
+              严格按阶段顺序，<code className="text-orange-400 bg-black/30 px-1 rounded border border-orange-500/20 mx-0.5">每个靶场至少通关 2 遍</code>（第一遍看教程，第二遍不看资料独立完成）。
+              推荐节奏：<span className="text-amber-300">阶段 01~03 → 参加 CTF Web 入门赛 → 阶段 04~06 → 冲刺 CISP-PTE / OSCP → 阶段 07 企业内网实战</span>。
+              本页负责「学习文档+方法论」，<a className="text-orange-400 underline mx-1" href="#/lab/vm-labs">真实靶场 VM Labs</a>负责「真实环境实操 + SSH 命令执行 + 靶场一键探活」。
+            </div>
+          </div>
+        </motion.section>
+      )}
 
       {/* Gamification Stats Panel */}
       <div className="w-full" style={{width: '100%', minWidth: '100%', maxWidth: '100%'}}>

@@ -15,6 +15,7 @@ import {
   Library,
   Wrench,
   BookMarked,
+  Monitor,
 } from 'lucide-react';
 import { SearchBox } from './SearchBox';
 
@@ -35,6 +36,7 @@ const navItems = [
   { path: '/study-tips', icon: Lightbulb, label: '学习技巧' },
   { path: '/lab', icon: Code, label: '代码实验室' },
   { path: '/lab/environment', icon: Server, label: '实验环境' },
+  { path: '/lab/vm-labs', icon: Monitor, label: '真实靶场（VM）' },
   { path: '/tool-sites', icon: Globe, label: '工具网站' },
   { path: '/online-tools', icon: Wrench, label: '在线工具' },
   { path: '/achievements', icon: Award, label: '成就系统' },

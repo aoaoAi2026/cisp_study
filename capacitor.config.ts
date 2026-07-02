@@ -1,5 +1,5 @@
 const config = {
-  appId: 'com.cisp.security',
+  appId: 'com.cisp.learning',
   appName: '网安百宝箱',
   webDir: 'dist',
   server: {

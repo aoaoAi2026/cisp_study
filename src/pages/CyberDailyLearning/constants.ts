@@ -6,6 +6,7 @@ import { cyberHwPlan } from '../../data/cyberHw';
 import { cyberHwExpress28Plan } from '../../data/cyberHwExpress28';
 import { cyberVendorPlan } from '../../data/cyberVendor';
 import { cyberShootRangePlan } from '../../data/cyberShootRange';
+import { cyberRedteamPlan } from '../../data/cyberRedteam';
 import basicSupplement from '../../data/cyberBasicSupplement';
 import penetrationSupplement from '../../data/cyberPenetrationSupplement';
 import defenseSupplement from '../../data/cyberDefenseSupplement';
@@ -21,6 +22,7 @@ export const plans: Record<string, CyberLearningPlan> = {
   'hw-express': cyberHwExpress28Plan,
   vendor: cyberVendorPlan,
   'shoot-range': cyberShootRangePlan,
+  redteam: cyberRedteamPlan,
 };
 
 export const planSupplements: Record<string, Record<number, any>> = {
@@ -32,6 +34,7 @@ export const planSupplements: Record<string, Record<number, any>> = {
   'hw-express': {},
   vendor: {},
   'shoot-range': {},
+  redteam: {},
 };
 
 export { planColor } from '../../utils/planColors';

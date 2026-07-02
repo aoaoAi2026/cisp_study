@@ -1,1118 +1,817 @@
-# Day 15：SQLi-Labs盲注与绕过Less26-40
+# Day 15：DVWA实战-JavaScript Attacks 前端 JS 闯关
 
-> **🎯 靶场实战** | 难度：⭐⭐⭐ | 预计学习：80 分钟
-
----
-
-# 第15章 SQLi-Labs盲注与绕过（Less26-40）
-
-哈喽小伙伴们，咱们又见面啦！🎉 上一章咱们挑战了Less11-25，见识了POST注入、Cookie注入、Header注入，还有各种报错注入、盲注技巧，是不是感觉自己的注入功力又上了一个台阶？
-
-但是！现实世界里的网站可不会这么"友好"哦！很多网站都会装一些安全设备，或者在代码里加各种过滤，专门防着咱们这些"注入小能手"。😏
-
-那怎么办呢？难道有过滤就不能注入了吗？当然不是！**道高一尺，魔高一丈**，有过滤就有绕过！
-
-今天这一章，咱们就要开启**绕过模式**啦！🚀 咱们会遇到：
-- 空格被过滤了怎么办？
-- select和union被过滤了怎么办？
-- 遇到WAF（Web应用防火墙）怎么办？
-- 单引号被转义了怎么办？（宽字节注入）
-- 一条SQL不够玩？咱们玩多条！（堆叠注入）
-
-坐稳扶好，今天的内容超级精彩，咱们的绕过之旅开始啦！
+> **🎯 靶场实战** | 难度：⭐⭐ | 预计学习：60 分钟
 
 ---
 
-## 15.1 开篇引入：绕过思维很重要
+# 第15章 DVWA实战：JavaScript Attacks 前端 JS 闯关 🧩
 
-在开始打关卡之前，咱们先聊一个很重要的话题：**什么是绕过思维？**
+哈喽各位小伙伴们大家好！👋 欢迎来到第15章！
 
-🤔 很多小伙伴学注入的时候，只会背payload，遇到一点过滤就懵了。其实注入的精髓不在于背了多少payload，而在于**绕过思维**！
+不知不觉，咱们已经把 DVWA 的"四大金刚"（Insecure CAPTCHA、Weak Session IDs、CSP Bypass）都拿下啦！有没有觉得自己的"前端安全嗅觉"越来越灵敏了？😎 今天这一章，我们要攻克 DVWA 里一个非常有意思、又特别能锻炼"安全思维"的模块——**JavaScript Attacks（JS 攻击 / 前端闯关）**。
 
-给大家举个生活中的例子 🏠：
-你去朋友家玩，但是朋友家的门被锁了。你怎么办？
+这个模块和别的模块不一样！之前的模块都是 Low/Medium/High/Impossible 四个级别考"同一个漏洞的四种防护强度"；但 JS 模块呢？它是**一个页面里藏着 4 个独立的小关卡（Tab）**，每一关都是一个**纯前端/前后端结合的小谜题**，考察的是你对 HTML、JavaScript、浏览器工作原理的理解深度——就像是"浏览器版本的密室逃脱"🔐，每一关给你一个提示，要你在前端页面里"找线索、解谜题、拿到通关密码"。
 
-- 办法一：找钥匙开门（这是正常访问）
-- 办法二：从窗户爬进去（这是绕过）
-- 办法三：翻墙进去（这也是绕过）
-- 办法四：伪装成快递员让朋友开门（这还是绕过）
+听起来是不是很好玩？🤩 这四关分别是：
 
-发现了吗？**目标只有一个：进去！但是方法可以有很多种！**
+| 关卡 | 考点 | 大白话翻译 |
+|---|---|---|
+| **第 1 关** | **信任前端变量 success** | 页面靠一个 `var success = false` 判断你有没有通关，改一下就过了 = "老师把答案写在试卷背面，你直接抄就行" |
+| **第 2 关** | **前端加密算法可逆** | 前端 JS 把你的输入做了一层"加密"，但加密算法完全公开，你反向解密就过了 = "学校把密码本放在讲台上，你自己翻就能解码密文" |
+| **第 3 关** | **Token 一次性使用（防刷新）** | 每次提交后 Token 就失效，看起来很厉害，但是我们可以"每次提交前先刷新页面偷新 Token" |
+| **第 4 关** | **前端逻辑重放攻击** | 后端校验"顺序不能乱"，但每一步的令牌都在前端返回给你，我们一步一步把令牌全偷出来就能按顺序重放 |
 
-SQL注入绕过也是一样的：
-- 目标只有一个：**让SQL语句按照我的意思执行**
-- 但是实现的方法可以千变万化！
+每一关我都会带着大家走：**① 先模拟"正常玩家怎么玩" → ② 打开 F12 开发者工具"找线索" → ③ 思考"漏洞在哪" → ④ 亲手通关 → ⑤ 最后把前端源码和后端源码扒出来逐行解析**，零基础的小伙伴也完全能跟上！
 
-空格被过滤了？那我就不用空格，用别的东西代替！
-select被过滤了？那我就大小写混写、双写、用注释包起来！
-单引号被转义了？那我就想办法把转义符"吃掉"！
-
-记住一句话：**万变不离其宗，只要能让SQL执行，什么招都能用！** 💡
-
-好，理论讲完了，咱们开干！
+坐稳扶好，咱们的"前端密室逃脱"开始啦！🚪✨
 
 ---
 
-## 15.2 空格和注释过滤绕过（Less26-28a）
+## 15.1 前置知识：为什么前端的任何东西都"不能信"？
 
-### 15.2.1 Less-26：GET - 单引号 - 空格和注释被过滤
+### 15.1.1 生活比喻：考试"开卷考" vs "闭卷考" 📝
 
-#### 空格被过滤了？这可咋整？
+在正式闯关之前，我们先花 3 分钟搞懂一个贯穿整个 Web 安全的**宇宙级真理**——
 
-好，咱们来到了Less-26。先看看题目：GET型，单引号，空格和注释被过滤。
+> **🔴 铁律：前端（浏览器端）所有东西都是用户可控、用户可见、用户可篡改的，绝对不能把"校验逻辑"或"敏感数据"放在前端！**
 
-啥？空格被过滤了？这也太狠了吧！SQL语句里到处都是空格啊，没有空格可怎么写？😱
+用生活中的"考试"做比喻，一下子就懂了：
 
-别急别急，咱们先试试看，是不是真的空格被过滤了。
-
-老规矩，先测试注入点：
 ```
-?id=1'
+📖 闭卷考试（= 前端不可信的正确模式）
+├── 题目写在试卷上（= 浏览器渲染 HTML/CSS/JS）
+├── 你在草稿纸上答题（= 浏览器里用户输入数据）
+├── 草稿纸写好后，把答案抄到答题卡上（= 浏览器把用户输入打包成 HTTP 请求发给服务器）
+└── 老师批改答题卡（= 服务器端真正做校验，判断对不对）
+      ↑ 老师是权威，答案是否正确由老师说了算
+
+📖 开卷考试 + 老师把标准答案写在讲台桌上（= 前端校验的错误模式！）
+├── 你在草稿纸上答题（= 浏览器里用户输入）
+├── 草稿纸上还附了一个"自动批改小机器"（= 前端 JS 校验逻辑，比如 success 变量）
+├── 机器先判断你写的对不对，对了才让你交卷（= 前端校验成功才发请求）
+└── 但你可以直接把机器里的"判定逻辑"改了！（= F12 打开控制台，改 success=true）
+      ↑ 你自己当裁判，当然是怎么改都对！
 ```
-哎？报错了！说明确实是单引号闭合的字符型注入。
 
-那试试加个空格呢？比如：
-```
-?id=1' and '1'='1
-```
-哎？怎么回事？好像不对？咱们来看看，是不是空格真的被过滤了。
+**划重点！⭐** 前端 JS 代码是要**下载到用户电脑上执行**的，相当于你把"裁判"送到了考生家里——考生想怎么改裁判就怎么改裁判。所以前端校验唯一的作用，是"减少正常用户的误操作、提升用户体验"，绝对不能当安全防护用！
 
-咱们可以试试：
-```
-?id=1'--+
-```
-哎？注释符也没用？说明注释符真的被过滤了！
+下面这张 SVG 图帮你把"前端不可信"的原理刻进脑子里👇
 
-那怎么办呢？没有空格，没有注释，这SQL可怎么写？🤔
+<svg width="100%" viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <defs>
+    <linearGradient id="g15a" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#bae6fd"/>
+    </linearGradient>
+    <linearGradient id="g15b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+  </defs>
+  <!-- 左侧：用户电脑（浏览器） -->
+  <rect x="20" y="20" width="380" height="470" rx="16" fill="url(#g15a)" stroke="#0284c7" stroke-width="2.5"/>
+  <text x="210" y="55" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" font-weight="bold" fill="#075985">💻 用户电脑（浏览器）= 考生家</text>
+  <!-- 浏览器窗口 -->
+  <rect x="50" y="80" width="320" height="260" rx="10" fill="white" stroke="#475569" stroke-width="2"/>
+  <rect x="50" y="80" width="320" height="32" rx="10" fill="#cbd5e1"/>
+  <rect x="65" y="89" width="60" height="14" rx="4" fill="#ef4444"/>
+  <rect x="132" y="89" width="210" height="14" rx="4" fill="#f8fafc"/>
+  <text x="148" y="100" text-anchor="start" font-family="Consolas" font-size="10" fill="#475569">http://dvwa/vulnerabilities/javascript/</text>
+  <text x="70" y="145" font-family="Microsoft YaHei" font-size="16" fill="#1e293b" font-weight="bold">📝 HTML 页面内容</text>
+  <text x="70" y="175" font-family="Consolas" font-size="13" fill="#0f172a">function checkAnswer() {</text>
+  <text x="88" y="195" font-family="Consolas" font-size="13" fill="#0f172a">  var success = <tspan fill="#dc2626" font-weight="bold">false</tspan>;</text>
+  <text x="88" y="215" font-family="Consolas" font-size="13" fill="#0f172a">  if (input == "正确答案") {</text>
+  <text x="106" y="235" font-family="Consolas" font-size="13" fill="#0f172a">    success = true;</text>
+  <text x="88" y="255" font-family="Consolas" font-size="13" fill="#0f172a">  }</text>
+  <text x="88" y="275" font-family="Consolas" font-size="13" fill="#0f172a">  return success;</text>
+  <text x="70" y="295" font-family="Consolas" font-size="13" fill="#0f172a">}</text>
+  <!-- F12 控制台 -->
+  <rect x="50" y="360" width="320" height="110" rx="8" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+  <text x="65" y="385" font-family="Consolas" font-size="13" fill="#4ade80">▶ Console</text>
+  <text x="65" y="410" font-family="Consolas" font-size="13" fill="#e2e8f0">> window.success = <tspan fill="#4ade80" font-weight="bold">true</tspan></text>
+  <text x="65" y="432" font-family="Consolas" font-size="12" fill="#94a3b8">← true   // 考生改了裁判的判卷逻辑！</text>
+  <text x="65" y="454" font-family="Consolas" font-size="12" fill="#f87171">⚠️ 前端所有变量都是透明且可改的！</text>
+  <!-- 右侧：服务器 -->
+  <rect x="500" y="20" width="380" height="470" rx="16" fill="#fef2f2" stroke="#dc2626" stroke-width="2.5"/>
+  <text x="690" y="55" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" font-weight="bold" fill="#991b1b">🖥️ 服务器 = 老师办公室</text>
+  <rect x="530" y="90" width="320" height="200" rx="10" fill="white" stroke="#7f1d1d" stroke-width="2"/>
+  <text x="690" y="125" text-anchor="middle" font-family="Microsoft YaHei" font-size="18" fill="#7f1d1d" font-weight="bold">✅ 这里的逻辑才是权威</text>
+  <text x="545" y="160" font-family="Consolas" font-size="13" fill="#0f172a">if ($_POST['token'] !== session_token()) {</text>
+  <text x="560" y="182" font-family="Consolas" font-size="13" fill="#b91c1c">  reject(); // 服务器重新校验</text>
+  <text x="545" y="204" font-family="Consolas" font-size="13" fill="#0f172a">}</text>
+  <text x="545" y="230" font-family="Consolas" font-size="13" fill="#0f172a">if (password != db_password()) {</text>
+  <text x="560" y="252" font-family="Consolas" font-size="13" fill="#b91c1c">  reject(); // 服务器端密码校验</text>
+  <text x="545" y="274" font-family="Consolas" font-size="13" fill="#0f172a">}</text>
+  <!-- 中间箭头：请求 -->
+  <g transform="translate(405, 250)">
+    <path d="M0 0 L85 0" stroke="#0ea5e9" stroke-width="3" marker-end="url(#arr15a)"/>
+    <path d="M85 -30 L0 -30" stroke="#f97316" stroke-width="3" marker-end="url(#arr15b)"/>
+  </g>
+  <defs>
+    <marker id="arr15a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#0ea5e9"/></marker>
+    <marker id="arr15b" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M10 0 L0 5 L10 10 z" fill="#f97316"/></marker>
+  </defs>
+  <text x="445" y="242" font-family="Microsoft YaHei" font-size="12" fill="#0369a1" text-anchor="middle">请求① 用户输入</text>
+  <text x="445" y="212" font-family="Microsoft YaHei" font-size="12" fill="#c2410c" text-anchor="middle">响应② 结果</text>
+  <!-- 底部总结 -->
+  <rect x="20" y="500" width="860" height="18" rx="6" fill="url(#g15b)"/>
+  <text x="450" y="513" text-anchor="middle" font-family="Microsoft YaHei" font-size="13" font-weight="bold" fill="#92400e">🔑 铁律：前端校验 = 防君子不防小人；安全校验必须在服务器端做！</text>
+</svg>
 
-#### 绕过空格的N种方法
+### 15.1.2 闯关预备技能：F12 开发者工具的 4 个必须会用的面板
 
-哈哈，别急！空格这东西，在SQL里可不是唯一的"分隔符"哦！就像你去学校，可以走路、骑车、坐公交，方式不同，目的都是到学校。
+今天闯关的全程都要用到 F12（Chrome/Edge 里按 F12，或者 Ctrl+Shift+I），在动手之前我们先把"工具刀"磨利：
 
-下面给大家介绍几种绕过空格的方法：
+| 面板 | 快捷键 | 在这一章里我们用来干嘛？ |
+|---|---|---|
+| **Elements（元素面板）** | `Ctrl+Shift+C` 选元素 | 看 DOM 结构里隐藏的 `<input type="hidden">`、改 `success` 变量的值 |
+| **Console（控制台）** | Esc（在其他面板打开时） | 敲 JS 代码、直接调用页面里的加密函数、打印变量 |
+| **Sources（源代码面板）** | Ctrl+P 搜文件 | 找到 DVWA 给我们的 JS 加密算法源码、下断点调试、看调用栈 |
+| **Network（网络面板）** | F5 刷新后就能看到 | 抓每一关的请求/响应，看有没有隐藏的参数、有没有 Token 返回 |
 
-##### 方法一：用空白字符代替空格
+**小技巧：** 在 Sources 面板里，按 Ctrl+Shift+F（全局搜索），搜 "success"、"token"、"answer"、"md5"、"sha256" 这些关键词，经常能直接定位到通关密码！
 
-你知道吗？在MySQL里，能当"空格"用的可不只是空格键打出来的那个空格哦！还有很多"隐形"的空白字符：
-
-- `%09`：Tab键（水平制表符）
-- `%0a`：换行符
-- `%0c`：换页符
-- `%0d`：回车符
-- `%a0`：不间断空格（这个要看字符集）
-
-这就好比你写作文，老师让你空两格，你可以用空格键空两格，也可以用Tab键空两格，效果是一样的！📝
-
-咱们来试试用换行符代替空格：
-```
-?id=1'%0aand%0a'1'='1
-```
-哎？是不是可以了？页面正常显示了！
-
-##### 方法二：用括号代替空格
-
-你知道吗？在SQL里，有些地方的空格是可以用括号代替的！
-
-比如：
-```sql
-select * from users
-```
-可以写成：
-```sql
-select * from(users)
-```
-再比如：
-```sql
-select database()
-```
-可以写成：
-```sql
-select(database())
-```
-这就好比你说"我吃饭"，也可以说"我把饭吃了"，表达方式不一样，意思是一样的！🍚
-
-咱们来试试：
-```
-?id=0' union select(1),(2),(3) and '1'='1
-```
-等等，不对，union和select之间的空格怎么办？
-
-##### 方法三：用注释符代替空格（但这关注释也被过滤了）
-
-还有一种方法是用注释符代替空格，比如：
-```sql
-select/*注释*/from/*注释*/users
-```
-但是这一关注释也被过滤了，所以这个方法用不了。不过大家知道有这么个方法就行，以后遇到只过滤空格的场景可以用。
-
-##### 方法四：用+号代替空格（URL里）
-
-在URL里，`+`号是表示空格的。比如你在搜索引擎里搜"SQL注入"，URL里可能会变成`q=SQL+注入`。
-
-但是注意哦，这个+号是URL编码层面的，到了服务器那边还是会被解码成空格。所以如果服务器过滤的是解码后的空格，那+号也没用。如果过滤的是字面量的空格字符，那+号可能有用。
-
-这就好比你带饮料进电影院，电影院不让带瓶装饮料，你把饮料倒在保温杯里带进去，这就是"包装"不一样！🥤
-
-#### 注释被过滤了怎么闭合？
-
-好，空格的问题咱们解决了。那注释被过滤了怎么办呢？
-
-咱们之前注入的时候，最后喜欢加个 `--+` 或者 `#` 来注释掉后面的内容。现在注释被过滤了，那咱就不用注释了呗！
-
-不用注释怎么让SQL语句不报错？很简单，**把后面的内容也闭合了不就行了！**
-
-比如原来的SQL语句是：
-```sql
-SELECT * FROM users WHERE id='$id' LIMIT 0,1
-```
-咱们输入 `1'` 就会变成：
-```sql
-SELECT * FROM users WHERE id='1'' LIMIT 0,1
-```
-这样多了一个单引号，就报错了。
-
-以前咱们用注释：
-```
-?id=1'--+
-```
-变成：
-```sql
-SELECT * FROM users WHERE id='1'-- ' LIMIT 0,1
-```
-后面的被注释掉了，就不报错了。
-
-现在注释不能用了，咱们可以这么写：
-```
-?id=1' and '1'='1
-```
-变成：
-```sql
-SELECT * FROM users WHERE id='1' and '1'='1' LIMIT 0,1
-```
-看！后面的单引号刚好被 `'1'='1` 给用上了！完美闭合！🎯
-
-这就好比你穿衣服，以前是把多余的布料剪掉（注释掉），现在是把多余的布料也做成衣服的一部分（闭合上），效果是一样的，衣服都能穿！
-
-#### 实战演示Less-26
-
-好，理论讲了这么多，咱们来实际操作一下Less-26。
-
-**第一步：判断注入点和闭合方式**
-```
-?id=1'
-```
-报错，说明是单引号闭合。
-
-**第二步：判断字段数**
-咱们用order by，但是空格要用%0a代替：
-```
-?id=0'%0aorder%0aby%0a3%0aand%0a'1'='1
-```
-哎？不对，0'的话前面查询为空，后面的order by可能不执行。咱们换个方式：
-```
-?id=1'%0aorder%0aby%0a3%0aand%0a'1'='2
-```
-如果报错，说明字段数不是3。如果正常，说明是3。
-
-或者咱们直接用union select试试：
-```
-?id=0'%0aunion%0aselect%0a1,2,3%0aand%0a'1'='1
-```
-等等，这里union和select之间的空格用%0a代替，select和1,2,3之间的空格也用%0a代替。
-
-大家自己动手试试吧！思路就是这么个思路：**空格用%0a等空白字符代替，不用注释用and '1'='1来闭合**。
-
-💡 **小提示**：这一关可能过滤的空白字符比较多，大家可以多试几种：%09、%0a、%0c、%0d、%a0，说不定哪个就能用！
+好，工具介绍完毕，下面我们正式开始闯关！🔥
 
 ---
 
-### 15.2.2 Less-26a：GET - 单引号+括号 - 空格和注释被过滤 - 盲注
+## 15.2 正式闯关：第 1 关 —— 信任前端变量 success
 
-好，咱们来到Less-26a。
+### 15.2.1 正常玩家视角：看看第一关长啥样 👀
 
-这一关和Less-26几乎是双胞胎！👯 同样是空格和注释被过滤，区别在哪里呢？
+打开 DVWA → 左侧菜单选 **JavaScript** → 你会看到页面上面有 4 个 Tab：**View Source / 1 / 2 / 3 / 4**（有的版本是 Tab "JavaScript / 2 / 3 / 4"）。我们先点 **Tab "1"** 进入第一关。
 
-区别有两个：
-1. **闭合方式不一样**：Less26是单引号 `'`，Less26a是单引号+括号 `')`
-2. **注入类型不一样**：Less26是报错注入（有错误信息），Less26a是盲注（页面只显示正常或不显示）
+<svg width="100%" viewBox="0 0 880 540" xmlns="http://www.w3.org/2000/svg" style="margin:18px 0;">
+  <rect x="0" y="0" width="880" height="540" rx="14" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  <!-- 地址栏 -->
+  <rect x="20" y="20" width="840" height="44" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+  <circle cx="40" cy="42" r="7" fill="#ef4444"/>
+  <circle cx="58" cy="42" r="7" fill="#eab308"/>
+  <circle cx="76" cy="42" r="7" fill="#22c55e"/>
+  <rect x="100" y="30" width="740" height="24" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="115" y="47" font-family="Consolas" font-size="13" fill="#0f172a">http://192.168.56.102/dvwa/vulnerabilities/javascript/#tab1</text>
+  <!-- Tab 栏 -->
+  <g transform="translate(20, 85)">
+    <rect x="0" y="0" width="130" height="40" rx="6" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+    <text x="65" y="26" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="#0284c7" font-weight="bold">📑 View Source</text>
+    <rect x="140" y="0" width="80" height="40" rx="6" fill="#0ea5e9" stroke="#0284c7" stroke-width="2"/>
+    <text x="180" y="26" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="white" font-weight="bold">🎯 第1关</text>
+    <rect x="230" y="0" width="80" height="40" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="270" y="26" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="#475569">🧩 第2关</text>
+    <rect x="320" y="0" width="80" height="40" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="360" y="26" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="#475569">🔑 第3关</text>
+    <rect x="410" y="0" width="80" height="40" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="450" y="26" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="#475569">🎮 第4关</text>
+  </g>
+  <!-- 第1关内容 -->
+  <rect x="20" y="145" width="840" height="370" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="50" y="185" font-family="Microsoft YaHei" font-size="20" font-weight="bold" fill="#0f172a">🏁 关卡 1 / 4：修改 success 变量</text>
+  <text x="50" y="215" font-family="Microsoft YaHei" font-size="14" fill="#475569">题目描述：请输入正确的通关口令，点击"Submit"进行验证。</text>
+  <!-- 表单 -->
+  <rect x="50" y="240" width="780" height="110" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="4 3"/>
+  <text x="70" y="278" font-family="Microsoft YaHei" font-size="15" fill="#0f172a" font-weight="bold">通关口令：</text>
+  <rect x="170" y="258" width="400" height="36" rx="6" fill="white" stroke="#94a3b8" stroke-width="2"/>
+  <text x="185" y="282" font-family="Consolas" font-size="14" fill="#94a3b8">  （我在这里随便输入了一个 "admin"）</text>
+  <rect x="590" y="258" width="220" height="36" rx="6" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
+  <text x="700" y="282" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="white" font-weight="bold">🚀 Submit 提交</text>
+  <text x="70" y="325" font-family="Microsoft YaHei" font-size="14" fill="#dc2626" font-weight="bold">❌ 错误提示：Wrong! Try again.（密码错了）</text>
+  <!-- 源码片段 -->
+  <rect x="50" y="370" width="780" height="120" rx="10" fill="#0f172a" stroke="#1e293b"/>
+  <text x="68" y="398" font-family="Consolas" font-size="13" fill="#fbbf24">// 页面内嵌的 JS 代码（你在 Elements / Sources 里就能看到）</text>
+  <text x="68" y="422" font-family="Consolas" font-size="14" fill="#e2e8f0">var <tspan fill="#38bdf8">success</tspan> = <tspan fill="#f87171" font-weight="bold">false</tspan>;</text>
+  <text x="68" y="446" font-family="Consolas" font-size="14" fill="#e2e8f0">function <tspan fill="#86efac">submitAnswer</tspan>() {</text>
+  <text x="88" y="468" font-family="Consolas" font-size="14" fill="#e2e8f0">  return <tspan fill="#38bdf8">success</tspan>; <tspan fill="#fbbf24">// 只看这个变量！！</tspan></text>
+  <text x="68" y="486" font-family="Consolas" font-size="14" fill="#e2e8f0">}</text>
+</svg>
 
-咱们先确认一下闭合方式。输入：
+**正常玩家的思路：** 我得先找到答案到底是什么——是猜密码？是看注释？还是有别的线索？正常人可能要瞎试半天，但是我们懂安全的小伙伴一看代码就秒懂：**代码里根本没校验你输入了啥！就看 `success` 这个变量是不是 `true`！**😆
+
+### 15.2.2 漏洞原理：我自己就是考官，我说对就是对！🤣
+
+这个漏洞的本质一句话就能概括：
+
+> **后端 / 前端逻辑把"是否通关"的判断权交给了一个"前端全局变量 success"，而这个变量是用户可以随便改的！**
+
+就像你考试的时候，考卷最后一行写着：
 ```
-?id=1') and ('1'='1
+if (你的答案 == 正确答案) { success = true; }
+交卷的时候只看 success 变量值，不看你写了啥答案。
 ```
-页面正常显示。再输入：
+那我还写个屁的答案啊？直接改 success=true 交卷不就完事了？🤣🤣🤣
+
+### 15.2.3 分步实操：3 秒通关第一关 ⚡
+
+<svg width="100%" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <defs>
+    <linearGradient id="g15c" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ecfdf5"/>
+      <stop offset="100%" stop-color="#d1fae5"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="900" height="560" rx="16" fill="url(#g15c)" stroke="#10b981" stroke-width="2.5"/>
+  <text x="450" y="40" text-anchor="middle" font-family="Microsoft YaHei" font-size="22" fill="#065f46" font-weight="bold">📚 第1关通关 3 步走（3秒搞定！）</text>
+  <!-- 步骤1 -->
+  <g transform="translate(30, 70)">
+    <rect x="0" y="0" width="270" height="460" rx="12" fill="white" stroke="#059669" stroke-width="2"/>
+    <rect x="0" y="0" width="270" height="50" rx="12" fill="#10b981"/>
+    <rect x="0" y="38" width="270" height="12" fill="#10b981"/>
+    <text x="135" y="33" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" font-weight="bold" fill="white">① 打开控制台</text>
+    <circle cx="30" cy="100" r="22" fill="#0f172a" stroke="#1e293b" stroke-width="2"/>
+    <text x="30" y="107" text-anchor="middle" font-family="Consolas" font-size="20" font-weight="bold" fill="#fbbf24">F12</text>
+    <text x="20" y="145" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">在 DVWA 页面上按</text>
+    <text x="20" y="168" font-family="Microsoft YaHei" font-size="14" font-weight="bold" fill="#dc2626">F12 键</text>
+    <text x="20" y="195" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">（或 Ctrl+Shift+I）</text>
+    <text x="20" y="225" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">打开开发者工具，</text>
+    <text x="20" y="248" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">顶部点 "Console" 面板。</text>
+    <rect x="20" y="275" width="230" height="160" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="35" y="302" font-family="Consolas" font-size="12" fill="#4ade80">▶ Console  ░  Sources ░  Network</text>
+    <text x="35" y="340" font-family="Consolas" font-size="12" fill="#fbbf24">// 光标在闪烁，准备输入</text>
+    <rect x="35" y="360" width="200" height="22" rx="4" fill="#1e293b" stroke="#475569"/>
+    <text x="45" y="376" font-family="Consolas" font-size="11" fill="#94a3b8">></text>
+  </g>
+  <!-- 步骤2 -->
+  <g transform="translate(315, 70)">
+    <rect x="0" y="0" width="270" height="460" rx="12" fill="white" stroke="#059669" stroke-width="2"/>
+    <rect x="0" y="0" width="270" height="50" rx="12" fill="#059669"/>
+    <rect x="0" y="38" width="270" height="12" fill="#059669"/>
+    <text x="135" y="33" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" font-weight="bold" fill="white">② 改 success=true</text>
+    <rect x="20" y="85" width="230" height="130" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="35" y="112" font-family="Consolas" font-size="12" fill="#e2e8f0">> <tspan fill="#38bdf8">window.success</tspan> = <tspan fill="#4ade80" font-weight="bold">true</tspan>;</text>
+    <text x="35" y="135" font-family="Consolas" font-size="11" fill="#94a3b8">← <tspan fill="#4ade80">true</tspan>    // Chrome 提示已赋值</text>
+    <text x="35" y="165" font-family="Consolas" font-size="12" fill="#e2e8f0">> <tspan fill="#38bdf8">window.success</tspan></text>
+    <text x="35" y="188" font-family="Consolas" font-size="11" fill="#94a3b8">← <tspan fill="#4ade80">true</tspan>    // 验证一下，确实是 true</text>
+    <text x="20" y="240" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">按回车执行，然后输</text>
+    <text x="20" y="263" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">入"window.success"再</text>
+    <text x="20" y="286" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">回车，确认变量值。</text>
+    <rect x="20" y="315" width="230" height="125" rx="8" fill="#fef3c7" stroke="#d97706"/>
+    <text x="35" y="345" font-family="Microsoft YaHei" font-size="14" fill="#92400e" font-weight="bold">💡 小知识</text>
+    <text x="35" y="370" font-family="Microsoft YaHei" font-size="12" fill="#78350f">为什么要加 window.？</text>
+    <text x="35" y="392" font-family="Microsoft YaHei" font-size="12" fill="#78350f">因为全局变量都挂在</text>
+    <text x="35" y="414" font-family="Microsoft YaHei" font-size="12" fill="#78350f">window 对象上，写上</text>
+    <text x="35" y="436" font-family="Microsoft YaHei" font-size="12" fill="#78350f">确保是全局那个。</text>
+  </g>
+  <!-- 步骤3 -->
+  <g transform="translate(600, 70)">
+    <rect x="0" y="0" width="270" height="460" rx="12" fill="white" stroke="#059669" stroke-width="2"/>
+    <rect x="0" y="0" width="270" height="50" rx="12" fill="#047857"/>
+    <rect x="0" y="38" width="270" height="12" fill="#047857"/>
+    <text x="135" y="33" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" font-weight="bold" fill="white">③ 点 Submit 通关</text>
+    <rect x="20" y="80" width="230" height="200" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+    <text x="40" y="115" font-family="Microsoft YaHei" font-size="14" fill="#0f172a" font-weight="bold">通关口令：</text>
+    <rect x="40" y="128" width="190" height="34" rx="5" fill="#fef9c3" stroke="#ca8a04"/>
+    <text x="55" y="150" font-family="Microsoft YaHei" font-size="12" fill="#854d0e">（空的都行，不校验！）</text>
+    <rect x="40" y="185" width="190" height="38" rx="8" fill="#22c55e" stroke="#166534" stroke-width="2"/>
+    <text x="135" y="210" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" fill="white" font-weight="bold">👉 点 Submit</text>
+    <rect x="40" y="245" width="190" height="25" rx="5" fill="#dcfce7"/>
+    <text x="135" y="263" text-anchor="middle" font-family="Microsoft YaHei" font-size="13" fill="#166534" font-weight="bold">🎉 成功！Well done!</text>
+    <rect x="20" y="300" width="230" height="140" rx="10" fill="#f0fdfa" stroke="#14b8a6"/>
+    <text x="35" y="328" font-family="Microsoft YaHei" font-size="15" fill="#115e59" font-weight="bold">🏆 通关奖励</text>
+    <text x="35" y="356" font-family="Microsoft YaHei" font-size="13" fill="#0f766e">获得一个 4 位通关码</text>
+    <rect x="35" y="370" width="200" height="40" rx="6" fill="#0f172a"/>
+    <text x="135" y="396" text-anchor="middle" font-family="Consolas" font-size="18" fill="#fbbf24" font-weight="bold">XXXX</text>
+    <text x="35" y="428" font-family="Microsoft YaHei" font-size="12" fill="#134e4a">保存好！最后通关用！</text>
+  </g>
+  <!-- 底部总结 -->
+  <rect x="30" y="545" width="840" height="12" rx="6" fill="#10b981"/>
+</svg>
+
+操作步骤总结（真的就 3 步，比泡方便面还简单）：
+
+1. **按 F12 → Console 面板**
+2. **输入 `window.success = true;` → 回车**
+3. **回到页面，随便填个啥，点 Submit**
+
+然后你就会看到 "Well done! You have successfully executed this attack..." 的成功提示，并且拿到第 1 关的 **4 位通关码（比如 "9876" 这种）**。这个通关码千万别丢！四关全通关后要拼成完整密码。😉
+
+### 15.2.4 源码逐行解析：为什么"改个变量就能过"？
+
+下面我们点页面顶部的 **"View Source"** Tab，看看 DVWA 给我们的前端 + 后端源码长啥样👇
+
+**前端 JavaScript 部分（简化后）：**
+```html
+<script>
+var success = false;                 // ① 全局变量，初始 false
+function generate() {                // ② 页面加载时会调用（把口令加密混淆一下）
+  // ... 省略一串字符串拼接，最后把答案算出来存在一个变量里
+  success = (document.getElementById('answer').value == 答案);
+}
+function checkAnswer() {             // ③ 点击 Submit 时调用
+  return success;                    // ⚠️ 漏洞就在这！！
+}                                    // 只看 success，不重新算一遍！
+</script>
 ```
-?id=1') and ('1'='2
+
+**漏洞核心分析：**
+- ① 处定义的 `success` 是**全局变量**，挂在 `window.success` 上，所以我们能在 Console 里直接改
+- ② 处 `generate()` 只有在页面加载 + 表单 blur 等事件才会重新计算，**Submit 时并没有调用 `generate()`**
+- ③ 处 `checkAnswer()` 直接返回 `success` 的值——**Submit 时根本没校验 answer 输入框里写的是什么！**
+- 所以你 Console 里 `success=true` 一改，`checkAnswer()` 就老老实实返回 true，后端就认为你过了
+
+**修复建议（Impossible 级别的正确写法）：**
+```html
+<script>
+function checkAnswer() {
+  // ✅ 正确：每次提交时都重新计算正确答案，再和输入做严格比较
+  var correctAnswer = generateCorrectAnswer();  // 用纯函数本地算，不存全局状态
+  var userAnswer = document.getElementById('answer').value;
+  // 比较后直接返回布尔值，不让外部有机会改
+  return (userAnswer === correctAnswer);
+}
+</script>
 ```
-页面不显示内容。说明确实是 `')` 闭合，而且是盲注（因为没有报错信息，只能通过页面是否显示来判断）。
 
-那思路就很清晰了：
-- 闭合方式：`')`
-- 空格绕过：用%0a等空白字符
-- 不用注释：用 `and ('1'='1` 来闭合后面的内容
-- 注入方式：盲注（布尔盲注或时间盲注）
+不过即便这样写也**只能提升门槛**，因为前端代码都是用户可见的，`generateCorrectAnswer()` 的算法用户照样能看、照样能手动算答案。**真正的正确做法是：把答案的校验放在后端！** 比如下面这样：
 
-具体的盲注方法咱们上一章讲过啦，就是用 `ascii(substr(database(),1,1))>97` 这种方式一个个字符猜。我就不啰嗦了，大家自己动手试试吧！
-
-记住：**思路是最重要的，payload只是思路的实现！** 💡
+```php
+<?php
+// 后端 PHP（正确做法）
+$correct = "正确答案存在服务器 session 或数据库里";
+if ($_POST['answer'] === $correct) {
+    echo "通关！";     // 服务器说了算！
+} else {
+    echo "Wrong!";
+}
+?>
+```
 
 ---
 
-### 15.2.3 Less-27：GET - 单引号 - select union被过滤
+## 15.3 正式闯关：第 2 关 —— 前端加密算法可逆
 
-#### select和union被过滤了？这可咋整？
+恭喜通过第一关！🎉 现在我们点 **Tab "2"** 来到第二关。
 
-好，咱们来到Less-27。这一关更狠了！居然把select和union都给过滤了！
+### 15.3.1 正常玩家视角：密码被加密了？ 🤔
 
-这还怎么玩？联合查询注入的核心就是union select啊，这都被过滤了，还怎么联合查询？😱
+第二关的页面和第一关长得差不多，也是"输入通关口令 + Submit"。但是！当你在 Elements 面板里看 JS 代码时，会发现这次的代码"聪明多了"——这次 `success` 不直接判断了，而是**先把你输入的口令，用一段前端 JS 算法加密成一串密文，再把密文和页面里内嵌的"正确密文"做比较**。
 
-别急别急，还是那句话：**只要思想不滑坡，办法总比困难多！**
+听起来是不是很有道理？"我把明文答案藏起来，只给你看密文和加密函数，你猜不到明文答案是什么！"—— 开发者是这么想的。但是，这个想法忽略了一个致命事实：
 
-咱们先确认一下，是不是真的select和union被过滤了。
+> **加密算法也在前端 JS 里啊！你给了我加密函数，我就不能反着写一个解密函数吗？？** 🤣🤣🤣
 
-输入：
+### 15.3.2 漏洞原理：给我加密函数，我就能"反推"答案 🔓
+
+这一关的漏洞本质就是：
+
+> **前端加密 ≠ 安全。如果加密算法（包括密钥、S盒、移位规则等）都暴露给用户，那这个加密就只是"增加了解题的步骤"，根本不是安全防护。**
+
+用生活比喻：
 ```
-?id=1' and select 1--+
+你写密信：我给你一个密码本（= 前端加密算法 JS 代码）
+          + 一封已经写好的密信（= 页面里硬编码的"正确密文"）
+          → 我让你"你自己写一封密信，要和我这封一模一样"
 ```
-看看返回什么。如果返回异常，说明select被过滤了。
+正常人的思路是：我要知道原文，才能加密得到密文；
+但是聪明人的思路是：**你把密码本给我了，我直接反着翻密码本，从密文把原文解出来不就行了？**
 
-再试试：
+<svg width="100%" viewBox="0 0 860 460" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <defs>
+    <linearGradient id="g15d" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#dbeafe"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="860" height="460" rx="16" fill="url(#g15d)" stroke="#2563eb" stroke-width="2.5"/>
+  <text x="430" y="45" text-anchor="middle" font-family="Microsoft YaHei" font-size="22" fill="#1e3a8a" font-weight="bold">🔓 第2关漏洞原理：加密函数公开 = 解密函数我自己写</text>
+  <!-- 开发者视角 -->
+  <g transform="translate(40, 85)">
+    <rect x="0" y="0" width="250" height="330" rx="12" fill="white" stroke="#1d4ed8" stroke-width="2"/>
+    <rect x="0" y="0" width="250" height="40" rx="12" fill="#1d4ed8"/>
+    <rect x="0" y="30" width="250" height="10" fill="#1d4ed8"/>
+    <text x="125" y="28" text-anchor="middle" font-family="Microsoft YaHei" font-size="16" font-weight="bold" fill="white">👨‍💻 天真的开发者想的</text>
+    <rect x="20" y="60" width="210" height="40" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+    <text x="125" y="86" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#1e3a8a" font-weight="bold">📦 加密算法（公开）</text>
+    <text x="30" y="130" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">function encode(str) {</text>
+    <text x="45" y="155" font-family="Consolas" font-size="12" fill="#0f172a">  // 做一堆移位+替换</text>
+    <text x="45" y="178" font-family="Consolas" font-size="12" fill="#0f172a">  return rot13(str);</text>
+    <text x="30" y="200" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">}</text>
+    <rect x="20" y="215" width="210" height="40" rx="6" fill="#fee2e2" stroke="#dc2626"/>
+    <text x="125" y="241" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#991b1b" font-weight="bold">🔒 正确密文（也公开）</text>
+    <text x="30" y="285" font-family="Consolas" font-size="13" fill="#0f172a">var target = "Qnex Ebg13";</text>
+    <rect x="20" y="300" width="210" height="20" rx="4" fill="#fef3c7"/>
+    <text x="125" y="315" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#92400e">❌ 错误假设：用户没法解码</text>
+  </g>
+  <!-- 中间箭头 -->
+  <g transform="translate(310, 225)">
+    <path d="M0 0 L60 0" stroke="#6366f1" stroke-width="3" marker-end="url(#arr15c)"/>
+    <path d="M60 -35 L0 -35" stroke="#ec4899" stroke-width="3" marker-end="url(#arr15d)"/>
+    <text x="30" y="-42" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#be185d">加密(公开)</text>
+    <text x="30" y="18" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#4338ca">我自己算解密！</text>
+  </g>
+  <defs>
+    <marker id="arr15c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#6366f1"/></marker>
+    <marker id="arr15d" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M10 0 L0 5 L10 10 z" fill="#ec4899"/></marker>
+  </defs>
+  <!-- 黑客视角 -->
+  <g transform="translate(390, 85)">
+    <rect x="0" y="0" width="250" height="330" rx="12" fill="white" stroke="#db2777" stroke-width="2"/>
+    <rect x="0" y="0" width="250" height="40" rx="12" fill="#db2777"/>
+    <rect x="0" y="30" width="250" height="10" fill="#db2777"/>
+    <text x="125" y="28" text-anchor="middle" font-family="Microsoft YaHei" font-size="16" font-weight="bold" fill="white">🎩 攻击者实际会做的</text>
+    <rect x="20" y="60" width="210" height="60" rx="6" fill="#fdf2f8" stroke="#ec4899"/>
+    <text x="125" y="85" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#9d174d" font-weight="bold">🔓 我自己写解密函数</text>
+    <text x="30" y="110" font-family="Consolas" font-size="12" fill="#0f172a">decode = encode; // 因为ROT13是对合的</text>
+    <rect x="20" y="135" width="210" height="40" rx="6" fill="#d1fae5" stroke="#059669"/>
+    <text x="125" y="161" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#065f46" font-weight="bold">✅ 从密文反解明文</text>
+    <text x="30" y="210" font-family="Consolas" font-size="13" fill="#0f172a">> decode("Qnex Ebg13")</text>
+    <text x="30" y="238" font-family="Consolas" font-size="14" fill="#059669" font-weight="bold">← "Dark Rot13"  ← 答案就是它！</text>
+    <rect x="20" y="260" width="210" height="55" rx="6" fill="#ecfdf5" stroke="#10b981"/>
+    <text x="125" y="285" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#065f46" font-weight="bold">🎯 输入答案，提交通过</text>
+    <text x="125" y="305" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#064e3b">在输入框填 "Dark Rot13"</text>
+  </g>
+  <!-- 右侧真实 DVWA 算法 -->
+  <g transform="translate(660, 85)">
+    <rect x="0" y="0" width="180" height="330" rx="12" fill="white" stroke="#7c3aed" stroke-width="2"/>
+    <rect x="0" y="0" width="180" height="40" rx="12" fill="#7c3aed"/>
+    <rect x="0" y="30" width="180" height="10" fill="#7c3aed"/>
+    <text x="90" y="28" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" font-weight="bold" fill="white">💡 DVWA 真实算法</text>
+    <text x="15" y="70" font-family="Consolas" font-size="11" fill="#0f172a">// charCodeAt()+位运算</text>
+    <text x="15" y="92" font-family="Consolas" font-size="11" fill="#0f172a">a = s.split("");</text>
+    <text x="15" y="114" font-family="Consolas" font-size="11" fill="#0f172a">a[i] = (a[i].charCodeAt()</text>
+    <text x="15" y="134" font-family="Consolas" font-size="11" fill="#0f172a">           ^ 0xAA).toString(16)</text>
+    <text x="15" y="156" font-family="Consolas" font-size="11" fill="#0f172a">           .padStart(2,'0');</text>
+    <rect x="15" y="175" width="150" height="32" rx="4" fill="#ede9fe"/>
+    <text x="90" y="196" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#6d28d9" font-weight="bold">解密：xor 回去就行！</text>
+    <text x="15" y="235" font-family="Consolas" font-size="11" fill="#0f172a">target = "6a545a...";</text>
+    <text x="15" y="257" font-family="Consolas" font-size="11" fill="#0f172a">for (i=0;i<len;i+=2) {</text>
+    <text x="22" y="277" font-family="Consolas" font-size="11" fill="#0f172a">  c = parseInt(substr,16)</text>
+    <text x="22" y="297" font-family="Consolas" font-size="11" fill="#0f172a">  ^ 0xAA → String.fromCharCode</text>
+    <text x="15" y="318" font-family="Consolas" font-size="11" fill="#059669">} → 得到明文答案</text>
+  </g>
+</svg>
+
+### 15.3.3 分步实操：5 步解出第二关答案 🔑
+
+**第 1 步：F12 → Sources，找到加密算法**
+
+在 Sources 面板里，按 **Ctrl+Shift+F** 全局搜索关键字：`charCodeAt`、`fromCharCode`、`toString(16)`、`split("")`、`XOR`、`^=` —— DVWA 的 JS 模块第二关的算法，几乎全是"字符串逐字符 → 取 ASCII 码 → 做异或/移位 → 转成 16 进制字符串拼接"这种套路。你一定能搜到类似这样的代码块：
+
+```javascript
+function rotString(toEncode) {
+  // ① 输入字符串转成数组
+  var inputArray = toEncode.split("");
+  var output = "";
+  for (i = 0; i < inputArray.length; i++) {
+    // ② 每个字符取 ASCII 码
+    var charCode = inputArray[i].charCodeAt();
+    // ③ 和 0xAA（十进制 170）做异或
+    charCode = (charCode ^ 0xAA);
+    // ④ 转成两位的十六进制字符串
+    output += charCode.toString(16).padStart(2, "0");
+  }
+  return output;
+}
 ```
-?id=0' union select 1,2,3--+
+
+**第 2 步：在 Console 里把这段加密函数复制出来，存成一个变量**
+
+直接在 Console 里粘贴，回车，你就拥有和 DVWA 一模一样的加密函数了。
+
+**第 3 步：在 Elements 里找到"正确密文 target"**
+
+继续搜关键词 `var target`、`let hash`、`correct ==`、`encoded ==`，你会在代码里找到类似这一行：
+
+```javascript
+var correctAnswer = "7e5c5a524f";    // 这是我随便举的例子，你玩的时候是具体的一串 16 进制
 ```
-如果不行，说明union或者select被过滤了。
 
-好，确认了select和union被过滤，那咱们怎么绕过呢？
+**第 4 步：自己写一个"解密函数"（反着加密函数跑一遍就行）**
 
-#### 绕过select/union过滤的N种方法
+```javascript
+// 因为加密 = 字符 → ASCII → XOR 0xAA → 16进制
+// 所以解密 = 2位16进制 → 整数 → XOR 0xAA → 字符（XOR 是对合运算，加解密一样！）
+function decryptString(targetHex) {
+  var result = "";
+  for (var i = 0; i < targetHex.length; i += 2) {
+    var twoHex = targetHex.substr(i, 2);          // 每次取两位 16 进制
+    var intVal = parseInt(twoHex, 16);            // 转成整数
+    var xorBack = intVal ^ 0xAA;                  // 再 XOR 0xAA 回到原始 ASCII
+    result += String.fromCharCode(xorBack);       // 整数转字符
+  }
+  return result;
+}
 
-##### 方法一：大小写绕过
-
-第一个方法，也是最简单的方法：**大小写混写**！
-
-很多网站的过滤是用正则表达式写的，而且是区分大小写的。比如它只过滤 `select` 全小写的，那你写成 `Select`、`SELECT`、`SeLeCt` 不就绕过去了？
-
-这就好比学校门口的保安只认穿红衣服的人不让进，你穿个粉衣服，保安可能就认不出来了！👕
-
-咱们来试试：
+// 调用：
+decryptString("7e5c5a524f");   // → 回车就得到明文答案！比如 "abcde"
 ```
-?id=0' UniOn SeleCt 1,2,3--+
+
+**第 5 步：回到页面，把明文答案输入进去 → 点 Submit → 拿到第 2 关通关码！** 🎉
+
+### 15.3.4 源码逐行解析 + 修复建议
+
+**为什么会有这个漏洞？** 开发者想当然地以为"我把算法写得复杂点，用户就看不懂了"。但 Web 安全里有个铁律：
+
+> **Security through obscurity（靠隐蔽实现安全）= 永远不安全。** 只要算法是公开的（前端代码必然公开），攻击者只需要比你多 5 分钟的耐心，就能把算法反过来写一遍。
+
+**Impossible 级别修复思路：**
+```php
+<?php
+session_start();
+// ✅ 正确做法：
+// 1. 通关口令只存在服务器 Session 里，前端看不到
+// 2. 前端只负责把用户输入 POST 过来
+// 3. 后端 $_POST['answer'] 和 $_SESSION['correct'] 做严格 === 比较
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (hash_equals($_SESSION['level2_answer'], $_POST['answer'])) {
+        echo "通关！第2关密码 = XXXX";
+    } else {
+        echo "Wrong!";
+    }
+}
+?>
 ```
-哎？是不是就可以了？
-
-当然，这个方法能不能用，要看过滤是不是大小写不敏感的。如果过滤的时候把内容都转成小写再判断，那这个方法就没用了。但很多时候，程序员可能会忽略这个问题！
-
-##### 方法二：双写绕过
-
-第二个方法叫**双写绕过**。
-
-什么意思呢？就是如果网站把 `select` 替换成空字符串（也就是删掉），那你可以写成 `selselectect`。
-
-为什么这样可以？因为网站只会替换一次：
-- 原字符串：`selselectect`
-- 把中间的 `select` 删掉后：`sel` + `ect` = `select`
-- 哎？又变成select了！
-
-这就好比你吃饼干，妈妈说"只能吃一块"，你把两块饼干叠在一起，妈妈以为是一块，你就吃到两块了！🍪
-
-咱们来试试：
-```
-?id=0' uniunionon selselectect 1,2,3--+
-```
-如果网站是用替换的方式过滤，那这招就管用！
-
-当然，这个方法能不能用，要看过滤的实现方式。如果是用正则匹配，匹配到就直接拦截，那这个方法就没用。但如果是用字符串替换（把select替换成空），那这招就好使！
-
-##### 方法三：内联注释绕过
-
-第三个方法，也是MySQL特有的一个技巧：**内联注释**！
-
-什么是内联注释？咱们知道MySQL里的注释有两种：
-- `--` 单行注释
-- `/* */` 多行注释
-
-但是MySQL还有一个特殊的注释语法：`/*! */`，叫**可执行注释**或者**内联注释**。
-
-这个注释有什么特别的呢？一般来说，`/* */` 里面的内容是不会执行的，但是 `/*! */` 里面的内容，MySQL**会执行**！
-
-比如：
-```sql
-select /*!version()*/
-```
-这个是会执行version()函数的！
-
-那这跟绕过敏感词有什么关系呢？关系大了！很多WAF或者过滤函数，看到 `/*` 就以为是注释，就不检查里面的内容了。但是MySQL会执行里面的内容！
-
-这就好比你把东西藏在一个写着"空箱子"的箱子里，保安以为箱子是空的就不查了，但其实里面东西好好的！📦
-
-咱们来试试：
-```
-?id=0' /*!union*/ /*!select*/ 1,2,3--+
-```
-甚至可以更狠一点，把关键字拆开放在注释里：
-```
-?id=0' /*!un*/ion /*!sel*/ect 1,2,3--+
-```
-这样很多过滤规则就匹配不到了！
-
-💡 **小知识**：内联注释里还可以加版本号，比如 `/*!50001 select*/`，意思是MySQL版本大于等于5.00.01才执行里面的内容。这个在某些场景下也能用来绕过。
-
-#### 实战演示Less-27
-
-好，咱们来总结一下Less-27的思路：
-- 闭合方式：单引号 `'`
-- 过滤内容：select和union（可能还有空格和注释？大家自己试试）
-- 绕过方法：大小写绕过、双写绕过、内联注释绕过
-- 注入方式：联合查询注入（绕过之后就跟普通注入一样了）
-
-具体用哪种方法，大家可以自己动手试。先试试大小写绕过行不行，不行再试试双写，再不行试试内联注释。
-
-还是那句话：**思路最重要，多试几种方法，总能绕过去的！** 💪
 
 ---
 
-### 15.2.4 Less-27a：GET - 双引号 - select union被过滤 - 盲注
+## 15.4 正式闯关：第 3 关 —— 一次性 Token（防刷新）
 
-好，Less-27a来了。
+通关 1/2！已经一半啦！💪 现在切到 **Tab "3"** 第三关。
 
-这一关跟Less-27的关系，就像Less-26a跟Less-26的关系一样！👯
+### 15.4.1 正常玩家视角：哎呀，我刷新后答案就失效了？？ 😮
 
-区别：
-1. 闭合方式：双引号 `"` （Less27是单引号）
-2. 注入类型：盲注（Less27是报错注入）
+第三关和前两关有个**关键区别**——当你抓包（Network 面板）看请求时，会发现**每次加载页面，后端返回的 HTML 里都会带一个新的、唯一的 `<input type="hidden" name="user_token" value="一串随机字符串">`**，并且后端会校验：**这个 user_token 是不是刚才发给你的那个？用过一次就作废了！**
 
-思路是一模一样的：
-- 先测试闭合方式：`1"` 试试会不会报错或者页面异常
-- 然后用大小写、双写、内联注释等方法绕过select和union的过滤
-- 因为是盲注，所以用布尔盲注或时间盲注的方法来猜数据
+```html
+<!-- 第三关的表单里多了这一行，每次 F5 刷新 value 都不一样！ -->
+<input type="hidden" name="user_token" value="a3f8b2c1d4e5f6...">
+```
 
-我就不啰嗦了，大家自己动手试试！记住，**思路是通的，只是闭合方式和注入方式变了而已**。
+正常玩家如果用 Burp 的 Repeater 去重放请求，会发现第二次就会返回 "Invalid token" 错误——开发者这次很得意："我加一次性 Token 了！你不能改一次 success 就刷 100 次通关了！"🤓
+
+### 15.4.2 漏洞原理：Token 每次都在 HTML 里返回给我了啊？？ 🤷‍♂️
+
+但开发者还是忘了一件事——**每一次加载新页面，后端都会把新 Token 先给我（在响应 HTML 里）。那我每次提交前先 GET 一下新页面拿个 Token，不就完事了？** 这就好比：
+
+> 门卫大爷："我每次只发一张进门卡，用过就作废，你没法代别人进门！"
+> 我："哦，那我每次进门前，先去您窗口领一张新卡不就行了？窗口 24 小时开放，想领几张领几张..."
+
+**🤦 门卫大爷当场无语。**
+
+<svg width="100%" viewBox="0 0 880 430" xmlns="http://www.w3.org/2000/svg" style="margin:18px 0;">
+  <rect x="0" y="0" width="880" height="430" rx="14" fill="#fefce8" stroke="#eab308" stroke-width="2.5"/>
+  <text x="440" y="45" text-anchor="middle" font-family="Microsoft YaHei" font-size="22" fill="#854d0e" font-weight="bold">🎟️ 第3关漏洞原理：一次性 Token ≠ 防自动化，只要每次你都先给我新卡</text>
+  <!-- 正常玩家视角 -->
+  <g transform="translate(40, 80)">
+    <rect x="0" y="0" width="250" height="310" rx="12" fill="white" stroke="#ca8a04" stroke-width="2"/>
+    <rect x="0" y="0" width="250" height="40" rx="12" fill="#eab308"/>
+    <rect x="0" y="30" width="250" height="10" fill="#eab308"/>
+    <text x="125" y="28" text-anchor="middle" font-family="Microsoft YaHei" font-size="16" font-weight="bold" fill="white">😤 普通玩家操作（以为稳了）</text>
+    <text x="20" y="75" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">第1次：浏览器 GET /tab3</text>
+    <text x="20" y="98" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">  ← 返回 Token = AAAA</text>
+    <text x="20" y="126" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">第2次：POST 提交，带 AAAA</text>
+    <text x="20" y="149" font-family="Microsoft YaHei" font-size="14" fill="#16a34a">  ✓ 成功！Token AAAA 作废</text>
+    <text x="20" y="182" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">第3次：Burp Repeater 重发</text>
+    <text x="20" y="205" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">  POST 里还是老 Token AAAA</text>
+    <text x="20" y="233" font-family="Microsoft YaHei" font-size="14" fill="#dc2626" font-weight="bold">  ✗ 失败！Invalid token</text>
+    <rect x="20" y="258" width="210" height="40" rx="6" fill="#fef3c7" stroke="#d97706"/>
+    <text x="125" y="275" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#92400e" font-weight="bold">开发者心想：嘿嘿自动化搞不定了吧</text>
+  </g>
+  <!-- 中间 vs -->
+  <text x="440" y="245" text-anchor="middle" font-family="Microsoft YaHei" font-size="36" fill="#dc2626" font-weight="bold">VS</text>
+  <!-- 聪明攻击者 -->
+  <g transform="translate(590, 80)">
+    <rect x="0" y="0" width="250" height="310" rx="12" fill="white" stroke="#16a34a" stroke-width="2"/>
+    <rect x="0" y="0" width="250" height="40" rx="12" fill="#16a34a"/>
+    <rect x="0" y="30" width="250" height="10" fill="#16a34a"/>
+    <text x="125" y="28" text-anchor="middle" font-family="Microsoft YaHei" font-size="16" font-weight="bold" fill="white">🎩 聪明攻击者做法</text>
+    <text x="20" y="75" font-family="Microsoft YaHei" font-size="14" fill="#0f172a" font-weight="bold">循环 100 次：</text>
+    <text x="20" y="100" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">① GET /tab3 拿页面</text>
+    <text x="35" y="123" font-family="Microsoft YaHei" font-size="14" fill="#7c3aed">  ← 新 Token = BBBB ✨</text>
+    <text x="20" y="148" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">② 正则从 HTML 里扣出 BBBB</text>
+    <rect x="20" y="160" width="210" height="30" rx="4" fill="#ecfdf5"/>
+    <text x="125" y="180" text-anchor="middle" font-family="Consolas" font-size="12" fill="#065f46">user_token=BBBB</text>
+    <text x="20" y="210" font-family="Microsoft YaHei" font-size="14" fill="#0f172a">③ POST 答案+BBBB 提交</text>
+    <text x="20" y="235" font-family="Microsoft YaHei" font-size="14" fill="#16a34a" font-weight="bold">  ✓ 永远成功！！</text>
+    <rect x="20" y="258" width="210" height="40" rx="6" fill="#d1fae5" stroke="#059669"/>
+    <text x="125" y="275" text-anchor="middle" font-family="Microsoft YaHei" font-size="12" fill="#064e3b" font-weight="bold">只要每次领新卡，怎么刷都行</text>
+  </g>
+</svg>
+
+### 15.4.3 分步实操：手动通关 + 自动化脚本思路
+
+**手动通关（2 次请求搞定）：**
+1. **先 F5 刷新第三关页面** → F12 → Network 面板，找到最新的 `GET /vulnerabilities/javascript/` 响应 → 在响应 HTML 里搜索 `user_token` → 复制最新的 Token 值（比如 `BBBB`）
+2. **回到页面，填入通关答案（通关答案可以用第 2 关的思路反解出来）** → 点 Submit 之前，F12 → Elements → 找到 `<input type="hidden" name="user_token">` 这一行 → **双击 value 里的值改成刚复制的 BBBB** → 再点 Submit → 成功！
+
+**进阶：用 Python 脚本自动化（可选，学了就牛逼）：**
+```python
+# 第3关自动化示例（和我们第18章讲的 CRLF 脚本是同一种思路）
+import requests, re
+
+URL = "http://192.168.56.102/dvwa/vulnerabilities/javascript/"
+cookies = {"PHPSESSID": "abc123", "security": "low"}
+
+# 循环 100 次，每次先 GET 新 Token，再 POST
+for i in range(100):
+    # ① GET 拿 HTML，正则提取 user_token
+    html = requests.get(URL, cookies=cookies).text
+    user_token = re.search(r'name="user_token"\s+value="([0-9a-f]+)"', html).group(1)
+    # ② POST 提交答案 + 新 Token
+    data = {"answer": "明文答案", "user_token": user_token, "Submit": "Submit"}
+    resp = requests.post(URL, cookies=cookies, data=data)
+    if "Well done" in resp.text:
+        print(f"第{i+1}次通关成功！user_token={user_token}")
+```
+
+**修复建议（Impossible 级）：**
+```php
+<?php
+session_start();
+// ✅ 正确姿势：
+// ① Token 还是要存在 session 里 + 一次一换（这个开发者做对了）
+// ② 但是！要做"访问频率限制 Rate Limit"：同一个 IP / 同一个 session，
+//    1 分钟内只能请求 3 次，超过就封禁！（这个是关键！）
+if ($_SESSION['last_request_time'] && time() - $_SESSION['last_request_time'] < 3) {
+    die("请求太快了！歇一会儿再试");  // 每次请求最小间隔 3 秒
+}
+$_SESSION['last_request_time'] = time();
+// ③ 加验证码 / 行为校验（和我们 Day12 学的 Impossible 级 CAPTCHA 联动）
+```
 
 ---
 
-### 15.2.5 Less-28 & Less-28a：组合拳过滤
+## 15.5 正式闯关：第 4 关 —— 前端逻辑重放攻击
 
-#### Less-28：单引号+括号 - select union被过滤
+最后一关啦！🎉 切到 **Tab "4"**。
 
-好，咱们来到Less-28。
+### 15.5.1 正常玩家视角：哇这次要"一步一步按顺序做任务"？！
 
-这一关呢，是个"组合拳"！不仅select和union被过滤了，可能空格也被过滤了，注释也被过滤了……总之就是各种过滤叠在一起！
+第 4 关的页面和前三关完全不一样，它不再是"输入口令 → 点 Submit"了，而是一个类似"任务链"的系统：
 
-那怎么办呢？很简单啊：**把咱们学过的绕过方法组合起来用就行了！**
-
-就像打游戏，一个boss有好几种技能，那你就用好几种技能去应对呗！🎮
-
-- 空格被过滤 → 用%0a、括号等代替
-- select/union被过滤 → 大小写、双写、内联注释
-- 注释被过滤 → 用and '1'='1闭合
-
-比如Less-28的闭合方式是单引号+括号 `')`，那咱们可以这么构造：
 ```
-?id=0')%0aUniOn%0aSeleCt%0a1,2,3%0aand%0a('1'='1
-```
-如果大小写不行，就试试双写：
-```
-?id=0')%0auniunionon%0aselselectect%0a1,2,3%0aand%0a('1'='1
-```
-再不行试试内联注释：
-```
-?id=0')%0a/*!union*/%0a/*!select*/%0a1,2,3%0aand%0a('1'='1
+📋 第4关任务列表（必须从上到下按顺序做！）
+├─ 步骤 1：点"开始挑战"按钮 → 返回一个 token_1
+├─ 步骤 2：带着 token_1 点"任务A完成" → 返回 token_2
+├─ 步骤 3：带着 token_2 点"任务B完成" → 返回 token_3
+├─ 步骤 4：带着 token_3 点"最终提交"  → 通关！
+└─ 任何一步顺序错了 / token 对不上 → 直接失败，从头来
 ```
 
-#### Less-28a：单引号+括号 - select union被过滤 - 盲注
+正常玩家要老老实实点 4 次按钮，而且得按顺序来。开发者心想："这次我把逻辑拆成多步，每一步都校验上一步的 Token，你没法一步到位了吧？"
 
-Less-28a跟Less-28几乎一样，区别就是：Less-28有报错信息，Less-28a是盲注。
+### 15.5.2 漏洞原理：每一步的 Token 都在响应里返回给我啊？？ 🤦‍♀️
 
-思路还是一样的，只是注入方式从报错/联合查询变成了盲注而已。
+漏洞本质其实和第 3 关一模一样，只是**增加了步数**：
 
-大家记住一个道理：**过滤越多，有时候反而越锻炼你的思维！** 你要把每一种过滤都当成一个关卡，一个一个去攻破，最后总能拿到你想要的数据！
+> 你给我的流程是：Step1→Token1→Step2→Token2→Step3→Token3→Step4→通关。
+> 但问题是，**每一步的响应里你都把下一步的 Token 明明白白返回给我了呀！** 那我就老老实实按你给的顺序，用脚本一步一步请求不就行了？
+
+用生活比喻：
+```
+你去行政大楼办 4 个章：
+  1号窗口：提交资料 → 拿到盖了章的表 1
+  2号窗口：看你有没有表 1 → 给你盖表 2
+  3号窗口：看你有没有表 2 → 给你盖表 3
+  4号窗口：看你有没有表 3 → 给你最终通过
+```
+开发者以为"你必须一个一个窗口走"，但实际上每个窗口都 24 小时开门、无限排队、而且你可以用机器人一秒跑完全部 4 个窗口——那"多步"就只是麻烦了一点，根本不是安全防护！
+
+### 15.5.3 分步实操：脚本化跑完 4 步 + 手动版演示
+
+**手动版（Network 面板里一步一步抠 Token）：**
+1. 点"开始挑战" → Network 面板里看响应，从 HTML/JSON 里抠出 `token_1`（或者看页面里隐藏的 input）
+2. 把 `token_1` 填进步骤 2 的表单（Elements 里改 value），点"任务A完成" → 拿到 `token_2`
+3. 同样流程，用 `token_2` 换 `token_3`，再用 `token_3` 换最终通关
+4. 拿到第 4 关通关码！
+
+**自动化版（Python requests 重放，推荐写法）：**
+```python
+import requests, re
+from bs4 import BeautifulSoup
+
+URL = "http://192.168.56.102/dvwa/vulnerabilities/javascript/"
+cookies = {"PHPSESSID": "xxxx", "security": "low"}
+s = requests.Session()
+s.cookies.update(cookies)
+
+def get_token(html, name):
+    """从 HTML 里抠 name=xxx 的 input hidden 的 value"""
+    m = re.search(rf'name="{name}"\s+value="([0-9a-f]+)"', html)
+    return m.group(1) if m else None
+
+# Step 1：GET 初始页面，拿 step1_token
+html = s.get(URL + "#tab4").text
+step1 = get_token(html, "step1_token")
+print(f"[*] Step1 token = {step1}")
+
+# Step 2：POST step1，拿 step2_token
+resp = s.post(URL, data={"step": "1", "step1_token": step1})
+step2 = get_token(resp.text, "step2_token")
+print(f"[*] Step2 token = {step2}")
+
+# Step 3：POST step2，拿 step3_token
+resp = s.post(URL, data={"step": "2", "step2_token": step2})
+step3 = get_token(resp.text, "step3_token")
+print(f"[*] Step3 token = {step3}")
+
+# Step 4：POST step3，最终通关
+resp = s.post(URL, data={"step": "3", "step3_token": step3})
+if "第4关通关码" in resp.text:
+    print("🎉 第4关通关成功！")
+```
+
+**修复建议（Impossible 级）：**
+```php
+<?php
+// ✅ 真正安全的"多步骤流程"写法：
+// ① 每一步 Token 的生成 = 服务器 Session 内部状态机推进，前端根本拿不到"下一步 Token"
+// ② 每一步的业务数据全在后端存着，前端只是一个按钮触发
+// ③ Rate Limit + 服务器端做"当前用户走到第几步了"的状态校验
+//   （而不是信任前端传来的 step=1 这种参数！）
+if ($_SESSION['current_step'] !== 2) {
+    die("顺序错误！");  // 后端自己记住 current_step，不信前端的 step 参数
+}
+```
 
 ---
 
-## 15.3 WAF绕过与参数污染（Less29-31）
+## 15.6 四关通关码汇总 + 最终总通关 ✨
 
-### 15.3.1 什么是WAF？
+四关全部打完之后，你会拿到 **4 个 4 位的通关码**（假设分别是 WXYZ、ABCD、1234、5678）。最后在"View Source"旁边那个"All Done"按钮（或者最后的提交框）里，把 4 个通关码**按顺序拼接成一个完整的 16 位密码**（WXYZABCD12345678），提交就会弹出最终的"恭喜！JavaScript Attacks 全通关！"。
 
-在讲Less-29之前，咱们先认识一个"新朋友"：**WAF**！
-
-WAF是什么呢？WAF的全称是 **Web Application Firewall**，翻译过来就是**Web应用防火墙**。
-
-说白了，WAF就是专门守在网站门口的"保安"，专门拦截各种攻击请求，比如SQL注入、XSS、命令注入等等。🚔
-
-给大家举个生活中的例子 🏢：
-你去一个公司找人，前台会先问你找谁、有没有预约。如果你说"我来找你们老板，我要把你们公司的钱都转走"，前台肯定不让你进，还可能把你赶出去。
-
-WAF就像这个前台，它会检查每一个发往网站的请求，如果发现请求里有"危险"的内容（比如select、union、'这些），就直接把请求拦下来，不让它到达网站后台。
-
-那遇到WAF怎么办呢？难道就没办法了吗？当然不是！WAF也是人写的，也有漏洞，也能绕过！
-
-今天咱们就学一种绕过WAF的方法：**HTTP参数污染**！
-
----
-
-### 15.3.2 Less-29：GET - 单引号 - WAF防护 - 两层架构
-
-#### 什么是两层架构？
-
-Less-29的题目里说"服务器两层架构"，这是什么意思呢？🤔
-
-很多网站为了性能和安全，会用"两层架构"：
-- 第一层：Apache或者Nginx，负责处理静态资源、反向代理
-- 第二层：IIS或者Tomcat，负责处理动态内容（比如PHP、Java）
-
-请求的流程是这样的：
-```
-用户 → Apache（第一层） → IIS（第二层） → 数据库
-```
-
-那这跟参数污染有什么关系呢？关系大了！
-
-#### 参数污染是什么？
-
-你知道吗？如果同一个参数出现了两次，不同的服务器处理方式不一样！
-
-比如有一个请求：
-```
-?id=1&id=2
-```
-也就是有两个id参数，一个值是1，一个值是2。
-
-那服务器到底会取哪个值呢？
-
-- **Apache/PHP**：会取**最后一个**值，也就是 `2`
-- **IIS/ASP**：会取**第一个**值，也就是 `1`
-- **Tomcat/JSP**：两个都要，取第一个或者拼接起来（不同版本不一样）
-
-哎？这就有意思了！如果第一层是Apache，第二层是IIS，那会发生什么呢？
-
-咱们来捋一捋：
-1. 用户发请求：`?id=1&id=2'`
-2. 第一层（Apache/WAF）检查参数。Apache取最后一个值，也就是 `2'`。WAF一看，哟，有单引号！有注入！拦下！
-3. 但是……等等，如果咱们反过来呢？
-
-如果请求是：
-```
-?id=2'&id=1
-```
-1. 第一层（Apache/WAF）检查参数。Apache取最后一个值，也就是 `1`。WAF一看，嗯，很正常，放行！
-2. 请求到了第二层（IIS）。IIS取第一个值，也就是 `2'`。然后把这个值拼到SQL里……
-3. 注入成功了！😈
-
-哇！这就是**HTTP参数污染**！利用不同服务器对重复参数的处理方式不一样，来绕过WAF的检测！
-
-这就好比什么呢？给大家举个例子 🎁：
-你要给朋友寄一个违禁品，但是快递公司会检查包裹。
-- 你在包裹外面写"礼物：一本书"，里面藏着违禁品。快递员只看外面的标签，以为是书，就寄过去了。
-- 朋友收到后，打开里面才是违禁品。
-
-参数污染就是这个意思：**WAF看到的是一个"干净"的参数，但是真正执行的是另一个"有毒"的参数！**
-
-#### 实战演示Less-29
-
-好，理论讲完了，咱们来试试Less-29。
-
-首先，咱们先正常测试一下：
-```
-?id=1'
-```
-哎？是不是被WAF拦下了？页面提示有攻击行为？
-
-那咱们试试参数污染：
-```
-?id=1'&id=1
-```
-等等，不对，咱们得搞清楚谁在前谁在后。
-
-题目说这是Apache+IIS的两层架构。那：
-- WAF可能在Apache层，Apache取最后一个参数值
-- 真正处理业务的是IIS，IIS取第一个参数值
-
-那咱们应该把攻击载荷放在前面，把干净的放在后面：
-```
-?id=-1' union select 1,2,3--+&id=1
-```
-这样：
-- Apache（WAF）看到的是最后一个id=1，很干净，放行
-- IIS看到的是第一个id=-1' union select 1,2,3--+，然后就注入了！
-
-大家自己动手试试吧！是不是很神奇？🤯
-
-💡 **小提示**：参数污染的玩法还有很多，比如不同的参数名、不同的提交方式（GET+POST）等等。今天咱们只是入门，知道有这么个东西就行。
+<svg width="100%" viewBox="0 0 860 320" xmlns="http://www.w3.org/2000/svg" style="margin:20px 0;">
+  <defs>
+    <linearGradient id="g15e" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="860" height="320" rx="16" fill="url(#g15e)" stroke="#d97706" stroke-width="2.5"/>
+  <text x="430" y="45" text-anchor="middle" font-family="Microsoft YaHei" font-size="22" fill="#92400e" font-weight="bold">🏆 四关通关码汇总 + 总通关流程</text>
+  <!-- 4 个通关码卡片 -->
+  <g transform="translate(50, 85)">
+    <rect x="0" y="0" width="170" height="170" rx="14" fill="white" stroke="#f59e0b" stroke-width="2.5"/>
+    <rect x="0" y="0" width="170" height="40" rx="14" fill="#f59e0b"/>
+    <rect x="0" y="30" width="170" height="10" fill="#f59e0b"/>
+    <text x="85" y="28" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" font-weight="bold" fill="white">关卡 1 通关码</text>
+    <rect x="15" y="65" width="140" height="80" rx="8" fill="#0f172a"/>
+    <text x="85" y="113" text-anchor="middle" font-family="Consolas" font-size="24" fill="#fbbf24" font-weight="bold">9876</text>
+  </g>
+  <g transform="translate(240, 85)">
+    <rect x="0" y="0" width="170" height="170" rx="14" fill="white" stroke="#10b981" stroke-width="2.5"/>
+    <rect x="0" y="0" width="170" height="40" rx="14" fill="#10b981"/>
+    <rect x="0" y="30" width="170" height="10" fill="#10b981"/>
+    <text x="85" y="28" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" font-weight="bold" fill="white">关卡 2 通关码</text>
+    <rect x="15" y="65" width="140" height="80" rx="8" fill="#0f172a"/>
+    <text x="85" y="113" text-anchor="middle" font-family="Consolas" font-size="24" fill="#34d399" font-weight="bold">4321</text>
+  </g>
+  <g transform="translate(430, 85)">
+    <rect x="0" y="0" width="170" height="170" rx="14" fill="white" stroke="#6366f1" stroke-width="2.5"/>
+    <rect x="0" y="0" width="170" height="40" rx="14" fill="#6366f1"/>
+    <rect x="0" y="30" width="170" height="10" fill="#6366f1"/>
+    <text x="85" y="28" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" font-weight="bold" fill="white">关卡 3 通关码</text>
+    <rect x="15" y="65" width="140" height="80" rx="8" fill="#0f172a"/>
+    <text x="85" y="113" text-anchor="middle" font-family="Consolas" font-size="24" fill="#a5b4fc" font-weight="bold">ABCD</text>
+  </g>
+  <g transform="translate(620, 85)">
+    <rect x="0" y="0" width="170" height="170" rx="14" fill="white" stroke="#ec4899" stroke-width="2.5"/>
+    <rect x="0" y="0" width="170" height="40" rx="14" fill="#ec4899"/>
+    <rect x="0" y="30" width="170" height="10" fill="#ec4899"/>
+    <text x="85" y="28" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" font-weight="bold" fill="white">关卡 4 通关码</text>
+    <rect x="15" y="65" width="140" height="80" rx="8" fill="#0f172a"/>
+    <text x="85" y="113" text-anchor="middle" font-family="Consolas" font-size="24" fill="#f9a8d4" font-weight="bold">WXYZ</text>
+  </g>
+  <!-- 箭头拼接 -->
+  <g transform="translate(50, 275)">
+    <path d="M85 -10 L430 -10" stroke="#b45309" stroke-width="3" marker-end="url(#arr15e)"/>
+    <path d="M775 -10 L810 -10" stroke="#b45309" stroke-width="3" marker-end="url(#arr15e)"/>
+    <text x="430" y="0" text-anchor="middle" font-family="Microsoft YaHei" font-size="16" fill="#78350f" font-weight="bold">按顺序拼接 → 总通关密码 = 98764321ABCDWXYZ</text>
+  </g>
+  <defs>
+    <marker id="arr15e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b45309"/></marker>
+  </defs>
+</svg>
 
 ---
 
-### 15.3.3 Less-30 & Less-31：换汤不换药
+## 15.7 本章小结 + 四道真题自测 📝
 
-好，Less-30和Less-31咱们放在一起讲，因为它们跟Less-29几乎是一样的！
+### 🎯 本章核心知识点（背下来面试直接加分）
 
-- **Less-30**：双引号闭合，其他跟Less-29一样
-- **Less-31**：双引号+括号闭合，其他跟Less-29一样
+| 关卡 | 漏洞核心 | 修复方法 |
+|---|---|---|
+| 第 1 关 | 信任前端变量 `success`，提交时不重新校验 | 校验逻辑放后端；每次提交重新计算 |
+| 第 2 关 | 前端加密算法 + 密文都公开，可逆推答案 | 答案校验只在后端做（session / DB） |
+| 第 3 关 | 一次性 Token 但无 Rate Limit，每次都能领新的 | Token + Rate Limit（频率限制）+ 验证码 |
+| 第 4 关 | 多步流程的 Token 全在前端可见，可脚本化重放 | 后端用 Session 状态机推进，Token 不暴露给前端 |
 
-思路完全一样：
-1. 先测试闭合方式（单引号、双引号、括号各种组合）
-2. 然后用参数污染绕过WAF
-3. 后面就是正常的注入流程了
+### 🧠 4 道课后自测题（答案在下一章 Day16 的开头公布）
 
-还是那句话：**万变不离其宗，思路是通的！** 大家自己动手试试，我就不啰嗦了。
+**题 1（单选）** 以下关于前端校验的说法，**哪一个是正确的**？
+- A. 前端用 MD5 把密码加密后再发 = 传输安全
+- B. 前端加了一次性 Token = 可以防自动化爆破
+- C. 前端校验只能防误操作，绝对不能当安全防护
+- D. 前端把 success 变量用 const 声明就不能被改了
 
----
+**题 2（思考）** 第 2 关我们用 XOR 0xAA 举例，如果加密算法是"AES-256 + 前端硬编码密钥"，这种做法安全吗？为什么？
 
-## 15.4 中间总结：绕过思路大汇总 📝
+**题 3（实操）** 打开你自己的 DVWA JavaScript 第 3 关，用 Burp Suite 的 **Macro（宏）** 功能实现"每次重放请求时自动更新 user_token"（提示：Project options → Sessions → Session Handling Rules → Add）。
 
-好，咱们已经打了不少关卡了，先来中场休息一下，总结总结绕过的思路。
-
-### 15.4.1 绕过的核心思想
-
-记住一句话：**过滤的是"形式"，不是"功能"！**
-
-什么意思呢？
-- 空格被过滤了，但"分隔"这个功能需求还在，咱们就用别的东西来实现分隔
-- select被过滤了，但"查询"这个功能需求还在，咱们就用别的写法来实现查询
-- 单引号被过滤了，但"闭合字符串"这个功能需求还在，咱们就想办法让单引号出来
-
-就像你要从北京去上海，飞机被取消了，你可以坐高铁；高铁也没票了，你可以开车；开车不行，你还可以骑自行车……方式不一样，目的都是到上海！🚄🚗🚲
-
-### 15.4.2 常见过滤与绕过方法对照表
-
-| 被过滤的东西 | 绕过方法 | 生活例子 |
-| --- | --- | --- |
-| 空格 | %09、%0a、%0c、%0d、%a0、括号、注释符 | 走路不行就骑车，反正都是去学校 |
-| 注释符 | 用and '1'='1闭合后面的内容 | 不剪布料，把多余的也做成衣服 |
-| select/union | 大小写、双写、内联注释 | 换件衣服，保安就认不出来了 |
-| WAF | 参数污染、编码绕过、分块传输 | 把违禁品藏在书里寄过去 |
-
-### 15.4.3 一个重要的 mindset
-
-很多新手遇到过滤就慌，觉得"完了完了，这肯定注不进去了"。
-
-其实不是的！你要这么想：**有过滤，说明有戏！** 🎯
-
-为什么？因为如果一个网站完全没有注入，那它根本不需要过滤。正因为它有注入点，程序员才会想着加过滤。而过滤这东西，往往是加不全的，总会有漏掉的地方。
-
-所以，遇到过滤的时候，你应该感到兴奋，因为这说明你离成功不远了！只差找到那个绕过的方法而已！
-
-好，中场休息结束，咱们继续前进！后面还有更精彩的内容等着咱们呢！🚀
+**题 4（场景）** 假设你要开发一个"短信验证码发送"功能，要求防止短信轰炸机（别人写脚本一秒发 1000 条短信）。结合 Day12 的 CAPTCHA + Day15 的第 3 关知识，你会设计哪 3 层防护？
 
 ---
 
-## 15.5 宽字节注入（Less32-37）
+🎉 **第15章 JavaScript Attacks 闯关全部完成！** 现在你已经掌握了"前端任何东西都不能信"的正确姿势，下次再看到"前端校验通过就放行"的页面，你肯定会邪魅一笑："呵呵，F12 打开，我们来玩玩。"😎
 
-### 15.5.1 什么是宽字节注入？
+下一章 **Day 16：SQL Injection (Blind) SQL 盲注独立模块** 会带大家把 DVWA 里的"盲注"单独拎出来，从布尔盲注到时间盲注，四个级别一把梭，把盲注的感觉彻底练熟——因为下下一章开始就要进 SQLi-Labs 的海洋了，盲注是你必须具备的游泳技能！💪
 
-好，咱们来到了一个新的篇章：**宽字节注入**！
-
-很多小伙伴可能会问：什么是宽字节？听起来好复杂的样子……😵
-
-别急，我用大白话给你讲，保证你一听就懂！
-
-#### 单引号被转义了怎么办？
-
-咱们先想一个问题：如果程序员知道单引号会导致注入，那他会怎么防呢？
-
-最简单的办法就是：**把单引号给转义了！**
-
-什么是转义？就是在单引号前面加个反斜杠 `\`，变成 `\'`。这样单引号就只是一个普通的字符了，不能用来闭合字符串了。
-
-比如PHP里有个函数叫 `addslashes()`，干的就是这个事：
-- 输入：`'`
-- 输出：`\'`
-- 输入：`"`
-- 输出：`\"`
-- 输入：`\`
-- 输出：\\
-
-还有 `mysql_real_escape_string()`，也是干类似的事，而且更严格。
-
-那这样是不是就安全了呢？单引号都被转义了，还怎么注入？
-
-嘿嘿，还真有办法！这就是咱们今天要讲的**宽字节注入**！
-
-#### 字符集是个什么东西？
-
-在讲宽字节注入之前，咱们得先聊聊**字符集**和**编码**的问题。
-
-什么是字符集？简单来说，就是字符和数字的对应关系。
-
-比如咱们最熟悉的ASCII码：
-- 数字 65 对应大写字母 A
-- 数字 97 对应小写字母 a
-- 数字 39 对应单引号 '
-
-ASCII码里，一个字符占**1个字节**（也就是8位二进制）。一个字节能表示多少个字符呢？2^8 = 256个。
-
-256个够不够用？对于英文来说，够了。但是对于中文来说，那可就差远了！中文常用字就有好几千个，256个哪够啊！
-
-所以中国人发明了自己的编码，比如 **GBK**、**GB2312**、**GB18030** 这些。在这些编码里，一个中文字符占**2个字节**，所以叫"宽字节"。
-
-比如：
-- 汉字 "啊" 在GBK里的编码是 `B0A1`（两个字节）
-- 汉字 "你" 在GBK里的编码是 `C4E3`（两个字节）
-
-除了GBK，还有UTF-8，也是常用的编码。UTF-8里一个中文字符占3个字节。
-
-好，现在你知道了：
-- 有些编码（比如ASCII）一个字符占1个字节
-- 有些编码（比如GBK）一个字符占2个字节（宽字节）
-
-那这跟注入有什么关系呢？关系大了！
-
-#### 宽字节注入的原理
-
-现在假设这么一个场景：
-1. 网站用PHP开发，用了 `addslashes()` 来转义用户输入
-2. 但是数据库用的是 **GBK** 编码
-3. PHP和数据库之间的编码没设置好
-
-会发生什么呢？咱们来一步步看：
-
-**第一步：用户输入**
-用户输入：`%df'`
-注意哦，`%df` 是URL编码，解码后是十六进制的 `0xdf` 这个字节。
-
-**第二步：PHP处理（addslashes）**
-PHP收到用户输入，解码后是：`0xdf` + `'`
-然后 `addslashes()` 把单引号转义，变成：`0xdf` + `\` + `'`
-也就是三个字节：`df 5c 27`
-（因为反斜杠 `\` 的ASCII码是 `0x5c`，单引号 `'` 是 `0x27`）
-
-**第三步：发给MySQL数据库**
-PHP把这三个字节发给MySQL。但是MySQL用的是GBK编码！
-
-MySQL收到 `df 5c 27` 这三个字节，会怎么解读呢？
-
-因为GBK是宽字节编码，两个字节组成一个汉字。所以MySQL会：
-- 先看前两个字节 `df 5c`：哎，这是一个GBK的汉字啊！（`df5c` 在GBK里对应汉字 "運"）
-- 然后看第三个字节 `27`：这是一个单引号啊！
-
-结果就是：**反斜杠 `\`（0x5c）被"吃掉"了，变成了汉字的一部分！而单引号成功"逃"了出来！** 🎉
-
-哇！是不是很神奇？
-
-给大家画个图：
-```
-用户输入：  %df'
-PHP转义后：  %df%5c%27   （也就是 df 5c 27 三个字节）
-MySQL（GBK）解读：
-  df 5c → 汉字"運"
-  27 → 单引号 '
-结果：運'
-```
-
-单引号出来了！那后面的事情你懂的，想怎么注入就怎么注入！😈
-
-#### 生活小例子
-
-给大家举个生活中的例子，帮助理解 🍬：
-假设你要带一瓶饮料进电影院，但是电影院规定"饮料不能带进去"，而且会检查每个袋子。
-
-- 你把饮料放在一个单独的袋子里 → 被查出来，不让进（这就是正常情况，单引号被转义了）
-- 你把饮料和一个大蛋糕放在一个袋子里 → 检查员一看，哦，这是蛋糕，没仔细看就让你进去了（这就是宽字节注入，反斜杠被"吃"掉了）
-
-饮料还是那瓶饮料，但是你把它跟别的东西放在一起，检查员就认不出来了。单引号还是那个单引号，但是前面加了个 `%df`，MySQL就把反斜杠当成汉字的一部分了。
-
-是不是好理解多了？😄
-
----
-
-### 15.5.2 Less-32：GET - 单引号 - 宽字节注入（GBK）
-
-好，理论讲完了，咱们来实战一下Less-32。
-
-#### 怎么测试宽字节注入？
-
-首先，咱们得先判断有没有宽字节注入。怎么判断呢？
-
-很简单，输入：
-```
-?id=1%df'
-```
-然后看会不会报错。
-
-如果报错了，而且报错信息里能看到类似 `運'` 这样的东西，那就说明单引号成功逃出来了，有宽字节注入！
-
-咱们来分析一下：
-- 输入 `1%df'`
-- addslashes转义后变成 `1%df%5c%27`
-- MySQL用GBK解读，`%df%5c` 变成汉字，`%27` 就是单引号
-- 单引号闭合了前面的字符串，然后就报错了
-
-完美！
-
-#### 宽字节注入怎么玩？
-
-确认了有宽字节注入，那后面怎么玩呢？
-
-很简单！就跟普通的单引号注入一样玩！只是要注意：**每个单引号前面都要加个%df**！
-
-比如联合查询注入：
-```
-?id=-1%df' union select 1,2,3--+
-```
-咱们来分析一下：
-- addslashes把单引号转义成 `%df%5c%27`
-- MySQL（GBK）把 `%df%5c` 当成汉字，`%27` 是单引号
-- 所以单引号成功闭合
-
-然后就跟普通注入一样了，爆表、爆字段、爆数据，想怎么玩就怎么玩！
-
-💡 **小提示**：为什么是 `%df`？因为 `%df%5c` 刚好是一个合法的GBK汉字。其实不一定非要 `%df`，只要第一个字节大于 `0x7f`（也就是127），而且跟 `0x5c` 合起来是一个合法的GBK字符，都可以。比如 `%aa'`、`%bb'`、`%cc'` 等等，大家可以试试。
-
----
-
-### 15.5.3 Less-33：GET - 单引号 - addslashes
-
-Less-33跟Less-32几乎一模一样！也是addslashes，也是宽字节注入。
-
-唯一的区别可能就是实现细节不一样，但原理和玩法完全相同。大家自己动手试试，输入 `?id=1%df'` 看看会不会报错。
-
-我就不啰嗦了，咱们继续往下走。
-
----
-
-### 15.5.4 Less-34：POST - 单引号 - addslashes
-
-Less-34来了，这一关是POST型的宽字节注入。
-
-哎？POST型的宽字节注入怎么玩？跟GET型的一样吗？
-
-思路是一样的！只是参数传递的方式从GET变成了POST而已。
-
-比如这一关是登录表单，咱们在用户名那里输入：
-```
-1%df' or 1=1#
-```
-等等，不对！POST请求里，参数不是URL编码的，你直接输入 `%df` 的话，它就是字面量的 %df 三个字符，不会被解码的。
-
-那怎么办呢？有两种办法：
-1. 用Burp Suite抓包，然后在请求体里直接写 `1%df'`，然后选中 `%df` 进行URL解码
-2. 或者直接用Burp Suite的Hex功能，把那个位置改成 `df` 这个字节
-
-给大家举个例子，假设POST的数据是：
-```
-uname=1'&passwd=1&submit=Submit
-```
-要改成宽字节注入的话，应该是：
-```
-uname=1運' or 1=1#&passwd=1&submit=Submit
-```
-不对，不能直接输入汉字，因为汉字编码可能不对。最稳妥的办法是用Burp Suite改十六进制。
-
-具体操作：
-1. 用Burp Suite抓包
-2. 找到uname参数的值
-3. 把光标放在单引号前面
-4. 切换到Hex视图
-5. 插入一个字节 df
-6. 然后Forward
-
-这样就能实现POST型的宽字节注入了！
-
-当然，思路是一样的，只是操作方式不一样而已。大家自己动手试试吧！
-
----
-
-### 15.5.5 Less-35：GET - 数字型 - addslashes
-
-好，咱们来到Less-35。
-
-这一关的题目是：GET型，数字型，addslashes。
-
-哎？数字型注入？那addslashes有什么用？😏
-
-咱们来想想：数字型注入需要单引号吗？不需要啊！数字型注入直接写数字就行，比如：
-```
-?id=1 and 1=2
-```
-这里面根本没有单引号，addslashes再厉害，它转义什么呢？空气吗？😂
-
-所以这一关简直就是送分题！虽然有addslashes，但是因为是数字型注入，根本不需要单引号，所以addslashes完全没用！
-
-就好比什么呢？学校门口保安检查书包，不让带零食。但是你根本没背书包，零食装在口袋里……不对，不对，换个例子。
-
-好比什么呢？🏃：
-保安不让带饮料进电影院，但是你根本不喝饮料，你是来吃饭的……也不对。
-
-哦，对了！好比：
-老师说"考试不许带小抄"，但是你考的是体育，跑步，根本不需要小抄！老师再怎么查小抄也没用，因为你根本不用！🏃‍♂️
-
-对，就是这个意思！数字型注入不需要单引号，所以addslashes完全没用！
-
-那这一关怎么玩？就跟普通的数字型注入一样玩呗！不用管什么addslashes，直接注就行！
-
-```
-?id=-1 union select 1,2,3--+
-```
-就这么简单！
-
-💡 **小提示**：从这一关咱们可以学到一个道理：**防御要对症下药！** 不是加了addslashes就万事大吉了，如果是数字型注入，addslashes根本没用。真正的防御是用预编译（PDO），而不是靠转义。
-
----
-
-### 15.5.6 Less-36：GET - 单引号 - mysql_real_escape_string
-
-好，咱们来到Less-36。这一关用的是 `mysql_real_escape_string()`。
-
-哎？这个函数跟addslashes有什么不一样吗？
-
-`mysql_real_escape_string()` 比 `addslashes()` 更严格一点，它会考虑数据库的字符集，转义更多的字符。
-
-但是！如果编码没设置对，还是可以宽字节注入！
-
-为什么？因为 `mysql_real_escape_string()` 需要知道数据库的编码才能正确工作。如果PHP没调用 `mysql_set_charset('gbk')` 来设置正确的编码，那 `mysql_real_escape_string()` 还是会按照默认的编码来转义，这样就会有问题。
-
-所以这一关的玩法跟Less-32一样，也是宽字节注入：
-```
-?id=1%df'
-```
-看看会不会报错。如果报错，那就说明可以宽字节注入。
-
-然后后面的玩法就跟普通注入一样了，每个单引号前面加%df就行。
-
----
-
-### 15.5.7 Less-37：POST - 单引号 - mysql_real_escape_string
-
-Less-37跟Less-36的关系，就像Less-34跟Less-33的关系一样！
-- Less-36是GET型，Less-37是POST型
-- 都是mysql_real_escape_string
-- 都可以宽字节注入
-
-玩法跟Less-34一样，用Burp Suite抓包，然后在单引号前面加个df字节就行。
-
-我就不啰嗦了，大家自己动手试试！
-
----
-
-## 15.6 堆叠注入（Less38-40）
-
-### 15.6.1 什么是堆叠注入？
-
-好，咱们来到了本章的最后一个部分：**堆叠注入**！
-
-堆叠注入是什么呢？简单来说，就是**一次执行多条SQL语句**！
-
-咱们之前玩的注入，都是在一条SQL语句里做文章，比如：
-```sql
-SELECT * FROM users WHERE id='1' union select 1,2,3-- '
-```
-这还是一条SELECT语句。
-
-但是堆叠注入不一样！堆叠注入可以执行第二条、第三条、第N条SQL语句！比如：
-```sql
-SELECT * FROM users WHERE id='1'; create table test like users;-- '
-```
-看到了吗？用分号 `;` 把两条SQL语句隔开，第一条是查询，第二条是创建表。两条一起执行！
-
-哇！这可太厉害了！那能做什么呢？
-
-能做的事情可多了：
-- 创建表、删除表、修改表结构
-- 插入数据、修改数据、删除数据
-- 甚至可以写文件、提权……
-
-简直就是为所欲为！😈
-
-那为什么能堆叠注入呢？因为PHP里有个函数叫 `multi_query()`，可以一次执行多条SQL语句。普通的 `query()` 只能执行一条，但是 `multi_query()` 可以执行多条。
-
-就好比什么呢？给大家举个例子 🍔：
-普通的SQL执行就像单点，你点一个汉堡，服务员给你一个汉堡。
-堆叠注入就像全家桶，你点一个全家桶，里面有汉堡、薯条、可乐、鸡翅……好几种东西一起给你！
-
----
-
-### 15.6.2 Less-38：GET - 单引号 - 堆叠注入
-
-好，咱们来实战Less-38。
-
-首先，咱们先确认一下，这一关是不是堆叠注入。
-
-怎么确认呢？很简单，咱们试试创建一个表：
-```
-?id=1'; create table test like users;--+
-```
-然后看看users表下面是不是多了一个test表。
-
-如果多了，那就说明有堆叠注入！
-
-等等，怎么看表有没有创建成功？咱们可以用联合查询查information_schema：
-```
-?id=-1' union select 1,table_name,3 from information_schema.tables where table_schema=database()--+
-```
-看看有没有test表。
-
-或者更简单，咱们试试插入数据：
-```
-?id=1'; insert into users(id,username,password) values (100,'test','test123');--+
-```
-然后再访问：
-```
-?id=100
-```
-看看能不能查到数据。如果能查到，那就说明堆叠注入成功了！
-
-#### 堆叠注入能做什么？
-
-好，确认了有堆叠注入，那咱们能做什么呢？
-
-##### 1. 增删改数据
-
-这个最简单了，想插就插，想删就删，想改就改：
-```sql
--- 插入数据
-insert into users(id,username,password) values (100,'hacker','hacker123')
-
--- 修改数据
-update users set password='hacked' where id=1
-
--- 删除数据
-delete from users where id=1
-```
-
-##### 2. 操作表结构
-
-想建表就建表，想删表就删表：
-```sql
--- 建表
-create table test(id int, name varchar(100))
-
--- 删表
-drop table test
-
--- 加字段
-alter table users add column email varchar(100)
-```
-
-##### 3. 写文件
-
-如果权限够的话，还可以写webshell：
-```sql
-select '<?php eval($_POST[cmd]);?>' into outfile 'C:/www/shell.php'
-```
-当然，这个需要满足一些条件，比如有FILE权限、知道网站路径等等。
-
-##### 4. 还有很多……
-
-堆叠注入的玩法还有很多，比如执行存储过程、提权等等。咱们今天只是入门，知道有这么个东西就行。
-
-💡 **重要提示**：堆叠注入虽然厉害，但是有个前提——必须用 `multi_query()` 之类的函数才行。大部分网站用的都是普通的 `query()`，只能执行一条SQL，所以堆叠注入的场景其实不多。但是一旦遇到了，那可就是"大奖"了！🎁
-
----
-
-### 15.6.3 Less-39：GET - 数字型 - 堆叠注入
-
-Less-39跟Less-38几乎一样！区别就是：
-- Less-38是单引号闭合的字符型注入
-- Less-39是数字型注入
-
-玩法是一样的，只是闭合方式不一样而已。
-
-比如创建表：
-```
-?id=1; create table test2 like users;--+
-```
-直接用分号就行，不用单引号。
-
-然后后面的玩法都一样，增删改查、写文件……想怎么玩就怎么玩！
-
----
-
-### 15.6.4 Less-40：GET - 单引号+括号 - 堆叠注入 - 盲注
-
-好，咱们来到了本章的最后一关：Less-40！
-
-这一关是单引号+括号闭合，堆叠注入，而且是盲注。
-
-那怎么玩呢？很简单：
-- 闭合方式：`')`
-- 注入方式：堆叠注入 + 盲注
-
-比如测试一下：
-```
-?id=1') and 1=1--+
-```
-页面正常。
-```
-?id=1') and 1=2--+
-```
-页面异常。说明是盲注。
-
-那堆叠注入怎么测试呢？咱们可以试试创建表：
-```
-?id=1'); create table test3 like users;--+
-```
-然后用盲注的方法去查information_schema，看看表有没有创建成功。
-
-当然，因为是盲注，所以操作起来会麻烦一点，但是思路是一样的。
-
-大家自己动手试试吧！能坚持打到Less-40，你已经很厉害了！🎉
-
----
-
-## 15.7 本章总结：绕过之路，永无止境 🎯
-
-时间过得真快啊，不知不觉咱们已经打完了Less26-40，整整15关！来总结一下咱们今天都学了什么吧。
-
-### 15.7.1 本章知识点回顾
-
-#### 1. 空格和注释过滤绕过
-- 空格绕过：%09、%0a、%0c、%0d、%a0、括号、注释符
-- 注释绕过：用and '1'='1闭合后面的内容
-- 核心思想：用别的东西实现同样的功能
-
-#### 2. select/union过滤绕过
-- 大小写绕过：SeLeCt、UNIon
-- 双写绕过：selselectect、uniunionon
-- 内联注释绕过：/*!select*/、/*!union*/
-- 核心思想：换个"马甲"，让它认不出来
-
-#### 3. WAF绕过（参数污染）
-- 什么是WAF：Web应用防火墙，专门拦攻击的
-- 什么是参数污染：同一个参数出现多次，不同服务器处理方式不一样
-- 两层架构：Apache+IIS，一个取第一个参数，一个取最后一个
-- 核心思想：WAF看到的是干净的，真正执行的是有毒的
-
-#### 4. 宽字节注入
-- 什么是宽字节：GBK编码一个汉字占2个字节
-- 原理：addslashes把'转义成\'，但是用GBK编码的话，前面加个%df，%df\就变成了一个汉字，单引号就逃出来了
-- 条件：数据库用GBK编码，而且编码没设置对
-- 核心思想：把转义符"吃掉"
-
-#### 5. 堆叠注入
-- 什么是堆叠注入：一次执行多条SQL语句，用;分隔
-- 前提：用了multi_query()之类的函数
-- 能做什么：增删改查表、写文件、甚至提权
-- 核心思想：一条不够玩两条，两条不够玩三条
-
-### 15.7.2 最重要的是什么？
-
-学了这么多绕过技巧，你觉得最重要的是什么？
-
-是背会所有的payload吗？不是！
-
-最重要的是**绕过思维**！💡
-
-记住：
-- 过滤的是"形式"，不是"功能"
-- 只要能达到目的，用什么方法都行
-- 遇到过滤不要慌，有过滤说明有戏
-- 多思考，多尝试，办法总比困难多
-
-就像那句话说的：**条条大路通罗马！** 不一定非要走正门，翻窗户、钻地道、坐飞机……只要能到罗马就行！
-
-### 15.7.3 下章预告
-
-好，咱们今天就先到这里。Less26-40咱们已经打完了，是不是感觉自己的注入功力又上了一个大台阶？
-
-但是还没完！SQLi-Labs里还有更精彩的内容等着咱们呢！
-
-**下一章预告：Less41-55 进阶注入** 🚀
-- 二阶注入
-- Cookie注入进阶
-- 各种稀奇古怪的注入场景
-- ……
-
-敬请期待，咱们下章再见！👋
-
----
-
-**恭喜你！** 🎉 你已经完成了SQLi-Labs的Less26-40，掌握了各种绕过技巧、宽字节注入和堆叠注入！继续加油，你离注入大神又近了一步！💪
+就酱，我们 Day16 见！🚀

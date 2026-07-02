@@ -22,3 +22,4 @@ export { ResourceLibrary } from './ResourceLibrary';
 export { ResourceDetail } from './ResourceDetail';
 export { QuestionBank, QuestionBankTabs } from './QuestionBank';
 export { BookLibrary } from './BookLibrary';
+export { VmLabs } from './VmLabs';

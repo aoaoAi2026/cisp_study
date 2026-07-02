@@ -26,6 +26,7 @@ import { cyberAiPlan } from '../data/cyberAi';
 import { cyberHwPlan } from '../data/cyberHw';
 import { cyberVendorPlan } from '../data/cyberVendor';
 import { cyberShootRangePlan } from '../data/cyberShootRange';
+import { cyberRedteamPlan } from '../data/cyberRedteam';
 import { learningData as cispLearningData } from '../data/learningData';
 import { loadData } from '../data/persistData';
 import { useLearningStore } from '../store';
@@ -40,6 +41,7 @@ const plans: CyberLearningPlan[] = [
   cyberHwPlan,
   cyberVendorPlan,
   cyberShootRangePlan,
+  cyberRedteamPlan,
 ];
 
 const difficultyIcon = (d: string) => {
@@ -55,6 +57,7 @@ const planIcon = (id: string) => {
   if (id === 'hw') return <Globe size={40} />;
   if (id === 'vendor') return <Monitor size={40} />;
   if (id === 'shoot-range') return <Target size={40} />;
+  if (id === 'redteam') return <Target size={40} />;
   return <Cpu size={40} />;
 };
 
@@ -65,6 +68,7 @@ const planBg = (id: string) => {
   if (id === 'hw') return 'from-cyber-gold/5 to-transparent';
   if (id === 'vendor') return 'from-cyber-teal/5 to-transparent';
   if (id === 'shoot-range') return 'from-orange-500/5 to-transparent';
+  if (id === 'redteam') return 'from-red-600/5 to-transparent';
   return 'from-cyber-blue/5 to-transparent';
 };
 
@@ -75,6 +79,7 @@ const planBorder = (id: string) => {
   if (id === 'hw') return 'border-cyber-gold/30';
   if (id === 'vendor') return 'border-cyber-teal/30';
   if (id === 'shoot-range') return 'border-orange-500/30';
+  if (id === 'redteam') return 'border-red-600/30';
   return 'border-cyber-blue/30';
 };
 
@@ -85,6 +90,7 @@ const planHover = (id: string) => {
   if (id === 'hw') return 'hover:border-cyber-gold/50';
   if (id === 'vendor') return 'hover:border-cyber-teal/50';
   if (id === 'shoot-range') return 'hover:border-orange-500/50';
+  if (id === 'redteam') return 'hover:border-red-600/50';
   return 'hover:border-cyber-blue/50';
 };
 
@@ -162,7 +168,7 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
           <Card className="text-center py-4">
             <div className="text-2xl font-bold text-gray-200">
               {(() => {
-                const total = getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw') + getProgress('vendor') + getProgress('shoot-range') + cispCompleted;
+                const total = getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw') + getProgress('vendor') + getProgress('shoot-range') + getProgress('redteam') + cispCompleted;
                 return total;
               })()}
             </div>
@@ -180,7 +186,7 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
             <div className="text-2xl font-bold text-cyber-gold">
               {(() => {
                 const totalDays = plans.reduce((s, p) => s + p.totalDays, 0) + cispTotal;
-                const completed = getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw') + getProgress('vendor') + getProgress('shoot-range') + cispCompleted;
+                const completed = getProgress('basic') + getProgress('penetration') + getProgress('defense') + getProgress('ai') + getProgress('hw') + getProgress('vendor') + getProgress('shoot-range') + getProgress('redteam') + cispCompleted;
                 return completed > 0 ? Math.round((completed / totalDays) * 100) : 0;
               })()}%
             </div>
@@ -262,6 +268,7 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                       ${plan.id === 'hw' ? 'bg-cyber-gold/20 text-cyber-gold' : ''}
                       ${plan.id === 'vendor' ? 'bg-cyber-teal/20 text-cyber-teal' : ''}
                       ${plan.id === 'shoot-range' ? 'bg-orange-500/20 text-orange-500' : ''}
+                      ${plan.id === 'redteam' ? 'bg-red-600/20 text-red-600' : ''}
                     `}
                   >
                     {planIcon(plan.id)}
@@ -297,7 +304,8 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                             plan.id === 'ai' ? 'bg-[#7a8a9a]' :
                             plan.id === 'hw' ? 'bg-cyber-gold' :
                             plan.id === 'vendor' ? 'bg-cyber-teal' :
-                            plan.id === 'shoot-range' ? 'bg-orange-500' : 'bg-cyber-blue'
+                            plan.id === 'shoot-range' ? 'bg-orange-500' :
+                            plan.id === 'redteam' ? 'bg-red-600' : 'bg-cyber-blue'
                           }`}
                           style={{ width: `${pct}%` }}
                         />
@@ -352,6 +360,8 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                           ? 'border-cyber-teal/50 text-cyber-teal hover:bg-cyber-teal/20 hover:border-cyber-teal/80'
                         : plan.id === 'shoot-range'
                           ? 'border-orange-500/50 text-orange-500 hover:bg-orange-500/20 hover:border-orange-500/80'
+                        : plan.id === 'redteam'
+                          ? 'border-red-600/50 text-red-600 hover:bg-red-600/20 hover:border-red-600/80'
                         : 'border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/20 hover:border-cyber-blue/80'
                       }`}
                     >
@@ -372,6 +382,8 @@ export const CyberLearningMain: React.FC<CyberLearningMainProps> = () => {
                           ? 'bg-[#14b8a6] text-white hover:bg-[#2dd4bf] shadow-[0_0_12px_rgba(20,184,166,0.35)] hover:shadow-[0_0_18px_rgba(20,184,166,0.5)]'
                         : plan.id === 'shoot-range'
                           ? 'bg-[#f97316] text-white hover:bg-[#fb923c] shadow-[0_0_12px_rgba(249,115,22,0.35)] hover:shadow-[0_0_18px_rgba(249,115,22,0.5)]'
+                        : plan.id === 'redteam'
+                          ? 'bg-[#dc2626] text-white hover:bg-[#ef4444] shadow-[0_0_12px_rgba(220,38,38,0.35)] hover:shadow-[0_0_18px_rgba(220,38,38,0.5)]'
                         : 'bg-[#3388ee] text-white hover:bg-[#5599ff] shadow-[0_0_12px_rgba(51,136,238,0.3)] hover:shadow-[0_0_20px_rgba(51,136,238,0.5)]'
                       }`}
                     >

